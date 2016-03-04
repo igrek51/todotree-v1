@@ -11,6 +11,6 @@
         android:layout_alignParentTop="true"
         android:layout_alignWithParentIfMissing="true"
         android:gravity="center_vertical"
-        android:text="Example item"
+        android:content="Example item"
         android:textSize="16sp" />
 </LinearLayout>

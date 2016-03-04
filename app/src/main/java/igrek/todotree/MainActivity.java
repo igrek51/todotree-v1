@@ -1,7 +1,6 @@
 package igrek.todotree;
 
 import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -18,7 +17,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import igrek.todotree.tree.TreeItem;
+
 public class MainActivity extends AppCompatActivity {
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
             }
         });
+
+
 
         View content_main = (View) findViewById(R.id.content_main);
 

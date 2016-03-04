@@ -16,7 +16,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Lista:"/>
+        android:content="Lista:"/>
 
     <ListView xmlns:android="http://schemas.android.com/apk/res/android"
               android:id="@+id/listview1"
