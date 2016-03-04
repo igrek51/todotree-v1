@@ -8,40 +8,47 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
 
+import igrek.todotree.logic.App;
+import igrek.todotree.system.output.Output;
+
 public class MainActivity2 extends AppCompatActivity {
+
+    private App app;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        engine = new Engine(this);
+        app = new App(this);
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-//        // Checks the orientation of the screen
-//        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-//            Output.log("orientation changed: landscape");
-//        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-//            Output.log("orientation changed: portrait");
-//        }
+        // Checks the orientation of the screen
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            app.resizeEvent(newConfig.screenWidthDp, newConfig.screenHeightDp);
+            Output.log("orientation changed: landscape");
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            app.resizeEvent(newConfig.screenWidthDp, newConfig.screenHeightDp);
+            Output.log("orientation changed: portrait");
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-//        engine.pause();
+        app.pause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-//        engine.resume();
+        app.resume();
     }
 
     @Override
     protected void onDestroy() {
-//        engine.quit();
+        app.quit();
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         super.onDestroy();
     }
@@ -54,19 +61,16 @@ public class MainActivity2 extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-//        return engine.optionsSelect(item.getItemId()) || super.onOptionsItemSelected(item);
-        return super.onOptionsItemSelected(item);
+        return app.optionsSelect(item.getItemId()) || super.onOptionsItemSelected(item);
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-//        if (keyCode == KeyEvent.KEYCODE_BACK) {
-//            engine.keycodeBack();
-//            return true;
-//        } else if (keyCode == KeyEvent.KEYCODE_MENU) {
-//            engine.keycodeMenu();
-//            return true;
-//        }
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if(app.keycodeBack()) return true;
+        } else if (keyCode == KeyEvent.KEYCODE_MENU) {
+            if(app.keycodeMenu()) return true;
+        }
         return super.onKeyDown(keyCode, event);
     }
 

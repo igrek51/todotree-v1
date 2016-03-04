@@ -1,14 +1,27 @@
 package igrek.todotree.system.output;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import igrek.todotree.settings.Config;
 
 public class Output {
+
+    private static List<String> echos;
+    private static long lastEcho;
+
+    public Output() {
+        reset();
+    }
+
     public static void reset() {
-        echos = "";
+        echos = new ArrayList<>();
+        lastEcho = 0;
     }
 
     //  LOG
@@ -20,99 +33,108 @@ public class Output {
         Log.e(Config.Output.logTag, l);
     }
 
-    public static void log(String l, int i) {
+    public static void logvar(String l, int i) {
         log(l + " = " + i);
     }
 
-    public static void log(String l, float f) {
+    public static void logvar(String l, float f) {
         log(l + " = " + f);
     }
 
     //  ERRORS, EXCEPTIONS
     public static void error(String e) {
-        echoMultiline("[ERROR] " + e);
+        echo("[ERROR] " + e);
         logError("[ERROR] " + e);
     }
 
     public static void error(Exception ex) {
-        if (ex instanceof SoftErrorException) {
-            echoMultiline("[BŁĄD] " + ex.getMessage());
+        if (ex instanceof SoftException) {
+            echo("[BŁĄD] " + ex.getMessage());
         } else {
-            echoMultiline("[" + ex.getClass().getName() + "] " + ex.getMessage());
+            echo("[" + ex.getClass().getName() + "] " + ex.getMessage());
         }
         logError("[EXCEPTION - " + ex.getClass().getName() + "] " + ex.getMessage());
-        if(Config.Output.show_exceptions_trace){
+        if (Config.Output.show_exceptions_trace) {
             printStackTrace(ex);
         }
     }
 
-    public static void printStackTrace(Exception ex){
+    public static void printStackTrace(Exception ex) {
         logError(Log.getStackTraceString(ex));
     }
 
-    public static void errorThrow(String e) throws SoftErrorException {
-        throw new SoftErrorException(e);
+    public static void errorThrow(String e) throws SoftException {
+        throw new SoftException(e);
     }
 
-    public static void errorCritical(String e) throws Exception {
-//        if (App.geti().engine == null || App.geti().engine.activity == null) {
-//            error("errorCritical: Brak activity");
-//            return;
-//        }
-//        AlertDialog.Builder dlgAlert = new AlertDialog.Builder(App.geti().engine.activity);
-//        dlgAlert.setMessage(e);
-//        dlgAlert.setTitle("Błąd krytyczny");
-//        dlgAlert.setPositiveButton("Zamknij", new DialogInterface.OnClickListener() {
-//            public void onClick(DialogInterface dialog, int which) {
-//                if (App.geti().engine != null) {
-//                    App.geti().engine.quit();
-//                }
-//            }
-//        });
-//        dlgAlert.setCancelable(false);
-//        dlgAlert.create().show();
+    public static void errorCritical(final Activity activity, String e) {
         logError("[CRITICAL ERROR] " + e);
-        throw new Exception(e);
+        if (activity == null) {
+            error("errorCritical: Brak activity");
+            return;
+        }
+        AlertDialog.Builder dlgAlert = new AlertDialog.Builder(activity);
+        dlgAlert.setMessage(e);
+        dlgAlert.setTitle("Błąd krytyczny");
+        dlgAlert.setPositiveButton("Zamknij aplikację", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                activity.finish();
+            }
+        });
+        dlgAlert.setCancelable(false);
+        dlgAlert.create().show();
     }
 
     //  INFO, ECHO
 
-    public static void info(String e) {
-        echoMultiline(e);
-        log("[info] " + e);
+    public static void info(String i) {
+        echo(i);
+        log("[info] " + i);
     }
 
-    private static void echoMultiline(String e) {
-        if (echos.length() == 0) {
-            echos = e;
-            lastEcho = System.currentTimeMillis();
-        } else {
-            echos += "\n" + e;
-        }
+    private static void echo(String e) {
+        echos.add(e);
+        lastEcho = System.currentTimeMillis();
     }
 
-    public static void echoClear1AfterDelay() {
-        if (System.currentTimeMillis() > lastEcho + Config.Output.echo_showtime) {
-            echoClear1Line();
-            lastEcho += Config.Output.echo_showtime;
+    public static void echoClearAfterDelay() {
+        if (!echos.isEmpty()) {
+            if (System.currentTimeMillis() > lastEcho + Config.Output.echo_showtime) {
+                echoClear1Line();
+                lastEcho += Config.Output.echo_showtime;
+            }
         }
     }
 
     public static void echoClear1Line() {
-        if (echos.length() == 0) return;
-        //usuwa 1 wpis z echo
-        int firstIndex = echos.indexOf("\n");
-        if (firstIndex == -1) {
-            echos = "";
-        } else {
-            echos = echos.substring(firstIndex + 1);
+        if (!echos.isEmpty()) {
+            echos.remove(0);
         }
     }
 
-    public static void echoWait(int waitms){
+    public static void echoWait(int waitms) {
         lastEcho = System.currentTimeMillis() + waitms;
     }
 
-    public static String echos = "";
-    public static long lastEcho = 0;
+    public static List<String> getEchos() {
+        return echos;
+    }
+
+    public static String getEchosMultiline() {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < echos.size(); i++) {
+            builder.append(echos.get(i));
+            if (i < echos.size() - 1) builder.append('\n');
+        }
+        return builder.toString();
+    }
+
+    public static String getEchosMultilineReversed() {
+        StringBuilder builder = new StringBuilder();
+        for (int i = echos.size() - 1; i >= 0; i--) {
+            builder.append(echos.get(i));
+            if (i > 0) builder.append('\n');
+        }
+        return builder.toString();
+    }
 }
