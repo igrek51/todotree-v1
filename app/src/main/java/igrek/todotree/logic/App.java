@@ -3,9 +3,12 @@ package igrek.todotree.logic;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
@@ -13,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
@@ -21,11 +25,13 @@ import igrek.todotree.logic.tree.TreeItem;
 import igrek.todotree.logic.tree.TreeItemListener;
 import igrek.todotree.logic.tree.TreeManager;
 import igrek.todotree.logic.tree.exceptions.NoSuperItemException;
+import igrek.todotree.settings.Config;
+import igrek.todotree.system.output.Output;
 import igrek.todotree.view.treelist.TreeItemAdapter;
 
 public class App extends BaseApp implements TreeItemListener {
 
-    ViewSwitcher mainContentSwicther;
+    RelativeLayout mainContent;
     View items_list_layout;
     View edit_item_content_layout;
 
@@ -61,8 +67,11 @@ public class App extends BaseApp implements TreeItemListener {
         Toolbar toolbar1 = (Toolbar) activity.findViewById(R.id.toolbar1);
         activity.setSupportActionBar(toolbar1);
 
-        activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        activity.getSupportActionBar().setDisplayShowHomeEnabled(true);
+        ActionBar actionBar = activity.getSupportActionBar();
+        if(actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setDisplayShowHomeEnabled(true);
+        }
 
         toolbar1.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,26 +82,20 @@ public class App extends BaseApp implements TreeItemListener {
 
         //  główna zawartość
 
-        mainContentSwicther = (ViewSwitcher) activity.findViewById(R.id.mainContentSwicther);
-
-        Animation slide_in_left = AnimationUtils.loadAnimation(activity, android.R.anim.slide_in_left);
-        Animation slide_out_right = AnimationUtils.loadAnimation(activity, android.R.anim.slide_out_right);
-        mainContentSwicther.setInAnimation(slide_in_left);
-        mainContentSwicther.setOutAnimation(slide_out_right);
-
-        items_list_layout = activity.findViewById(R.id.items_list);
-
-        edit_item_content_layout = activity.findViewById(R.id.edit_item_content);
+        mainContent = (RelativeLayout) activity.findViewById(R.id.mainContent);
 
         showItemsList();
+        Output.log("Aplikacja uruchomiona.");
     }
 
     public void showItemsList(){
 
+        mainContent.removeAllViews();
 
-        if (mainContentSwicther.getCurrentView() == edit_item_content_layout){
-            mainContentSwicther.showPrevious();
-        }
+        LayoutInflater inflater = activity.getLayoutInflater();
+        items_list_layout = inflater.inflate(R.layout.items_list, null);
+
+        mainContent.addView(items_list_layout);
 
 
         //przycisk dodawania
@@ -123,8 +126,6 @@ public class App extends BaseApp implements TreeItemListener {
                 updateListModel();
             }
         });
-
-        mainContentSwicther.showNext();
 
         updateListModel();
     }
@@ -162,14 +163,18 @@ public class App extends BaseApp implements TreeItemListener {
     }
 
     public void showInfo(String info) {
-        showInfo(info, mainContentSwicther);
+        showInfo(info, mainContent);
     }
 
     public void showEditItemPanel(final TreeItem item) {
 
-        if (mainContentSwicther.getCurrentView() == items_list_layout){
-            mainContentSwicther.showNext();
-        }
+        mainContent.removeAllViews();
+
+        LayoutInflater inflater = activity.getLayoutInflater();
+        edit_item_content_layout = inflater.inflate(R.layout.edit_item_content, null);
+
+        mainContent.addView(edit_item_content_layout);
+
 
         treeManager.setEditItem(item);
 

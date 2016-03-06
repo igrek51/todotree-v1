@@ -43,7 +43,7 @@ public abstract class BaseApp implements ITouchScreenController {
 
         //        activity.setContentView(graphics);
 
-        Output.log("Utworzenie aplikacji.");
+        Output.log("Inicjalizacja aplikacji...");
     }
 
     public void pause() {
