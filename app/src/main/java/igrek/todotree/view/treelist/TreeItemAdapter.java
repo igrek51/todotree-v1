@@ -59,6 +59,8 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
         }
         textView.setText(contentBuilder.toString());
 
+
+        //TODO: ikonka z android drawable na przycisk
         Button editButton = (Button) itemView.findViewById(R.id.button_edit);
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override

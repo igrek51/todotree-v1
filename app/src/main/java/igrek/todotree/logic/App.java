@@ -5,16 +5,16 @@ import android.content.res.ColorStateList;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewStub;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.ViewFlipper;
+import android.widget.ViewSwitcher;
 
 import igrek.todotree.R;
 import igrek.todotree.logic.tree.TreeItem;
@@ -25,10 +25,8 @@ import igrek.todotree.view.treelist.TreeItemAdapter;
 
 public class App extends BaseApp implements TreeItemListener {
 
-    View activity_main_layout;
-    ViewStub items_list_viewstub;
+    ViewSwitcher mainContentSwicther;
     View items_list_layout;
-    ViewStub edit_item_content_viewstub;
     View edit_item_content_layout;
 
     ListView listview;
@@ -57,11 +55,10 @@ public class App extends BaseApp implements TreeItemListener {
         //  ZBUDOWANIE LAYOUTU
         //TODO: layout builder
 
-        LayoutInflater inflater = activity.getLayoutInflater();
-        activity_main_layout = inflater.inflate(R.layout.activity_main, null);
+        activity.setContentView(R.layout.activity_main);
 
         //toolbar
-        Toolbar toolbar1 = (Toolbar) activity_main_layout.findViewById(R.id.toolbar1);
+        Toolbar toolbar1 = (Toolbar) activity.findViewById(R.id.toolbar1);
         activity.setSupportActionBar(toolbar1);
 
         activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -75,34 +72,27 @@ public class App extends BaseApp implements TreeItemListener {
         });
 
         //  główna zawartość
-        items_list_viewstub = (ViewStub) activity_main_layout.findViewById(R.id.items_list);
-        items_list_viewstub.setLayoutResource(R.layout.items_list);
-        items_list_viewstub.setVisibility(View.VISIBLE);
-        items_list_layout = items_list_viewstub.inflate();
 
-        edit_item_content_viewstub = (ViewStub) activity_main_layout.findViewById(R.id.edit_item_content);
-        items_list_viewstub.setLayoutResource(R.layout.edit_item_content);
-        edit_item_content_viewstub.setVisibility(View.GONE);
-        edit_item_content_layout = edit_item_content_viewstub.inflate();
+        mainContentSwicther = (ViewSwitcher) activity.findViewById(R.id.mainContentSwicther);
 
-        try {
-            View.inflate(activity.getApplicationContext(), R.layout.view_stub_layout, mainLayout = null);
-            mainLayout.add(views[i]);
-        } catch(Exception e){
-            e.getMessage();
-        }
+        Animation slide_in_left = AnimationUtils.loadAnimation(activity, android.R.anim.slide_in_left);
+        Animation slide_out_right = AnimationUtils.loadAnimation(activity, android.R.anim.slide_out_right);
+        mainContentSwicther.setInAnimation(slide_in_left);
+        mainContentSwicther.setOutAnimation(slide_out_right);
 
-        ViewFlipper
+        items_list_layout = activity.findViewById(R.id.items_list);
+
+        edit_item_content_layout = activity.findViewById(R.id.edit_item_content);
 
         showItemsList();
-
-        activity.setContentView(activity_main_layout);
     }
 
     public void showItemsList(){
 
-        items_list_viewstub.setVisibility(View.VISIBLE);
-        edit_item_content_viewstub.setVisibility(View.GONE);
+
+        if (mainContentSwicther.getCurrentView() == edit_item_content_layout){
+            mainContentSwicther.showPrevious();
+        }
 
 
         //przycisk dodawania
@@ -133,6 +123,8 @@ public class App extends BaseApp implements TreeItemListener {
                 updateListModel();
             }
         });
+
+        mainContentSwicther.showNext();
 
         updateListModel();
     }
@@ -170,12 +162,14 @@ public class App extends BaseApp implements TreeItemListener {
     }
 
     public void showInfo(String info) {
-        showInfo(info, activity_main_layout);
+        showInfo(info, mainContentSwicther);
     }
 
     public void showEditItemPanel(final TreeItem item) {
-        items_list_viewstub.setVisibility(View.GONE);
-        edit_item_content_viewstub.setVisibility(View.VISIBLE);
+
+        if (mainContentSwicther.getCurrentView() == items_list_layout){
+            mainContentSwicther.showNext();
+        }
 
         treeManager.setEditItem(item);
 

@@ -22,25 +22,37 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <ViewSwitcher
-        android:id="@+id/viewswitcher"
+    <View
+        android:id="@+id/mainContent"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content" />
 
-        </ViewSwitcher>
 
-    <ViewStub
-        android:id="@+id/items_list"
+<ViewSwitcher
+        android:id="@+id/mainContentSwicther"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_toEndOf="@+id/appBar"
-        android:layout_toRightOf="@+id/appBar"/>
+        android:layout_height="wrap_content">
 
-    <ViewStub
-        android:id="@+id/edit_item_content"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_toEndOf="@+id/appBar"
-        android:layout_toRightOf="@+id/appBar"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Large Text"
+            android:id="@+id/textView"
+            android:layout_below="@+id/appBar"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="125dp"/>
+
+        <include
+            android:id="@+id/items_list"
+            layout="@layout/items_list"/>
+
+        <include
+            android:id="@+id/edit_item_content"
+            layout="@layout/edit_item_content"/>
+
+    </ViewSwitcher>
+
+
 
 </RelativeLayout>
