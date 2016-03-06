@@ -1,4 +1,4 @@
-package ToDo;
+package igrek.todotree.smieci;
 
 class Encoding{
     static byte polish_to_ansi(char p){

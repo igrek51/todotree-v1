@@ -14,13 +14,11 @@ public class Config {
     public static class Screen {
         public static final int fullscreen_flag = WindowManager.LayoutParams.FLAG_FULLSCREEN | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED;
         public static final boolean fullscreen = true;
-        public static final boolean hide_taskbar = true;
+        public static final boolean hide_taskbar = false;
         public static final boolean keep_screen_on = true;
-        public static final boolean paint_antialias = true;
-        public static final boolean paint_subpixel_text = true;
     }
     //  USTAWIENIA UŻYTKOWNIKA
-    public static final String shared_preferences_name = "userpreferences";
+    public static final String shared_preferences_name = "ToDoTreeUserPreferences";
     //Zestaw ustawień: 0 - samsung galaxy grand prime (DEFAULT), 1 - emulator Android
     public static final int config_set = 0;
     //nadpisanie parametrów dla innego zestawu

@@ -1,4 +1,4 @@
-package igrek.todotree.tree;
+package igrek.todotree.logic.tree;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,6 +59,12 @@ public class TreeItem {
 
     public void add(int location, TreeItem newItem){
         children.add(location, newItem);
+    }
+
+    public TreeItem add(String content){
+        TreeItem newItem = new TreeItem(this, content);
+        children.add(newItem);
+        return newItem;
     }
 
     public void remove(int location){

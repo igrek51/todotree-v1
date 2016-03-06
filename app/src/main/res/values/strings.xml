@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">ToDo Tree</string>
     <string name="action_settings">Settings</string>
+    <string name="example_item">Example item</string>
+    <string name="list_txt">Lista:</string>
+    <string name="editButton">Edytuj</string>
+    <string name="button_save">Zapisz</string>
 </resources>

@@ -2,7 +2,9 @@ package igrek.todotree.logic;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.view.WindowManager;
 
 import igrek.todotree.settings.Config;
@@ -54,7 +56,6 @@ public abstract class BaseApp implements ITouchScreenController {
 
     public void quit() {
         if (!running) { //próba ponownego zamknięcia
-            Output.log("Zamykanie aplikacji (2) - anulowanie");
             return;
         }
         Output.info("Zamykanie...");
@@ -85,7 +86,6 @@ public abstract class BaseApp implements ITouchScreenController {
     }
 
     public void resizeEvent(int w, int h) {
-
         Output.log("Rozmiar ekranu zmieniony na: " + w + "px x " + h + "px");
     }
 
@@ -99,7 +99,6 @@ public abstract class BaseApp implements ITouchScreenController {
     }
 
     public boolean optionsSelect(int id) {
-
         return false;
     }
 
@@ -108,5 +107,9 @@ public abstract class BaseApp implements ITouchScreenController {
         startMain.addCategory(Intent.CATEGORY_HOME);
         startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         activity.startActivity(startMain);
+    }
+
+    public void showInfo(String info, View view){
+        Snackbar.make(view, info, Snackbar.LENGTH_SHORT).setAction("Action", null).show();
     }
 }

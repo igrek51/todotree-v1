@@ -1,15 +1,31 @@
-package igrek.todotree.tree;
+package igrek.todotree.logic.tree;
 
-import igrek.todotree.tree.exceptions.NoSuperItemException;
+import igrek.todotree.logic.tree.exceptions.NoSuperItemException;
 
 public class TreeManager {
-    TreeItem rootItem;
-    TreeItem currentItem;
-    TreeItem editItem = null;
+    private TreeItem rootItem;
+    private TreeItem currentItem;
+    private TreeItem editItem = null;
 
     public TreeManager(){
         rootItem = new TreeItem(null, "root");
         currentItem = rootItem;
+    }
+
+    public TreeItem getRootItem() {
+        return rootItem;
+    }
+
+    public TreeItem getCurrentItem() {
+        return currentItem;
+    }
+
+    public TreeItem getEditItem() {
+        return editItem;
+    }
+
+    public void setEditItem(TreeItem editItem) {
+        this.editItem = editItem;
     }
 
     //  NAWIGACJA

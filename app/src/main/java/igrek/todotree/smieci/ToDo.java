@@ -1,4 +1,4 @@
-package igrek.todotree;
+package igrek.todotree.smieci;
 
 import java.io.IOException;
 import java.io.InputStream;
