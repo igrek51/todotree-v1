@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             app = new App(this);
         } catch (Exception ex) {
-            Output.error(ex);
+            Output.errorCritical(this, ex);
         }
     }
 

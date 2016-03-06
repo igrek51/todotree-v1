@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.ViewFlipper;
 
 import igrek.todotree.R;
 import igrek.todotree.logic.tree.TreeItem;
@@ -25,7 +26,10 @@ import igrek.todotree.view.treelist.TreeItemAdapter;
 public class App extends BaseApp implements TreeItemListener {
 
     View activity_main_layout;
-    ViewStub content_main;
+    ViewStub items_list_viewstub;
+    View items_list_layout;
+    ViewStub edit_item_content_viewstub;
+    View edit_item_content_layout;
 
     ListView listview;
     TextView list_title;
@@ -52,6 +56,7 @@ public class App extends BaseApp implements TreeItemListener {
 
         //  ZBUDOWANIE LAYOUTU
         //TODO: layout builder
+
         LayoutInflater inflater = activity.getLayoutInflater();
         activity_main_layout = inflater.inflate(R.layout.activity_main, null);
 
@@ -70,7 +75,24 @@ public class App extends BaseApp implements TreeItemListener {
         });
 
         //  główna zawartość
-        content_main = (ViewStub) activity_main_layout.findViewById(R.id.content_main);
+        items_list_viewstub = (ViewStub) activity_main_layout.findViewById(R.id.items_list);
+        items_list_viewstub.setLayoutResource(R.layout.items_list);
+        items_list_viewstub.setVisibility(View.VISIBLE);
+        items_list_layout = items_list_viewstub.inflate();
+
+        edit_item_content_viewstub = (ViewStub) activity_main_layout.findViewById(R.id.edit_item_content);
+        items_list_viewstub.setLayoutResource(R.layout.edit_item_content);
+        edit_item_content_viewstub.setVisibility(View.GONE);
+        edit_item_content_layout = edit_item_content_viewstub.inflate();
+
+        try {
+            View.inflate(activity.getApplicationContext(), R.layout.view_stub_layout, mainLayout = null);
+            mainLayout.add(views[i]);
+        } catch(Exception e){
+            e.getMessage();
+        }
+
+        ViewFlipper
 
         showItemsList();
 
@@ -78,8 +100,9 @@ public class App extends BaseApp implements TreeItemListener {
     }
 
     public void showItemsList(){
-        content_main.setLayoutResource(R.layout.items_list);
-        View items_list_layout = content_main.inflate();
+
+        items_list_viewstub.setVisibility(View.VISIBLE);
+        edit_item_content_viewstub.setVisibility(View.GONE);
 
 
         //przycisk dodawania
@@ -151,8 +174,8 @@ public class App extends BaseApp implements TreeItemListener {
     }
 
     public void showEditItemPanel(final TreeItem item) {
-        content_main.setLayoutResource(R.layout.edit_item_content);
-        View edit_item_content_layout = content_main.inflate();
+        items_list_viewstub.setVisibility(View.GONE);
+        edit_item_content_viewstub.setVisibility(View.VISIBLE);
 
         treeManager.setEditItem(item);
 

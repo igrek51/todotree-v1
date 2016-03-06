@@ -49,7 +49,7 @@ public class Output {
 
     public static void error(Exception ex) {
         if (ex instanceof SoftException) {
-            echo("[BŁĄD] " + ex.getMessage());
+            echo("[ERROR] " + ex.getMessage());
         } else {
             echo("[" + ex.getClass().getName() + "] " + ex.getMessage());
         }
@@ -83,6 +83,19 @@ public class Output {
         });
         dlgAlert.setCancelable(false);
         dlgAlert.create().show();
+    }
+
+    public static void errorCritical(final Activity activity, Exception ex) {
+        String e;
+        if (ex instanceof SoftException) {
+            e = ex.getMessage();
+        } else {
+            e = ex.getClass().getName() + " - " + ex.getMessage();
+        }
+        if (Config.Output.show_exceptions_trace) {
+            printStackTrace(ex);
+        }
+        errorCritical(activity, e);
     }
 
     //  INFO, ECHO
