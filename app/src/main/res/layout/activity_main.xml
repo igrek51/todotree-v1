@@ -6,7 +6,8 @@
     android:layout_gravity="center_horizontal"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
-    android:weightSum="1">
+    android:weightSum="1"
+    android:background="#00ff00">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appBar"
@@ -25,7 +26,11 @@
     <RelativeLayout
         android:id="@+id/mainContent"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/appBar"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:background="#0000ff">
 
     </RelativeLayout>
 

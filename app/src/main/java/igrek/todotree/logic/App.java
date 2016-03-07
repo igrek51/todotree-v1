@@ -173,6 +173,10 @@ public class App extends BaseApp implements TreeItemListener {
         LayoutInflater inflater = activity.getLayoutInflater();
         edit_item_content_layout = inflater.inflate(R.layout.edit_item_content, null);
 
+        edit_item_content_layout.setLayoutParams(new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT));
+
         mainContent.addView(edit_item_content_layout);
 
 
