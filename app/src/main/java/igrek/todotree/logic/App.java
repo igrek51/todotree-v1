@@ -9,8 +9,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -18,14 +16,12 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.ViewSwitcher;
 
 import igrek.todotree.R;
 import igrek.todotree.logic.tree.TreeItem;
 import igrek.todotree.logic.tree.TreeItemListener;
 import igrek.todotree.logic.tree.TreeManager;
 import igrek.todotree.logic.tree.exceptions.NoSuperItemException;
-import igrek.todotree.settings.Config;
 import igrek.todotree.system.output.Output;
 import igrek.todotree.view.treelist.TreeItemAdapter;
 
