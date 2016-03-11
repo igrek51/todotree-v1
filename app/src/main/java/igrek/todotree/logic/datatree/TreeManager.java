@@ -1,6 +1,14 @@
-package igrek.todotree.logic.tree;
+package igrek.todotree.logic.datatree;
 
-import igrek.todotree.logic.tree.exceptions.NoSuperItemException;
+import java.io.IOException;
+import java.text.ParseException;
+
+import igrek.todotree.logic.datatree.serializer.TreeSerializer;
+import igrek.todotree.logic.exceptions.NoSuperItemException;
+import igrek.todotree.settings.preferences.Preferences;
+import igrek.todotree.system.files.Files;
+import igrek.todotree.system.files.PathBuilder;
+import igrek.todotree.system.output.Output;
 
 public class TreeManager {
     private TreeItem rootItem;
@@ -68,15 +76,6 @@ public class TreeManager {
         currentItem.add(newItem);
     }
 
-    public void addAndEdit(TreeItem newItem) {
-        addToCurrent(newItem);
-        editItem(newItem);
-    }
-
-    public void addNewItemAndEdit() {
-        addAndEdit(new TreeItem(currentItem));
-    }
-
     public void deleteFromCurrent(int location) {
         currentItem.remove(location);
     }
@@ -93,7 +92,39 @@ public class TreeManager {
         }
     }
 
-    public void editItem(TreeItem item) {
-        //TODO włączenie ekranu edycji elementu
+    //  ZAPIS / ODCZYT Z PLIKU
+
+    public void loadRootTree(Files files, Preferences preferences) {
+        Output.log("odczyt drzewka");
+
+        PathBuilder dbFilePath = files.pathSD().append(preferences.dbFilePath);
+
+        if (!files.exists(dbFilePath.toString())) {
+
+            Output.log("plik z bazą danych nie istnieje");
+            return;
+        }
+
+        try {
+            String fileContent = files.openFileString(dbFilePath.toString());
+            TreeItem rootItem = TreeSerializer.loadTree(fileContent);
+            setRootItem(rootItem);
+        } catch (IOException | ParseException e) {
+            Output.error(e);
+        }
+
+    }
+
+    public void saveRootTree(Files files, Preferences preferences) {
+        Output.log("zapis drzewka");
+
+        PathBuilder dbFilePath = files.pathSD().append(preferences.dbFilePath);
+
+        try {
+            String output = TreeSerializer.saveTree(getRootItem());
+            files.saveFile(dbFilePath.toString(), output);
+        } catch (IOException e) {
+            Output.error(e);
+        }
     }
 }

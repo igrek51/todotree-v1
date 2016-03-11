@@ -6,9 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.WindowManager;
 
-import igrek.todotree.logic.App;
+import igrek.todotree.logic.app.App;
 import igrek.todotree.system.output.Output;
 
 public class MainActivity extends AppCompatActivity {

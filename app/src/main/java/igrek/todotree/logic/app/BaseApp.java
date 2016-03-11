@@ -1,4 +1,4 @@
-package igrek.todotree.logic;
+package igrek.todotree.logic.app;
 
 import android.app.Activity;
 import android.content.Intent;

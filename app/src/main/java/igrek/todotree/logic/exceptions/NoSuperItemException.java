@@ -1,4 +1,4 @@
-package igrek.todotree.logic.tree.exceptions;
+package igrek.todotree.logic.exceptions;
 
 public class NoSuperItemException extends Exception {
     public NoSuperItemException() {

@@ -1,4 +1,4 @@
-package igrek.todotree.logic.tree;
+package igrek.todotree.logic.datatree;
 
 import java.util.ArrayList;
 import java.util.List;

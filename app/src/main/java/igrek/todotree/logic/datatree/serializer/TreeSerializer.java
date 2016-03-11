@@ -1,13 +1,13 @@
-package igrek.todotree.logic.tree.converter;
+package igrek.todotree.logic.datatree.serializer;
 
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-import igrek.todotree.logic.tree.TreeItem;
-import igrek.todotree.logic.tree.exceptions.NoMatchingBracketException;
+import igrek.todotree.logic.datatree.TreeItem;
+import igrek.todotree.logic.exceptions.NoMatchingBracketException;
 
-public class TreeConverter {
+public class TreeSerializer {
 
     //  WCZYTYWANIE Z PLIKU
 

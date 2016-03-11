@@ -26,8 +26,8 @@ public class Files {
         }
     }
 
-    public Path pathSD() {
-        return new Path(pathToExtSD);
+    public PathBuilder pathSD() {
+        return new PathBuilder(pathToExtSD);
     }
 
     public String internalAppDirectory() {
@@ -44,7 +44,7 @@ public class Files {
         return lista;
     }
 
-    public List<String> listDir(Path path) {
+    public List<String> listDir(PathBuilder path) {
         return listDir(path.toString());
     }
 
@@ -96,7 +96,7 @@ public class Files {
         return file.delete();
     }
 
-    public boolean delete(Path path){
+    public boolean delete(PathBuilder path){
         return delete(path.toString());
     }
 
