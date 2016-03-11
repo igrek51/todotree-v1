@@ -56,10 +56,10 @@ public abstract class BaseApp implements ITouchScreenController {
 
     public void quit() {
         if (!running) { //próba ponownego zamknięcia
-            Output.info("Zamykanie - próba ponownego zamknięcia");
+            Output.error("Zamykanie - próba ponownego zamknięcia");
             return;
         }
-        Output.info("Zamykanie aplikacji...");
+        Output.log("Zamykanie aplikacji...");
         running = false;
         activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         activity.finish();
@@ -67,23 +67,17 @@ public abstract class BaseApp implements ITouchScreenController {
 
     @Override
     public void touchDown(float touch_x, float touch_y) {
-//                if (touchpanel != null) {
-//                    touchpanel.touchDown(touch_x, touch_y);
-//                }
+
     }
 
     @Override
     public void touchMove(float touch_x, float touch_y) {
-        //        if (touchpanel != null) {
-        //            touchpanel.touchMove(touch_x, touch_y);
-        //        }
+
     }
 
     @Override
     public void touchUp(float touch_x, float touch_y) {
-        //        if (touchpanel != null) {
-        //            touchpanel.touchUp(touch_x, touch_y);
-        //        }
+
     }
 
     public void resizeEvent(int w, int h) {
@@ -112,5 +106,6 @@ public abstract class BaseApp implements ITouchScreenController {
 
     public void showInfo(String info, View view){
         Snackbar.make(view, info, Snackbar.LENGTH_SHORT).setAction("Action", null).show();
+        Output.info(info);
     }
 }

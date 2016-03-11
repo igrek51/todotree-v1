@@ -15,12 +15,10 @@ public class TreeManager {
     private TreeItem currentItem;
     private TreeItem editItem = null;
 
-    public TreeManager() {
-        this(new TreeItem(null, "root"));
-    }
+    private TreeSerializer treeSerializer = new TreeSerializer();
 
-    public TreeManager(TreeItem rootItem) {
-        this.rootItem = rootItem;
+    public TreeManager() {
+        rootItem = new TreeItem(null, "root");
         currentItem = rootItem;
         editItem = null;
     }
@@ -95,34 +93,29 @@ public class TreeManager {
     //  ZAPIS / ODCZYT Z PLIKU
 
     public void loadRootTree(Files files, Preferences preferences) {
-        Output.log("odczyt drzewka");
-
         PathBuilder dbFilePath = files.pathSD().append(preferences.dbFilePath);
-
+        Output.log("Wczytywanie bazy danych z pliku: " + dbFilePath.toString());
         if (!files.exists(dbFilePath.toString())) {
-
-            Output.log("plik z bazą danych nie istnieje");
+            Output.log("Plik z bazą danych nie istnieje. Domyślna pusta baza danych.");
             return;
         }
-
         try {
             String fileContent = files.openFileString(dbFilePath.toString());
-            TreeItem rootItem = TreeSerializer.loadTree(fileContent);
+            TreeItem rootItem = treeSerializer.loadTree(fileContent);
             setRootItem(rootItem);
+            Output.log("Wczytano bazę danych");
         } catch (IOException | ParseException e) {
             Output.error(e);
         }
-
     }
 
     public void saveRootTree(Files files, Preferences preferences) {
-        Output.log("zapis drzewka");
-
         PathBuilder dbFilePath = files.pathSD().append(preferences.dbFilePath);
-
+        Output.log("Zapisywanie bazy danych do pliku: " + dbFilePath.toString());
         try {
-            String output = TreeSerializer.saveTree(getRootItem());
+            String output = treeSerializer.saveTree(getRootItem());
             files.saveFile(dbFilePath.toString(), output);
+            Output.log("Zapisano bazę danych");
         } catch (IOException e) {
             Output.error(e);
         }

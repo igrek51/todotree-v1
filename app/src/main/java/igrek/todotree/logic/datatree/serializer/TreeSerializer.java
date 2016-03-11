@@ -9,9 +9,13 @@ import igrek.todotree.logic.exceptions.NoMatchingBracketException;
 
 public class TreeSerializer {
 
+    public TreeSerializer(){
+
+    }
+
     //  WCZYTYWANIE Z PLIKU
 
-    public static TreeItem loadTree(String data) throws ParseException {
+    public TreeItem loadTree(String data) throws ParseException {
         TreeItem rootItem = new TreeItem(null, "root");
         if (!data.isEmpty()) {
             //wyłuskanie wierszy
@@ -36,7 +40,7 @@ public class TreeSerializer {
      * @param lines lista wierszy, z których zostaną dodane elementy
      * @throws ParseException
      */
-    private static void loadTreeItems(TreeItem parent, List<String> lines) throws ParseException {
+    private void loadTreeItems(TreeItem parent, List<String> lines) throws ParseException {
         for (int i = 0; i < lines.size(); i++) {
             String line = lines.get(i);
             if (line.equals("{")) {
@@ -71,7 +75,7 @@ public class TreeSerializer {
      * @return indeks wiersza będącego pasującą klamrą zamykającą
      * @throws NoMatchingBracketException jeśli nie znaleziono poprawnego nawiasu domykającego
      */
-    private static int findClosingBracket(List<String> lines, int startIndex) throws NoMatchingBracketException {
+    private int findClosingBracket(List<String> lines, int startIndex) throws NoMatchingBracketException {
         int bracketDepth = 1;
         for (int j = startIndex + 1; j < lines.size(); j++) {
             String line = lines.get(j);
@@ -90,7 +94,7 @@ public class TreeSerializer {
 
     //  ZAPIS DO PLIKU
 
-    private static void saveTreeItems(TreeItem parent, int level, StringBuilder output) {
+    private void saveTreeItems(TreeItem parent, int level, StringBuilder output) {
         StringBuilder indentBuilder = new StringBuilder();
         for (int i = 0; i < level; i++) indentBuilder.append("\t");
         String indents = indentBuilder.toString();
@@ -109,7 +113,7 @@ public class TreeSerializer {
         }
     }
 
-    public static String saveTree(TreeItem root) {
+    public String saveTree(TreeItem root) {
         StringBuilder output = new StringBuilder();
         for (TreeItem child : root.getChildren()){
             saveTreeItems(child, 0, output);

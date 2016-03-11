@@ -11,8 +11,7 @@ import igrek.todotree.gui.GUI;
 import igrek.todotree.gui.GUIListener;
 
 //  WERSJA v1.1
-//TODO: anulowanie dodawania nowego elementu
-//TODO: uporządkowanie logów
+//TODO: anulowanie dodawania nowego elementu - dodawanie dopiero w momencie zapisu,
 //TODO: anulowanie edycji przyciskiem powrotu i strzałką powrotu
 //TODO: przycisk dodawania nowego elementu przesunięty pod koniec listy, tak żeby nie zasłaniał przycisków elementów
 //TODO: przesuwanie elementów, przesuwanie na koniec, na początek listy
@@ -120,13 +119,13 @@ public class App extends BaseApp implements GUIListener {
         editItem.setContent(content);
         GUI.showItemsList(treeManager.getCurrentItem());
         state = AppState.ITEMS_LIST;
-        showInfo("Zapisano element");
+        showInfo("Zapisano element.");
     }
 
     private void removeItem(int position) {
         treeManager.getCurrentItem().remove(position);
-        showInfo("Element zostal usunięty.");
         GUI.updateItemsList(treeManager.getCurrentItem());
+        showInfo("Usunięto element.");
     }
 
     public void goUp() {

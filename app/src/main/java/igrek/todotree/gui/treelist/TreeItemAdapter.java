@@ -13,7 +13,6 @@ import java.util.List;
 
 import igrek.todotree.R;
 import igrek.todotree.logic.datatree.TreeItem;
-import igrek.todotree.system.output.Output;
 
 public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 
@@ -81,7 +80,6 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
         removeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Output.log("klik usun");
                 treeItemListener.onTreeItemRemoveClicked(position, item);
             }
         });

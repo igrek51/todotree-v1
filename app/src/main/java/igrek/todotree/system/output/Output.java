@@ -98,7 +98,7 @@ public class Output {
         errorCritical(activity, e);
     }
 
-    //  INFO, ECHO
+    //  INFO, ECHO - widoczne dla użytkownika
 
     public static void info(String i) {
         echo(i);
