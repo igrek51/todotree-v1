@@ -17,13 +17,53 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.io.IOException;
+import java.text.ParseException;
+
 import igrek.todotree.R;
 import igrek.todotree.logic.tree.TreeItem;
 import igrek.todotree.logic.tree.TreeItemListener;
 import igrek.todotree.logic.tree.TreeManager;
+import igrek.todotree.logic.tree.converter.TreeConverter;
 import igrek.todotree.logic.tree.exceptions.NoSuperItemException;
+import igrek.todotree.system.files.Path;
 import igrek.todotree.system.output.Output;
 import igrek.todotree.view.treelist.TreeItemAdapter;
+
+//  WERSJA v1.1
+//TODO: przesuwanie elementów, przesuwanie na koniec, na początek listy
+//TODO: przycisk dodawania nowego elementu przesunięty pod koniec listy, tak żeby nie zasłaniał przycisków elementów
+//TODO: anulowanie edycji przyciskiem powrotu i strzałką powrotu
+
+//  NOWA FUNKCJONALNOŚĆ
+//TODO: zabronienie używania znaków "{" i "}" w tekście (usuwanie ich)
+//TODO: kopiowanie i wklejanie elementów
+//TODO: utworzenie nowego elementu przed wybranym
+//TODO: podczas edycji, przyciski przesuwania kursora (do początku, 1 w lewo, 1 w prawo, do końca), zaznacz wszystko
+//TODO: minimalizacja aplikacji i wyjście z aplikacji (z zapisem i bez zapisu bazy), szybkie wyjście
+//TODO: wychwycenie eventu resize'u okna (zmiany orientacji), brak restartu aplikacji, obsłużenie, odświeżenie layoutów
+//TODO: różne akcje na kliknięcie elementu: (wejście - folder, edycja - element), przycisk wejścia dla pojedynczych elementów
+//TODO: akcja long pressed do tree itemów - wybór większej ilości opcji: multiselect, utworzenie nowego przed
+//TODO: zapisywanie kilku ostatnich wersji bazy danych (backup)
+//TODO: zaznaczanie wielu elementów + usuwanie, kopiowanie, wycinanie
+//TODO: system logów z wieloma poziomami (info - jeden z poziomów, wyświetlany użytkownikowi)
+//TODO: funkcja cofania zmian - zapisywanie modyfikacji, dodawania, usuwania elementów, przesuwania
+//TODO: moduł obliczeń: sumowanie elementów, inline calc
+//TODO: gesty do obsługi powrotu w górę, dodania nowego elementu, wejścia w element
+//TODO: klasy elementów: checkable (z pamięcią stanu), separator
+
+//TODO: KONFIGURACJA:
+//TODO: ekran konfiguracji
+//TODO: konfiguracja położenia pliku z bazą dancyh
+//TODO: shared preferences: zautomatyzowanie w celu konfiguracji, definicja: typ, nazwa, wartość domyślna, refleksja, automatyczny zapis, odczyt, generowanie fomrularza
+
+//  WYGLĄD
+//TODO: edycja: domyślnie kursor na końcu tekstu, focus na start, pokazanie kalwiatury
+//TODO: motyw kolorystyczny, zapisanie wszystkich kolorów w Config lub w xml
+//TODO: ustalenie marginesów w layoutach i wypozycjonowanie elementów
+//TODO: konfiguracja: wyświetlacz zawsze zapalony, wielkość czcionki, marginesy między elementami
+//TODO: pole edycyjne multiline przy overflow
+//TODO: ikona aplikacji
 
 public class App extends BaseApp implements TreeItemListener {
 
@@ -40,18 +80,19 @@ public class App extends BaseApp implements TreeItemListener {
     public App(AppCompatActivity activity) {
         super(activity);
         preferences.preferencesLoad();
-
         treeManager = new TreeManager();
+        loadRootTree();
 
-        TreeItem item1 = treeManager.getCurrentItem().add("Dupa");
-        item1.add("d");
-        item1.add("u");
-        item1.add("pa");
-        treeManager.getCurrentItem().add("Dupa, dupa");
-        TreeItem item3 = treeManager.getCurrentItem().add("Dupa i ****");
-        for (int i = 0; i < 30; i++) {
-            item3.add("numerek " + i);
-        }
+
+//        TreeItem item1 = treeManager.getCurrentItem().add("Dupa");
+//        item1.add("d");
+//        item1.add("u");
+//        item1.add("pa");
+//        treeManager.getCurrentItem().add("Dupa, dupa");
+//        TreeItem item3 = treeManager.getCurrentItem().add("Dupa i ****");
+//        for (int i = 0; i < 30; i++) {
+//            item3.add("numerek " + i);
+//        }
 
 
         //  ZBUDOWANIE LAYOUTU
@@ -91,6 +132,8 @@ public class App extends BaseApp implements TreeItemListener {
         LayoutInflater inflater = activity.getLayoutInflater();
         items_list_layout = inflater.inflate(R.layout.items_list, null);
 
+        items_list_layout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+
         mainContent.addView(items_list_layout);
 
 
@@ -103,7 +146,7 @@ public class App extends BaseApp implements TreeItemListener {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showInfo("Replace with your own action", view);
+                addNewItem();
             }
         });
 
@@ -117,7 +160,7 @@ public class App extends BaseApp implements TreeItemListener {
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
-                //                TreeItem item = (TreeItem) parent.getItemAtPosition(position);
+                //TreeItem item = (TreeItem) parent.getItemAtPosition(position);
                 treeManager.goInto(position);
                 updateListModel();
             }
@@ -131,6 +174,11 @@ public class App extends BaseApp implements TreeItemListener {
         list_title.setText(treeManager.getCurrentItem().getContent() + " [" + treeManager.getCurrentItem().size() + "]:");
         //lista elementów
         adapter.setDataSource(treeManager.getCurrentItem().getChildren());
+    }
+
+    public void addNewItem(){
+        TreeItem newItem = treeManager.getCurrentItem().add("");
+        showEditItemPanel(newItem);
     }
 
 
@@ -205,7 +253,59 @@ public class App extends BaseApp implements TreeItemListener {
     }
 
     @Override
-    public void onTreeItemClicked(int position, TreeItem item) {
+    public void onTreeItemEditClicked(int position, TreeItem item) {
         showEditItemPanel(item);
+    }
+
+    @Override
+    public void onTreeItemRemoveClicked(int position, TreeItem item) {
+        removeItem(position);
+    }
+
+    private void removeItem(int position){
+        treeManager.getCurrentItem().remove(position);
+        showInfo("Element zostal usunięty.");
+        updateListModel();
+    }
+
+    @Override
+    public void quit() {
+        saveRootTree();
+        preferences.preferencesSave();
+        super.quit();
+    }
+
+    private void loadRootTree(){
+        Output.log("odczyt drzewka");
+
+        Path dbFilePath = files.pathSD().append(preferences.dbFilePath);
+
+        if(!files.exists(dbFilePath.toString())){
+
+            Output.log("plik z bazą danych nie istnieje");
+            return;
+        }
+
+        try {
+            String fileContent = files.openFileString(dbFilePath.toString());
+            TreeItem rootItem = TreeConverter.loadTree(fileContent);
+            treeManager.setRootItem(rootItem);
+        }catch(IOException | ParseException e){
+            Output.error(e);
+        }
+
+    }
+
+    private void saveRootTree(){
+        Output.log("zapis drzewka");
+
+        Path dbFilePath = files.pathSD().append(preferences.dbFilePath);
+
+        try {
+            String output = TreeConverter.saveTree(treeManager.getRootItem());
+            files.saveFile(dbFilePath.toString(), output);
+        }catch(IOException e) {
+            Output.error(e);
+        }
     }
 }

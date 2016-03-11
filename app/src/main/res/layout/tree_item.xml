@@ -16,14 +16,26 @@
         android:text="@string/example_item"
         android:textSize="16sp"/>
 
-    <Button
+    <ImageButton
         android:id="@+id/button_edit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="right"
-        android:text="@string/editButton"
+        android:background="@android:drawable/ic_menu_edit"
         android:focusable="false"
-        android:layout_alignParentTop="true"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/button_remove"
+        android:layout_toStartOf="@+id/button_remove"
+        android:layout_marginRight="20dp"/>
+
+    <ImageButton
+        android:id="@+id/button_remove"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:background="@android:drawable/ic_menu_delete"
+        android:focusable="false"
+        android:layout_centerVertical="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"/>
 </RelativeLayout>

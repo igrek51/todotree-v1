@@ -6,7 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.util.List;
@@ -14,6 +14,7 @@ import java.util.List;
 import igrek.todotree.R;
 import igrek.todotree.logic.tree.TreeItem;
 import igrek.todotree.logic.tree.TreeItemListener;
+import igrek.todotree.system.output.Output;
 
 public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 
@@ -59,13 +60,30 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
         }
         textView.setText(contentBuilder.toString());
 
+        //edycja elementu
+        ImageButton editButton = (ImageButton) itemView.findViewById(R.id.button_edit);
 
-        //TODO: ikonka z android drawable na przycisk
-        Button editButton = (Button) itemView.findViewById(R.id.button_edit);
+        editButton.setFocusableInTouchMode(false);
+        editButton.setFocusable(false);
+
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                 treeItemListener.onTreeItemClicked(position, item);
+                treeItemListener.onTreeItemEditClicked(position, item);
+            }
+        });
+
+        //usuwanie elementu
+        ImageButton removeButton = (ImageButton) itemView.findViewById(R.id.button_remove);
+
+        removeButton.setFocusableInTouchMode(false);
+        removeButton.setFocusable(false);
+
+        removeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Output.log("klik usun");
+                treeItemListener.onTreeItemRemoveClicked(position, item);
             }
         });
 

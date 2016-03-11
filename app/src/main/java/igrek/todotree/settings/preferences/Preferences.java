@@ -2,23 +2,26 @@ package igrek.todotree.settings.preferences;
 
 import android.app.Activity;
 
+import igrek.todotree.system.output.Output;
+
 public class Preferences extends BasePreferences {
+
+    public String dbFilePath = "Android/data/igrek.todotree/todo.dat";
+
     public Preferences(Activity activity){
         super(activity);
     }
 
     public void preferencesSave() {
-        //TODO: zapisanie do shared preferences
-//        setString("samplesPath", app.samplesPath);
+        setString("dbFilePath", dbFilePath);
     }
 
     public void preferencesLoad() {
-        //TODO: wczytanie z shared preferences
-//        if (exists("samplesPath")) {
-//            app.samplesPath = getString("samplesPath");
-//            Output.info("Wczytano ścieżkę wzorców: " + app.samplesPath);
-//        } else {
-//            Output.info("Wczytano domyślną ścieżkę wzorców: " + app.samplesPath);
-//        }
+        if (exists("dbFilePath")) {
+            dbFilePath = getString("dbFilePath");
+            Output.log("Wczytano ścieżkę do pliku bazy: " + dbFilePath);
+        } else {
+            Output.log("Wczytano domyślną ścieżkę do pliku bazy: " + dbFilePath);
+        }
     }
 }

@@ -35,14 +35,19 @@ public class TreeItem {
         return parent;
     }
 
-    public TreeItem getChild(int index){
-        if(index < 0){
+    public TreeItem getChild(int index) {
+        if (index < 0) {
             throw new IndexOutOfBoundsException("index < 0");
         }
-        if(index >= children.size()){
-            throw new IndexOutOfBoundsException("index > size = "+children.size());
+        if (index >= children.size()) {
+            throw new IndexOutOfBoundsException("index > size = " + children.size());
         }
         return children.get(index);
+    }
+
+    public TreeItem getLastChild() {
+        if (children.isEmpty()) return null;
+        return children.get(children.size() - 1);
     }
 
     public int size() {
@@ -53,25 +58,25 @@ public class TreeItem {
         return children.isEmpty();
     }
 
-    public void add(TreeItem newItem){
+    public void add(TreeItem newItem) {
         children.add(newItem);
     }
 
-    public void add(int location, TreeItem newItem){
+    public void add(int location, TreeItem newItem) {
         children.add(location, newItem);
     }
 
-    public TreeItem add(String content){
+    public TreeItem add(String content) {
         TreeItem newItem = new TreeItem(this, content);
         children.add(newItem);
         return newItem;
     }
 
-    public void remove(int location){
+    public void remove(int location) {
         children.remove(location);
     }
 
-    public boolean remove(TreeItem item){
+    public boolean remove(TreeItem item) {
         return children.remove(item);
     }
 

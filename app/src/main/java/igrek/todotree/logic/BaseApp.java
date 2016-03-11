@@ -56,11 +56,12 @@ public abstract class BaseApp implements ITouchScreenController {
 
     public void quit() {
         if (!running) { //próba ponownego zamknięcia
+            Output.info("Zamykanie - próba ponownego zamknięcia");
             return;
         }
-        Output.info("Zamykanie...");
+        Output.info("Zamykanie aplikacji...");
         running = false;
-        Output.log("Zamykanie aplikacji");
+        activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         activity.finish();
     }
 
