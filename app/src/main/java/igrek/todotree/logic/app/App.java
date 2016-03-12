@@ -12,7 +12,7 @@ import igrek.todotree.gui.GUIListener;
 
 //  WERSJA v1.1
 //TODO: przesuwanie elementów, przesuwanie na koniec, na początek listy
-//TODO: edycja i dodawanie elementu: domyślnie kursor na końcu tekstu, focus na start, pokazanie kalwiatury
+//TODO: zamiast tytułu aplikacji: tytuł aktualnego elementu (lub nazwa ekranu)
 
 //  NOWE FUNKCJONALNOŚCI
 //TODO: zabronienie używania znaków "{" i "}" w tekście (usuwanie ich)
@@ -38,7 +38,6 @@ import igrek.todotree.gui.GUIListener;
 //TODO: shared preferences: zautomatyzowanie w celu konfiguracji, definicja: typ, nazwa, wartość domyślna, refleksja, automatyczny zapis, odczyt, generowanie fomrularza
 
 //  WYGLĄD
-//TODO: zamiast tytułu aplikacji: tytuł aktualnego elementu (lub nazwa ekranu)
 //TODO: motyw kolorystyczny, zapisanie wszystkich kolorów w Config lub w xml
 //TODO: ustalenie marginesów w layoutach i wypozycjonowanie elementów
 //TODO: konfiguracja: wyświetlacz zawsze zapalony, wielkość czcionki, marginesy między elementami
@@ -96,6 +95,9 @@ public class App extends BaseApp implements GUIListener {
     }
 
 
+    /**
+     * @param position pozycja nowego elementu (0 - początek, ujemna wartość - na końcu listy)
+     */
     public void newItem(int position) {
         if(position < 0) position = treeManager.getCurrentItem().size();
         if(position > treeManager.getCurrentItem().size()) position = treeManager.getCurrentItem().size();

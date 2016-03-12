@@ -15,11 +15,14 @@ public class GUIBase {
     AppCompatActivity activity;
     GUIListener guiListener;
 
+    InputMethodManager imm;
+
     RelativeLayout mainContent;
 
     public GUIBase(AppCompatActivity activity, GUIListener guiListener) {
         this.activity = activity;
         this.guiListener = guiListener;
+        imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
         init();
     }
 
@@ -50,7 +53,14 @@ public class GUIBase {
     }
 
     protected void hideSoftKeyboard(View window) {
-        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(window.getWindowToken(), 0);
+        if (imm != null) {
+            imm.hideSoftInputFromWindow(window.getWindowToken(), 0);
+        }
+    }
+
+    protected void showSoftKeyboard(View window) {
+        if (imm != null) {
+            imm.showSoftInput(window, 0);
+        }
     }
 }

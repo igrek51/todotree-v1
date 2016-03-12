@@ -82,7 +82,7 @@ public class GUI extends GUIBase {
         etEditItem = (EditText) editItemContentLayout.findViewById(R.id.et_edit_item);
         Button buttonSaveItem = (Button) editItemContentLayout.findViewById(R.id.button_save_item);
 
-        tvItemTitle.setText(getTreeItemText(parent));
+        tvItemTitle.setText(parent.getContent() + ":");
 
         if (item != null) { //edycja
             etEditItem.setText(item.getContent());
@@ -103,6 +103,11 @@ public class GUI extends GUIBase {
                 }
             });
         }
+
+        //focus na końcu edytowanego tekstu
+        etEditItem.requestFocus();
+        etEditItem.setSelection(etEditItem.getText().length());
+        showSoftKeyboard(etEditItem);
     }
 
     public void updateItemsList(TreeItem currentItem) {
