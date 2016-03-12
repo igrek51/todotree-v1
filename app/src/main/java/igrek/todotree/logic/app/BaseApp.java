@@ -1,6 +1,5 @@
 package igrek.todotree.logic.app;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -15,15 +14,30 @@ import igrek.todotree.system.touchscreen.ITouchScreenController;
 
 public abstract class BaseApp implements ITouchScreenController {
 
+    public AppCompatActivity activity;
+    private Thread.UncaughtExceptionHandler defaultUEH;
+
     boolean running = true;
-    public Activity activity;
 
     public Files files;
     public Preferences preferences;
 
-    public BaseApp(AppCompatActivity activity) {
-        this.activity = activity;
+    public BaseApp(AppCompatActivity aActivity) {
+        this.activity = aActivity;
+
         new Config();
+
+        //łapanie niezłapanych wyjątków
+        defaultUEH = Thread.getDefaultUncaughtExceptionHandler();
+        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(Thread thread, Throwable th) {
+                Output.errorUncaught(th);
+                //przekazanie dalej do systemu operacyjnego
+                defaultUEH.uncaughtException(thread, th);
+            }
+        });
+
         //schowanie paska tytułu
         if (Config.Screen.hide_taskbar) {
             if (activity.getSupportActionBar() != null) {

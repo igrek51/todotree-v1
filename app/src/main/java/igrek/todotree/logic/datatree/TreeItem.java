@@ -72,6 +72,12 @@ public class TreeItem {
         return newItem;
     }
 
+    public TreeItem add(int location, String content) {
+        TreeItem newItem = new TreeItem(this, content);
+        children.add(location, newItem);
+        return newItem;
+    }
+
     public void remove(int location) {
         children.remove(location);
     }

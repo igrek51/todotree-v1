@@ -13,7 +13,9 @@ import igrek.todotree.system.output.Output;
 public class TreeManager {
     private TreeItem rootItem;
     private TreeItem currentItem;
+
     private TreeItem editItem = null;
+    private Integer newItemPosition = null;
 
     private TreeSerializer treeSerializer = new TreeSerializer();
 
@@ -42,6 +44,16 @@ public class TreeManager {
 
     public void setEditItem(TreeItem editItem) {
         this.editItem = editItem;
+        this.newItemPosition = null;
+    }
+
+    public void setNewItemPosition(Integer newItemPosition) {
+        this.editItem = null;
+        this.newItemPosition = newItemPosition;
+    }
+
+    public Integer getNewItemPosition() {
+        return newItemPosition;
     }
 
     //  NAWIGACJA
@@ -103,7 +115,7 @@ public class TreeManager {
             String fileContent = files.openFileString(dbFilePath.toString());
             TreeItem rootItem = treeSerializer.loadTree(fileContent);
             setRootItem(rootItem);
-            Output.log("Wczytano bazę danych");
+            Output.log("Wczytano bazę danych.");
         } catch (IOException | ParseException e) {
             Output.error(e);
         }
@@ -115,7 +127,7 @@ public class TreeManager {
         try {
             String output = treeSerializer.saveTree(getRootItem());
             files.saveFile(dbFilePath.toString(), output);
-            Output.log("Zapisano bazę danych");
+            Output.log("Zapisano bazę danych.");
         } catch (IOException e) {
             Output.error(e);
         }

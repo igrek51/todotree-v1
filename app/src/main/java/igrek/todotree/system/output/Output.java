@@ -47,24 +47,27 @@ public class Output {
         logError("[ERROR] " + e);
     }
 
-    public static void error(Exception ex) {
-        if (ex instanceof SoftException) {
-            echo("[ERROR] " + ex.getMessage());
-        } else {
-            echo("[" + ex.getClass().getName() + "] " + ex.getMessage());
-        }
+    public static void error(Throwable ex) {
+        echo("[" + ex.getClass().getName() + "] " + ex.getMessage());
         logError("[EXCEPTION - " + ex.getClass().getName() + "] " + ex.getMessage());
         if (Config.Output.show_exceptions_trace) {
             printStackTrace(ex);
         }
     }
 
-    public static void printStackTrace(Exception ex) {
+    public static void errorUncaught(Throwable ex) {
+        logError("[UNCAUGHT EXCEPTION - " + ex.getClass().getName() + "] " + ex.getMessage());
+        if (Config.Output.show_exceptions_trace) {
+            printStackTrace(ex);
+        }
+    }
+
+    public static void printStackTrace(Throwable ex) {
         logError(Log.getStackTraceString(ex));
     }
 
-    public static void errorThrow(String e) throws SoftException {
-        throw new SoftException(e);
+    public static void errorThrow(String e) throws Exception {
+        throw new Exception(e);
     }
 
     public static void errorCritical(final Activity activity, String e) {
@@ -85,13 +88,8 @@ public class Output {
         dlgAlert.create().show();
     }
 
-    public static void errorCritical(final Activity activity, Exception ex) {
-        String e;
-        if (ex instanceof SoftException) {
-            e = ex.getMessage();
-        } else {
-            e = ex.getClass().getName() + " - " + ex.getMessage();
-        }
+    public static void errorCritical(final Activity activity, Throwable ex) {
+        String e = ex.getClass().getName() + " - " + ex.getMessage();
         if (Config.Output.show_exceptions_trace) {
             printStackTrace(ex);
         }

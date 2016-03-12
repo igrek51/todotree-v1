@@ -3,15 +3,17 @@ package igrek.todotree.gui;
 import igrek.todotree.logic.datatree.TreeItem;
 
 public interface GUIListener {
-    void onToolbarBackClick();
+    void onToolbarBackClicked();
 
-    void onAddItemButtonClicked();
+    void onAddItemClicked();
 
-    void onTreeItemClicked(int position, TreeItem item);
+    void onItemClicked(int position, TreeItem item);
 
-    void onTreeItemEditClicked(int position, TreeItem item);
+    void onItemEditClicked(int position, TreeItem item);
 
-    void onTreeItemRemoveClicked(int position, TreeItem item);
+    void onItemRemoveClicked(int position, TreeItem item);
 
     void onSavedEditedItem(TreeItem editedItem, String content);
+
+    void onSavedNewItem(String content);
 }

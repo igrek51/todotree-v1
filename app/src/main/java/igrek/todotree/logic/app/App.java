@@ -11,12 +11,10 @@ import igrek.todotree.gui.GUI;
 import igrek.todotree.gui.GUIListener;
 
 //  WERSJA v1.1
-//TODO: anulowanie dodawania nowego elementu - dodawanie dopiero w momencie zapisu,
-//TODO: anulowanie edycji przyciskiem powrotu i strzałką powrotu
-//TODO: przycisk dodawania nowego elementu przesunięty pod koniec listy, tak żeby nie zasłaniał przycisków elementów
 //TODO: przesuwanie elementów, przesuwanie na koniec, na początek listy
+//TODO: edycja i dodawanie elementu: domyślnie kursor na końcu tekstu, focus na start, pokazanie kalwiatury
 
-//  NOWA FUNKCJONALNOŚĆ
+//  NOWE FUNKCJONALNOŚCI
 //TODO: zabronienie używania znaków "{" i "}" w tekście (usuwanie ich)
 //TODO: kopiowanie i wklejanie elementów
 //TODO: utworzenie nowego elementu przed wybranym
@@ -32,6 +30,7 @@ import igrek.todotree.gui.GUIListener;
 //TODO: moduł obliczeń: sumowanie elementów, inline calc
 //TODO: gesty do obsługi powrotu w górę, dodania nowego elementu, wejścia w element
 //TODO: klasy elementów: checkable (z pamięcią stanu), separator
+//TODO: breadcrumbs przy nazwie aktualnego elementu
 
 //TODO: KONFIGURACJA:
 //TODO: ekran konfiguracji
@@ -39,17 +38,18 @@ import igrek.todotree.gui.GUIListener;
 //TODO: shared preferences: zautomatyzowanie w celu konfiguracji, definicja: typ, nazwa, wartość domyślna, refleksja, automatyczny zapis, odczyt, generowanie fomrularza
 
 //  WYGLĄD
-//TODO: edycja: domyślnie kursor na końcu tekstu, focus na start, pokazanie kalwiatury
+//TODO: zamiast tytułu aplikacji: tytuł aktualnego elementu (lub nazwa ekranu)
 //TODO: motyw kolorystyczny, zapisanie wszystkich kolorów w Config lub w xml
 //TODO: ustalenie marginesów w layoutach i wypozycjonowanie elementów
 //TODO: konfiguracja: wyświetlacz zawsze zapalony, wielkość czcionki, marginesy między elementami
 //TODO: pole edycyjne multiline przy overflow
+//TODO: zmiana wyglądu obrazków z drawable (przycisk +)
 //TODO: ikona aplikacji
 
 public class App extends BaseApp implements GUIListener {
 
     TreeManager treeManager;
-    GUI GUI;
+    GUI gui;
 
     AppState state;
 
@@ -61,8 +61,8 @@ public class App extends BaseApp implements GUIListener {
         treeManager = new TreeManager();
         treeManager.loadRootTree(files, preferences);
 
-        GUI = new GUI(activity, this);
-        GUI.showItemsList(treeManager.getCurrentItem());
+        gui = new GUI(activity, this);
+        gui.showItemsList(treeManager.getCurrentItem());
         state = AppState.ITEMS_LIST;
 
         Output.log("Aplikacja uruchomiona.");
@@ -92,46 +92,48 @@ public class App extends BaseApp implements GUIListener {
 
 
     public void showInfo(String info) {
-        showInfo(info, GUI.getMainContent());
+        showInfo(info, gui.getMainContent());
     }
 
 
-
-    public void addNewItem() {
-        TreeItem newItem = treeManager.getCurrentItem().add("");
-        editItem(newItem, treeManager.getCurrentItem());
+    public void newItem(int position) {
+        if(position < 0) position = treeManager.getCurrentItem().size();
+        if(position > treeManager.getCurrentItem().size()) position = treeManager.getCurrentItem().size();
+        treeManager.setNewItemPosition(position);
+        gui.showEditItemPanel(null, treeManager.getCurrentItem());
+        state = AppState.EDIT_ITEM_CONTENT;
     }
 
     private void editItem(TreeItem item, TreeItem parent) {
         treeManager.setEditItem(item);
-        GUI.showEditItemPanel(item, parent);
+        gui.showEditItemPanel(item, parent);
         state = AppState.EDIT_ITEM_CONTENT;
     }
 
     private void discardEditingItem(){
         treeManager.setEditItem(null);
-        GUI.showItemsList(treeManager.getCurrentItem());
+        gui.showItemsList(treeManager.getCurrentItem());
         state = AppState.ITEMS_LIST;
         showInfo("Anulowano edycję elementu.");
     }
 
     public void saveItem(TreeItem editItem, String content) {
         editItem.setContent(content);
-        GUI.showItemsList(treeManager.getCurrentItem());
+        gui.showItemsList(treeManager.getCurrentItem());
         state = AppState.ITEMS_LIST;
         showInfo("Zapisano element.");
     }
 
     private void removeItem(int position) {
         treeManager.getCurrentItem().remove(position);
-        GUI.updateItemsList(treeManager.getCurrentItem());
+        gui.updateItemsList(treeManager.getCurrentItem());
         showInfo("Usunięto element.");
     }
 
     public void goUp() {
         try {
             treeManager.goUp();
-            GUI.updateItemsList(treeManager.getCurrentItem());
+            gui.updateItemsList(treeManager.getCurrentItem());
         } catch (NoSuperItemException e) {
             quit();
         }
@@ -141,6 +143,7 @@ public class App extends BaseApp implements GUIListener {
         if(state == AppState.ITEMS_LIST) {
             goUp();
         }else if(state == AppState.EDIT_ITEM_CONTENT) {
+            gui.hideSoftKeyboard();
             discardEditingItem();
         }
     }
@@ -148,33 +151,41 @@ public class App extends BaseApp implements GUIListener {
 
 
     @Override
-    public void onToolbarBackClick() {
+    public void onToolbarBackClicked() {
         backClicked();
     }
 
     @Override
-    public void onAddItemButtonClicked() {
-        addNewItem();
+    public void onAddItemClicked() {
+        newItem(-1);
     }
 
     @Override
-    public void onTreeItemClicked(int position, TreeItem item) {
+    public void onItemClicked(int position, TreeItem item) {
         treeManager.goInto(position);
-        GUI.updateItemsList(treeManager.getCurrentItem());
+        gui.updateItemsList(treeManager.getCurrentItem());
     }
 
     @Override
-    public void onTreeItemEditClicked(int position, TreeItem item) {
+    public void onItemEditClicked(int position, TreeItem item) {
         editItem(item, treeManager.getCurrentItem());
     }
 
     @Override
-    public void onTreeItemRemoveClicked(int position, TreeItem item) {
+    public void onItemRemoveClicked(int position, TreeItem item) {
         removeItem(position);
     }
 
     @Override
     public void onSavedEditedItem(TreeItem editedItem, String content) {
         saveItem(editedItem, content);
+    }
+
+    @Override
+    public void onSavedNewItem(String content) {
+        treeManager.getCurrentItem().add(treeManager.getNewItemPosition(), content);
+        gui.showItemsList(treeManager.getCurrentItem());
+        state = AppState.ITEMS_LIST;
+        showInfo("Zapisano nowy element.");
     }
 }
