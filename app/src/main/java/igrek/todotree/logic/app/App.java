@@ -12,7 +12,6 @@ import igrek.todotree.gui.GUIListener;
 
 //  WERSJA v1.1
 //TODO: przesuwanie elementów, przesuwanie na koniec, na początek listy
-//TODO: zamiast tytułu aplikacji: tytuł aktualnego elementu (lub nazwa ekranu)
 
 //  NOWE FUNKCJONALNOŚCI
 //TODO: zabronienie używania znaków "{" i "}" w tekście (usuwanie ich)

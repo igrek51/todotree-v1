@@ -6,16 +6,13 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/tv_item_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
     <EditText
         android:id="@+id/et_edit_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"/>
+        android:layout_gravity="center_horizontal"
+        android:paddingBottom="16dp"
+        android:paddingTop="16dp"/>
 
     <Button
         android:id="@+id/button_save_item"

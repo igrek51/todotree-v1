@@ -44,14 +44,6 @@ public class GUIBase {
     }
 
 
-    protected String getTreeItemText(TreeItem item) {
-        StringBuilder sb = new StringBuilder(item.getContent());
-        sb.append(" [");
-        sb.append(item.size());
-        sb.append("]:");
-        return sb.toString();
-    }
-
     protected void hideSoftKeyboard(View window) {
         if (imm != null) {
             imm.hideSoftInputFromWindow(window.getWindowToken(), 0);

@@ -9,7 +9,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import igrek.todotree.R;
 import igrek.todotree.gui.treelist.TreeItemAdapter;
@@ -17,9 +16,9 @@ import igrek.todotree.logic.datatree.TreeItem;
 
 public class GUI extends GUIBase {
 
-    TextView listTitle;
     TreeItemAdapter itemsListAdapter;
     EditText etEditItem;
+    ActionBar actionBar;
 
     public GUI(AppCompatActivity activity, GUIListener guiListener) {
         super(activity, guiListener);
@@ -32,10 +31,10 @@ public class GUI extends GUIBase {
         //toolbar
         Toolbar toolbar1 = (Toolbar) activity.findViewById(R.id.toolbar1);
         activity.setSupportActionBar(toolbar1);
-        ActionBar actionBar = activity.getSupportActionBar();
+        actionBar = activity.getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            //actionBar.setDisplayShowHomeEnabled(true);
+            actionBar.setDisplayShowHomeEnabled(true);
         }
         toolbar1.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,8 +49,6 @@ public class GUI extends GUIBase {
 
     public void showItemsList(final TreeItem currentItem) {
         View itemsListLayout = setMainContentLayout(R.layout.items_list);
-
-        listTitle = (TextView) itemsListLayout.findViewById(R.id.list_title);
 
         ListView itemsListView = (ListView) itemsListLayout.findViewById(R.id.listview1);
 
@@ -78,11 +75,10 @@ public class GUI extends GUIBase {
     public void showEditItemPanel(final TreeItem item, TreeItem parent) {
         View editItemContentLayout = setMainContentLayout(R.layout.edit_item_content);
 
-        TextView tvItemTitle = (TextView) editItemContentLayout.findViewById(R.id.tv_item_title);
         etEditItem = (EditText) editItemContentLayout.findViewById(R.id.et_edit_item);
         Button buttonSaveItem = (Button) editItemContentLayout.findViewById(R.id.button_save_item);
 
-        tvItemTitle.setText(parent.getContent() + ":");
+        setTitle(parent.getContent());
 
         if (item != null) { //edycja
             etEditItem.setText(item.getContent());
@@ -112,12 +108,22 @@ public class GUI extends GUIBase {
 
     public void updateItemsList(TreeItem currentItem) {
         //tytuł gałęzi
-        listTitle.setText(getTreeItemText(currentItem));
+        StringBuilder sb = new StringBuilder(currentItem.getContent());
+        if(!currentItem.isEmpty()) {
+            sb.append(" [");
+            sb.append(currentItem.size());
+            sb.append("]");
+        }
+        setTitle(sb.toString());
         //lista elementów
         itemsListAdapter.setDataSource(currentItem.getChildren());
     }
 
     public void hideSoftKeyboard() {
         hideSoftKeyboard(etEditItem);
+    }
+
+    public void setTitle(String title){
+        actionBar.setTitle(title);
     }
 }
