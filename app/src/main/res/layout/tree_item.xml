@@ -6,6 +6,17 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center_horizontal">
 
+    <ImageButton
+        android:id="@+id/button_move"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:background="@drawable/ic_menu_moreoverflow_normal_holo_light"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="4dp"/>
+
     <TextView
         android:id="@+id/firstLine"
         android:layout_width="wrap_content"
@@ -15,7 +26,9 @@
         android:gravity="center_vertical"
         android:text="@string/example_item"
         android:textSize="16sp"
-        android:layout_marginLeft="8dp"/>
+        android:layout_marginLeft="10dp"
+        android:layout_toRightOf="@+id/button_move"
+        android:layout_toEndOf="@+id/button_move"/>
 
     <ImageButton
         android:id="@+id/button_edit"
@@ -24,6 +37,7 @@
         android:layout_gravity="right"
         android:background="@android:drawable/ic_menu_edit"
         android:focusable="false"
+        android:focusableInTouchMode="false"
         android:layout_centerVertical="true"
         android:layout_toLeftOf="@+id/button_remove"
         android:layout_toStartOf="@+id/button_remove"
@@ -36,6 +50,7 @@
         android:layout_gravity="right"
         android:background="@android:drawable/ic_menu_delete"
         android:focusable="false"
+        android:focusableInTouchMode="false"
         android:layout_centerVertical="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"/>

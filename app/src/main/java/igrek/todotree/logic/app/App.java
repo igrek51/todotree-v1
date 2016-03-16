@@ -1,17 +1,19 @@
 package igrek.todotree.logic.app;
 
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 
 import igrek.todotree.R;
+import igrek.todotree.gui.GUI;
+import igrek.todotree.gui.GUIListener;
 import igrek.todotree.logic.datatree.TreeItem;
 import igrek.todotree.logic.datatree.TreeManager;
 import igrek.todotree.logic.exceptions.NoSuperItemException;
 import igrek.todotree.system.output.Output;
-import igrek.todotree.gui.GUI;
-import igrek.todotree.gui.GUIListener;
 
 //  WERSJA v1.1
 //TODO: przesuwanie elementów, przesuwanie na koniec, na początek listy
+//TODO: wychwycenie eventu resize'u okna (zmiany orientacji), brak restartu aplikacji, obsłużenie, odświeżenie layoutów
 
 //  NOWE FUNKCJONALNOŚCI
 //TODO: zabronienie używania znaków "{" i "}" w tekście (usuwanie ich)
@@ -19,7 +21,6 @@ import igrek.todotree.gui.GUIListener;
 //TODO: utworzenie nowego elementu przed wybranym
 //TODO: podczas edycji, przyciski przesuwania kursora (do początku, 1 w lewo, 1 w prawo, do końca), zaznacz wszystko
 //TODO: minimalizacja aplikacji i wyjście z aplikacji (z zapisem i bez zapisu bazy), szybkie wyjście
-//TODO: wychwycenie eventu resize'u okna (zmiany orientacji), brak restartu aplikacji, obsłużenie, odświeżenie layoutów
 //TODO: różne akcje na kliknięcie elementu: (wejście - folder, edycja - element), przycisk wejścia dla pojedynczych elementów
 //TODO: akcja long pressed do tree itemów - wybór większej ilości opcji: multiselect, utworzenie nowego przed
 //TODO: zapisywanie kilku ostatnich wersji bazy danych (backup)
@@ -51,6 +52,9 @@ public class App extends BaseApp implements GUIListener {
 
     AppState state;
 
+    Integer movePosition = null;
+    View moveView = null;
+
     public App(AppCompatActivity activity) {
         super(activity);
 
@@ -60,6 +64,7 @@ public class App extends BaseApp implements GUIListener {
         treeManager.loadRootTree(files, preferences);
 
         gui = new GUI(activity, this);
+        gui.setTouchController(this);
         gui.showItemsList(treeManager.getCurrentItem());
         state = AppState.ITEMS_LIST;
 
@@ -188,5 +193,62 @@ public class App extends BaseApp implements GUIListener {
         gui.showItemsList(treeManager.getCurrentItem());
         state = AppState.ITEMS_LIST;
         showInfo("Zapisano nowy element.");
+    }
+
+
+
+    @Override
+    public boolean onTouchDown(float x, float y){
+        Output.log("on touch down: " + x + ", " + y);
+        return false;
+    }
+
+    @Override
+    public boolean onTouchMove(float x, float y){
+        //Output.log("on touch move: " + x + ", " + y);
+        if(moveView != null){
+            //return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean onTouchUp(float x, float y){
+        Output.log("on touch up: " + x + ", " + y);
+
+        if(moveView != null){
+            if(y < moveView.getTop()){
+                //przesuwanie w górę
+                int stepUp = (int)((moveView.getTop() - y) / moveView.getHeight()) + 1;
+                Output.log("step up: "+stepUp);
+
+            }else if(y > moveView.getBottom()){
+                //przesuwanie w dół
+                int stepDown = (int)((y - moveView.getBottom()) / moveView.getHeight()) + 1;
+                Output.log("step down: "+stepDown);
+
+            }else{
+                Output.log("no step");
+            }
+
+        }
+
+        return false;
+    }
+
+    @Override
+    public void onItemMoveButtonPressed(int position, TreeItem item, View itemView) {
+        movePosition = position;
+        moveView = itemView;
+
+        Output.log("Button move pressed, item: "+ position + ", view h: " + itemView.getHeight() + ", " + itemView.getMeasuredHeight() + ", " + itemView.getMeasuredHeightAndState() + ", top: " + itemView.getTop() + ", bottom: " + itemView.getBottom());
+    }
+
+    @Override
+    public void onItemMoveButtonReleased(int position, TreeItem item, View itemView) {
+        Output.log("Button move released, item: "+ position + ", view h: " + itemView.getHeight() + ", " + itemView.getMeasuredHeight() + ", " + itemView.getMeasuredHeightAndState() + ", top: " + itemView.getTop() + ", bottom: " + itemView.getBottom());
+
+        movePosition = null;
+        moveView = null;
     }
 }

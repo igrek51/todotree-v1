@@ -12,13 +12,14 @@ import android.widget.RelativeLayout;
 
 import igrek.todotree.R;
 import igrek.todotree.gui.treelist.TreeItemAdapter;
+import igrek.todotree.gui.treelist.TreeListView;
 import igrek.todotree.logic.datatree.TreeItem;
 
 public class GUI extends GUIBase {
 
-    TreeItemAdapter itemsListAdapter;
     EditText etEditItem;
     ActionBar actionBar;
+    TreeListView itemsListView;
 
     public GUI(AppCompatActivity activity, GUIListener guiListener) {
         super(activity, guiListener);
@@ -50,24 +51,13 @@ public class GUI extends GUIBase {
     public void showItemsList(final TreeItem currentItem) {
         View itemsListLayout = setMainContentLayout(R.layout.items_list);
 
-        ListView itemsListView = (ListView) itemsListLayout.findViewById(R.id.listview1);
+        itemsListView = (TreeListView) itemsListLayout.findViewById(R.id.treelistview1);
 
-        itemsListAdapter = new TreeItemAdapter(activity, currentItem.getChildren(), guiListener);
-        itemsListView.setAdapter(itemsListAdapter);
+        itemsListView.init(activity, guiListener);
 
-        itemsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
-                if (position == itemsListAdapter.getCount() - 1) {
-                    //nowy element
-                    guiListener.onAddItemClicked();
-                } else {
-                    //istniejący element
-                    TreeItem item = itemsListAdapter.getItem(position);
-                    guiListener.onItemClicked(position, item);
-                }
-            }
-        });
+        itemsListView.setItems(currentItem.getChildren());
+
+        //itemsListView.setOnTouchListener(this);
 
         updateItemsList(currentItem);
     }
@@ -116,7 +106,7 @@ public class GUI extends GUIBase {
         }
         setTitle(sb.toString());
         //lista elementów
-        itemsListAdapter.setDataSource(currentItem.getChildren());
+        itemsListView.setItems(currentItem.getChildren());
     }
 
     public void hideSoftKeyboard() {

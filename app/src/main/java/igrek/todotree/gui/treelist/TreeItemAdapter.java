@@ -3,6 +3,7 @@ package igrek.todotree.gui.treelist;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -25,6 +26,7 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
     public TreeItemAdapter(Context context, List<TreeItem> dataSource, GUIListener guiListener) {
         super(context, 0, new ArrayList<TreeItem>());
         this.context = context;
+        if(dataSource == null) dataSource = new ArrayList<>();
         this.dataSource = dataSource;
         this.guiListener = guiListener;
     }
@@ -41,6 +43,13 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
     @Override
     public int getCount() {
         return dataSource.size() + 1;
+    }
+
+    @Override
+    public long getItemId(int position){
+        if(position < 0) return -1;
+        if(position >= dataSource.size()) return -1;
+        return (long) position;
     }
 
     @Override
@@ -63,7 +72,7 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 
             return itemPlus;
         } else {
-            View itemView = inflater.inflate(R.layout.tree_item, parent, false);
+            final View itemView = inflater.inflate(R.layout.tree_item, parent, false);
             final TreeItem item = dataSource.get(position);
 
             TextView textView = (TextView) itemView.findViewById(R.id.firstLine);
@@ -101,6 +110,34 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
                 @Override
                 public void onClick(View v) {
                     guiListener.onItemRemoveClicked(position, item);
+                }
+            });
+
+            //przesuwanie
+            ImageButton moveButton = (ImageButton) itemView.findViewById(R.id.button_move);
+
+            moveButton.setFocusableInTouchMode(false);
+            moveButton.setFocusable(false);
+
+            moveButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //guiListener.onItemMoveClicked(position, item);
+                }
+            });
+
+            moveButton.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    switch (event.getAction()) {
+                        case MotionEvent.ACTION_DOWN:
+                            guiListener.onItemMoveButtonPressed(position, item, itemView);
+                            break;
+                        case MotionEvent.ACTION_UP:
+                            guiListener.onItemMoveButtonReleased(position, item, itemView);
+                            break;
+                    }
+                    return false;
                 }
             });
 

@@ -6,13 +6,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.WindowManager;
 
+import igrek.todotree.logic.touchcontroller.ITouchController;
 import igrek.todotree.settings.Config;
 import igrek.todotree.settings.preferences.Preferences;
 import igrek.todotree.system.files.Files;
 import igrek.todotree.system.output.Output;
-import igrek.todotree.system.touchscreen.ITouchScreenController;
 
-public abstract class BaseApp implements ITouchScreenController {
+public abstract class BaseApp implements ITouchController {
 
     public AppCompatActivity activity;
     private Thread.UncaughtExceptionHandler defaultUEH;
@@ -80,18 +80,18 @@ public abstract class BaseApp implements ITouchScreenController {
     }
 
     @Override
-    public void touchDown(float touch_x, float touch_y) {
-
+    public boolean onTouchDown(float x, float y){
+        return false;
     }
 
     @Override
-    public void touchMove(float touch_x, float touch_y) {
-
+    public boolean onTouchMove(float x, float y){
+        return false;
     }
 
     @Override
-    public void touchUp(float touch_x, float touch_y) {
-
+    public boolean onTouchUp(float x, float y){
+        return false;
     }
 
     public void resizeEvent(int w, int h) {

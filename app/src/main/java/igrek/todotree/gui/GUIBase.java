@@ -3,17 +3,19 @@ package igrek.todotree.gui;
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.RelativeLayout;
 
-import igrek.todotree.logic.datatree.TreeItem;
+import igrek.todotree.logic.touchcontroller.ITouchController;
 
-public class GUIBase {
+public class GUIBase implements View.OnTouchListener {
 
     AppCompatActivity activity;
     GUIListener guiListener;
+    ITouchController touchController = null;
 
     InputMethodManager imm;
 
@@ -24,6 +26,10 @@ public class GUIBase {
         this.guiListener = guiListener;
         imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
         init();
+    }
+
+    public void setTouchController(ITouchController touchController) {
+        this.touchController = touchController;
     }
 
     protected void init() {
@@ -55,4 +61,22 @@ public class GUIBase {
             imm.showSoftInput(window, 0);
         }
     }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        if(touchController != null) {
+            float touchX = event.getX();
+            float touchY = event.getY();
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    return touchController.onTouchDown(touchX, touchY);
+                case MotionEvent.ACTION_MOVE:
+                    return touchController.onTouchMove(touchX, touchY);
+                case MotionEvent.ACTION_UP:
+                    return touchController.onTouchUp(touchX, touchY);
+            }
+        }
+        return false;
+    }
+
 }
