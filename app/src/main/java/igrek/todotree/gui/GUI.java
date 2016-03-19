@@ -4,14 +4,11 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 
 import igrek.todotree.R;
-import igrek.todotree.gui.treelist.TreeItemAdapter;
 import igrek.todotree.gui.treelist.TreeListView;
 import igrek.todotree.logic.datatree.TreeItem;
 
@@ -67,6 +64,7 @@ public class GUI extends GUIBase {
 
         etEditItem = (EditText) editItemContentLayout.findViewById(R.id.et_edit_item);
         Button buttonSaveItem = (Button) editItemContentLayout.findViewById(R.id.button_save_item);
+        Button buttonEditCancel = (Button) editItemContentLayout.findViewById(R.id.buttonEditCancel);
 
         setTitle(parent.getContent());
 
@@ -89,6 +87,13 @@ public class GUI extends GUIBase {
                 }
             });
         }
+
+        buttonEditCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                guiListener.onCancelEditedItem(item);
+            }
+        });
 
         //focus na końcu edytowanego tekstu
         etEditItem.requestFocus();

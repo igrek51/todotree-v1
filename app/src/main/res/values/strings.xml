@@ -5,4 +5,5 @@
     <string name="list_txt">Lista:</string>
     <string name="editButton">Edytuj</string>
     <string name="button_save">Zapisz</string>
+    <string name="buttonEditCancel">Anuluj</string>
 </resources>

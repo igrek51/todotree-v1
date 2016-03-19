@@ -13,8 +13,6 @@ import igrek.todotree.logic.exceptions.NoSuperItemException;
 import igrek.todotree.system.output.Output;
 
 //  WERSJA v1.02
-//TODO: zabronienie używania znaków "{" i "}" i "[", "]" w tekście (usuwanie ich)
-//TODO: usuwanie białych znaków przy zapisie elementu
 //TODO: utworzenie nowego elementu przed wybranym
 
 //  NOWE FUNKCJONALNOŚCI
@@ -104,8 +102,9 @@ public class App extends BaseApp implements GUIListener {
      * @param position pozycja nowego elementu (0 - początek, ujemna wartość - na końcu listy)
      */
     public void newItem(int position) {
-        if(position < 0) position = treeManager.getCurrentItem().size();
-        if(position > treeManager.getCurrentItem().size()) position = treeManager.getCurrentItem().size();
+        if (position < 0) position = treeManager.getCurrentItem().size();
+        if (position > treeManager.getCurrentItem().size())
+            position = treeManager.getCurrentItem().size();
         treeManager.setNewItemPosition(position);
         gui.showEditItemPanel(null, treeManager.getCurrentItem());
         state = AppState.EDIT_ITEM_CONTENT;
@@ -117,18 +116,11 @@ public class App extends BaseApp implements GUIListener {
         state = AppState.EDIT_ITEM_CONTENT;
     }
 
-    private void discardEditingItem(){
+    private void discardEditingItem() {
         treeManager.setEditItem(null);
         gui.showItemsList(treeManager.getCurrentItem());
         state = AppState.ITEMS_LIST;
         showInfo("Anulowano edycję elementu.");
-    }
-
-    public void saveItem(TreeItem editItem, String content) {
-        editItem.setContent(content);
-        gui.showItemsList(treeManager.getCurrentItem());
-        state = AppState.ITEMS_LIST;
-        showInfo("Zapisano element.");
     }
 
     private void removeItem(int position) {
@@ -146,15 +138,14 @@ public class App extends BaseApp implements GUIListener {
         }
     }
 
-    private void backClicked(){
-        if(state == AppState.ITEMS_LIST) {
+    private void backClicked() {
+        if (state == AppState.ITEMS_LIST) {
             goUp();
-        }else if(state == AppState.EDIT_ITEM_CONTENT) {
+        } else if (state == AppState.EDIT_ITEM_CONTENT) {
             gui.hideSoftKeyboard();
             discardEditingItem();
         }
     }
-
 
 
     @Override
@@ -185,20 +176,40 @@ public class App extends BaseApp implements GUIListener {
 
     @Override
     public void onSavedEditedItem(TreeItem editedItem, String content) {
-        saveItem(editedItem, content);
+        content = treeManager.trimContent(content);
+        if (content.isEmpty()) {
+            treeManager.getCurrentItem().remove(editedItem);
+            showInfo("Pusty element został usunięty.");
+        } else {
+            editedItem.setContent(content);
+            showInfo("Zapisano element.");
+        }
+        state = AppState.ITEMS_LIST;
+        gui.showItemsList(treeManager.getCurrentItem());
     }
 
     @Override
     public void onSavedNewItem(String content) {
-        treeManager.getCurrentItem().add(treeManager.getNewItemPosition(), content);
+        content = treeManager.trimContent(content);
+        if (content.isEmpty()) {
+            showInfo("Pusty element został usunięty.");
+        } else {
+            treeManager.getCurrentItem().add(treeManager.getNewItemPosition(), content);
+            showInfo("Zapisano nowy element.");
+        }
         gui.showItemsList(treeManager.getCurrentItem());
         state = AppState.ITEMS_LIST;
-        showInfo("Zapisano nowy element.");
     }
 
     @Override
     public List<TreeItem> onItemMoved(int position, int step) {
         treeManager.move(treeManager.getCurrentItem(), position, step);
         return treeManager.getCurrentItem().getChildren();
+    }
+
+    @Override
+    public void onCancelEditedItem(TreeItem editedItem) {
+        gui.hideSoftKeyboard();
+        discardEditingItem();
     }
 }

@@ -17,6 +17,8 @@ public interface GUIListener {
 
     void onSavedEditedItem(TreeItem editedItem, String content);
 
+    void onCancelEditedItem(TreeItem editedItem);
+
     void onSavedNewItem(String content);
 
     /**

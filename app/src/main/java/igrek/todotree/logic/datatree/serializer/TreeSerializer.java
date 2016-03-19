@@ -9,7 +9,7 @@ import igrek.todotree.logic.exceptions.NoMatchingBracketException;
 
 public class TreeSerializer {
 
-    public TreeSerializer(){
+    public TreeSerializer() {
 
     }
 
@@ -36,8 +36,9 @@ public class TreeSerializer {
 
     /**
      * ładuje zawartość elementów z tekstowych wierszy i dodaje do wybranego elementu
+     *
      * @param parent element, do którego dodane odczytane potomki
-     * @param lines lista wierszy, z których zostaną dodane elementy
+     * @param lines  lista wierszy, z których zostaną dodane elementy
      * @throws ParseException
      */
     private void loadTreeItems(TreeItem parent, List<String> lines) throws ParseException {
@@ -47,10 +48,10 @@ public class TreeSerializer {
                 try {
                     int closingBracketIndex = findClosingBracket(lines, i);
                     //jeśli cokolwiek jest w środku bloku
-                    if(closingBracketIndex - i >= 2) {
+                    if (closingBracketIndex - i >= 2) {
                         List<String> subLines = lines.subList(i + 1, closingBracketIndex);
                         TreeItem lastChild = parent.getLastChild();
-                        if(lastChild == null){
+                        if (lastChild == null) {
                             throw new ParseException("Brak pasującego elementu przed otwarciem nawiasu", i);
                         }
                         loadTreeItems(lastChild, subLines);
@@ -70,7 +71,7 @@ public class TreeSerializer {
     }
 
     /**
-     * @param lines lista wierszy
+     * @param lines      lista wierszy
      * @param startIndex indeks wiersza będącego klamrą otwierającą
      * @return indeks wiersza będącego pasującą klamrą zamykającą
      * @throws NoMatchingBracketException jeśli nie znaleziono poprawnego nawiasu domykającego
@@ -105,7 +106,7 @@ public class TreeSerializer {
         if (!parent.isEmpty()) {
             output.append(indents);
             output.append("{\n");
-            for (TreeItem item : parent.getChildren()){
+            for (TreeItem item : parent.getChildren()) {
                 saveTreeItems(item, level + 1, output);
             }
             output.append(indents);
@@ -115,9 +116,10 @@ public class TreeSerializer {
 
     public String saveTree(TreeItem root) {
         StringBuilder output = new StringBuilder();
-        for (TreeItem child : root.getChildren()){
+        for (TreeItem child : root.getChildren()) {
             saveTreeItems(child, 0, output);
         }
         return output.toString();
     }
+
 }

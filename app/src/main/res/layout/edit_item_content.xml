@@ -21,4 +21,11 @@
         android:layout_gravity="center_horizontal"
         android:text="@string/button_save"/>
 
+    <Button
+        android:id="@+id/buttonEditCancel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/buttonEditCancel"/>
+
 </LinearLayout>
