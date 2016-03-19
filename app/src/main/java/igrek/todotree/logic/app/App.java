@@ -31,11 +31,12 @@ import igrek.todotree.system.output.Output;
 //TODO: gesty do obsługi powrotu w górę, dodania nowego elementu, wejścia w element
 //TODO: klasy elementów: checkable (z pamięcią stanu), separator
 //TODO: breadcrumbs przy nazwie aktualnego elementu
+//TODO: tryb landscape screen przy pisaniu z klawiatury ekranowej
 
 //TODO: KONFIGURACJA:
 //TODO: ekran konfiguracji
 //TODO: konfiguracja położenia pliku z bazą dancyh
-//TODO: shared preferences: zautomatyzowanie w celu konfiguracji, definicja: typ, nazwa, wartość domyślna, refleksja, automatyczny zapis, odczyt, generowanie fomrularza
+//TODO: shared preferences: zautomatyzowanie w celu konfiguracji, definicja: typ, nazwa, wartość domyślna, refleksja, automatyczny zapis, odczyt, generowanie fomrularza, tryb landscape screen przy pisaniu z klawiatury ekranowej
 
 //  WYGLĄD
 //TODO: motyw kolorystyczny, zapisanie wszystkich kolorów w Config lub w xml
@@ -250,5 +251,11 @@ public class App extends BaseApp implements GUIListener {
 
         movePosition = null;
         moveView = null;
+    }
+
+    @Override
+    public void onItemsSwapped(int pos1, int pos2) {
+        treeManager.replace(treeManager.getCurrentItem(), pos1, pos2);
+        gui.updateItemsList(treeManager.getCurrentItem());
     }
 }

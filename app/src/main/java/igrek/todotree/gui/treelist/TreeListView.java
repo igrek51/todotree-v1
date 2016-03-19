@@ -19,23 +19,23 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.ListView;
 
 import java.util.List;
 
 import igrek.todotree.gui.GUIListener;
 import igrek.todotree.logic.datatree.TreeItem;
+import igrek.todotree.system.output.Output;
 
-public class TreeListView extends ListView implements AdapterView.OnItemLongClickListener, AbsListView.OnScrollListener {
+public class TreeListView extends ListView implements AdapterView.OnItemLongClickListener, AbsListView.OnScrollListener, AdapterView.OnItemClickListener {
 
     private List<TreeItem> items;
     private TreeItemAdapter adapter;
     private GUIListener guiListener;
 
     private final int SMOOTH_SCROLL_AMOUNT_AT_EDGE = 15;
-    private final int MOVE_DURATION = 150;
-    private final int LINE_THICKNESS = 15;
+    private final int MOVE_DURATION = 1;
+    private final int LINE_THICKNESS = 5;
 
     private int mLastEventY = -1;
 
@@ -49,9 +49,9 @@ public class TreeListView extends ListView implements AdapterView.OnItemLongClic
     private int mSmoothScrollAmountAtEdge = 0;
 
     private final int INVALID_ID = -1;
-    private long mAboveItemId = INVALID_ID;
-    private long mMobileItemId = INVALID_ID;
-    private long mBelowItemId = INVALID_ID;
+    private int aboveItemPos = INVALID_ID;
+    private int mobileItemPos = INVALID_ID;
+    private int belowItemPos = INVALID_ID;
 
     private BitmapDrawable mHoverCell;
     private Rect mHoverCellCurrentBounds;
@@ -60,7 +60,7 @@ public class TreeListView extends ListView implements AdapterView.OnItemLongClic
     private final int INVALID_POINTER_ID = -1;
     private int mActivePointerId = INVALID_POINTER_ID;
 
-    private boolean mIsWaitingForScrollFinish = false;
+    private boolean isWaitingForScrollFinish = false;
     private int mScrollState = OnScrollListener.SCROLL_STATE_IDLE;
 
     public TreeListView(Context context) {
@@ -76,30 +76,16 @@ public class TreeListView extends ListView implements AdapterView.OnItemLongClic
     }
 
     public void init(Context context, GUIListener aGuiListener) {
-        setOnItemLongClickListener(this);
-        setOnScrollListener(this);
-        DisplayMetrics metrics = context.getResources().getDisplayMetrics();
-        mSmoothScrollAmountAtEdge = (int)(SMOOTH_SCROLL_AMOUNT_AT_EDGE / metrics.density);
-
         this.guiListener = aGuiListener;
+        setOnScrollListener(this);
+        setOnItemClickListener(this);
+        setOnItemLongClickListener(this);
+        DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+        mSmoothScrollAmountAtEdge = (int) (SMOOTH_SCROLL_AMOUNT_AT_EDGE / metrics.density);
+        setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+
         adapter = new TreeItemAdapter(context, null, guiListener);
         setAdapter(adapter);
-
-        setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
-                if (position == adapter.getCount() - 1) {
-                    //nowy element
-                    guiListener.onAddItemClicked();
-                } else {
-                    //istniejący element
-                    TreeItem item = adapter.getItem(position);
-                    guiListener.onItemClicked(position, item);
-                }
-            }
-        });
-
-        setChoiceMode(ListView.CHOICE_MODE_SINGLE);
     }
 
     /**
@@ -111,18 +97,24 @@ public class TreeListView extends ListView implements AdapterView.OnItemLongClic
         mTotalOffset = 0;
 
         int position = pointToPosition(mDownX, mDownY);
-        int itemNum = position - getFirstVisiblePosition();
+        if (position != adapter.getCount() - 1) {
+            int itemNum = position - getFirstVisiblePosition();
 
-        View selectedView = getChildAt(itemNum);
-        mMobileItemId = getAdapter().getItemId(position);
-        mHoverCell = getAndAddHoverView(selectedView);
-        selectedView.setVisibility(INVISIBLE);
+            View selectedView = getChildAt(itemNum);
+            mobileItemPos = position;
+            mHoverCell = getAndAddHoverView(selectedView);
+            selectedView.setVisibility(INVISIBLE);
 
-        mCellIsMobile = true;
+            mCellIsMobile = true;
 
-        updateNeighborViewsForID(mMobileItemId);
+            updateNeighborViews(mobileItemPos);
 
-        return true;
+            Output.log("item long click");
+
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -149,7 +141,9 @@ public class TreeListView extends ListView implements AdapterView.OnItemLongClic
         return drawable;
     }
 
-    /** Draws a black border over the screenshot of the view passed in. */
+    /**
+     * Draws a black border over the screenshot of the view passed in.
+     */
     private Bitmap getBitmapWithBorder(View v) {
         Bitmap bitmap = getBitmapFromView(v);
         Canvas can = new Canvas(bitmap);
@@ -159,7 +153,7 @@ public class TreeListView extends ListView implements AdapterView.OnItemLongClic
         Paint paint = new Paint();
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(LINE_THICKNESS);
-        paint.setColor(Color.BLACK);
+        paint.setColor(0xcc505050);
 
         can.drawBitmap(bitmap, 0, 0, null);
         can.drawRect(rect, paint);
@@ -167,10 +161,12 @@ public class TreeListView extends ListView implements AdapterView.OnItemLongClic
         return bitmap;
     }
 
-    /** Returns a bitmap showing a screenshot of the view passed in. */
+    /**
+     * Returns a bitmap showing a screenshot of the view passed in.
+     */
     private Bitmap getBitmapFromView(View v) {
         Bitmap bitmap = Bitmap.createBitmap(v.getWidth(), v.getHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas (bitmap);
+        Canvas canvas = new Canvas(bitmap);
         v.draw(canvas);
         return bitmap;
     }
@@ -178,45 +174,28 @@ public class TreeListView extends ListView implements AdapterView.OnItemLongClic
     /**
      * Stores a reference to the views above and below the item currently
      * corresponding to the hover cell. It is important to note that if this
-     * item is either at the top or bottom of the list, mAboveItemId or mBelowItemId
+     * item is either at the top or bottom of the list, aboveItemPos or belowItemPos
      * may be invalid.
      */
-    private void updateNeighborViewsForID(long itemID) {
-        int position = getPositionForID(itemID);
-        TreeItemAdapter adapter = ((TreeItemAdapter)getAdapter());
-        mAboveItemId = adapter.getItemId(position - 1);
-        mBelowItemId = adapter.getItemId(position + 1);
-    }
-
-    /** Retrieves the view in the list corresponding to itemID */
-    public View getViewForID (long itemID) {
-        int firstVisiblePosition = getFirstVisiblePosition();
-        TreeItemAdapter adapter = ((TreeItemAdapter)getAdapter());
-        for(int i = 0; i < getChildCount(); i++) {
-            View v = getChildAt(i);
-            int position = firstVisiblePosition + i;
-            long id = adapter.getItemId(position);
-            if (id == itemID) {
-                return v;
-            }
-        }
-        return null;
-    }
-
-    /** Retrieves the position in the list corresponding to itemID */
-    public int getPositionForID (long itemID) {
-        View v = getViewForID(itemID);
-        if (v == null) {
-            return -1;
-        } else {
-            return getPositionForView(v);
-        }
+    private void updateNeighborViews(int position) {
+        aboveItemPos = position > 0 ? position - 1 : -1;
+        belowItemPos = position < items.size() - 1 ? position + 1 : -1;
     }
 
     /**
-     *  dispatchDraw gets invoked when all the child views are about to be drawn.
-     *  By overriding this method, the hover cell (BitmapDrawable) can be drawn
-     *  over the listview's items whenever the listview is redrawn.
+     * Retrieves the view in the list corresponding to itemID
+     */
+    public View getViewByPosition(int itemPos) {
+        if (itemPos < 0) return null;
+        if (itemPos >= items.size()) return null;
+        int itemNum = itemPos - getFirstVisiblePosition();
+        return getChildAt(itemNum);
+    }
+
+    /**
+     * dispatchDraw gets invoked when all the child views are about to be drawn.
+     * By overriding this method, the hover cell (BitmapDrawable) can be drawn
+     * over the listview's items whenever the listview is redrawn.
      */
     @Override
     protected void dispatchDraw(Canvas canvas) {
@@ -227,12 +206,11 @@ public class TreeListView extends ListView implements AdapterView.OnItemLongClic
     }
 
     @Override
-    public boolean onTouchEvent (MotionEvent event) {
-
+    public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
-                mDownX = (int)event.getX();
-                mDownY = (int)event.getY();
+                mDownX = (int) event.getX();
+                mDownY = (int) event.getY();
                 mActivePointerId = event.getPointerId(0);
                 break;
             case MotionEvent.ACTION_MOVE:
@@ -246,8 +224,7 @@ public class TreeListView extends ListView implements AdapterView.OnItemLongClic
                 int deltaY = mLastEventY - mDownY;
 
                 if (mCellIsMobile) {
-                    mHoverCellCurrentBounds.offsetTo(mHoverCellOriginalBounds.left,
-                            mHoverCellOriginalBounds.top + deltaY + mTotalOffset);
+                    mHoverCellCurrentBounds.offsetTo(mHoverCellOriginalBounds.left, mHoverCellOriginalBounds.top + deltaY + mTotalOffset);
                     mHoverCell.setBounds(mHoverCellCurrentBounds);
                     invalidate();
 
@@ -270,8 +247,7 @@ public class TreeListView extends ListView implements AdapterView.OnItemLongClic
                  * the movement of the hover cell has ended, then the dragging event
                  * ends and the hover cell is animated to its corresponding position
                  * in the listview. */
-                pointerIndex = (event.getAction() & MotionEvent.ACTION_POINTER_INDEX_MASK) >>
-                        MotionEvent.ACTION_POINTER_INDEX_SHIFT;
+                pointerIndex = (event.getAction() & MotionEvent.ACTION_POINTER_INDEX_MASK) >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
                 final int pointerId = event.getPointerId(pointerIndex);
                 if (pointerId == mActivePointerId) {
                     touchEventsEnded();
@@ -297,43 +273,45 @@ public class TreeListView extends ListView implements AdapterView.OnItemLongClic
         final int deltaY = mLastEventY - mDownY;
         int deltaYTotal = mHoverCellOriginalBounds.top + mTotalOffset + deltaY;
 
-        View belowView = getViewForID(mBelowItemId);
-        View mobileView = getViewForID(mMobileItemId);
-        View aboveView = getViewForID(mAboveItemId);
+        View belowView = getViewByPosition(belowItemPos);
+        View mobileView = getViewByPosition(mobileItemPos);
+        View aboveView = getViewByPosition(aboveItemPos);
+
+        if(mobileView != null){
+            mobileView.setVisibility(View.INVISIBLE);
+        }
 
         boolean isBelow = (belowView != null) && (deltaYTotal > belowView.getTop());
         boolean isAbove = (aboveView != null) && (deltaYTotal < aboveView.getTop());
 
         if (isBelow || isAbove) {
 
-            final long switchItemID = isBelow ? mBelowItemId : mAboveItemId;
-            View switchView = isBelow ? belowView : aboveView;
-            final int originalItem = getPositionForView(mobileView);
+            final int switchItemPos = isBelow ? belowItemPos : aboveItemPos;
+            final View switchView = isBelow ? belowView : aboveView;
 
             if (switchView == null) {
-                updateNeighborViewsForID(mMobileItemId);
+                updateNeighborViews(mobileItemPos);
                 return;
             }
 
-            swapElements(items, originalItem, getPositionForView(switchView));
+            swapElements(items, mobileItemPos, switchItemPos);
 
-            ((BaseAdapter) getAdapter()).notifyDataSetChanged();
+            //adapter.setDataSource(items);
 
             mDownY = mLastEventY;
 
             final int switchViewStartTop = switchView.getTop();
 
-            mobileView.setVisibility(View.VISIBLE);
+            mobileView.setVisibility(View.INVISIBLE); // ?????
             switchView.setVisibility(View.INVISIBLE);
 
-            updateNeighborViewsForID(mMobileItemId);
+            updateNeighborViews(mobileItemPos);
+
 
             final ViewTreeObserver observer = getViewTreeObserver();
             observer.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
                 public boolean onPreDraw() {
                     observer.removeOnPreDrawListener(this);
-
-                    View switchView = getViewForID(switchItemID);
 
                     mTotalOffset += deltaY;
 
@@ -342,23 +320,28 @@ public class TreeListView extends ListView implements AdapterView.OnItemLongClic
 
                     switchView.setTranslationY(delta);
 
-                    ObjectAnimator animator = null;
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-                        animator = ObjectAnimator.ofFloat(switchView, View.TRANSLATION_Y, 0);
+                        ObjectAnimator animator = ObjectAnimator.ofFloat(switchView, View.TRANSLATION_Y, 0);
+                        animator.setDuration(MOVE_DURATION);
+                        animator.start();
                     }
-                    animator.setDuration(MOVE_DURATION);
-                    animator.start();
 
                     return true;
                 }
             });
+
+            mobileItemPos = switchItemPos;
+            updateNeighborViews(mobileItemPos);
         }
     }
 
     private void swapElements(List arrayList, int indexOne, int indexTwo) {
-        Object temp = arrayList.get(indexOne);
-        arrayList.set(indexOne, arrayList.get(indexTwo));
-        arrayList.set(indexTwo, temp);
+        guiListener.onItemsSwapped(indexOne, indexTwo);
+
+        Output.log("elements swapped: "+indexOne + ", " + indexTwo);
+        //        Object temp = arrayList.get(indexOne);
+        //        arrayList.set(indexOne, arrayList.get(indexTwo));
+        //        arrayList.set(indexTwo, temp);
     }
 
 
@@ -366,11 +349,11 @@ public class TreeListView extends ListView implements AdapterView.OnItemLongClic
      * Resets all the appropriate fields to a default state while also animating
      * the hover cell back to its correct location.
      */
-    private void touchEventsEnded () {
-        final View mobileView = getViewForID(mMobileItemId);
-        if (mCellIsMobile|| mIsWaitingForScrollFinish) {
+    private void touchEventsEnded() {
+        final View mobileView = getViewByPosition(mobileItemPos);
+        if (mCellIsMobile || isWaitingForScrollFinish) {
             mCellIsMobile = false;
-            mIsWaitingForScrollFinish = false;
+            isWaitingForScrollFinish = false;
             mIsMobileScrolling = false;
             mActivePointerId = INVALID_POINTER_ID;
 
@@ -378,14 +361,13 @@ public class TreeListView extends ListView implements AdapterView.OnItemLongClic
             // finish in order to determine the final location of where the hover cell
             // should be animated to.
             if (mScrollState != OnScrollListener.SCROLL_STATE_IDLE) {
-                mIsWaitingForScrollFinish = true;
+                isWaitingForScrollFinish = true;
                 return;
             }
 
             mHoverCellCurrentBounds.offsetTo(mHoverCellOriginalBounds.left, mobileView.getTop());
 
-            ObjectAnimator hoverViewAnimator = ObjectAnimator.ofObject(mHoverCell, "bounds",
-                    sBoundEvaluator, mHoverCellCurrentBounds);
+            ObjectAnimator hoverViewAnimator = ObjectAnimator.ofObject(mHoverCell, "bounds", sBoundEvaluator, mHoverCellCurrentBounds);
             hoverViewAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
                 public void onAnimationUpdate(ValueAnimator valueAnimator) {
@@ -400,9 +382,9 @@ public class TreeListView extends ListView implements AdapterView.OnItemLongClic
 
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    mAboveItemId = INVALID_ID;
-                    mMobileItemId = INVALID_ID;
-                    mBelowItemId = INVALID_ID;
+                    aboveItemPos = INVALID_ID;
+                    mobileItemPos = INVALID_ID;
+                    belowItemPos = INVALID_ID;
                     mobileView.setVisibility(VISIBLE);
                     mHoverCell = null;
                     setEnabled(true);
@@ -418,12 +400,12 @@ public class TreeListView extends ListView implements AdapterView.OnItemLongClic
     /**
      * Resets all the appropriate fields to a default state.
      */
-    private void touchEventsCancelled () {
-        View mobileView = getViewForID(mMobileItemId);
+    private void touchEventsCancelled() {
+        View mobileView = getViewByPosition(mobileItemPos);
         if (mCellIsMobile) {
-            mAboveItemId = INVALID_ID;
-            mMobileItemId = INVALID_ID;
-            mBelowItemId = INVALID_ID;
+            aboveItemPos = INVALID_ID;
+            mobileItemPos = INVALID_ID;
+            belowItemPos = INVALID_ID;
             mobileView.setVisibility(VISIBLE);
             mHoverCell = null;
             invalidate();
@@ -440,20 +422,17 @@ public class TreeListView extends ListView implements AdapterView.OnItemLongClic
      */
     private final static TypeEvaluator<Rect> sBoundEvaluator = new TypeEvaluator<Rect>() {
         public Rect evaluate(float fraction, Rect startValue, Rect endValue) {
-            return new Rect(interpolate(startValue.left, endValue.left, fraction),
-                    interpolate(startValue.top, endValue.top, fraction),
-                    interpolate(startValue.right, endValue.right, fraction),
-                    interpolate(startValue.bottom, endValue.bottom, fraction));
+            return new Rect(interpolate(startValue.left, endValue.left, fraction), interpolate(startValue.top, endValue.top, fraction), interpolate(startValue.right, endValue.right, fraction), interpolate(startValue.bottom, endValue.bottom, fraction));
         }
 
         public int interpolate(int start, int end, float fraction) {
-            return (int)(start + fraction * (end - start));
+            return (int) (start + fraction * (end - start));
         }
     };
 
     /**
-     *  Determines whether this listview is in a scrolling state invoked
-     *  by the fact that the hover cell is out of the bounds of the listview;
+     * Determines whether this listview is in a scrolling state invoked
+     * by the fact that the hover cell is out of the bounds of the listview;
      */
     private void handleMobileCellScroll() {
         mIsMobileScrolling = handleMobileCellScroll(mHoverCellCurrentBounds);
@@ -485,18 +464,23 @@ public class TreeListView extends ListView implements AdapterView.OnItemLongClic
         return false;
     }
 
+
     public void setItems(List<TreeItem> items) {
         this.items = items;
         adapter.setDataSource(items);
     }
 
-
-
-
-
-
-
-
+    @Override
+    public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
+        if (position == adapter.getCount() - 1) {
+            //nowy element
+            guiListener.onAddItemClicked();
+        } else {
+            //istniejący element
+            TreeItem item = adapter.getItem(position);
+            guiListener.onItemClicked(position, item);
+        }
+    }
 
 
     /**
@@ -514,15 +498,12 @@ public class TreeListView extends ListView implements AdapterView.OnItemLongClic
     private int mCurrentScrollState;
 
     @Override
-    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount,
-                         int totalItemCount) {
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
         mCurrentFirstVisibleItem = firstVisibleItem;
         mCurrentVisibleItemCount = visibleItemCount;
 
-        mPreviousFirstVisibleItem = (mPreviousFirstVisibleItem == -1) ? mCurrentFirstVisibleItem
-                : mPreviousFirstVisibleItem;
-        mPreviousVisibleItemCount = (mPreviousVisibleItemCount == -1) ? mCurrentVisibleItemCount
-                : mPreviousVisibleItemCount;
+        mPreviousFirstVisibleItem = (mPreviousFirstVisibleItem == -1) ? mCurrentFirstVisibleItem : mPreviousFirstVisibleItem;
+        mPreviousVisibleItemCount = (mPreviousVisibleItemCount == -1) ? mCurrentVisibleItemCount : mPreviousVisibleItemCount;
 
         checkAndHandleFirstVisibleCellChange();
         checkAndHandleLastVisibleCellChange();
@@ -550,7 +531,7 @@ public class TreeListView extends ListView implements AdapterView.OnItemLongClic
         if (mCurrentVisibleItemCount > 0 && mCurrentScrollState == SCROLL_STATE_IDLE) {
             if (mCellIsMobile && mIsMobileScrolling) {
                 handleMobileCellScroll();
-            } else if (mIsWaitingForScrollFinish) {
+            } else if (isWaitingForScrollFinish) {
                 touchEventsEnded();
             }
         }
@@ -562,8 +543,8 @@ public class TreeListView extends ListView implements AdapterView.OnItemLongClic
      */
     public void checkAndHandleFirstVisibleCellChange() {
         if (mCurrentFirstVisibleItem != mPreviousFirstVisibleItem) {
-            if (mCellIsMobile && mMobileItemId != INVALID_ID) {
-                updateNeighborViewsForID(mMobileItemId);
+            if (mCellIsMobile && mobileItemPos != INVALID_ID) {
+                updateNeighborViews(mobileItemPos);
                 handleCellSwitch();
             }
         }
@@ -577,8 +558,8 @@ public class TreeListView extends ListView implements AdapterView.OnItemLongClic
         int currentLastVisibleItem = mCurrentFirstVisibleItem + mCurrentVisibleItemCount;
         int previousLastVisibleItem = mPreviousFirstVisibleItem + mPreviousVisibleItemCount;
         if (currentLastVisibleItem != previousLastVisibleItem) {
-            if (mCellIsMobile && mMobileItemId != INVALID_ID) {
-                updateNeighborViewsForID(mMobileItemId);
+            if (mCellIsMobile && mobileItemPos != INVALID_ID) {
+                updateNeighborViews(mobileItemPos);
                 handleCellSwitch();
             }
         }

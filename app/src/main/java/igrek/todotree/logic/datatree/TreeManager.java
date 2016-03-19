@@ -138,8 +138,9 @@ public class TreeManager {
     public void replace(TreeItem parent, int pos1, int pos2) {
         if (pos1 == pos2) return;
         if (pos1 < 0 || pos2 < 0) throw new IllegalArgumentException("position < 0");
-        if (pos1 >= parent.size() || pos2 >= parent.size())
+        if (pos1 >= parent.size() || pos2 >= parent.size()) {
             throw new IllegalArgumentException("position >= size");
+        }
         TreeItem item1 = parent.getChild(pos1);
         TreeItem item2 = parent.getChild(pos2);
         //wstawienie na pos1

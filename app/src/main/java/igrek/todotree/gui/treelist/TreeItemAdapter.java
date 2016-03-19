@@ -144,4 +144,5 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
             return itemView;
         }
     }
+
 }

@@ -22,4 +22,6 @@ public interface GUIListener {
     void onSavedEditedItem(TreeItem editedItem, String content);
 
     void onSavedNewItem(String content);
+
+    void onItemsSwapped(int pos1, int pos2);
 }
