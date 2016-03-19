@@ -3,6 +3,8 @@ package igrek.todotree.logic.app;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+import java.util.List;
+
 import igrek.todotree.R;
 import igrek.todotree.gui.GUI;
 import igrek.todotree.gui.GUIListener;
@@ -197,17 +199,9 @@ public class App extends BaseApp implements GUIListener {
         showInfo("Zapisano nowy element.");
     }
 
-
     @Override
-    public void onItemsSwapped(int pos1, int pos2) {
-        treeManager.replace(treeManager.getCurrentItem(), pos1, pos2);
-        gui.updateItemsList(treeManager.getCurrentItem());
-    }
-
-    @Override
-    public int onItemMoved(int position, int step) {
-        int newPos = treeManager.move(treeManager.getCurrentItem(), position, step);
-        gui.updateItemsList(treeManager.getCurrentItem());
-        return newPos;
+    public List<TreeItem> onItemMoved(int position, int step) {
+        treeManager.move(treeManager.getCurrentItem(), position, step);
+        return treeManager.getCurrentItem().getChildren();
     }
 }

@@ -14,6 +14,7 @@ public class Output {
 
     private static List<String> echos;
     private static long lastEcho;
+    private static int errors = 0;
 
     public Output() {
         reset();
@@ -22,15 +23,16 @@ public class Output {
     public static void reset() {
         echos = new ArrayList<>();
         lastEcho = 0;
+        errors = 0;
     }
 
     //  LOG
     public static void log(String l) {
-        Log.i(Config.Output.logTag, l);
+        Log.i(Config.Output.logTag, errorPrefix() + l);
     }
 
     public static void logError(String l) {
-        Log.e(Config.Output.logTag, l);
+        Log.e(Config.Output.logTag, errorPrefix() + l);
     }
 
     public static void logvar(String l, int i) {
@@ -43,12 +45,12 @@ public class Output {
 
     //  ERRORS, EXCEPTIONS
     public static void error(String e) {
-        echo("[ERROR] " + e);
+        errors++;
         logError("[ERROR] " + e);
     }
 
     public static void error(Throwable ex) {
-        echo("[" + ex.getClass().getName() + "] " + ex.getMessage());
+        errors++;
         logError("[EXCEPTION - " + ex.getClass().getName() + "] " + ex.getMessage());
         if (Config.Output.show_exceptions_trace) {
             printStackTrace(ex);
@@ -56,6 +58,7 @@ public class Output {
     }
 
     public static void errorUncaught(Throwable ex) {
+        errors++;
         logError("[UNCAUGHT EXCEPTION - " + ex.getClass().getName() + "] " + ex.getMessage());
         if (Config.Output.show_exceptions_trace) {
             printStackTrace(ex);
@@ -71,6 +74,7 @@ public class Output {
     }
 
     public static void errorCritical(final Activity activity, String e) {
+        errors++;
         logError("[CRITICAL ERROR] " + e);
         if (activity == null) {
             error("errorCritical: Brak activity");
@@ -94,6 +98,10 @@ public class Output {
             printStackTrace(ex);
         }
         errorCritical(activity, e);
+    }
+
+    private static String errorPrefix() {
+        return (errors > 0) ? ("[E:" + errors + "] ") : "";
     }
 
     //  INFO, ECHO - widoczne dla użytkownika
