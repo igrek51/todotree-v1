@@ -14,7 +14,6 @@ import igrek.todotree.logic.exceptions.NoSuperItemException;
 import igrek.todotree.system.output.Output;
 
 //  WERSJA v1.1
-//TODO: przesuwanie elementów, przesuwanie na koniec, na początek listy
 //TODO: wychwycenie eventu resize'u okna (zmiany orientacji), brak restartu aplikacji, obsłużenie, odświeżenie layoutów
 
 //  NOWE FUNKCJONALNOŚCI
@@ -31,9 +30,11 @@ import igrek.todotree.system.output.Output;
 //TODO: funkcja cofania zmian - zapisywanie modyfikacji, dodawania, usuwania elementów, przesuwania
 //TODO: moduł obliczeń: sumowanie elementów, inline calc
 //TODO: gesty do obsługi powrotu w górę, dodania nowego elementu, wejścia w element
+//TODO: wchodzenie do środka drzewa poprzez gesty (smyranie w prawo), w górę (smyranie w lewo)
 //TODO: klasy elementów: checkable (z pamięcią stanu), separator
 //TODO: breadcrumbs przy nazwie aktualnego elementu
 //TODO: tryb landscape screen przy pisaniu z klawiatury ekranowej
+//TODO: przesuwanie elementów na koniec, na początek listy
 
 //TODO: KONFIGURACJA:
 //TODO: ekran konfiguracji

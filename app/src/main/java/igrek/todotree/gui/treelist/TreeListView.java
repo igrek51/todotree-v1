@@ -31,48 +31,36 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
     private TreeItemAdapter adapter;
     private GUIListener guiListener;
 
-    /**
-     * początkowa pozycja kursora przy rozpoczęciu przeciągania (ulega zmianie przy zamianie elementów)
-     */
+    /** początkowa pozycja kursora przy rozpoczęciu przeciągania (ulega zmianie przy zamianie elementów) */
     private float startTouchY;
-    /**
-     * aktualna pozycja kursora względem ekranu i listview (bez scrollowania)
-     */
+    /** aktualna pozycja kursora względem ekranu i listview (bez scrollowania) */
     private float lastTouchY;
 
-    /**
-     * pozycja aktualnie przeciąganego elementu
-     */
+    /** pozycja aktualnie przeciąganego elementu */
     private Integer draggedItemPos = null;
-    /**
-     * widok aktualnie przeciąganego elementu
-     */
+    /** widok aktualnie przeciąganego elementu */
     private View draggedItemView = null;
-    /**
-     * oryginalna górna pozycja niewidocznego elementu na liście, którego bitmapa jest przeciągana
-     */
+    /** oryginalna górna pozycja niewidocznego elementu na liście, którego bitmapa jest przeciągana */
     private Integer draggedItemViewTop = null;
-    /**
-     * wysokość jednego elementu
-     */
+    /** wysokość jednego elementu */
     private Integer draggedItemViewHeight = null;
 
-    /**
-     * aktualne położenie scrolla
-     */
+    /** aktualne położenie scrolla */
     private int scrollOffset = 0;
-    /**
-     * położenie scrolla przy rozpoczęciu przeciągania
-     */
+    /** położenie scrolla przy rozpoczęciu przeciągania */
     private int scrollStart = 0;
+
+    private int scrollState = SCROLL_STATE_IDLE;
 
     private BitmapDrawable hoverBitmap;
     private Rect hoverBitmapBounds;
 
-    private int scrollEdge = 0;
     private final int SMOOTH_SCROLL_EDGE_DP = 140;
+    private int SMOOTH_SCROLL_EDGE_PX;
     private final float SMOOTH_SCROLL_FACTOR = 0.4f;
     private final int SMOOTH_SCROLL_DURATION = 10;
+
+    private final float ITEMS_REPLACE_COVER = 0.4f;
 
     public TreeListView(Context context) {
         super(context);
@@ -92,25 +80,92 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
         setOnItemClickListener(this);
         //setOnItemLongClickListener(this);
         DisplayMetrics metrics = context.getResources().getDisplayMetrics();
-        scrollEdge = (int) (SMOOTH_SCROLL_EDGE_DP / metrics.density);
+        Output.log("metrics.density: " + metrics.density);
+        SMOOTH_SCROLL_EDGE_PX = (int) (SMOOTH_SCROLL_EDGE_DP / metrics.density);
         setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
         adapter = new TreeItemAdapter(context, null, guiListener, this);
         setAdapter(adapter);
     }
 
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        switch (event.getAction() & MotionEvent.ACTION_MASK) {
+            case MotionEvent.ACTION_DOWN:
+                break;
+            case MotionEvent.ACTION_MOVE:
+                if (draggedItemPos != null) {
+                    lastTouchY = event.getY();
+                    handleItemDragging();
+                    return false;
+                }
+                break;
+            case MotionEvent.ACTION_UP:
+                itemDraggingStopped();
+                break;
+            case MotionEvent.ACTION_CANCEL:
+                itemDraggingStopped();
+                break;
+        }
+        return super.onTouchEvent(event);
+    }
+
+    @Override
+    public void invalidate() {
+        super.invalidate();
+        if (draggedItemPos != null) {
+            draggedItemView = getViewByPosition(draggedItemPos);
+            if (draggedItemView != null) {
+                draggedItemView.setVisibility(View.INVISIBLE);
+            }
+        }
+    }
+
+    @Override
+    protected void dispatchDraw(Canvas canvas) {
+        super.dispatchDraw(canvas);
+        if (hoverBitmap != null) {
+            updateHoverBitmap();
+            hoverBitmap.draw(canvas);
+        }
+    }
+
+    public void setItems(List<TreeItem> items) {
+        this.items = items;
+        adapter.setDataSource(items);
+        invalidate();
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
+        if (position == adapter.getCount() - 1) {
+            //nowy element
+            guiListener.onAddItemClicked();
+        } else {
+            //istniejący element
+            TreeItem item = adapter.getItem(position);
+            guiListener.onItemClicked(position, item);
+        }
+    }
+
+
+    private void updateHoverBitmap() {
+        if (draggedItemViewTop != null) {
+            float dy = lastTouchY - startTouchY;
+            hoverBitmapBounds.offsetTo(0, draggedItemViewTop + (int) dy);
+            hoverBitmap.setBounds(hoverBitmapBounds);
+        }
+    }
+
     private BitmapDrawable getAndAddHoverView(View v) {
-        int w = v.getWidth();
-        int h = v.getHeight();
         int top = v.getTop();
         int left = v.getLeft();
 
         Bitmap b = getBitmapWithBorder(v);
-
         BitmapDrawable drawable = new BitmapDrawable(getResources(), b);
 
-        hoverBitmapBounds = new Rect(left, top, left + w, top + h);
-
+        hoverBitmapBounds = new Rect(left, top, left + v.getWidth(), top + v.getHeight());
         drawable.setBounds(hoverBitmapBounds);
 
         return drawable;
@@ -141,56 +196,14 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
         return bitmap;
     }
 
-    @Override
-    protected void dispatchDraw(Canvas canvas) {
-        super.dispatchDraw(canvas);
-        if (hoverBitmap != null) {
-            updateHoverBitmap();
-            hoverBitmap.draw(canvas);
-        }
-    }
 
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        switch (event.getAction() & MotionEvent.ACTION_MASK) {
-            case MotionEvent.ACTION_DOWN:
-                Output.log("listview touch down: " + event.getX() + " , " + event.getY());
-                break;
-            case MotionEvent.ACTION_MOVE:
-                if (draggedItemPos != null) {
-                    lastTouchY = event.getY();
-                    handleItemDragging();
-                    return false;
-                }
-                break;
-            case MotionEvent.ACTION_UP:
-                itemDraggingStopped();
-                break;
-            case MotionEvent.ACTION_CANCEL:
-                itemDraggingStopped();
-                break;
-        }
-        return super.onTouchEvent(event);
-    }
-
-    public View getViewByPosition(int itemPos) {
+    private View getViewByPosition(int itemPos) {
         if (itemPos < 0) return null;
         if (itemPos >= items.size()) return null;
         int itemNum = itemPos - getFirstVisiblePosition();
         return getChildAt(itemNum);
     }
 
-
-    @Override
-    public void invalidate() {
-        super.invalidate();
-        if (draggedItemPos != null) {
-            draggedItemView = getViewByPosition(draggedItemPos);
-            if (draggedItemView != null) {
-                draggedItemView.setVisibility(View.INVISIBLE);
-            }
-        }
-    }
 
     private final static TypeEvaluator<Rect> rectBoundsEvaluator = new TypeEvaluator<Rect>() {
         public Rect evaluate(float fraction, Rect startValue, Rect endValue) {
@@ -203,76 +216,7 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
     };
 
 
-    public void setItems(List<TreeItem> items) {
-        this.items = items;
-        adapter.setDataSource(items);
-        invalidate();
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
-        if (position == adapter.getCount() - 1) {
-            //nowy element
-            guiListener.onAddItemClicked();
-        } else {
-            //istniejący element
-            TreeItem item = adapter.getItem(position);
-            guiListener.onItemClicked(position, item);
-        }
-    }
-
-    public boolean handleScrolling() {
-        int offset = computeVerticalScrollOffset();
-        int height = getHeight();
-        int extent = computeVerticalScrollExtent();
-        int range = computeVerticalScrollRange();
-        int hoverViewTop = hoverBitmapBounds.top;
-        int hoverHeight = hoverBitmapBounds.height();
-
-        if (draggedItemPos != null) {
-            if (hoverViewTop <= scrollEdge && offset > 0) {
-                int scrollDistance = (int)((hoverViewTop - scrollEdge) * SMOOTH_SCROLL_FACTOR);
-                smoothScrollBy(scrollDistance, SMOOTH_SCROLL_DURATION);
-                Output.log("scrolled " + scrollDistance);
-                return true;
-            }
-            if (hoverViewTop + hoverHeight >= height - scrollEdge && (offset + extent) < range) {
-                int scrollDistance = (int)((hoverViewTop + hoverHeight - height + scrollEdge) * SMOOTH_SCROLL_FACTOR);
-                smoothScrollBy(scrollDistance, SMOOTH_SCROLL_DURATION);
-                Output.log("scrolled " + scrollDistance);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        scrollOffset = getREALScrollPosition();
-    }
-
-    @Override
-    public void onScrollStateChanged(AbsListView view, int scrollState) {
-        if (scrollState == SCROLL_STATE_IDLE) {
-            if (draggedItemPos != null) {
-                handleScrolling();
-                Output.log("rescroll");
-            }
-        }
-    }
-
-
-    private void updateHoverBitmap() {
-        if (draggedItemViewTop != null) {
-            float dy = lastTouchY - startTouchY;
-            hoverBitmapBounds.offsetTo(0, draggedItemViewTop + (int) dy);
-            hoverBitmap.setBounds(hoverBitmapBounds);
-        }
-    }
-
-
     private void itemDraggingStarted(int position, View itemView) {
-        Output.log("item dragging started");
         draggedItemPos = position;
         draggedItemView = itemView;
         draggedItemViewTop = itemView.getTop();
@@ -286,12 +230,7 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
     }
 
     private void handleItemDragging() {
-        final float dy = lastTouchY - startTouchY;
-        float dyTotal = dy + scrollOffset - scrollStart;
-
-        Output.log("handleItemDragging: dy: " + dy + ", dyTotal: " + dyTotal);
-        Output.log("scroll diff: " + (scrollOffset - scrollStart));
-        Output.log("view height: " + draggedItemViewHeight);
+        float dyTotal = lastTouchY - startTouchY + scrollOffset - scrollStart;
 
         if (draggedItemViewTop == null) {
             Output.error("draggedItemViewTop = null");
@@ -301,13 +240,9 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
             Output.error("draggedItemPos = null");
             return;
         }
-        if (draggedItemViewHeight == null) {
-            Output.error("draggedItemViewHeight = null");
-            return;
-        }
 
-        int stepUp = (int) (-dyTotal / draggedItemViewHeight + 0.4); //minimalne nałożenie się itemów: 60 %
-        int stepDown = (int) (dyTotal / draggedItemViewHeight + 0.4); //minimalne nałożenie się itemów: 60 %
+        int stepUp = (int) (-dyTotal / draggedItemViewHeight + ITEMS_REPLACE_COVER); //minimalne nałożenie się itemów: 60 %
+        int stepDown = (int) (dyTotal / draggedItemViewHeight + ITEMS_REPLACE_COVER); //minimalne nałożenie się itemów: 60 %
         int step = stepDown > 0 ? stepDown : (stepUp > 0 ? -stepUp : 0);
         //walidacja wyjścia poza granicę
         int targetPosition = draggedItemPos + step;
@@ -315,7 +250,6 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
         if (targetPosition >= items.size()) targetPosition = items.size() - 1;
         step = targetPosition - draggedItemPos;
 
-        Output.log("item pos: " + draggedItemPos + " moving by step: " + step);
         if (step != 0) {
             items = guiListener.onItemMoved(draggedItemPos, step);
             adapter.setDataSource(items);
@@ -324,11 +258,11 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
             draggedItemViewTop += step * draggedItemViewHeight;
 
             draggedItemPos = targetPosition;
-            if(draggedItemView != null) {
+            if (draggedItemView != null) {
                 draggedItemView.setVisibility(View.VISIBLE);
             }
             draggedItemView = getViewByPosition(draggedItemPos);
-            if(draggedItemView != null) {
+            if (draggedItemView != null) {
                 draggedItemView.setVisibility(View.INVISIBLE);
             }
         }
@@ -339,9 +273,7 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
     }
 
     private void itemDraggingStopped() {
-        Output.log("item dragging stopped");
         if (draggedItemPos != null && draggedItemViewTop != null) {
-
             hoverBitmapBounds.offsetTo(0, draggedItemViewTop);
 
             ObjectAnimator hoverViewAnimator = ObjectAnimator.ofObject(hoverBitmap, "bounds", rectBoundsEvaluator, hoverBitmapBounds);
@@ -359,9 +291,7 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
 
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    if (draggedItemView == null) {
-                        Output.error("itemDraggingStopped: onAnimationEnd: draggedItemView = null");
-                    } else {
+                    if (draggedItemView != null) {
                         draggedItemView.setVisibility(VISIBLE);
                     }
                     hoverBitmap = null;
@@ -382,6 +312,47 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
         }
     }
 
+
+    public boolean handleScrolling() {
+        if (scrollState == SCROLL_STATE_IDLE || scrollState == SCROLL_STATE_TOUCH_SCROLL) {
+            int offset = computeVerticalScrollOffset();
+            int height = getHeight();
+            int extent = computeVerticalScrollExtent();
+            int range = computeVerticalScrollRange();
+            int hoverViewTop = hoverBitmapBounds.top;
+            int hoverHeight = hoverBitmapBounds.height();
+
+            if (draggedItemPos != null) {
+                if (hoverViewTop <= SMOOTH_SCROLL_EDGE_PX && offset > 0) {
+                    int scrollDistance = (int) ((hoverViewTop - SMOOTH_SCROLL_EDGE_PX) * SMOOTH_SCROLL_FACTOR);
+                    smoothScrollBy(scrollDistance, SMOOTH_SCROLL_DURATION);
+                    return true;
+                }
+                if (hoverViewTop + hoverHeight >= height - SMOOTH_SCROLL_EDGE_PX && (offset + extent) < range) {
+                    int scrollDistance = (int) ((hoverViewTop + hoverHeight - height + SMOOTH_SCROLL_EDGE_PX) * SMOOTH_SCROLL_FACTOR);
+                    smoothScrollBy(scrollDistance, SMOOTH_SCROLL_DURATION);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+        scrollOffset = getREALScrollPosition();
+    }
+
+    @Override
+    public void onScrollStateChanged(AbsListView view, int scrollState) {
+        this.scrollState = scrollState;
+        if (scrollState == SCROLL_STATE_IDLE) {
+            if (draggedItemPos != null) {
+                handleScrolling();
+            }
+        }
+    }
+
     private int getREALScrollPosition() {
         if (getChildAt(0) == null) {
             return 0;
@@ -394,8 +365,6 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
         startTouchY = itemView.getTop() + touchY;
         lastTouchY = startTouchY;
         itemDraggingStarted(position, itemView);
-
-        Output.log("Button move pressed, item: " + position + ", relative touchY: " + touchY + ", startTouchY : " + startTouchY);
     }
 
     public void onItemMoveButtonReleased(int position, TreeItem item, View itemView, float touchX, float touchY) {
