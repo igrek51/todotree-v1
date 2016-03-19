@@ -22,13 +22,15 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
     Context context;
     List<TreeItem> dataSource;
     GUIListener guiListener;
+    TreeListView listView;
 
-    public TreeItemAdapter(Context context, List<TreeItem> dataSource, GUIListener guiListener) {
+    public TreeItemAdapter(Context context, List<TreeItem> dataSource, GUIListener guiListener, TreeListView listView) {
         super(context, 0, new ArrayList<TreeItem>());
         this.context = context;
         if(dataSource == null) dataSource = new ArrayList<>();
         this.dataSource = dataSource;
         this.guiListener = guiListener;
+        this.listView = listView;
     }
 
     public void setDataSource(List<TreeItem> dataSource) {
@@ -51,6 +53,8 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
         if(position >= dataSource.size()) return -1;
         return (long) position;
     }
+
+
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
@@ -119,22 +123,22 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
             moveButton.setFocusableInTouchMode(false);
             moveButton.setFocusable(false);
 
-            moveButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //guiListener.onItemMoveClicked(position, item);
-                }
-            });
+//            moveButton.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    guiListener.onItemMoveClicked(position, item);
+//                }
+//            });
 
             moveButton.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
                     switch (event.getAction()) {
                         case MotionEvent.ACTION_DOWN:
-                            guiListener.onItemMoveButtonPressed(position, item, itemView);
+                            listView.onItemMoveButtonPressed(position, item, itemView, event.getX(), event.getY());
                             break;
                         case MotionEvent.ACTION_UP:
-                            guiListener.onItemMoveButtonReleased(position, item, itemView);
+                            listView.onItemMoveButtonReleased(position, item, itemView, event.getX(), event.getY());
                             break;
                     }
                     return false;

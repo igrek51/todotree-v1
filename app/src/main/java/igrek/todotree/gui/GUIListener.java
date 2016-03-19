@@ -1,7 +1,5 @@
 package igrek.todotree.gui;
 
-import android.view.View;
-
 import igrek.todotree.logic.datatree.TreeItem;
 
 public interface GUIListener {
@@ -15,13 +13,16 @@ public interface GUIListener {
 
     void onItemRemoveClicked(int position, TreeItem item);
 
-    void onItemMoveButtonPressed(int position, TreeItem item, View itemView);
-
-    void onItemMoveButtonReleased(int position, TreeItem item, View itemView);
-
     void onSavedEditedItem(TreeItem editedItem, String content);
 
     void onSavedNewItem(String content);
 
     void onItemsSwapped(int pos1, int pos2);
+
+    /**
+     * @param position pozycja elementu przed przesuwaniem
+     * @param step liczba pozycji do przesunięcia (dodatnia - w dół, ujemna - w górę)
+     * @return nowa pozycja elementu
+     */
+    int onItemMoved(int position, int step);
 }

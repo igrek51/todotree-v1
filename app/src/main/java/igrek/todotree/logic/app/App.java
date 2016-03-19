@@ -39,6 +39,7 @@ import igrek.todotree.system.output.Output;
 //TODO: shared preferences: zautomatyzowanie w celu konfiguracji, definicja: typ, nazwa, wartość domyślna, refleksja, automatyczny zapis, odczyt, generowanie fomrularza, tryb landscape screen przy pisaniu z klawiatury ekranowej
 
 //  WYGLĄD
+//TODO: padding dla przycisków akcji (zwiększenie aktywnego pola)
 //TODO: motyw kolorystyczny, zapisanie wszystkich kolorów w Config lub w xml
 //TODO: ustalenie marginesów w layoutach i wypozycjonowanie elementów
 //TODO: konfiguracja: wyświetlacz zawsze zapalony, wielkość czcionki, marginesy między elementami
@@ -197,65 +198,16 @@ public class App extends BaseApp implements GUIListener {
     }
 
 
-
-    @Override
-    public boolean onTouchDown(float x, float y){
-        Output.log("on touch down: " + x + ", " + y);
-        return false;
-    }
-
-    @Override
-    public boolean onTouchMove(float x, float y){
-        //Output.log("on touch move: " + x + ", " + y);
-        if(moveView != null){
-            //return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean onTouchUp(float x, float y){
-        Output.log("on touch up: " + x + ", " + y);
-
-        if(moveView != null){
-            if(y < moveView.getTop()){
-                //przesuwanie w górę
-                int stepUp = (int)((moveView.getTop() - y) / moveView.getHeight()) + 1;
-                Output.log("step up: "+stepUp);
-
-            }else if(y > moveView.getBottom()){
-                //przesuwanie w dół
-                int stepDown = (int)((y - moveView.getBottom()) / moveView.getHeight()) + 1;
-                Output.log("step down: "+stepDown);
-
-            }else{
-                Output.log("no step");
-            }
-
-        }
-
-        return false;
-    }
-
-    @Override
-    public void onItemMoveButtonPressed(int position, TreeItem item, View itemView) {
-        movePosition = position;
-        moveView = itemView;
-
-        Output.log("Button move pressed, item: "+ position + ", view h: " + itemView.getHeight() + ", " + itemView.getMeasuredHeight() + ", " + itemView.getMeasuredHeightAndState() + ", top: " + itemView.getTop() + ", bottom: " + itemView.getBottom());
-    }
-
-    @Override
-    public void onItemMoveButtonReleased(int position, TreeItem item, View itemView) {
-        Output.log("Button move released, item: "+ position + ", view h: " + itemView.getHeight() + ", " + itemView.getMeasuredHeight() + ", " + itemView.getMeasuredHeightAndState() + ", top: " + itemView.getTop() + ", bottom: " + itemView.getBottom());
-
-        movePosition = null;
-        moveView = null;
-    }
-
     @Override
     public void onItemsSwapped(int pos1, int pos2) {
         treeManager.replace(treeManager.getCurrentItem(), pos1, pos2);
         gui.updateItemsList(treeManager.getCurrentItem());
+    }
+
+    @Override
+    public int onItemMoved(int position, int step) {
+        int newPos = treeManager.move(treeManager.getCurrentItem(), position, step);
+        gui.updateItemsList(treeManager.getCurrentItem());
+        return newPos;
     }
 }

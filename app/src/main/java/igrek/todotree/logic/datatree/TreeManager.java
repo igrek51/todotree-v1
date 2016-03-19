@@ -179,8 +179,9 @@ public class TreeManager {
      * @param parent   przodek przesuwanego elementu
      * @param position pozycja elementu przed przesuwaniem
      * @param step     liczba pozycji do przesunięcia (dodatnia - w dół, ujemna - w górę)
+     * @return nowa pozycja elementu
      */
-    public void move(TreeItem parent, int position, int step) {
+    public int move(TreeItem parent, int position, int step) {
         int targetPosition = position + step;
         if (targetPosition < 0) targetPosition = 0;
         if (targetPosition >= parent.size()) targetPosition = parent.size() - 1;
@@ -192,6 +193,7 @@ public class TreeManager {
             moveUp(parent, position);
             position--;
         }
+        return targetPosition;
     }
 
     /**
