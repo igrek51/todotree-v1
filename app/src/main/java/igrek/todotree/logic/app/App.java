@@ -1,7 +1,6 @@
 package igrek.todotree.logic.app;
 
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 
 import java.util.List;
 
@@ -14,7 +13,6 @@ import igrek.todotree.logic.exceptions.NoSuperItemException;
 import igrek.todotree.system.output.Output;
 
 //  WERSJA v1.02
-//TODO: wychwycenie eventu resize'u okna (zmiany orientacji), brak restartu aplikacji, obsłużenie, odświeżenie layoutów
 //TODO: zabronienie używania znaków "{" i "}" i "[", "]" w tekście (usuwanie ich)
 //TODO: usuwanie białych znaków przy zapisie elementu
 //TODO: utworzenie nowego elementu przed wybranym
