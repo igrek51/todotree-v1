@@ -13,24 +13,25 @@ import igrek.todotree.logic.datatree.TreeManager;
 import igrek.todotree.logic.exceptions.NoSuperItemException;
 import igrek.todotree.system.output.Output;
 
-//  WERSJA v1.1
+//  WERSJA v1.02
 //TODO: wychwycenie eventu resize'u okna (zmiany orientacji), brak restartu aplikacji, obsłużenie, odświeżenie layoutów
+//TODO: zabronienie używania znaków "{" i "}" i "[", "]" w tekście (usuwanie ich)
+//TODO: usuwanie białych znaków przy zapisie elementu
+//TODO: utworzenie nowego elementu przed wybranym
 
 //  NOWE FUNKCJONALNOŚCI
-//TODO: zabronienie używania znaków "{" i "}" w tekście (usuwanie ich)
 //TODO: kopiowanie i wklejanie elementów
-//TODO: utworzenie nowego elementu przed wybranym
 //TODO: podczas edycji, przyciski przesuwania kursora (do początku, 1 w lewo, 1 w prawo, do końca), zaznacz wszystko
 //TODO: minimalizacja aplikacji i wyjście z aplikacji (z zapisem i bez zapisu bazy), szybkie wyjście
 //TODO: różne akcje na kliknięcie elementu: (wejście - folder, edycja - element), przycisk wejścia dla pojedynczych elementów
 //TODO: akcja long pressed do tree itemów - wybór większej ilości opcji: multiselect, utworzenie nowego przed
+//TODO: gesty do obsługi powrotu w górę, dodania nowego elementu, wejścia w element
+//TODO: wchodzenie do środka drzewa poprzez gesty (smyranie w prawo), w górę (smyranie w lewo)
 //TODO: zapisywanie kilku ostatnich wersji bazy danych (backup)
 //TODO: zaznaczanie wielu elementów + usuwanie, kopiowanie, wycinanie
 //TODO: system logów z wieloma poziomami (info - jeden z poziomów, wyświetlany użytkownikowi)
 //TODO: funkcja cofania zmian - zapisywanie modyfikacji, dodawania, usuwania elementów, przesuwania
 //TODO: moduł obliczeń: sumowanie elementów, inline calc
-//TODO: gesty do obsługi powrotu w górę, dodania nowego elementu, wejścia w element
-//TODO: wchodzenie do środka drzewa poprzez gesty (smyranie w prawo), w górę (smyranie w lewo)
 //TODO: klasy elementów: checkable (z pamięcią stanu), separator
 //TODO: breadcrumbs przy nazwie aktualnego elementu
 //TODO: tryb landscape screen przy pisaniu z klawiatury ekranowej
@@ -56,9 +57,6 @@ public class App extends BaseApp implements GUIListener {
     GUI gui;
 
     AppState state;
-
-    Integer movePosition = null;
-    View moveView = null;
 
     public App(AppCompatActivity activity) {
         super(activity);
@@ -93,7 +91,7 @@ public class App extends BaseApp implements GUIListener {
     }
 
     @Override
-    public boolean keycodeBack() {
+    public boolean onKeyBack() {
         backClicked();
         return true;
     }

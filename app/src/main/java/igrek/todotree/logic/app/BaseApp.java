@@ -1,6 +1,7 @@
 package igrek.todotree.logic.app;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -80,30 +81,39 @@ public abstract class BaseApp implements ITouchController {
     }
 
     @Override
-    public boolean onTouchDown(float x, float y){
+    public boolean onTouchDown(float x, float y) {
         return false;
     }
 
     @Override
-    public boolean onTouchMove(float x, float y){
+    public boolean onTouchMove(float x, float y) {
         return false;
     }
 
     @Override
-    public boolean onTouchUp(float x, float y){
+    public boolean onTouchUp(float x, float y) {
         return false;
     }
 
-    public void resizeEvent(int w, int h) {
-        Output.log("Rozmiar ekranu zmieniony na: " + w + "px x " + h + "px");
+    public void onResizeEvent(Configuration newConfig) {
+        int screenWidthDp = newConfig.screenWidthDp;
+        int screenHeightDp = newConfig.screenHeightDp;
+        int orientation = newConfig.orientation;
+        int densityDpi = newConfig.densityDpi;
+        Output.log("Rozmiar ekranu zmieniony na: " + screenWidthDp + "dp x " + screenHeightDp + "dp (DPI = " + densityDpi + ")");
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            Output.log("Zmiana orientacji ekranu: landscape");
+        } else if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+            Output.log("Zmiana orientacji ekranu: portrait");
+        }
     }
 
-    public boolean keycodeBack() {
+    public boolean onKeyBack() {
         quit();
         return true;
     }
 
-    public boolean keycodeMenu() {
+    public boolean onKeyMenu() {
         return false;
     }
 
@@ -118,7 +128,7 @@ public abstract class BaseApp implements ITouchController {
         activity.startActivity(startMain);
     }
 
-    public void showInfo(String info, View view){
+    public void showInfo(String info, View view) {
         Snackbar.make(view, info, Snackbar.LENGTH_SHORT).setAction("Action", null).show();
         Output.info(info);
     }

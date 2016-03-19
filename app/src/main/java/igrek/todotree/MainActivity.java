@@ -6,7 +6,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 
 import igrek.todotree.logic.app.App;
 import igrek.todotree.system.output.Output;
@@ -28,14 +27,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        // Checks the orientation of the screen
-        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            app.resizeEvent(newConfig.screenWidthDp, newConfig.screenHeightDp);
-            Output.log("orientation changed: landscape");
-        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            app.resizeEvent(newConfig.screenWidthDp, newConfig.screenHeightDp);
-            Output.log("orientation changed: portrait");
-        }
+        app.onResizeEvent(newConfig);
     }
 
     @Override
@@ -69,21 +61,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (app.keycodeBack()) return true;
+            if (app.onKeyBack()) return true;
         } else if (keyCode == KeyEvent.KEYCODE_MENU) {
-            if (app.keycodeMenu()) return true;
+            if (app.onKeyMenu()) return true;
         }
         return super.onKeyDown(keyCode, event);
     }
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
-        /*
-        //przechwycenie klawisza menu
-        if (keyCode == KeyEvent.KEYCODE_MENU) {
-            return true;
-        }
-        */
         return super.onKeyDown(keyCode, event);
     }
 }
