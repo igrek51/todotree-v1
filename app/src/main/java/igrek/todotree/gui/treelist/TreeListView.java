@@ -25,7 +25,7 @@ import igrek.todotree.gui.GUIListener;
 import igrek.todotree.logic.datatree.TreeItem;
 import igrek.todotree.system.output.Output;
 
-public class TreeListView extends ListView implements AbsListView.OnScrollListener, AdapterView.OnItemClickListener {
+public class TreeListView extends ListView implements AbsListView.OnScrollListener, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
 
     private List<TreeItem> items;
     private TreeItemAdapter adapter;
@@ -78,7 +78,7 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
         this.guiListener = aGuiListener;
         setOnScrollListener(this);
         setOnItemClickListener(this);
-        //setOnItemLongClickListener(this);
+        setOnItemLongClickListener(this);
         DisplayMetrics metrics = context.getResources().getDisplayMetrics();
         SMOOTH_SCROLL_EDGE_PX = (int) (SMOOTH_SCROLL_EDGE_DP / metrics.density);
         setChoiceMode(ListView.CHOICE_MODE_SINGLE);
@@ -138,7 +138,7 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
 
     @Override
     public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
-        if (position == adapter.getCount() - 1) {
+        if (position == items.size()) {
             //nowy element
             guiListener.onAddItemClicked();
         } else {
@@ -146,6 +146,18 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
             TreeItem item = adapter.getItem(position);
             guiListener.onItemClicked(position, item);
         }
+    }
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+        if (position == items.size()) {
+            //nowy element na końcu
+            guiListener.onAddItemClicked();
+        } else {
+            //nowy element w wybranym miejscu
+            guiListener.onAddItemClicked(position);
+        }
+        return true;
     }
 
 

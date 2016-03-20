@@ -7,7 +7,7 @@
     android:orientation="vertical">
 
     <EditText
-        android:id="@+id/et_edit_item"
+        android:id="@+id/etEditItemContent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
@@ -15,7 +15,7 @@
         android:paddingTop="16dp"/>
 
     <Button
-        android:id="@+id/button_save_item"
+        android:id="@+id/buttonSaveItem"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"

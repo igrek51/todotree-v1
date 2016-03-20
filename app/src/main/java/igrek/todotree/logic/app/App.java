@@ -13,10 +13,11 @@ import igrek.todotree.logic.exceptions.NoSuperItemException;
 import igrek.todotree.system.output.Output;
 
 //  WERSJA v1.02
-//TODO: utworzenie nowego elementu przed wybranym
+//TODO: padding dla przycisków akcji (zwiększenie aktywnego pola)
 
 //  NOWE FUNKCJONALNOŚCI
 //TODO: kopiowanie i wklejanie elementów
+//TODO: zaznaczanie wielu elementów + usuwanie, kopiowanie, wycinanie
 //TODO: podczas edycji, przyciski przesuwania kursora (do początku, 1 w lewo, 1 w prawo, do końca), zaznacz wszystko
 //TODO: minimalizacja aplikacji i wyjście z aplikacji (z zapisem i bez zapisu bazy), szybkie wyjście
 //TODO: różne akcje na kliknięcie elementu: (wejście - folder, edycja - element), przycisk wejścia dla pojedynczych elementów
@@ -24,7 +25,6 @@ import igrek.todotree.system.output.Output;
 //TODO: gesty do obsługi powrotu w górę, dodania nowego elementu, wejścia w element
 //TODO: wchodzenie do środka drzewa poprzez gesty (smyranie w prawo), w górę (smyranie w lewo)
 //TODO: zapisywanie kilku ostatnich wersji bazy danych (backup)
-//TODO: zaznaczanie wielu elementów + usuwanie, kopiowanie, wycinanie
 //TODO: system logów z wieloma poziomami (info - jeden z poziomów, wyświetlany użytkownikowi)
 //TODO: funkcja cofania zmian - zapisywanie modyfikacji, dodawania, usuwania elementów, przesuwania
 //TODO: moduł obliczeń: sumowanie elementów, inline calc
@@ -39,7 +39,7 @@ import igrek.todotree.system.output.Output;
 //TODO: shared preferences: zautomatyzowanie w celu konfiguracji, definicja: typ, nazwa, wartość domyślna, refleksja, automatyczny zapis, odczyt, generowanie fomrularza, tryb landscape screen przy pisaniu z klawiatury ekranowej
 
 //  WYGLĄD
-//TODO: padding dla przycisków akcji (zwiększenie aktywnego pola)
+//TODO: multiline tekstu itemu, przy overflowie (różny rozmiar itemów)
 //TODO: motyw kolorystyczny, zapisanie wszystkich kolorów w Config lub w xml
 //TODO: ustalenie marginesów w layoutach i wypozycjonowanie elementów
 //TODO: konfiguracja: wyświetlacz zawsze zapalony, wielkość czcionki, marginesy między elementami
@@ -156,6 +156,11 @@ public class App extends BaseApp implements GUIListener {
     @Override
     public void onAddItemClicked() {
         newItem(-1);
+    }
+
+    @Override
+    public void onAddItemClicked(int position) {
+        newItem(position);
     }
 
     @Override

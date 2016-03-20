@@ -8,7 +8,7 @@
     android:layout_gravity="center_horizontal">
 
     <ImageButton
-        android:id="@+id/button_move"
+        android:id="@+id/buttonItemMove"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="left"
@@ -19,7 +19,7 @@
         android:layout_marginLeft="4dp"/>
 
     <TextView
-        android:id="@+id/firstLine"
+        android:id="@+id/tvItemContent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="12dp"
@@ -28,11 +28,24 @@
         android:text="@string/example_item"
         android:textSize="16sp"
         android:layout_marginLeft="10dp"
-        android:layout_toRightOf="@+id/button_move"
-        android:layout_toEndOf="@+id/button_move"/>
+        android:layout_toRightOf="@+id/buttonItemMove"
+        android:layout_toEndOf="@+id/buttonItemMove"/>
 
     <ImageButton
-        android:id="@+id/button_edit"
+        android:id="@+id/buttonItemAddHere"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:background="@android:drawable/ic_menu_add"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/buttonItemEdit"
+        android:layout_toStartOf="@+id/buttonItemEdit"
+        android:layout_marginRight="20dp"/>
+
+    <ImageButton
+        android:id="@+id/buttonItemEdit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="right"
@@ -40,12 +53,12 @@
         android:focusable="false"
         android:focusableInTouchMode="false"
         android:layout_centerVertical="true"
-        android:layout_toLeftOf="@+id/button_remove"
-        android:layout_toStartOf="@+id/button_remove"
+        android:layout_toLeftOf="@+id/buttonItemRemove"
+        android:layout_toStartOf="@+id/buttonItemRemove"
         android:layout_marginRight="20dp"/>
 
     <ImageButton
-        android:id="@+id/button_remove"
+        android:id="@+id/buttonItemRemove"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="right"

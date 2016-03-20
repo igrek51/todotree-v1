@@ -9,6 +9,8 @@ public interface GUIListener {
 
     void onAddItemClicked();
 
+    void onAddItemClicked(int position);
+
     void onItemClicked(int position, TreeItem item);
 
     void onItemEditClicked(int position, TreeItem item);

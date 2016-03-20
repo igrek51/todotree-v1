@@ -64,7 +64,7 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
             //plusik
             View itemPlus = inflater.inflate(R.layout.item_plus, parent, false);
 
-            ImageButton plusButton = (ImageButton) itemPlus.findViewById(R.id.button_add);
+            ImageButton plusButton = (ImageButton) itemPlus.findViewById(R.id.buttonAddNewItem);
             plusButton.setFocusableInTouchMode(false);
             plusButton.setFocusable(false);
             plusButton.setOnClickListener(new View.OnClickListener() {
@@ -79,7 +79,7 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
             final View itemView = inflater.inflate(R.layout.tree_item, parent, false);
             final TreeItem item = dataSource.get(position);
 
-            TextView textView = (TextView) itemView.findViewById(R.id.firstLine);
+            TextView textView = (TextView) itemView.findViewById(R.id.tvItemContent);
             StringBuilder contentBuilder = new StringBuilder(item.getContent());
             if (!item.isEmpty()) {
                 contentBuilder.append(" [");
@@ -92,11 +92,10 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
             textView.setText(contentBuilder.toString());
 
             //edycja elementu
-            ImageButton editButton = (ImageButton) itemView.findViewById(R.id.button_edit);
+            ImageButton editButton = (ImageButton) itemView.findViewById(R.id.buttonItemEdit);
 
             editButton.setFocusableInTouchMode(false);
             editButton.setFocusable(false);
-
             editButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -105,11 +104,10 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
             });
 
             //usuwanie elementu
-            ImageButton removeButton = (ImageButton) itemView.findViewById(R.id.button_remove);
+            ImageButton removeButton = (ImageButton) itemView.findViewById(R.id.buttonItemRemove);
 
             removeButton.setFocusableInTouchMode(false);
             removeButton.setFocusable(false);
-
             removeButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -118,18 +116,10 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
             });
 
             //przesuwanie
-            ImageButton moveButton = (ImageButton) itemView.findViewById(R.id.button_move);
+            ImageButton moveButton = (ImageButton) itemView.findViewById(R.id.buttonItemMove);
 
             moveButton.setFocusableInTouchMode(false);
             moveButton.setFocusable(false);
-
-//            moveButton.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    guiListener.onItemMoveClicked(position, item);
-//                }
-//            });
-
             moveButton.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
@@ -142,6 +132,18 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
                             break;
                     }
                     return false;
+                }
+            });
+
+            //dodawanie nowego elementu
+            ImageButton addButton = (ImageButton) itemView.findViewById(R.id.buttonItemAddHere);
+
+            addButton.setFocusableInTouchMode(false);
+            addButton.setFocusable(false);
+            addButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    guiListener.onAddItemClicked(position);
                 }
             });
 

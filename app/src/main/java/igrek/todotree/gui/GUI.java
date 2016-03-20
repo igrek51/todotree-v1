@@ -48,7 +48,7 @@ public class GUI extends GUIBase {
     public void showItemsList(final TreeItem currentItem) {
         View itemsListLayout = setMainContentLayout(R.layout.items_list);
 
-        itemsListView = (TreeListView) itemsListLayout.findViewById(R.id.treelistview1);
+        itemsListView = (TreeListView) itemsListLayout.findViewById(R.id.treeItemsList);
 
         itemsListView.init(activity, guiListener);
 
@@ -62,8 +62,8 @@ public class GUI extends GUIBase {
     public void showEditItemPanel(final TreeItem item, TreeItem parent) {
         View editItemContentLayout = setMainContentLayout(R.layout.edit_item_content);
 
-        etEditItem = (EditText) editItemContentLayout.findViewById(R.id.et_edit_item);
-        Button buttonSaveItem = (Button) editItemContentLayout.findViewById(R.id.button_save_item);
+        etEditItem = (EditText) editItemContentLayout.findViewById(R.id.etEditItemContent);
+        Button buttonSaveItem = (Button) editItemContentLayout.findViewById(R.id.buttonSaveItem);
         Button buttonEditCancel = (Button) editItemContentLayout.findViewById(R.id.buttonEditCancel);
 
         setTitle(parent.getContent());

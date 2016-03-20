@@ -10,7 +10,7 @@
     tools:context="igrek.todotree.MainActivity">
 
     <igrek.todotree.gui.treelist.TreeListView
-        android:id="@+id/treelistview1"
+        android:id="@+id/treeItemsList"
         android:background="#0000"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
