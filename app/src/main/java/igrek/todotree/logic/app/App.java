@@ -12,14 +12,13 @@ import igrek.todotree.logic.datatree.TreeManager;
 import igrek.todotree.logic.exceptions.NoSuperItemException;
 import igrek.todotree.system.output.Output;
 
-//  WERSJA v1.02
-//TODO: padding dla przycisków akcji (zwiększenie aktywnego pola)
+//  WERSJA v1.03
 
 //  NOWE FUNKCJONALNOŚCI
 //TODO: kopiowanie i wklejanie elementów
 //TODO: zaznaczanie wielu elementów + usuwanie, kopiowanie, wycinanie
 //TODO: podczas edycji, przyciski przesuwania kursora (do początku, 1 w lewo, 1 w prawo, do końca), zaznacz wszystko
-//TODO: minimalizacja aplikacji i wyjście z aplikacji (z zapisem i bez zapisu bazy), szybkie wyjście
+//TODO: menu opcji: minimalizacja aplikacji i wyjście z aplikacji (z zapisem i bez zapisu bazy), szybkie wyjście
 //TODO: różne akcje na kliknięcie elementu: (wejście - folder, edycja - element), przycisk wejścia dla pojedynczych elementów
 //TODO: akcja long pressed do tree itemów - wybór większej ilości opcji: multiselect, utworzenie nowego przed
 //TODO: gesty do obsługi powrotu w górę, dodania nowego elementu, wejścia w element
