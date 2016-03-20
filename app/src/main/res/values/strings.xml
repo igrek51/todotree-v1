@@ -1,7 +1,14 @@
 <resources>
     <string name="app_name">ToDo Tree</string>
-    <string name="action_settings">Settings</string>
-    <string name="example_item">Example item</string>
+
+    <string name="action_settings">Ustawienia</string>
+    <string name="action_minimize">Minimalizuj</string>
+    <string name="action_exit_without_saving">Wyjdź bez zapisywania</string>
+    <string name="action_save_exit">Zapisz i wyjdź</string>
+    <string name="action_reload">Wczytaj ponownie</string>
+    <string name="action_save">Zapisz</string>
+
+    <string name="example_item">Example Item content</string>
     <string name="list_txt">Lista:</string>
     <string name="editButton">Edytuj</string>
     <string name="button_save">Zapisz</string>

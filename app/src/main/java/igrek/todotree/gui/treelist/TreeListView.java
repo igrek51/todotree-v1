@@ -62,6 +62,9 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
 
     private final float ITEMS_REPLACE_COVER = 0.4f;
 
+    private final int HOVER_BORDER_THICKNESS = 5;
+    private final int HOVER_BORDER_COLOR = 0xccb0b0b0;
+
     public TreeListView(Context context) {
         super(context);
     }
@@ -190,9 +193,8 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
 
         Paint paint = new Paint();
         paint.setStyle(Paint.Style.STROKE);
-        int LINE_THICKNESS = 5;
-        paint.setStrokeWidth(LINE_THICKNESS);
-        paint.setColor(0xcc505050);
+        paint.setStrokeWidth(HOVER_BORDER_THICKNESS);
+        paint.setColor(HOVER_BORDER_COLOR);
 
         can.drawBitmap(bitmap, 0, 0, null);
         can.drawRect(rect, paint);

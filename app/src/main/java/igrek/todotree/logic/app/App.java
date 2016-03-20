@@ -13,15 +13,18 @@ import igrek.todotree.logic.exceptions.NoSuperItemException;
 import igrek.todotree.system.output.Output;
 
 //  WERSJA v1.03
+//TODO: poprawienie layoutów po zmianie theme
+//TODO: menu opcji: minimalizacja aplikacji i wyjście z aplikacji (z zapisem i bez zapisu bazy), szybkie wyjście
+//TODO: zaznaczanie wielu elementów + usuwanie, kopiowanie, przenoszenie, wycinanie
+//TODO: akcja long pressed do tree itemów - wybór większej ilości opcji: multiselect
+//TODO: podczas edycji, przyciski przesuwania kursora (do początku, 1 w lewo, 1 w prawo, do końca), zaznacz wszystko
+//TODO: pole edycyjne multiline przy overflow
+//TODO: multiline tekstu itemu, przy overflowie (różny rozmiar itemów)
 
 //  NOWE FUNKCJONALNOŚCI
 //TODO: kopiowanie i wklejanie elementów
-//TODO: zaznaczanie wielu elementów + usuwanie, kopiowanie, wycinanie
-//TODO: podczas edycji, przyciski przesuwania kursora (do początku, 1 w lewo, 1 w prawo, do końca), zaznacz wszystko
-//TODO: menu opcji: minimalizacja aplikacji i wyjście z aplikacji (z zapisem i bez zapisu bazy), szybkie wyjście
-//TODO: różne akcje na kliknięcie elementu: (wejście - folder, edycja - element), przycisk wejścia dla pojedynczych elementów
-//TODO: akcja long pressed do tree itemów - wybór większej ilości opcji: multiselect, utworzenie nowego przed
 //TODO: gesty do obsługi powrotu w górę, dodania nowego elementu, wejścia w element
+//TODO: różne akcje na kliknięcie elementu: (wejście - folder, edycja - element), przycisk wejścia dla pojedynczych elementów
 //TODO: wchodzenie do środka drzewa poprzez gesty (smyranie w prawo), w górę (smyranie w lewo)
 //TODO: zapisywanie kilku ostatnich wersji bazy danych (backup)
 //TODO: system logów z wieloma poziomami (info - jeden z poziomów, wyświetlany użytkownikowi)
@@ -30,7 +33,8 @@ import igrek.todotree.system.output.Output;
 //TODO: klasy elementów: checkable (z pamięcią stanu), separator
 //TODO: breadcrumbs przy nazwie aktualnego elementu
 //TODO: tryb landscape screen przy pisaniu z klawiatury ekranowej
-//TODO: przesuwanie elementów na koniec, na początek listy
+//TODO: zapisanie stałej konfiguracji w Config lub XML
+//TODO: przywrócenie minSdkVersion 13
 
 //TODO: KONFIGURACJA:
 //TODO: ekran konfiguracji
@@ -38,12 +42,10 @@ import igrek.todotree.system.output.Output;
 //TODO: shared preferences: zautomatyzowanie w celu konfiguracji, definicja: typ, nazwa, wartość domyślna, refleksja, automatyczny zapis, odczyt, generowanie fomrularza, tryb landscape screen przy pisaniu z klawiatury ekranowej
 
 //  WYGLĄD
-//TODO: multiline tekstu itemu, przy overflowie (różny rozmiar itemów)
-//TODO: motyw kolorystyczny, zapisanie wszystkich kolorów w Config lub w xml
-//TODO: ustalenie marginesów w layoutach i wypozycjonowanie elementów
+//TODO: liczebność elementów folderu jako osobny textedit z szarym kolorem i wyrównany do prawej, w tytule rodzica to samo
+//TODO: motyw kolorystyczny, pasek stanu, zapisanie wszystkich kolorów w xml
+//TODO: zrobić porządek w stylach: layout i values/styles
 //TODO: konfiguracja: wyświetlacz zawsze zapalony, wielkość czcionki, marginesy między elementami
-//TODO: pole edycyjne multiline przy overflow
-//TODO: zmiana wyglądu obrazków z drawable (przycisk +)
 //TODO: ikona aplikacji
 
 public class App extends BaseApp implements GUIListener {
@@ -71,7 +73,6 @@ public class App extends BaseApp implements GUIListener {
 
     @Override
     public void quit() {
-        treeManager.saveRootTree(files, preferences);
         preferences.preferencesSave();
         super.quit();
     }
@@ -80,6 +81,25 @@ public class App extends BaseApp implements GUIListener {
     public boolean optionsSelect(int id) {
         if (id == R.id.action_settings) {
 
+            return true;
+        }else if (id == R.id.action_minimize) {
+            minimize();
+            return true;
+        }else if (id == R.id.action_exit_without_saving) {
+            exitApp(false);
+            return true;
+        }else if (id == R.id.action_save_exit) {
+            exitApp(true);
+            return true;
+        }else if (id == R.id.action_save) {
+            treeManager.saveRootTree(files, preferences);
+            showInfo("Zapisano bazę danych.");
+            return true;
+        }else if (id == R.id.action_reload) {
+            treeManager = new TreeManager();
+            treeManager.loadRootTree(files, preferences);
+            updateItemsList();
+            showInfo("Wczytano bazę danych.");
             return true;
         }
         return false;
@@ -124,16 +144,16 @@ public class App extends BaseApp implements GUIListener {
 
     private void removeItem(int position) {
         treeManager.getCurrentItem().remove(position);
-        gui.updateItemsList(treeManager.getCurrentItem());
+        updateItemsList();
         showInfo("Usunięto element.");
     }
 
     public void goUp() {
         try {
             treeManager.goUp();
-            gui.updateItemsList(treeManager.getCurrentItem());
+            updateItemsList();
         } catch (NoSuperItemException e) {
-            quit();
+            exitApp(true);
         }
     }
 
@@ -144,6 +164,18 @@ public class App extends BaseApp implements GUIListener {
             gui.hideSoftKeyboard();
             discardEditingItem();
         }
+    }
+
+    private void exitApp(boolean withSaving){
+        if(withSaving) {
+            treeManager.saveRootTree(files, preferences);
+        }
+        quit();
+    }
+
+    private void updateItemsList(){
+        gui.updateItemsList(treeManager.getCurrentItem());
+        state = AppState.ITEMS_LIST;
     }
 
 
@@ -165,7 +197,7 @@ public class App extends BaseApp implements GUIListener {
     @Override
     public void onItemClicked(int position, TreeItem item) {
         treeManager.goInto(position);
-        gui.updateItemsList(treeManager.getCurrentItem());
+        updateItemsList();
     }
 
     @Override
