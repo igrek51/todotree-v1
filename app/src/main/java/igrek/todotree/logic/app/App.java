@@ -13,13 +13,12 @@ import igrek.todotree.logic.exceptions.NoSuperItemException;
 import igrek.todotree.system.output.Output;
 
 //  WERSJA v1.03
-//TODO: poprawienie layoutów po zmianie theme
-//TODO: menu opcji: minimalizacja aplikacji i wyjście z aplikacji (z zapisem i bez zapisu bazy), szybkie wyjście
 //TODO: zaznaczanie wielu elementów + usuwanie, kopiowanie, przenoszenie, wycinanie
 //TODO: akcja long pressed do tree itemów - wybór większej ilości opcji: multiselect
 //TODO: podczas edycji, przyciski przesuwania kursora (do początku, 1 w lewo, 1 w prawo, do końca), zaznacz wszystko
 //TODO: pole edycyjne multiline przy overflow
 //TODO: multiline tekstu itemu, przy overflowie (różny rozmiar itemów)
+//TODO: poprawienie layoutów po zmianie theme
 
 //  NOWE FUNKCJONALNOŚCI
 //TODO: kopiowanie i wklejanie elementów
