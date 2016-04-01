@@ -7,6 +7,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -16,11 +18,13 @@ import java.util.List;
 import igrek.todotree.R;
 import igrek.todotree.gui.GUIListener;
 import igrek.todotree.logic.datatree.TreeItem;
+import igrek.todotree.system.output.Output;
 
 public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 
     Context context;
     List<TreeItem> dataSource;
+    List<Integer> selections = null;
     GUIListener guiListener;
     TreeListView listView;
 
@@ -42,6 +46,10 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
         return dataSource.get(position);
     }
 
+    public void setSelections(List<Integer> selections) {
+        this.selections = selections;
+    }
+
     @Override
     public int getCount() {
         return dataSource.size() + 1;
@@ -53,8 +61,6 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
         if(position >= dataSource.size()) return -1;
         return (long) position;
     }
-
-
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
@@ -146,6 +152,30 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
                     guiListener.onAddItemClicked(position);
                 }
             });
+
+            //checkbox zaznaczania
+            CheckBox cbItemSelected = (CheckBox) itemView.findViewById(R.id.cbItemSelected);
+
+
+            if(selections == null){
+                //cbItemSelected.setVisibility(View.GONE);
+            Output.log("selections = null");
+            }else{
+            Output.log("selections != null");
+                //cbItemSelected.setVisibility(View.VISIBLE);
+                if(selections.contains(position)){
+                    cbItemSelected.setChecked(true);
+            Output.log("checked: "+position);
+                }else{
+                    cbItemSelected.setChecked(false);
+                }
+                cbItemSelected.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        guiListener.onSelectedClicked(position, item, isChecked);
+                    }
+                });
+            }
 
             return itemView;
         }

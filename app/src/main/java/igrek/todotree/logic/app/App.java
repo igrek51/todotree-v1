@@ -13,12 +13,14 @@ import igrek.todotree.logic.exceptions.NoSuperItemException;
 import igrek.todotree.system.output.Output;
 
 //  WERSJA v1.03
+//TODO: poprawienie layoutów po zmianie theme
+//TODO: zrobić porządek w stylach: layout i values/styles
+
 //TODO: zaznaczanie wielu elementów + usuwanie, kopiowanie, przenoszenie, wycinanie
-//TODO: akcja long pressed do tree itemów - wybór większej ilości opcji: multiselect
+//TODO: akcja long pressed do tree itemów - wybór większej ilości opcji: multiselect (zmiana przycisków akcji na inne funkcje)
 //TODO: podczas edycji, przyciski przesuwania kursora (do początku, 1 w lewo, 1 w prawo, do końca), zaznacz wszystko
 //TODO: pole edycyjne multiline przy overflow
-//TODO: multiline tekstu itemu, przy overflowie (różny rozmiar itemów)
-//TODO: poprawienie layoutów po zmianie theme
+//TODO: multiline tekstu itemu, przy overflowie (różny rozmiar itemów - poprawienie przewijania i przemieszczania)
 
 //  NOWE FUNKCJONALNOŚCI
 //TODO: kopiowanie i wklejanie elementów
@@ -32,6 +34,7 @@ import igrek.todotree.system.output.Output;
 //TODO: klasy elementów: checkable (z pamięcią stanu), separator
 //TODO: breadcrumbs przy nazwie aktualnego elementu
 //TODO: tryb landscape screen przy pisaniu z klawiatury ekranowej
+//TODO: powrót w górę scrolluje lista do rodzica
 //TODO: zapisanie stałej konfiguracji w Config lub XML
 //TODO: przywrócenie minSdkVersion 13
 
@@ -42,8 +45,7 @@ import igrek.todotree.system.output.Output;
 
 //  WYGLĄD
 //TODO: liczebność elementów folderu jako osobny textedit z szarym kolorem i wyrównany do prawej, w tytule rodzica to samo
-//TODO: motyw kolorystyczny, pasek stanu, zapisanie wszystkich kolorów w xml
-//TODO: zrobić porządek w stylach: layout i values/styles
+//TODO: motyw kolorystyczny, pasek stanu, zapisanie wszystkich kolorów w xml, metoda do wyciągania kolorów z zasobów
 //TODO: konfiguracja: wyświetlacz zawsze zapalony, wielkość czcionki, marginesy między elementami
 //TODO: ikona aplikacji
 
@@ -173,7 +175,7 @@ public class App extends BaseApp implements GUIListener {
     }
 
     private void updateItemsList(){
-        gui.updateItemsList(treeManager.getCurrentItem());
+        gui.updateItemsList(treeManager.getCurrentItem(), treeManager.getSelectedItems());
         state = AppState.ITEMS_LIST;
     }
 
@@ -246,5 +248,32 @@ public class App extends BaseApp implements GUIListener {
     public void onCancelEditedItem(TreeItem editedItem) {
         gui.hideSoftKeyboard();
         discardEditingItem();
+    }
+
+    @Override
+    public void onSelectedClicked(int position, TreeItem item, boolean checked) {
+        treeManager.setItemSelected(position, checked);
+        updateItemsList();
+    }
+
+    @Override
+    public void onItemLongClick(int position) {
+        Output.log("long click");
+        if(!treeManager.isSelectionMode()){
+            treeManager.startSelectionMode();
+            treeManager.setItemSelected(position, true);
+            Output.log("start selection mode");
+        }else{
+            treeManager.setItemSelected(position, true);
+            Output.log("continue selection mode");
+        }
+
+        for(Integer itemPos : treeManager.getSelectedItems()){
+            Output.log("selected: "+itemPos.intValue());
+        }
+
+        updateItemsList();
+
+
     }
 }

@@ -29,4 +29,8 @@ public interface GUIListener {
      * @return nowa lista elementów
      */
     List<TreeItem> onItemMoved(int position, int step);
+
+    void onItemLongClick(int position);
+
+    void onSelectedClicked(int position, TreeItem item, boolean checked);
 }

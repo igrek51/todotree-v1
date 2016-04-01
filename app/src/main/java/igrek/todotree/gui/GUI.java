@@ -8,6 +8,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 
+import java.util.List;
+
 import igrek.todotree.R;
 import igrek.todotree.gui.treelist.TreeListView;
 import igrek.todotree.logic.datatree.TreeItem;
@@ -56,7 +58,7 @@ public class GUI extends GUIBase {
 
         //itemsListView.setOnTouchListener(this);
 
-        updateItemsList(currentItem);
+        updateItemsList(currentItem, null);
     }
 
     public void showEditItemPanel(final TreeItem item, TreeItem parent) {
@@ -101,7 +103,7 @@ public class GUI extends GUIBase {
         showSoftKeyboard(etEditItem);
     }
 
-    public void updateItemsList(TreeItem currentItem) {
+    public void updateItemsList(TreeItem currentItem, List<Integer> selectedPositions) {
         //tytuł gałęzi
         StringBuilder sb = new StringBuilder(currentItem.getContent());
         if(!currentItem.isEmpty()) {
@@ -111,7 +113,11 @@ public class GUI extends GUIBase {
         }
         setTitle(sb.toString());
         //lista elementów
-        itemsListView.setItems(currentItem.getChildren());
+        if(selectedPositions!=null){
+            itemsListView.setItemsAndSelected(currentItem.getChildren(), selectedPositions);
+        }else {
+            itemsListView.setItems(currentItem.getChildren());
+        }
     }
 
     public void hideSoftKeyboard() {

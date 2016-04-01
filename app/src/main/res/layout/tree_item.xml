@@ -32,6 +32,17 @@
         android:layout_toRightOf="@+id/buttonItemMove"
         android:layout_toEndOf="@+id/buttonItemMove"/>
 
+    <CheckBox
+        android:id="@+id/cbItemSelected"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|center_vertical"
+        android:layout_toLeftOf="@+id/buttonItemAddHere"
+        android:layout_toStartOf="@+id/buttonItemAddHere"
+        android:gravity="center_vertical|center_horizontal"
+        android:padding="0dp"
+        android:text="dupa"/>
+
     <ImageButton
         android:id="@+id/buttonItemAddHere"
         android:layout_width="wrap_content"

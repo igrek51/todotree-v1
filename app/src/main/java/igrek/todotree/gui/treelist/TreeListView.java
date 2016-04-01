@@ -85,6 +85,8 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
         DisplayMetrics metrics = context.getResources().getDisplayMetrics();
         SMOOTH_SCROLL_EDGE_PX = (int) (SMOOTH_SCROLL_EDGE_DP / metrics.density);
         setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+//        setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+//        setItemsCanFocus(false);
 
         adapter = new TreeItemAdapter(context, null, guiListener, this);
         setAdapter(adapter);
@@ -133,6 +135,11 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
         }
     }
 
+    public void setItemsAndSelected(List<TreeItem> items, List<Integer> selectedPositions){
+        adapter.setSelections(selectedPositions);
+        setItems(items);
+    }
+
     public void setItems(List<TreeItem> items) {
         this.items = items;
         adapter.setDataSource(items);
@@ -157,8 +164,8 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
             //nowy element na końcu
             guiListener.onAddItemClicked();
         } else {
-            //nowy element w wybranym miejscu
-            guiListener.onAddItemClicked(position);
+            //tryb zaznaczania elementów
+            guiListener.onItemLongClick(position);
         }
         return true;
     }

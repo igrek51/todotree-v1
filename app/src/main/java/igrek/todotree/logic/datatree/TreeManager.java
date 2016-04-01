@@ -2,6 +2,8 @@ package igrek.todotree.logic.datatree;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 import igrek.todotree.logic.datatree.serializer.TreeSerializer;
 import igrek.todotree.logic.exceptions.NoSuperItemException;
@@ -16,6 +18,8 @@ public class TreeManager {
 
     private TreeItem editItem = null;
     private Integer newItemPosition = null;
+
+    private List<Integer> selectedPositions = null;
 
     private TreeSerializer treeSerializer = new TreeSerializer();
 
@@ -54,6 +58,14 @@ public class TreeManager {
 
     public Integer getNewItemPosition() {
         return newItemPosition;
+    }
+
+    public List<Integer> getSelectedItems() {
+        return selectedPositions;
+    }
+
+    public boolean isSelectionMode(){
+        return selectedPositions != null;
     }
 
     //  NAWIGACJA
@@ -256,6 +268,44 @@ public class TreeManager {
     private boolean isCharInSet(char c, String set) {
         for (int i = 0; i < set.length(); i++) {
             if (set.charAt(i) == c) return true;
+        }
+        return false;
+    }
+
+    //  ZAZNACZANIE ELEMENTÓW
+
+    public void startSelectionMode(){
+        selectedPositions = new ArrayList<>();
+    }
+
+    public void cancelSelection(){
+        selectedPositions = null;
+    }
+
+    public void setItemSelected(int position, boolean selectedState){
+        if(!isSelectionMode()){
+            startSelectionMode();
+        }
+        if(selectedState == true){
+            if(isItemSelected(position)){
+                return;
+            }else{
+                selectedPositions.add(position);
+            }
+        }else{
+            if(isItemSelected(position)){
+                selectedPositions.remove(new Integer(position));
+            }else{
+                return;
+            }
+        }
+    }
+
+    public boolean isItemSelected(int position){
+        for(Integer pos : selectedPositions){
+            if(pos.intValue() == position){
+                return true;
+            }
         }
         return false;
     }
