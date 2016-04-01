@@ -155,7 +155,8 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 
             //checkbox zaznaczania
             CheckBox cbItemSelected = (CheckBox) itemView.findViewById(R.id.cbItemSelected);
-
+            cbItemSelected.setFocusableInTouchMode(false);
+            cbItemSelected.setFocusable(false);
 
             if(selections == null){
                 //cbItemSelected.setVisibility(View.GONE);

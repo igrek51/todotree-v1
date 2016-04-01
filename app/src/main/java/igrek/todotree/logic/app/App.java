@@ -13,9 +13,6 @@ import igrek.todotree.logic.exceptions.NoSuperItemException;
 import igrek.todotree.system.output.Output;
 
 //  WERSJA v1.03
-//TODO: poprawienie layoutów po zmianie theme
-//TODO: zrobić porządek w stylach: layout i values/styles
-
 //TODO: zaznaczanie wielu elementów + usuwanie, kopiowanie, przenoszenie, wycinanie
 //TODO: akcja long pressed do tree itemów - wybór większej ilości opcji: multiselect (zmiana przycisków akcji na inne funkcje)
 //TODO: podczas edycji, przyciski przesuwania kursora (do początku, 1 w lewo, 1 w prawo, do końca), zaznacz wszystko
@@ -36,7 +33,6 @@ import igrek.todotree.system.output.Output;
 //TODO: tryb landscape screen przy pisaniu z klawiatury ekranowej
 //TODO: powrót w górę scrolluje lista do rodzica
 //TODO: zapisanie stałej konfiguracji w Config lub XML
-//TODO: przywrócenie minSdkVersion 13
 
 //TODO: KONFIGURACJA:
 //TODO: ekran konfiguracji
