@@ -32,4 +32,20 @@
         android:orderInCategory="100"
         android:title="@string/action_save_exit"
         app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/action_copy"
+        android:orderInCategory="100"
+        android:title="@string/action_copy"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_cut"
+        android:orderInCategory="100"
+        android:title="@string/action_cut"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_paste"
+        android:orderInCategory="100"
+        android:title="@string/action_paste"
+        app:showAsAction="never"/>
 </menu>

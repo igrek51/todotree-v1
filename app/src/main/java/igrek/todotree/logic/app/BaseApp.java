@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 
@@ -17,6 +19,7 @@ public abstract class BaseApp implements ITouchController {
 
     public AppCompatActivity activity;
     private Thread.UncaughtExceptionHandler defaultUEH;
+    protected Menu menu;
 
     boolean running = true;
 
@@ -105,6 +108,17 @@ public abstract class BaseApp implements ITouchController {
             Output.log("Zmiana orientacji ekranu: landscape");
         } else if (orientation == Configuration.ORIENTATION_PORTRAIT) {
             Output.log("Zmiana orientacji ekranu: portrait");
+        }
+    }
+
+    public void menuInit(Menu menu){
+        this.menu = menu;
+    }
+
+    public void setMenuItemVisible(int id, boolean visibility){
+        MenuItem item = menu.findItem(id);
+        if(item != null) {
+            item.setVisible(visibility);
         }
     }
 

@@ -18,7 +18,6 @@ import java.util.List;
 import igrek.todotree.R;
 import igrek.todotree.gui.GUIListener;
 import igrek.todotree.logic.datatree.TreeItem;
-import igrek.todotree.system.output.Output;
 
 public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 
@@ -31,7 +30,7 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
     public TreeItemAdapter(Context context, List<TreeItem> dataSource, GUIListener guiListener, TreeListView listView) {
         super(context, 0, new ArrayList<TreeItem>());
         this.context = context;
-        if(dataSource == null) dataSource = new ArrayList<>();
+        if (dataSource == null) dataSource = new ArrayList<>();
         this.dataSource = dataSource;
         this.guiListener = guiListener;
         this.listView = listView;
@@ -56,9 +55,9 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
     }
 
     @Override
-    public long getItemId(int position){
-        if(position < 0) return -1;
-        if(position >= dataSource.size()) return -1;
+    public long getItemId(int position) {
+        if (position < 0) return -1;
+        if (position >= dataSource.size()) return -1;
         return (long) position;
     }
 
@@ -85,6 +84,7 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
             final View itemView = inflater.inflate(R.layout.tree_item, parent, false);
             final TreeItem item = dataSource.get(position);
 
+            //zawartość tekstowa elementu
             TextView textView = (TextView) itemView.findViewById(R.id.tvItemContent);
             StringBuilder contentBuilder = new StringBuilder(item.getContent());
             if (!item.isEmpty()) {
@@ -99,19 +99,21 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 
             //edycja elementu
             ImageButton editButton = (ImageButton) itemView.findViewById(R.id.buttonItemEdit);
-
             editButton.setFocusableInTouchMode(false);
             editButton.setFocusable(false);
-            editButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    guiListener.onItemEditClicked(position, item);
-                }
-            });
+            if (selections == null) {
+                editButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        guiListener.onItemEditClicked(position, item);
+                    }
+                });
+            } else {
+                editButton.setVisibility(View.GONE);
+            }
 
             //usuwanie elementu
             ImageButton removeButton = (ImageButton) itemView.findViewById(R.id.buttonItemRemove);
-
             removeButton.setFocusableInTouchMode(false);
             removeButton.setFocusable(false);
             removeButton.setOnClickListener(new View.OnClickListener() {
@@ -123,51 +125,54 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 
             //przesuwanie
             ImageButton moveButton = (ImageButton) itemView.findViewById(R.id.buttonItemMove);
-
             moveButton.setFocusableInTouchMode(false);
             moveButton.setFocusable(false);
-            moveButton.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    switch (event.getAction()) {
-                        case MotionEvent.ACTION_DOWN:
-                            listView.onItemMoveButtonPressed(position, item, itemView, event.getX(), event.getY());
-                            break;
-                        case MotionEvent.ACTION_UP:
-                            listView.onItemMoveButtonReleased(position, item, itemView, event.getX(), event.getY());
-                            break;
+            if (selections == null) {
+                moveButton.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        switch (event.getAction()) {
+                            case MotionEvent.ACTION_DOWN:
+                                listView.onItemMoveButtonPressed(position, item, itemView, event.getX(), event.getY());
+                                break;
+                            case MotionEvent.ACTION_UP:
+                                listView.onItemMoveButtonReleased(position, item, itemView, event.getX(), event.getY());
+                                break;
+                        }
+                        return false;
                     }
-                    return false;
-                }
-            });
+                });
+            } else {
+                moveButton.setVisibility(View.GONE);
+            }
 
             //dodawanie nowego elementu
             ImageButton addButton = (ImageButton) itemView.findViewById(R.id.buttonItemAddHere);
-
             addButton.setFocusableInTouchMode(false);
             addButton.setFocusable(false);
-            addButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    guiListener.onAddItemClicked(position);
-                }
-            });
+            if (selections == null) {
+                addButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        guiListener.onAddItemClicked(position);
+                    }
+                });
+            } else {
+                addButton.setVisibility(View.GONE);
+            }
 
-            //checkbox zaznaczania
+            //checkbox do zaznaczania wielu elementów
             CheckBox cbItemSelected = (CheckBox) itemView.findViewById(R.id.cbItemSelected);
             cbItemSelected.setFocusableInTouchMode(false);
             cbItemSelected.setFocusable(false);
 
-            if(selections == null){
-                //cbItemSelected.setVisibility(View.GONE);
-            Output.log("selections = null");
-            }else{
-            Output.log("selections != null");
-                //cbItemSelected.setVisibility(View.VISIBLE);
-                if(selections.contains(position)){
+            if (selections == null) {
+                cbItemSelected.setVisibility(View.GONE);
+            } else {
+                cbItemSelected.setVisibility(View.VISIBLE);
+                if (selections.contains(position)) {
                     cbItemSelected.setChecked(true);
-            Output.log("checked: "+position);
-                }else{
+                } else {
                     cbItemSelected.setChecked(false);
                 }
                 cbItemSelected.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

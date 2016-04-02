@@ -13,4 +13,8 @@
     <string name="editButton">Edytuj</string>
     <string name="button_save">Zapisz</string>
     <string name="buttonEditCancel">Anuluj</string>
+
+    <string name="action_copy">Kopiuj</string>
+    <string name="action_cut">Wytnij</string>
+    <string name="action_paste">Wklej</string>
 </resources>

@@ -23,6 +23,8 @@ public class TreeManager {
 
     private TreeSerializer treeSerializer = new TreeSerializer();
 
+    private List<TreeItem> clipboard = null;
+
     public TreeManager() {
         rootItem = new TreeItem(null, "root");
         currentItem = rootItem;
@@ -58,14 +60,6 @@ public class TreeManager {
 
     public Integer getNewItemPosition() {
         return newItemPosition;
-    }
-
-    public List<Integer> getSelectedItems() {
-        return selectedPositions;
-    }
-
-    public boolean isSelectionMode(){
-        return selectedPositions != null;
     }
 
     //  NAWIGACJA
@@ -274,11 +268,25 @@ public class TreeManager {
 
     //  ZAZNACZANIE ELEMENTÓW
 
+    public List<Integer> getSelectedItems() {
+        return selectedPositions;
+    }
+
+    public int getSelectedItemsCount() {
+        if(selectedPositions == null) return 0;
+        return selectedPositions.size();
+    }
+
+    public boolean isSelectionMode(){
+        if(selectedPositions == null) return false;
+        return selectedPositions.size() > 0;
+    }
+
     public void startSelectionMode(){
         selectedPositions = new ArrayList<>();
     }
 
-    public void cancelSelection(){
+    public void cancelSelectionMode(){
         selectedPositions = null;
     }
 
@@ -295,6 +303,9 @@ public class TreeManager {
         }else{
             if(isItemSelected(position)){
                 selectedPositions.remove(new Integer(position));
+                if(selectedPositions.isEmpty()){
+                    selectedPositions = null;
+                }
             }else{
                 return;
             }
@@ -308,5 +319,46 @@ public class TreeManager {
             }
         }
         return false;
+    }
+
+    public void toggleItemSelected(int position){
+        setItemSelected(position, !isItemSelected(position));
+    }
+
+    //  SCHOWEK
+
+    public List<TreeItem> getClipboard() {
+        return clipboard;
+    }
+
+    public int getClipboardSize() {
+        if(clipboard == null) return 0;
+        return clipboard.size();
+    }
+
+    public boolean isClipboardEmpty(){
+        if(clipboard == null) return true;
+        return clipboard.size() == 0;
+    }
+
+    public void clearClipboard(){
+        clipboard = null;
+    }
+
+    public void addToClipboard(TreeItem item){
+        if(clipboard == null){
+            clipboard = new ArrayList<>();
+        }
+        clipboard.add(new TreeItem(item));
+    }
+
+    public void recopyClipboard(){
+        if(clipboard != null){
+            ArrayList<TreeItem> newClipboard = new ArrayList<>();
+            for(TreeItem item : clipboard){
+                newClipboard.add(new TreeItem(item));
+            }
+            clipboard = newClipboard;
+        }
     }
 }

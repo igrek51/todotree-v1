@@ -113,11 +113,7 @@ public class GUI extends GUIBase {
         }
         setTitle(sb.toString());
         //lista elementów
-        if(selectedPositions!=null){
-            itemsListView.setItemsAndSelected(currentItem.getChildren(), selectedPositions);
-        }else {
-            itemsListView.setItems(currentItem.getChildren());
-        }
+        itemsListView.setItemsAndSelected(currentItem.getChildren(), selectedPositions);
     }
 
     public void hideSoftKeyboard() {

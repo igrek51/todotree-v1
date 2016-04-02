@@ -1,7 +1,10 @@
 package igrek.todotree.logic.app;
 
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import igrek.todotree.R;
@@ -13,8 +16,7 @@ import igrek.todotree.logic.exceptions.NoSuperItemException;
 import igrek.todotree.system.output.Output;
 
 //  WERSJA v1.03
-//TODO: zaznaczanie wielu elementów + usuwanie, kopiowanie, przenoszenie, wycinanie
-//TODO: akcja long pressed do tree itemów - wybór większej ilości opcji: multiselect (zmiana przycisków akcji na inne funkcje)
+//TODO: zmiana widoczności opcji menu przy zaznaczaniu wielu elementów i kopiowaniu (niepusty schowek, niepuste zaznaczenie)
 //TODO: podczas edycji, przyciski przesuwania kursora (do początku, 1 w lewo, 1 w prawo, do końca), zaznacz wszystko
 //TODO: pole edycyjne multiline przy overflow
 //TODO: multiline tekstu itemu, przy overflowie (różny rozmiar itemów - poprawienie przewijania i przemieszczania)
@@ -40,6 +42,7 @@ import igrek.todotree.system.output.Output;
 //TODO: shared preferences: zautomatyzowanie w celu konfiguracji, definicja: typ, nazwa, wartość domyślna, refleksja, automatyczny zapis, odczyt, generowanie fomrularza, tryb landscape screen przy pisaniu z klawiatury ekranowej
 
 //  WYGLĄD
+//TODO: wypozycjonowanie checkboxa do zaznaczania (vertical center)
 //TODO: liczebność elementów folderu jako osobny textedit z szarym kolorem i wyrównany do prawej, w tytule rodzica to samo
 //TODO: motyw kolorystyczny, pasek stanu, zapisanie wszystkich kolorów w xml, metoda do wyciągania kolorów z zasobów
 //TODO: konfiguracja: wyświetlacz zawsze zapalony, wielkość czcionki, marginesy między elementami
@@ -79,25 +82,31 @@ public class App extends BaseApp implements GUIListener {
         if (id == R.id.action_settings) {
 
             return true;
-        }else if (id == R.id.action_minimize) {
+        } else if (id == R.id.action_minimize) {
             minimize();
             return true;
-        }else if (id == R.id.action_exit_without_saving) {
+        } else if (id == R.id.action_exit_without_saving) {
             exitApp(false);
             return true;
-        }else if (id == R.id.action_save_exit) {
+        } else if (id == R.id.action_save_exit) {
             exitApp(true);
             return true;
-        }else if (id == R.id.action_save) {
+        } else if (id == R.id.action_save) {
             treeManager.saveRootTree(files, preferences);
             showInfo("Zapisano bazę danych.");
             return true;
-        }else if (id == R.id.action_reload) {
+        } else if (id == R.id.action_reload) {
             treeManager = new TreeManager();
             treeManager.loadRootTree(files, preferences);
             updateItemsList();
             showInfo("Wczytano bazę danych.");
             return true;
+        } else if (id == R.id.action_copy) {
+            copySelectedItems(true);
+        } else if (id == R.id.action_cut) {
+            cutSelectedItems();
+        } else if (id == R.id.action_paste) {
+            pasteItems();
         }
         return false;
     }
@@ -111,6 +120,15 @@ public class App extends BaseApp implements GUIListener {
 
     public void showInfo(String info) {
         showInfo(info, gui.getMainContent());
+    }
+
+
+    @Override
+    public void menuInit(Menu menu) {
+        super.menuInit(menu);
+        //setMenuItemVisible(R.id.action_copy, false);
+        //        item.setTitle(title);
+        //        item.setIcon(iconRes); //int iconRes
     }
 
 
@@ -145,6 +163,25 @@ public class App extends BaseApp implements GUIListener {
         showInfo("Usunięto element.");
     }
 
+    private void removeSelectedItems(boolean info) {
+        List<Integer> selectedIds = treeManager.getSelectedItems();
+        //posortowanie malejąco (żeby przy usuwaniu nie nadpisać indeksów)
+        Collections.sort(selectedIds, new Comparator<Integer>() {
+            @Override
+            public int compare(Integer lhs, Integer rhs) {
+                return rhs.compareTo(lhs);
+            }
+        });
+        for(Integer id : selectedIds){
+            treeManager.getCurrentItem().remove(id);
+        }
+        if(info) {
+            showInfo("Usunięto zaznaczone elementy: " + selectedIds.size());
+        }
+        treeManager.cancelSelectionMode();
+        updateItemsList();
+    }
+
     public void goUp() {
         try {
             treeManager.goUp();
@@ -156,23 +193,62 @@ public class App extends BaseApp implements GUIListener {
 
     private void backClicked() {
         if (state == AppState.ITEMS_LIST) {
-            goUp();
+            if (treeManager.isSelectionMode()) {
+                treeManager.cancelSelectionMode();
+            } else {
+                goUp();
+            }
+            updateItemsList();
         } else if (state == AppState.EDIT_ITEM_CONTENT) {
             gui.hideSoftKeyboard();
             discardEditingItem();
         }
     }
 
-    private void exitApp(boolean withSaving){
-        if(withSaving) {
+    private void exitApp(boolean withSaving) {
+        if (withSaving) {
             treeManager.saveRootTree(files, preferences);
         }
         quit();
     }
 
-    private void updateItemsList(){
+    private void updateItemsList() {
         gui.updateItemsList(treeManager.getCurrentItem(), treeManager.getSelectedItems());
         state = AppState.ITEMS_LIST;
+    }
+
+    private void copySelectedItems(boolean info) {
+        if (treeManager.isSelectionMode()) {
+            treeManager.clearClipboard();
+            for(Integer selectedItemId : treeManager.getSelectedItems()) {
+                TreeItem selectedItem = treeManager.getCurrentItem().getChild(selectedItemId);
+                treeManager.addToClipboard(selectedItem);
+            }
+            if(info){
+                showInfo("Skopiowano zaznaczone elementy: " + treeManager.getSelectedItemsCount());
+            }
+        }
+    }
+
+    private void cutSelectedItems() {
+        copySelectedItems(false);
+        showInfo("Wycięto zaznaczone elementy: " + treeManager.getSelectedItemsCount());
+        removeSelectedItems(false);
+    }
+
+    private void pasteItems(){
+        if(treeManager.isClipboardEmpty()){
+            showInfo("Schowek jest pusty.");
+        }else{
+            for(TreeItem clipboardItem : treeManager.getClipboard()){
+                clipboardItem.setParent(treeManager.getCurrentItem());
+                treeManager.addToCurrent(clipboardItem);
+            }
+            showInfo("Wklejono elementy: " + treeManager.getClipboardSize());
+            treeManager.recopyClipboard();
+            updateItemsList();
+        }
+
     }
 
 
@@ -183,28 +259,38 @@ public class App extends BaseApp implements GUIListener {
 
     @Override
     public void onAddItemClicked() {
-        newItem(-1);
+        onAddItemClicked(-1);
     }
 
     @Override
     public void onAddItemClicked(int position) {
+        treeManager.cancelSelectionMode();
         newItem(position);
     }
 
     @Override
     public void onItemClicked(int position, TreeItem item) {
-        treeManager.goInto(position);
+        if(treeManager.isSelectionMode()) {
+            treeManager.toggleItemSelected(position);
+        }else{
+            treeManager.goInto(position);
+        }
         updateItemsList();
     }
 
     @Override
     public void onItemEditClicked(int position, TreeItem item) {
+        treeManager.cancelSelectionMode();
         editItem(item, treeManager.getCurrentItem());
     }
 
     @Override
     public void onItemRemoveClicked(int position, TreeItem item) {
-        removeItem(position);
+        if (treeManager.isSelectionMode()) {
+            removeSelectedItems(true);
+        } else {
+            removeItem(position);
+        }
     }
 
     @Override
@@ -254,22 +340,12 @@ public class App extends BaseApp implements GUIListener {
 
     @Override
     public void onItemLongClick(int position) {
-        Output.log("long click");
-        if(!treeManager.isSelectionMode()){
+        if (!treeManager.isSelectionMode()) {
             treeManager.startSelectionMode();
             treeManager.setItemSelected(position, true);
-            Output.log("start selection mode");
-        }else{
+        } else {
             treeManager.setItemSelected(position, true);
-            Output.log("continue selection mode");
         }
-
-        for(Integer itemPos : treeManager.getSelectedItems()){
-            Output.log("selected: "+itemPos.intValue());
-        }
-
         updateItemsList();
-
-
     }
 }

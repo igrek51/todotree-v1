@@ -9,15 +9,26 @@ public class TreeItem {
     private List<TreeItem> children;
     private TreeItem parent = null;
 
-    public TreeItem(TreeItem parent) {
+    public TreeItem(TreeItem parent, String content) {
         children = new ArrayList<>();
         this.parent = parent;
-    }
-
-    public TreeItem(TreeItem parent, String content) {
-        this(parent);
         this.content = content;
     }
+
+    /**
+     * konstruktor kopiujący (razem z zawartością), element nadrzędny nie ma rodzica!
+     * @param source    źródłowy element
+     */
+    public TreeItem(TreeItem source) {
+        this.content = source.content;
+        this.children = new ArrayList<>();
+        for(TreeItem sourceChild : source.children){
+            TreeItem newChild = new TreeItem(sourceChild);
+            newChild.parent = this;
+            this.children.add(newChild);
+        }
+    }
+
 
     public String getContent() {
         return content;
@@ -29,6 +40,10 @@ public class TreeItem {
 
     public List<TreeItem> getChildren() {
         return children;
+    }
+
+    public void setParent(TreeItem parent) {
+        this.parent = parent;
     }
 
     public TreeItem getParent() {
