@@ -17,19 +17,27 @@ import igrek.todotree.system.output.Output;
 
 //  WERSJA v1.03
 //TODO: zmiana widoczności opcji menu przy zaznaczaniu wielu elementów i kopiowaniu (niepusty schowek, niepuste zaznaczenie)
+
 //TODO: podczas edycji, przyciski przesuwania kursora (do początku, 1 w lewo, 1 w prawo, do końca), zaznacz wszystko
+
 //TODO: pole edycyjne multiline przy overflow
 //TODO: multiline tekstu itemu, przy overflowie (różny rozmiar itemów - poprawienie przewijania i przemieszczania)
+//TODO: przewijanie do ostatniego itemu po powrocie (w górę, zapis, anulowanie edycji)
 
 //  NOWE FUNKCJONALNOŚCI
-//TODO: kopiowanie i wklejanie elementów
 //TODO: gesty do obsługi powrotu w górę, dodania nowego elementu, wejścia w element
-//TODO: różne akcje na kliknięcie elementu: (wejście - folder, edycja - element), przycisk wejścia dla pojedynczych elementów
 //TODO: wchodzenie do środka drzewa poprzez gesty (smyranie w prawo), w górę (smyranie w lewo)
+//TODO: różne akcje na kliknięcie elementu: (wejście - folder, edycja - element), przycisk wejścia dla pojedynczych elementów
 //TODO: zapisywanie kilku ostatnich wersji bazy danych (backup)
 //TODO: system logów z wieloma poziomami (info - jeden z poziomów, wyświetlany użytkownikowi)
 //TODO: funkcja cofania zmian - zapisywanie modyfikacji, dodawania, usuwania elementów, przesuwania
-//TODO: moduł obliczeń: sumowanie elementów, inline calc
+//TODO: moduł obliczeń: inline calc
+//TODO: moduł obliczeń: sumowanie wielu elementów
+//TODO: wyjście bez zapisywania bazy jeśli nie było zmian
+//TODO: przycisk zaznaczania wszystkich elementów
+//TODO: przewijanie na koniec listy elementów
+//TODO: nieprzykrywanie przycisku plus przez info bar
+//TODO: klawiatura szybkiego wpisywania godzin (i dat)
 //TODO: klasy elementów: checkable (z pamięcią stanu), separator
 //TODO: breadcrumbs przy nazwie aktualnego elementu
 //TODO: tryb landscape screen przy pisaniu z klawiatury ekranowej
