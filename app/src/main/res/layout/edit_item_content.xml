@@ -17,7 +17,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:paddingBottom="16dp"
-        android:paddingTop="16dp"/>
+        android:paddingTop="16dp"
+        android:inputType="textMultiLine"
+        android:scrollbars="vertical"/>
 
     <Button
         android:id="@+id/buttonSaveItem"

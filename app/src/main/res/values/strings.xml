@@ -8,7 +8,7 @@
     <string name="action_reload">Wczytaj ponownie</string>
     <string name="action_save">Zapisz</string>
 
-    <string name="example_item">Example Item content</string>
+    <string name="example_item">Example Item content long long long long ...</string>
     <string name="list_txt">Lista:</string>
     <string name="editButton">Edytuj</string>
     <string name="button_save">Zapisz</string>

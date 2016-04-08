@@ -1,7 +1,9 @@
 package igrek.todotree.gui.treelist;
 
 import android.content.Context;
+import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -10,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -143,7 +146,8 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
                     }
                 });
             } else {
-                moveButton.setVisibility(View.GONE);
+                moveButton.setVisibility(View.INVISIBLE);
+                moveButton.setLayoutParams(new RelativeLayout.LayoutParams(0, 0));
             }
 
             //dodawanie nowego elementu

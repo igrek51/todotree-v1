@@ -16,32 +16,31 @@ import igrek.todotree.logic.exceptions.NoSuperItemException;
 import igrek.todotree.system.output.Output;
 
 //  WERSJA v1.03
-//TODO: zmiana widoczności opcji menu przy zaznaczaniu wielu elementów i kopiowaniu (niepusty schowek, niepuste zaznaczenie)
+//TODO: poprawienie przewijania i przemieszczania dla różnego rozmiaru itemów
+//TODO: przewijanie do ostatniego itemu lub rodzica po powrocie (w górę, zapis, anulowanie edycji)
+//TODO: rescroll po wejsciu do gałęzi
+//TODO: rescroll przy wejściu w tryb zaznaczania (zmiana rozmiaru itemów)
 
-//TODO: podczas edycji, przyciski przesuwania kursora (do początku, 1 w lewo, 1 w prawo, do końca), zaznacz wszystko
+//TODO: nieprzykrywanie przycisku plus przez info bar
 
-//TODO: pole edycyjne multiline przy overflow
-//TODO: multiline tekstu itemu, przy overflowie (różny rozmiar itemów - poprawienie przewijania i przemieszczania)
-//TODO: przewijanie do ostatniego itemu po powrocie (w górę, zapis, anulowanie edycji)
+//TODO: szybkie przewijanie na koniec i początek listy elementów
 
 //  NOWE FUNKCJONALNOŚCI
-//TODO: gesty do obsługi powrotu w górę, dodania nowego elementu, wejścia w element
-//TODO: wchodzenie do środka drzewa poprzez gesty (smyranie w prawo), w górę (smyranie w lewo)
+//TODO: zmiana widoczności opcji menu przy zaznaczaniu wielu elementów i kopiowaniu (niepusty schowek, niepuste zaznaczenie)
+//TODO: podczas edycji, przyciski przesuwania kursora (do początku, 1 w lewo, 1 w prawo, do końca), zaznacz wszystko
+//TODO: gesty do obsługi powrotu w górę (smyranie w lewo), dodania nowego elementu, wejścia w element (smyranie w prawo)
 //TODO: różne akcje na kliknięcie elementu: (wejście - folder, edycja - element), przycisk wejścia dla pojedynczych elementów
 //TODO: zapisywanie kilku ostatnich wersji bazy danych (backup)
-//TODO: system logów z wieloma poziomami (info - jeden z poziomów, wyświetlany użytkownikowi)
 //TODO: funkcja cofania zmian - zapisywanie modyfikacji, dodawania, usuwania elementów, przesuwania
 //TODO: moduł obliczeń: inline calc
 //TODO: moduł obliczeń: sumowanie wielu elementów
 //TODO: wyjście bez zapisywania bazy jeśli nie było zmian
 //TODO: przycisk zaznaczania wszystkich elementów
-//TODO: przewijanie na koniec listy elementów
-//TODO: nieprzykrywanie przycisku plus przez info bar
 //TODO: klawiatura szybkiego wpisywania godzin (i dat)
+//TODO: system logów z wieloma poziomami (info - jeden z poziomów, wyświetlany użytkownikowi)
 //TODO: klasy elementów: checkable (z pamięcią stanu), separator
 //TODO: breadcrumbs przy nazwie aktualnego elementu
 //TODO: tryb landscape screen przy pisaniu z klawiatury ekranowej
-//TODO: powrót w górę scrolluje lista do rodzica
 //TODO: zapisanie stałej konfiguracji w Config lub XML
 
 //TODO: KONFIGURACJA:
@@ -50,7 +49,6 @@ import igrek.todotree.system.output.Output;
 //TODO: shared preferences: zautomatyzowanie w celu konfiguracji, definicja: typ, nazwa, wartość domyślna, refleksja, automatyczny zapis, odczyt, generowanie fomrularza, tryb landscape screen przy pisaniu z klawiatury ekranowej
 
 //  WYGLĄD
-//TODO: wypozycjonowanie checkboxa do zaznaczania (vertical center)
 //TODO: liczebność elementów folderu jako osobny textedit z szarym kolorem i wyrównany do prawej, w tytule rodzica to samo
 //TODO: motyw kolorystyczny, pasek stanu, zapisanie wszystkich kolorów w xml, metoda do wyciągania kolorów z zasobów
 //TODO: konfiguracja: wyświetlacz zawsze zapalony, wielkość czcionki, marginesy między elementami
