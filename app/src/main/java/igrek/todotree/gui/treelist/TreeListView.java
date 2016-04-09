@@ -261,7 +261,7 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
     }
 
     private void handleItemDragging() {
-        float dyTotal = lastTouchY - startTouchY + (scrollOffset.diff(scrollStart));
+        float dyTotal = lastTouchY - startTouchY + (scrollOffset.diff(scrollStart, this));
 
         if (draggedItemViewTop == null) {
             Output.error("draggedItemViewTop = null");
@@ -329,7 +329,7 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
             //wyłączenie automatycznego ustawiania pozycji hover bitmapy
             draggedItemPos = null;
             //animacja powrotu do aktualnego połozenia elementu
-            hoverBitmapBounds.offsetTo(0, draggedItemViewTop - (scrollOffset.diff(scrollStart)));
+            hoverBitmapBounds.offsetTo(0, draggedItemViewTop - (scrollOffset.diff(scrollStart, this)));
             ObjectAnimator hoverViewAnimator = ObjectAnimator.ofObject(hoverBitmap, "bounds", rectBoundsEvaluator, hoverBitmapBounds);
             hoverViewAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
@@ -422,6 +422,15 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
         return sumh - getChildAt(0).getTop();
     }
 
+    /**
+     * @param position pozycja elementu do przescrollowania (-1 - ostatni element)
+     */
+    public void scrollTo(int position){
+        if(position == -1) position = items.size() - 1;
+        if(position < 0) position = 0;
+        setSelection(position);
+        invalidate();
+    }
 
     public void onItemMoveButtonPressed(int position, TreeItem item, View itemView, float touchX, float touchY) {
         startTouchY = itemView.getTop() + touchY;

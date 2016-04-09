@@ -16,11 +16,6 @@ import igrek.todotree.logic.exceptions.NoSuperItemException;
 import igrek.todotree.system.output.Output;
 
 //  WERSJA v1.03
-//TODO: poprawienie przewijania i przemieszczania dla różnego rozmiaru itemów
-//TODO: przewijanie do ostatniego itemu lub rodzica po powrocie (w górę, zapis, anulowanie edycji)
-//TODO: rescroll po wejsciu do gałęzi
-//TODO: rescroll przy wejściu w tryb zaznaczania (zmiana rozmiaru itemów)
-
 //TODO: nieprzykrywanie przycisku plus przez info bar
 
 //TODO: szybkie przewijanie na koniec i początek listy elementów
@@ -42,6 +37,7 @@ import igrek.todotree.system.output.Output;
 //TODO: breadcrumbs przy nazwie aktualnego elementu
 //TODO: tryb landscape screen przy pisaniu z klawiatury ekranowej
 //TODO: zapisanie stałej konfiguracji w Config lub XML
+//TODO: zapamiętywanie dokładnej pozycji scrolla (każdego poziomu gałęzi) i powracanie do niej z powrotu w górę, zapisywania edycji, anulowania edycji, dodawania elementu, anulowania dodawania
 
 //TODO: KONFIGURACJA:
 //TODO: ekran konfiguracji
@@ -134,8 +130,8 @@ public class App extends BaseApp implements GUIListener {
     public void menuInit(Menu menu) {
         super.menuInit(menu);
         //setMenuItemVisible(R.id.action_copy, false);
-        //        item.setTitle(title);
-        //        item.setIcon(iconRes); //int iconRes
+        //item.setTitle(title);
+        //item.setIcon(iconRes); //int iconRes
     }
 
 
@@ -158,9 +154,19 @@ public class App extends BaseApp implements GUIListener {
     }
 
     private void discardEditingItem() {
+        Integer scrollTo = null;
+        if (treeManager.getEditItem() != null) {
+            scrollTo = treeManager.getEditItem().getIndexInParent();
+        }
+        if (treeManager.getNewItemPosition() != null) {
+            scrollTo = treeManager.getNewItemPosition();
+        }
         treeManager.setEditItem(null);
-        gui.showItemsList(treeManager.getCurrentItem());
         state = AppState.ITEMS_LIST;
+        gui.showItemsList(treeManager.getCurrentItem());
+        if (scrollTo != null) {
+            gui.scrollToItem(scrollTo);
+        }
         showInfo("Anulowano edycję elementu.");
     }
 
@@ -179,10 +185,10 @@ public class App extends BaseApp implements GUIListener {
                 return rhs.compareTo(lhs);
             }
         });
-        for(Integer id : selectedIds){
+        for (Integer id : selectedIds) {
             treeManager.getCurrentItem().remove(id);
         }
-        if(info) {
+        if (info) {
             showInfo("Usunięto zaznaczone elementy: " + selectedIds.size());
         }
         treeManager.cancelSelectionMode();
@@ -191,8 +197,16 @@ public class App extends BaseApp implements GUIListener {
 
     public void goUp() {
         try {
+            TreeItem current = treeManager.getCurrentItem();
+            TreeItem parent = current.getParent();
             treeManager.goUp();
             updateItemsList();
+            if (parent != null) {
+                int childIndex = parent.getChildIndex(current);
+                if (childIndex != -1) {
+                    gui.scrollToItem(childIndex);
+                }
+            }
         } catch (NoSuperItemException e) {
             exitApp(true);
         }
@@ -202,10 +216,10 @@ public class App extends BaseApp implements GUIListener {
         if (state == AppState.ITEMS_LIST) {
             if (treeManager.isSelectionMode()) {
                 treeManager.cancelSelectionMode();
+                updateItemsList();
             } else {
                 goUp();
             }
-            updateItemsList();
         } else if (state == AppState.EDIT_ITEM_CONTENT) {
             gui.hideSoftKeyboard();
             discardEditingItem();
@@ -227,11 +241,11 @@ public class App extends BaseApp implements GUIListener {
     private void copySelectedItems(boolean info) {
         if (treeManager.isSelectionMode()) {
             treeManager.clearClipboard();
-            for(Integer selectedItemId : treeManager.getSelectedItems()) {
+            for (Integer selectedItemId : treeManager.getSelectedItems()) {
                 TreeItem selectedItem = treeManager.getCurrentItem().getChild(selectedItemId);
                 treeManager.addToClipboard(selectedItem);
             }
-            if(info){
+            if (info) {
                 showInfo("Skopiowano zaznaczone elementy: " + treeManager.getSelectedItemsCount());
             }
         }
@@ -243,17 +257,18 @@ public class App extends BaseApp implements GUIListener {
         removeSelectedItems(false);
     }
 
-    private void pasteItems(){
-        if(treeManager.isClipboardEmpty()){
+    private void pasteItems() {
+        if (treeManager.isClipboardEmpty()) {
             showInfo("Schowek jest pusty.");
-        }else{
-            for(TreeItem clipboardItem : treeManager.getClipboard()){
+        } else {
+            for (TreeItem clipboardItem : treeManager.getClipboard()) {
                 clipboardItem.setParent(treeManager.getCurrentItem());
                 treeManager.addToCurrent(clipboardItem);
             }
             showInfo("Wklejono elementy: " + treeManager.getClipboardSize());
             treeManager.recopyClipboard();
             updateItemsList();
+            gui.scrollToItem(-1);
         }
 
     }
@@ -277,12 +292,14 @@ public class App extends BaseApp implements GUIListener {
 
     @Override
     public void onItemClicked(int position, TreeItem item) {
-        if(treeManager.isSelectionMode()) {
+        if (treeManager.isSelectionMode()) {
             treeManager.toggleItemSelected(position);
-        }else{
+            updateItemsList();
+        } else {
             treeManager.goInto(position);
+            updateItemsList();
+            gui.scrollToItem(0);
         }
-        updateItemsList();
     }
 
     @Override
@@ -303,6 +320,7 @@ public class App extends BaseApp implements GUIListener {
     @Override
     public void onSavedEditedItem(TreeItem editedItem, String content) {
         content = treeManager.trimContent(content);
+        int scrollTo = editedItem.getIndexInParent();
         if (content.isEmpty()) {
             treeManager.getCurrentItem().remove(editedItem);
             showInfo("Pusty element został usunięty.");
@@ -310,21 +328,26 @@ public class App extends BaseApp implements GUIListener {
             editedItem.setContent(content);
             showInfo("Zapisano element.");
         }
+        treeManager.setEditItem(null);
         state = AppState.ITEMS_LIST;
         gui.showItemsList(treeManager.getCurrentItem());
+        gui.scrollToItem(scrollTo);
     }
 
     @Override
     public void onSavedNewItem(String content) {
         content = treeManager.trimContent(content);
+        int scrollTo = treeManager.getNewItemPosition();
         if (content.isEmpty()) {
             showInfo("Pusty element został usunięty.");
         } else {
             treeManager.getCurrentItem().add(treeManager.getNewItemPosition(), content);
             showInfo("Zapisano nowy element.");
         }
-        gui.showItemsList(treeManager.getCurrentItem());
+        treeManager.setNewItemPosition(null);
         state = AppState.ITEMS_LIST;
+        gui.showItemsList(treeManager.getCurrentItem());
+        gui.scrollToItem(scrollTo);
     }
 
     @Override
@@ -350,9 +373,11 @@ public class App extends BaseApp implements GUIListener {
         if (!treeManager.isSelectionMode()) {
             treeManager.startSelectionMode();
             treeManager.setItemSelected(position, true);
+            updateItemsList();
+            gui.scrollToItem(position);
         } else {
             treeManager.setItemSelected(position, true);
+            updateItemsList();
         }
-        updateItemsList();
     }
 }

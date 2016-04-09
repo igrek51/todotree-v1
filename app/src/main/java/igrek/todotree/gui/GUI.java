@@ -116,6 +116,10 @@ public class GUI extends GUIBase {
         itemsListView.setItemsAndSelected(currentItem.getChildren(), selectedPositions);
     }
 
+    public void scrollToItem(int position){
+        itemsListView.scrollTo(position);
+    }
+
     public void hideSoftKeyboard() {
         hideSoftKeyboard(etEditItem);
     }

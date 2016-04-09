@@ -60,6 +60,20 @@ public class TreeItem {
         return children.get(index);
     }
 
+    public int getChildIndex(TreeItem child){
+        for(int i=0; i<children.size(); i++){
+            if(children.get(i) == child){
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public int getIndexInParent(){
+        if(parent == null) return -1;
+        return parent.getChildIndex(this);
+    }
+
     public TreeItem getLastChild() {
         if (children.isEmpty()) return null;
         return children.get(children.size() - 1);
