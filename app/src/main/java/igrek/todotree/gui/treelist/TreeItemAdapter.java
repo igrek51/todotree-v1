@@ -1,13 +1,13 @@
 package igrek.todotree.gui.treelist;
 
 import android.content.Context;
-import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -16,11 +16,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import igrek.todotree.R;
 import igrek.todotree.gui.GUIListener;
 import igrek.todotree.logic.datatree.TreeItem;
+import igrek.todotree.system.output.Output;
 
 public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 
@@ -30,6 +32,12 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
     GUIListener guiListener;
     TreeListView listView;
 
+    HashMap<Integer, View> itemViews;
+    HashMap<Integer, Integer> itemHeights;
+
+    View convertView = null;
+    ViewGroup parent = null;
+
     public TreeItemAdapter(Context context, List<TreeItem> dataSource, GUIListener guiListener, TreeListView listView) {
         super(context, 0, new ArrayList<TreeItem>());
         this.context = context;
@@ -37,10 +45,14 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
         this.dataSource = dataSource;
         this.guiListener = guiListener;
         this.listView = listView;
+        itemViews = new HashMap<>();
+        itemHeights = new HashMap<>();
     }
 
     public void setDataSource(List<TreeItem> dataSource) {
         this.dataSource = dataSource;
+        itemViews = new HashMap<>();
+        itemHeights = new HashMap<>();
         notifyDataSetChanged();
     }
 
@@ -50,6 +62,33 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 
     public void setSelections(List<Integer> selections) {
         this.selections = selections;
+    }
+
+    public Integer getViewHeight(int position, ViewGroup listView) {
+        if (position >= dataSource.size()) return null;
+        if(itemHeights.containsKey(position)) {
+            return itemHeights.get(position);
+        }
+        if (!itemViews.containsKey(position)){
+//            itemView = getView(position, convertView, parent);
+//            itemView.measure(0, 0);
+//            Output.log("no view in map View, position: "+ position + ", new H: " + itemView.getHeight() + ", mh: " + itemView.getMeasuredHeight() + "mhi: " + itemView.getMeasuredHeightAndState());
+            Output.log("no view stored in adapter: " + position);
+            return null;
+        }else {
+            View itemView = itemViews.get(position);
+            return itemView.getHeight();
+        }
+    }
+
+    public HashMap<Integer, Integer> getItemHeights() {
+        return itemHeights;
+    }
+
+    public View getStoredView(int position){
+        if (position >= dataSource.size()) return null;
+        if (!itemViews.containsKey(position)) return null;
+        return itemViews.get(position);
     }
 
     @Override
@@ -66,6 +105,10 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
+
+        this.convertView = convertView;
+        this.parent = parent;
+
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         if (position == dataSource.size()) {
@@ -127,7 +170,7 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
             });
 
             //przesuwanie
-            ImageButton moveButton = (ImageButton) itemView.findViewById(R.id.buttonItemMove);
+            final ImageButton moveButton = (ImageButton) itemView.findViewById(R.id.buttonItemMove);
             moveButton.setFocusableInTouchMode(false);
             moveButton.setFocusable(false);
             if (selections == null) {
@@ -136,10 +179,10 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
                     public boolean onTouch(View v, MotionEvent event) {
                         switch (event.getAction()) {
                             case MotionEvent.ACTION_DOWN:
-                                listView.onItemMoveButtonPressed(position, item, itemView, event.getX(), event.getY());
+                                listView.onItemMoveButtonPressed(position, item, itemView, event.getX(), event.getY() + moveButton.getTop());
                                 break;
                             case MotionEvent.ACTION_UP:
-                                listView.onItemMoveButtonReleased(position, item, itemView, event.getX(), event.getY());
+                                listView.onItemMoveButtonReleased(position, item, itemView, event.getX(), event.getY() + moveButton.getTop());
                                 break;
                         }
                         return false;
@@ -186,6 +229,19 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
                     }
                 });
             }
+
+            //zapisanie rozmiaru widoku
+            itemViews.put(position, itemView);
+            itemView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                        itemView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    }
+                    itemHeights.put(position, itemView.getHeight());
+                    //Output.log("stored height = " + itemView.getHeight() + ", pos: " + position);
+                }
+            });
 
             return itemView;
         }
