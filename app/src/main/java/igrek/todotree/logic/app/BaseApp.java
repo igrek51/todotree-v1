@@ -143,7 +143,8 @@ public abstract class BaseApp implements ITouchController {
     }
 
     public void showInfo(String info, View view) {
-        Snackbar.make(view, info, Snackbar.LENGTH_SHORT).setAction("Action", null).show();
+        Snackbar snackbar = Snackbar.make(view, info, Snackbar.LENGTH_SHORT);
+        snackbar.setAction("Action", null).show();
         Output.info(info);
     }
 }

@@ -16,8 +16,6 @@ import igrek.todotree.logic.exceptions.NoSuperItemException;
 import igrek.todotree.system.output.Output;
 
 //  WERSJA v1.03
-//TODO: nieprzykrywanie przycisku plus przez info bar
-
 //TODO: szybkie przewijanie na koniec i początek listy elementów
 
 //  NOWE FUNKCJONALNOŚCI
@@ -38,6 +36,7 @@ import igrek.todotree.system.output.Output;
 //TODO: tryb landscape screen przy pisaniu z klawiatury ekranowej
 //TODO: zapisanie stałej konfiguracji w Config lub XML
 //TODO: zapamiętywanie dokładnej pozycji scrolla (każdego poziomu gałęzi) i powracanie do niej z powrotu w górę, zapisywania edycji, anulowania edycji, dodawania elementu, anulowania dodawania
+//TODO: widoczność przycisków i całego layoutu przy edycji w trybie landscape
 
 //TODO: KONFIGURACJA:
 //TODO: ekran konfiguracji
@@ -45,6 +44,7 @@ import igrek.todotree.system.output.Output;
 //TODO: shared preferences: zautomatyzowanie w celu konfiguracji, definicja: typ, nazwa, wartość domyślna, refleksja, automatyczny zapis, odczyt, generowanie fomrularza, tryb landscape screen przy pisaniu z klawiatury ekranowej
 
 //  WYGLĄD
+//TODO: nieprzykrywanie przycisku plus przez info bar
 //TODO: przycisk przesuwania itemów - maksymalna wysokość = wysokość itemu
 //TODO: liczebność elementów folderu jako osobny textedit z szarym kolorem i wyrównany do prawej, w tytule rodzica to samo
 //TODO: motyw kolorystyczny, pasek stanu, zapisanie wszystkich kolorów w xml, metoda do wyciągania kolorów z zasobów

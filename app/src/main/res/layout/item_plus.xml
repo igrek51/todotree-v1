@@ -15,5 +15,7 @@
         android:focusable="false"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:padding="18dp"/>
+        android:padding="18dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"/>
 </RelativeLayout>
