@@ -15,28 +15,34 @@ import igrek.todotree.logic.datatree.TreeManager;
 import igrek.todotree.logic.exceptions.NoSuperItemException;
 import igrek.todotree.system.output.Output;
 
-//  WERSJA v1.03
-//TODO: szybkie przewijanie na koniec i początek listy elementów
+//  WERSJA v1.04
+//TODO: przycisk zaznaczania wszystkich elementów
+
+//TODO: podczas edycji, przyciski przesuwania kursora (do początku, 1 w lewo, 1 w prawo, do końca), zaznacz wszystko
+
+//TODO: szybkie przenoszenie na koniec i początek listy elementów - long press naprzycisk przesuwania pierwszego lub ostatniego itemu
+
+//TODO: zapisywanie kilku ostatnich wersji bazy danych (backupy)
+
+//TODO: tryb portrait ekranu na stałe - przycisk przełączania w tryb landscape screen przy pisaniu z klawiatury ekranowej
+//TODO: widoczność przycisków i całego layoutu przy edycji w trybie landscape
 
 //  NOWE FUNKCJONALNOŚCI
-//TODO: zmiana widoczności opcji menu przy zaznaczaniu wielu elementów i kopiowaniu (niepusty schowek, niepuste zaznaczenie)
-//TODO: podczas edycji, przyciski przesuwania kursora (do początku, 1 w lewo, 1 w prawo, do końca), zaznacz wszystko
+//TODO: zapamiętywanie dokładnej pozycji scrolla (każdego poziomu gałęzi) i powracanie do niej z powrotu w górę, zapisywania edycji, anulowania edycji, dodawania elementu, anulowania dodawania
+//TODO: klawiatura szybkiego wpisywania godzin (i dat)
+//TODO: breadcrumbs przy nazwie aktualnego elementu
+
 //TODO: gesty do obsługi powrotu w górę (smyranie w lewo), dodania nowego elementu, wejścia w element (smyranie w prawo)
 //TODO: różne akcje na kliknięcie elementu: (wejście - folder, edycja - element), przycisk wejścia dla pojedynczych elementów
-//TODO: zapisywanie kilku ostatnich wersji bazy danych (backup)
 //TODO: funkcja cofania zmian - zapisywanie modyfikacji, dodawania, usuwania elementów, przesuwania
 //TODO: moduł obliczeń: inline calc
 //TODO: moduł obliczeń: sumowanie wielu elementów
+//TODO: zmiana widoczności opcji menu przy zaznaczaniu wielu elementów i kopiowaniu (niepusty schowek, niepuste zaznaczenie)
+//TODO: zmiana widoczności opcji menu przy edycji elementu
 //TODO: wyjście bez zapisywania bazy jeśli nie było zmian
-//TODO: przycisk zaznaczania wszystkich elementów
-//TODO: klawiatura szybkiego wpisywania godzin (i dat)
 //TODO: system logów z wieloma poziomami (info - jeden z poziomów, wyświetlany użytkownikowi)
 //TODO: klasy elementów: checkable (z pamięcią stanu), separator
-//TODO: breadcrumbs przy nazwie aktualnego elementu
-//TODO: tryb landscape screen przy pisaniu z klawiatury ekranowej
 //TODO: zapisanie stałej konfiguracji w Config lub XML
-//TODO: zapamiętywanie dokładnej pozycji scrolla (każdego poziomu gałęzi) i powracanie do niej z powrotu w górę, zapisywania edycji, anulowania edycji, dodawania elementu, anulowania dodawania
-//TODO: widoczność przycisków i całego layoutu przy edycji w trybie landscape
 
 //TODO: KONFIGURACJA:
 //TODO: ekran konfiguracji
@@ -44,12 +50,12 @@ import igrek.todotree.system.output.Output;
 //TODO: shared preferences: zautomatyzowanie w celu konfiguracji, definicja: typ, nazwa, wartość domyślna, refleksja, automatyczny zapis, odczyt, generowanie fomrularza, tryb landscape screen przy pisaniu z klawiatury ekranowej
 
 //  WYGLĄD
+//TODO: płynne przesuwanie elementów przy swappingu
 //TODO: nieprzykrywanie przycisku plus przez info bar
 //TODO: przycisk przesuwania itemów - maksymalna wysokość = wysokość itemu
 //TODO: liczebność elementów folderu jako osobny textedit z szarym kolorem i wyrównany do prawej, w tytule rodzica to samo
 //TODO: motyw kolorystyczny, pasek stanu, zapisanie wszystkich kolorów w xml, metoda do wyciągania kolorów z zasobów
 //TODO: konfiguracja: wyświetlacz zawsze zapalony, wielkość czcionki, marginesy między elementami
-//TODO: ikona aplikacji
 
 public class App extends BaseApp implements GUIListener {
 
@@ -110,6 +116,8 @@ public class App extends BaseApp implements GUIListener {
             cutSelectedItems();
         } else if (id == R.id.action_paste) {
             pasteItems();
+        } else if (id == R.id.action_select_all) {
+            toggleSelectAll();
         }
         return false;
     }
@@ -270,7 +278,21 @@ public class App extends BaseApp implements GUIListener {
             updateItemsList();
             gui.scrollToItem(-1);
         }
+    }
 
+    private void selectAllItems(boolean selectedState) {
+        for (int i = 0; i < treeManager.getCurrentItem().size(); i++) {
+            treeManager.setItemSelected(i, selectedState);
+        }
+    }
+
+    private void toggleSelectAll(){
+        if(treeManager.getSelectedItemsCount() == treeManager.getCurrentItem().size()){
+            treeManager.cancelSelectionMode();
+        }else{
+            selectAllItems(true);
+        }
+        updateItemsList();
     }
 
 

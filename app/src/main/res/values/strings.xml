@@ -17,4 +17,5 @@
     <string name="action_copy">Kopiuj</string>
     <string name="action_cut">Wytnij</string>
     <string name="action_paste">Wklej</string>
+    <string name="action_select_all">Zaznacz wszystko</string>
 </resources>
