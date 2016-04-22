@@ -16,10 +16,6 @@ import igrek.todotree.logic.exceptions.NoSuperItemException;
 import igrek.todotree.system.output.Output;
 
 //  WERSJA v1.04
-//TODO: przycisk zaznaczania wszystkich elementów
-
-//TODO: podczas edycji, przyciski przesuwania kursora (do początku, 1 w lewo, 1 w prawo, do końca), zaznacz wszystko
-
 //TODO: szybkie przenoszenie na koniec i początek listy elementów - long press naprzycisk przesuwania pierwszego lub ostatniego itemu
 
 //TODO: zapisywanie kilku ostatnich wersji bazy danych (backupy)
@@ -27,13 +23,18 @@ import igrek.todotree.system.output.Output;
 //TODO: tryb portrait ekranu na stałe - przycisk przełączania w tryb landscape screen przy pisaniu z klawiatury ekranowej
 //TODO: widoczność przycisków i całego layoutu przy edycji w trybie landscape
 
-//  NOWE FUNKCJONALNOŚCI
 //TODO: zapamiętywanie dokładnej pozycji scrolla (każdego poziomu gałęzi) i powracanie do niej z powrotu w górę, zapisywania edycji, anulowania edycji, dodawania elementu, anulowania dodawania
+
+//TODO: gesty do obsługi powrotu w górę (smyranie w lewo), dodania nowego elementu, wejścia w element (smyranie w prawo)
+
+//FIXME: brak dostępności wszystkich menu w trybie landscape (nie scrolluje się)
+
+//TODO: lepsze dopasowanie scrolla przy przejściu w tryb zaznaczania
+
+//  NOWE FUNKCJONALNOŚCI
 //TODO: klawiatura szybkiego wpisywania godzin (i dat)
 //TODO: breadcrumbs przy nazwie aktualnego elementu
 
-//TODO: gesty do obsługi powrotu w górę (smyranie w lewo), dodania nowego elementu, wejścia w element (smyranie w prawo)
-//TODO: różne akcje na kliknięcie elementu: (wejście - folder, edycja - element), przycisk wejścia dla pojedynczych elementów
 //TODO: funkcja cofania zmian - zapisywanie modyfikacji, dodawania, usuwania elementów, przesuwania
 //TODO: moduł obliczeń: inline calc
 //TODO: moduł obliczeń: sumowanie wielu elementów

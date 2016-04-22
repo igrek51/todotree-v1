@@ -13,13 +13,13 @@ import igrek.todotree.logic.touchcontroller.ITouchController;
 
 public class GUIBase implements View.OnTouchListener {
 
-    AppCompatActivity activity;
-    GUIListener guiListener;
-    ITouchController touchController = null;
+    protected AppCompatActivity activity;
+    protected GUIListener guiListener;
+    protected ITouchController touchController = null;
 
-    InputMethodManager imm;
+    protected InputMethodManager imm;
 
-    RelativeLayout mainContent;
+    protected RelativeLayout mainContent;
 
     public GUIBase(AppCompatActivity activity, GUIListener guiListener) {
         this.activity = activity;
@@ -32,6 +32,10 @@ public class GUIBase implements View.OnTouchListener {
         this.touchController = touchController;
     }
 
+    public GUIListener getGuiListener() {
+        return guiListener;
+    }
+
     protected void init() {
 
     }
@@ -40,7 +44,7 @@ public class GUIBase implements View.OnTouchListener {
         return mainContent;
     }
 
-    protected View setMainContentLayout(int layoutResource) {
+    public View setMainContentLayout(int layoutResource) {
         mainContent.removeAllViews();
         LayoutInflater inflater = activity.getLayoutInflater();
         View layout = inflater.inflate(layoutResource, null);
@@ -50,13 +54,13 @@ public class GUIBase implements View.OnTouchListener {
     }
 
 
-    protected void hideSoftKeyboard(View window) {
+    public void hideSoftKeyboard(View window) {
         if (imm != null) {
             imm.hideSoftInputFromWindow(window.getWindowToken(), 0);
         }
     }
 
-    protected void showSoftKeyboard(View window) {
+    public void showSoftKeyboard(View window) {
         if (imm != null) {
             imm.showSoftInput(window, 0);
         }

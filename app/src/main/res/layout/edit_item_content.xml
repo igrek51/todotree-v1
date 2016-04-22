@@ -28,6 +28,49 @@
         android:layout_gravity="center_horizontal"
         android:text="@string/button_save"/>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="0dp">
+
+        <ImageButton
+            android:id="@+id/quickEditGoBegin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@android:drawable/ic_media_previous"/>
+
+        <ImageButton
+            android:id="@+id/quickEditGoLeft"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@android:drawable/ic_media_rew"/>
+
+        <ImageButton
+            android:id="@+id/quickEditSelectAll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/ic_media_fullscreen"/>
+
+        <ImageButton
+            android:id="@+id/quickEditGoRight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@android:drawable/ic_media_ff"/>
+
+        <ImageButton
+            android:id="@+id/quickEditGoEnd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@android:drawable/ic_media_next"/>
+
+    </LinearLayout>
+
     <Button
         android:id="@+id/buttonEditCancel"
         android:layout_width="match_parent"

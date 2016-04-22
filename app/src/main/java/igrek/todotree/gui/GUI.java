@@ -4,7 +4,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 
@@ -12,13 +11,15 @@ import java.util.List;
 
 import igrek.todotree.R;
 import igrek.todotree.gui.treelist.TreeListView;
+import igrek.todotree.gui.views.edititem.EditItemGUI;
 import igrek.todotree.logic.datatree.TreeItem;
 
 public class GUI extends GUIBase {
 
-    EditText etEditItem;
-    ActionBar actionBar;
-    TreeListView itemsListView;
+    private EditText etEditItem;
+    private ActionBar actionBar;
+    private TreeListView itemsListView;
+    private EditItemGUI editItemGUI = null;
 
     public GUI(AppCompatActivity activity, GUIListener guiListener) {
         super(activity, guiListener);
@@ -62,45 +63,8 @@ public class GUI extends GUIBase {
     }
 
     public void showEditItemPanel(final TreeItem item, TreeItem parent) {
-        View editItemContentLayout = setMainContentLayout(R.layout.edit_item_content);
-
-        etEditItem = (EditText) editItemContentLayout.findViewById(R.id.etEditItemContent);
-        Button buttonSaveItem = (Button) editItemContentLayout.findViewById(R.id.buttonSaveItem);
-        Button buttonEditCancel = (Button) editItemContentLayout.findViewById(R.id.buttonEditCancel);
-
-        setTitle(parent.getContent());
-
-        if (item != null) { //edycja
-            etEditItem.setText(item.getContent());
-            buttonSaveItem.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    guiListener.onSavedEditedItem(item, etEditItem.getText().toString());
-                    hideSoftKeyboard(etEditItem);
-                }
-            });
-        } else { //nowy element
-            etEditItem.setText("");
-            buttonSaveItem.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    guiListener.onSavedNewItem(etEditItem.getText().toString());
-                    hideSoftKeyboard(etEditItem);
-                }
-            });
-        }
-
-        buttonEditCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                guiListener.onCancelEditedItem(item);
-            }
-        });
-
-        //focus na końcu edytowanego tekstu
-        etEditItem.requestFocus();
-        etEditItem.setSelection(etEditItem.getText().length());
-        showSoftKeyboard(etEditItem);
+        editItemGUI = new EditItemGUI(this, item, parent);
+        etEditItem = editItemGUI.getEtEditItem();
     }
 
     public void updateItemsList(TreeItem currentItem, List<Integer> selectedPositions) {
