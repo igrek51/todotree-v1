@@ -1,12 +1,23 @@
 package igrek.todotree.logic.datatree;
 
+import android.util.Pair;
+
+import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import igrek.todotree.logic.datatree.serializer.TreeSerializer;
 import igrek.todotree.logic.exceptions.NoSuperItemException;
+import igrek.todotree.settings.Config;
 import igrek.todotree.settings.preferences.Preferences;
 import igrek.todotree.system.files.Files;
 import igrek.todotree.system.files.PathBuilder;
@@ -128,12 +139,66 @@ public class TreeManager {
     }
 
     public void saveRootTree(Files files, Preferences preferences) {
+        saveBackupFile(files, preferences);
         PathBuilder dbFilePath = files.pathSD().append(preferences.dbFilePath);
         Output.log("Zapisywanie bazy danych do pliku: " + dbFilePath.toString());
         try {
             String output = treeSerializer.saveTree(getRootItem());
             files.saveFile(dbFilePath.toString(), output);
             Output.log("Zapisano bazę danych.");
+        } catch (IOException e) {
+            Output.error(e);
+        }
+    }
+
+    //  BACKUP
+
+    public void saveBackupFile(Files files, Preferences preferences) {
+        if (Config.backup_num == 0) return;
+        SimpleDateFormat sdfr = new SimpleDateFormat("dd_MM_yyyy-HH_mm_ss", Locale.ENGLISH);
+        //usunięcie starych plików
+        PathBuilder dbFilePath = files.pathSD().append(preferences.dbFilePath);
+        PathBuilder dbDirPath = dbFilePath.parent();
+
+        List<String> children = files.listDir(dbDirPath);
+        List<Pair<String, Date>> backups = new ArrayList<>();
+        //rozpoznanie plików backup i odczytanie ich dat
+        for (String child : children) {
+            if (child.startsWith(Config.backup_file_prefix)) {
+                String dateStr = PathBuilder.removeExtension(child).substring(Config.backup_file_prefix.length());
+                Date date = null;
+                try {
+                    date = sdfr.parse(dateStr);
+                } catch (ParseException e) {
+                    Output.log("Niepoprawny format daty w nazwie pliku: " + child);
+                }
+                backups.add(new Pair<>(child, date));
+            }
+        }
+
+        //posortowanie po datach malejąco
+        Collections.sort(backups, new Comparator<Pair<String, Date>>() {
+            @Override
+            public int compare(Pair<String, Date> a, Pair<String, Date> b) {
+                if (a.second == null) return +1;
+                if (b.second == null) return -1;
+                return -a.second.compareTo(b.second);
+            }
+        });
+
+        //usunięcie najstarszych plików
+        for (int i = Config.backup_num - 1; i < backups.size(); i++) {
+            Pair<String, Date> pair = backups.get(i);
+            PathBuilder toRemovePath = dbDirPath.append(pair.first);
+            files.delete(toRemovePath);
+            Output.log("Usunięto stary backup: " + toRemovePath.toString());
+        }
+
+        //zapisanie nowego backupa
+        PathBuilder backupPath = dbDirPath.append(Config.backup_file_prefix + sdfr.format(new Date()));
+        try {
+            files.copy(new File(dbFilePath.toString()), new File(backupPath.toString()));
+            Output.log("Utworzono backup: " + backupPath.toString());
         } catch (IOException e) {
             Output.error(e);
         }
@@ -242,7 +307,7 @@ public class TreeManager {
         final String WHITE_CHARS = " ";
         final String INVALID_CHARS = "{}[]\n\t";
         //usunięcie niedozwolonych znaków ze środka
-        for(int i=0; i<content.length(); i++) {
+        for (int i = 0; i < content.length(); i++) {
             if (isCharInSet(content.charAt(i), INVALID_CHARS)) {
                 content = content.substring(0, i) + content.substring(i + 1);
                 i--;
@@ -273,55 +338,55 @@ public class TreeManager {
     }
 
     public int getSelectedItemsCount() {
-        if(selectedPositions == null) return 0;
+        if (selectedPositions == null) return 0;
         return selectedPositions.size();
     }
 
-    public boolean isSelectionMode(){
-        if(selectedPositions == null) return false;
+    public boolean isSelectionMode() {
+        if (selectedPositions == null) return false;
         return selectedPositions.size() > 0;
     }
 
-    public void startSelectionMode(){
+    public void startSelectionMode() {
         selectedPositions = new ArrayList<>();
     }
 
-    public void cancelSelectionMode(){
+    public void cancelSelectionMode() {
         selectedPositions = null;
     }
 
-    public void setItemSelected(int position, boolean selectedState){
-        if(!isSelectionMode()){
+    public void setItemSelected(int position, boolean selectedState) {
+        if (!isSelectionMode()) {
             startSelectionMode();
         }
-        if(selectedState == true){
-            if(isItemSelected(position)){
+        if (selectedState == true) {
+            if (isItemSelected(position)) {
                 return;
-            }else{
+            } else {
                 selectedPositions.add(position);
             }
-        }else{
-            if(isItemSelected(position)){
+        } else {
+            if (isItemSelected(position)) {
                 selectedPositions.remove(new Integer(position));
-                if(selectedPositions.isEmpty()){
+                if (selectedPositions.isEmpty()) {
                     selectedPositions = null;
                 }
-            }else{
+            } else {
                 return;
             }
         }
     }
 
-    public boolean isItemSelected(int position){
-        for(Integer pos : selectedPositions){
-            if(pos.intValue() == position){
+    public boolean isItemSelected(int position) {
+        for (Integer pos : selectedPositions) {
+            if (pos.intValue() == position) {
                 return true;
             }
         }
         return false;
     }
 
-    public void toggleItemSelected(int position){
+    public void toggleItemSelected(int position) {
         setItemSelected(position, !isItemSelected(position));
     }
 
@@ -332,30 +397,30 @@ public class TreeManager {
     }
 
     public int getClipboardSize() {
-        if(clipboard == null) return 0;
+        if (clipboard == null) return 0;
         return clipboard.size();
     }
 
-    public boolean isClipboardEmpty(){
-        if(clipboard == null) return true;
+    public boolean isClipboardEmpty() {
+        if (clipboard == null) return true;
         return clipboard.size() == 0;
     }
 
-    public void clearClipboard(){
+    public void clearClipboard() {
         clipboard = null;
     }
 
-    public void addToClipboard(TreeItem item){
-        if(clipboard == null){
+    public void addToClipboard(TreeItem item) {
+        if (clipboard == null) {
             clipboard = new ArrayList<>();
         }
         clipboard.add(new TreeItem(item));
     }
 
-    public void recopyClipboard(){
-        if(clipboard != null){
+    public void recopyClipboard() {
+        if (clipboard != null) {
             ArrayList<TreeItem> newClipboard = new ArrayList<>();
-            for(TreeItem item : clipboard){
+            for (TreeItem item : clipboard) {
                 newClipboard.add(new TreeItem(item));
             }
             clipboard = newClipboard;

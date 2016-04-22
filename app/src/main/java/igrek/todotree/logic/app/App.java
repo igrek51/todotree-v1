@@ -18,8 +18,6 @@ import igrek.todotree.system.output.Output;
 //  WERSJA v1.04
 //TODO: szybkie przenoszenie na koniec i początek listy elementów - long press naprzycisk przesuwania pierwszego lub ostatniego itemu
 
-//TODO: zapisywanie kilku ostatnich wersji bazy danych (backupy)
-
 //TODO: tryb portrait ekranu na stałe - przycisk przełączania w tryb landscape screen przy pisaniu z klawiatury ekranowej
 //TODO: widoczność przycisków i całego layoutu przy edycji w trybie landscape
 
@@ -41,7 +39,7 @@ import igrek.todotree.system.output.Output;
 //TODO: zmiana widoczności opcji menu przy zaznaczaniu wielu elementów i kopiowaniu (niepusty schowek, niepuste zaznaczenie)
 //TODO: zmiana widoczności opcji menu przy edycji elementu
 //TODO: wyjście bez zapisywania bazy jeśli nie było zmian
-//TODO: system logów z wieloma poziomami (info - jeden z poziomów, wyświetlany użytkownikowi)
+//TODO: system logów z wieloma poziomami (info - jeden z poziomów, wyświetlany użytkownikowi): debug, warn, error
 //TODO: klasy elementów: checkable (z pamięcią stanu), separator
 //TODO: zapisanie stałej konfiguracji w Config lub XML
 
