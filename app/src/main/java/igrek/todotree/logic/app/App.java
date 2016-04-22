@@ -16,7 +16,7 @@ import igrek.todotree.logic.exceptions.NoSuperItemException;
 import igrek.todotree.system.output.Output;
 
 //  WERSJA v1.04
-//TODO: szybkie przenoszenie na koniec i początek listy elementów - long press naprzycisk przesuwania pierwszego lub ostatniego itemu
+//TODO: szybkie przenoszenie na koniec i początek listy elementów - long press na przycisk przesuwania pierwszego lub ostatniego itemu
 
 //TODO: tryb portrait ekranu na stałe - przycisk przełączania w tryb landscape screen przy pisaniu z klawiatury ekranowej
 //TODO: widoczność przycisków i całego layoutu przy edycji w trybie landscape
@@ -87,10 +87,7 @@ public class App extends BaseApp implements GUIListener {
 
     @Override
     public boolean optionsSelect(int id) {
-        if (id == R.id.action_settings) {
-
-            return true;
-        } else if (id == R.id.action_minimize) {
+        if (id == R.id.action_minimize) {
             minimize();
             return true;
         } else if (id == R.id.action_exit_without_saving) {
