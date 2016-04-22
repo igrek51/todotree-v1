@@ -180,12 +180,18 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
                         switch (event.getAction()) {
                             case MotionEvent.ACTION_DOWN:
                                 listView.onItemMoveButtonPressed(position, item, itemView, event.getX(), event.getY() + moveButton.getTop());
-                                break;
+                                return false;
                             case MotionEvent.ACTION_UP:
                                 listView.onItemMoveButtonReleased(position, item, itemView, event.getX(), event.getY() + moveButton.getTop());
-                                break;
+                                return true;
                         }
                         return false;
+                    }
+                });
+                moveButton.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        return listView.onItemMoveLongPressed(position, item);
                     }
                 });
             } else {

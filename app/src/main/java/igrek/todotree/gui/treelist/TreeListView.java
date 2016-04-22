@@ -42,8 +42,6 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
     private View draggedItemView = null;
     /** oryginalna górna pozycja niewidocznego elementu na liście, którego bitmapa jest przeciągana */
     private Integer draggedItemViewTop = null;
-    /** wysokość przeciąganego elementu */
-    private Integer draggedItemViewHeight = null;
 
     /** aktualne położenie scrolla */
     private ListScrollOffset scrollOffset = new ListScrollOffset();
@@ -158,6 +156,7 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
 
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+        itemDraggingStopped();
         if (position == items.size()) {
             //nowy element na końcu
             guiListener.onAddItemClicked();
@@ -250,8 +249,6 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
         draggedItemPos = position;
         draggedItemView = itemView;
         draggedItemViewTop = itemView.getTop();
-        draggedItemViewHeight = getItemHeight(position);
-        //Output.log("height: "+ draggedItemViewHeight);
         scrollStart.copyFrom(scrollOffset);
 
         hoverBitmap = getAndAddHoverView(draggedItemView);
@@ -351,7 +348,6 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
                     draggedItemView = null;
                     hoverBitmap = null;
                     draggedItemViewTop = null;
-                    draggedItemViewHeight = null;
                     setEnabled(true);
                     invalidate();
                 }
@@ -361,7 +357,6 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
             draggedItemPos = null;
             draggedItemView = null;
             draggedItemViewTop = null;
-            draggedItemViewHeight = null;
         }
     }
 
@@ -440,5 +435,25 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
 
     public void onItemMoveButtonReleased(int position, TreeItem item, View itemView, float touchX, float touchY) {
         itemDraggingStopped();
+    }
+
+    public boolean onItemMoveLongPressed(int position, TreeItem item){
+        if(position == 0){
+            //przeniesienie na koniec
+            itemDraggingStopped();
+            items = guiListener.onItemMoved(position, items.size() - 1);
+            adapter.setDataSource(items);
+            scrollTo(items.size() - 1);
+            return true;
+        }
+        if(position == items.size() - 1){
+            //przeniesienie na początek
+            itemDraggingStopped();
+            items = guiListener.onItemMoved(position, -(items.size() - 1));
+            adapter.setDataSource(items);
+            scrollTo(0);
+            return true;
+        }
+        return false;
     }
 }

@@ -16,8 +16,6 @@ import igrek.todotree.logic.exceptions.NoSuperItemException;
 import igrek.todotree.system.output.Output;
 
 //  WERSJA v1.04
-//TODO: szybkie przenoszenie na koniec i początek listy elementów - long press na przycisk przesuwania pierwszego lub ostatniego itemu
-
 //TODO: tryb portrait ekranu na stałe - przycisk przełączania w tryb landscape screen przy pisaniu z klawiatury ekranowej
 //TODO: widoczność przycisków i całego layoutu przy edycji w trybie landscape
 
@@ -47,6 +45,9 @@ import igrek.todotree.system.output.Output;
 //TODO: ekran konfiguracji
 //TODO: konfiguracja położenia pliku z bazą dancyh
 //TODO: shared preferences: zautomatyzowanie w celu konfiguracji, definicja: typ, nazwa, wartość domyślna, refleksja, automatyczny zapis, odczyt, generowanie fomrularza, tryb landscape screen przy pisaniu z klawiatury ekranowej
+
+//  BŁĘDY
+//FIXME: przechodzenie wgłąb elementu po szybkim przenoszenie na koniec lub początek listy
 
 //  WYGLĄD
 //TODO: płynne przesuwanie elementów przy swappingu
