@@ -21,7 +21,7 @@ public class Config {
     public static final String shared_preferences_name = "ToDoTreeUserPreferences";
     //  BACKUP
     public static final String backup_file_prefix = "backup_";
-    public static final int backup_num = 5;
+    public static final int backup_num = 10;
     //Zestaw ustawień: 0 - samsung galaxy grand prime (DEFAULT), 1 - emulator Android
     public static final int config_set = 0;
     //nadpisanie parametrów dla innego zestawu

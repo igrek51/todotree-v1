@@ -15,7 +15,7 @@ import igrek.todotree.logic.datatree.TreeManager;
 import igrek.todotree.logic.exceptions.NoSuperItemException;
 import igrek.todotree.system.output.Output;
 
-//  WERSJA v1.04
+//  WERSJA v1.05
 //TODO: tryb portrait ekranu na stałe - przycisk przełączania w tryb landscape screen przy pisaniu z klawiatury ekranowej
 //TODO: widoczność przycisków i całego layoutu przy edycji w trybie landscape
 
@@ -27,8 +27,17 @@ import igrek.todotree.system.output.Output;
 
 //TODO: lepsze dopasowanie scrolla przy przejściu w tryb zaznaczania
 
+//TODO: przycisk dodaj nowy przy edycji - wstawienie nowego elementu zaraz po edytowanym
+
+//TODO: wygaszanie ekranu
+//TODO: edycja plików kliknięciem, wchodzenie wgłąb nowym przyciskiem ->
+//TODO: schowanie info bara - zmiana rozmiaru listview lub możliwość schowania
+//TODO: mniejsza szybkość przewijania
+//FIXME: przewijanie w trybie landscape
+
+//TODO: klawiatura szybkiego wpisywania: godizn, dat, przedziałów godzin, przedziałów dat
+
 //  NOWE FUNKCJONALNOŚCI
-//TODO: klawiatura szybkiego wpisywania godzin (i dat)
 //TODO: breadcrumbs przy nazwie aktualnego elementu
 
 //TODO: funkcja cofania zmian - zapisywanie modyfikacji, dodawania, usuwania elementów, przesuwania
@@ -40,6 +49,7 @@ import igrek.todotree.system.output.Output;
 //TODO: system logów z wieloma poziomami (info - jeden z poziomów, wyświetlany użytkownikowi): debug, warn, error
 //TODO: klasy elementów: checkable (z pamięcią stanu), separator
 //TODO: zapisanie stałej konfiguracji w Config lub XML
+//TODO: zmaksymalizowanie obszaru aktywnego przycisków (edycji, przewijania)
 
 //TODO: KONFIGURACJA:
 //TODO: ekran konfiguracji
