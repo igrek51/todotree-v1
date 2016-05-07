@@ -15,6 +15,8 @@ public interface GUIListener {
 
     void onItemEditClicked(int position, TreeItem item);
 
+    void onItemGoIntoClicked(int position, TreeItem item);
+
     void onItemRemoveClicked(int position, TreeItem item);
 
     void onSavedEditedItem(TreeItem editedItem, String content);

@@ -147,7 +147,7 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
             ImageButton editButton = (ImageButton) itemView.findViewById(R.id.buttonItemEdit);
             editButton.setFocusableInTouchMode(false);
             editButton.setFocusable(false);
-            if (selections == null) {
+            if (selections == null && !item.isEmpty()) {
                 editButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -156,6 +156,21 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
                 });
             } else {
                 editButton.setVisibility(View.GONE);
+            }
+
+            //wejście w element
+            ImageButton goIntoButton = (ImageButton) itemView.findViewById(R.id.buttonItemGoInto);
+            goIntoButton.setFocusableInTouchMode(false);
+            goIntoButton.setFocusable(false);
+            if (selections == null && item.isEmpty()) {
+                goIntoButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        guiListener.onItemGoIntoClicked(position, item);
+                    }
+                });
+            } else {
+                goIntoButton.setVisibility(View.GONE);
             }
 
             //usuwanie elementu

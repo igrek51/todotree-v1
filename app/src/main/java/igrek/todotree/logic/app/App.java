@@ -16,26 +16,25 @@ import igrek.todotree.logic.exceptions.NoSuperItemException;
 import igrek.todotree.system.output.Output;
 
 //  WERSJA v1.05
+
+//LANDSCAPE
 //TODO: tryb portrait ekranu na stałe - przycisk przełączania w tryb landscape screen przy pisaniu z klawiatury ekranowej
 //TODO: widoczność przycisków i całego layoutu przy edycji w trybie landscape
-
-//TODO: zapamiętywanie dokładnej pozycji scrolla (każdego poziomu gałęzi) i powracanie do niej z powrotu w górę, zapisywania edycji, anulowania edycji, dodawania elementu, anulowania dodawania
-
-//TODO: gesty do obsługi powrotu w górę (smyranie w lewo), dodania nowego elementu, wejścia w element (smyranie w prawo)
-
 //FIXME: brak dostępności wszystkich menu w trybie landscape (nie scrolluje się)
 
+//SCROLLOWANIE
+//TODO: zapamiętywanie dokładnej pozycji scrolla (każdego poziomu gałęzi) i powracanie do niej z powrotu w górę, zapisywania edycji, anulowania edycji, dodawania elementu, anulowania dodawania
 //TODO: lepsze dopasowanie scrolla przy przejściu w tryb zaznaczania
-
-//TODO: przycisk dodaj nowy przy edycji - wstawienie nowego elementu zaraz po edytowanym
-
-//TODO: wygaszanie ekranu
-//TODO: edycja plików kliknięciem, wchodzenie wgłąb nowym przyciskiem ->
-//TODO: schowanie info bara - zmiana rozmiaru listview lub możliwość schowania
 //TODO: mniejsza szybkość przewijania
 //FIXME: przewijanie w trybie landscape
 
+
+//TODO: przycisk dodaj nowy przy edycji - wstawienie nowego elementu zaraz po edytowanym
 //TODO: klawiatura szybkiego wpisywania: godizn, dat, przedziałów godzin, przedziałów dat
+
+//TODO: gesty do obsługi powrotu w górę (smyranie w lewo), dodania nowego elementu, wejścia w element (smyranie w prawo)
+
+//TODO: schowanie info bara - zmiana rozmiaru listview lub możliwość schowania
 
 //  NOWE FUNKCJONALNOŚCI
 //TODO: breadcrumbs przy nazwie aktualnego elementu
@@ -50,6 +49,7 @@ import igrek.todotree.system.output.Output;
 //TODO: klasy elementów: checkable (z pamięcią stanu), separator
 //TODO: zapisanie stałej konfiguracji w Config lub XML
 //TODO: zmaksymalizowanie obszaru aktywnego przycisków (edycji, przewijania)
+//TODO: wygaszanie ekranu
 
 //TODO: KONFIGURACJA:
 //TODO: ekran konfiguracji
@@ -325,9 +325,11 @@ public class App extends BaseApp implements GUIListener {
             treeManager.toggleItemSelected(position);
             updateItemsList();
         } else {
-            treeManager.goInto(position);
-            updateItemsList();
-            gui.scrollToItem(0);
+            if(item.isEmpty()) {
+                onItemEditClicked(position, item);
+            }else{
+                onItemGoIntoClicked(position, item);
+            }
         }
     }
 
@@ -335,6 +337,14 @@ public class App extends BaseApp implements GUIListener {
     public void onItemEditClicked(int position, TreeItem item) {
         treeManager.cancelSelectionMode();
         editItem(item, treeManager.getCurrentItem());
+    }
+
+    @Override
+    public void onItemGoIntoClicked(int position, TreeItem item) {
+        treeManager.cancelSelectionMode();
+        treeManager.goInto(position);
+        updateItemsList();
+        gui.scrollToItem(0);
     }
 
     @Override
