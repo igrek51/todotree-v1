@@ -29,15 +29,12 @@ import igrek.todotree.system.output.Output;
 //FIXME: przewijanie w trybie landscape
 
 
-//TODO: klawiatura szybkiego wpisywania: godizn, dat, przedziałów godzin, przedziałów dat
-
 //TODO: gesty do obsługi powrotu w górę (smyranie w lewo), dodania nowego elementu, wejścia w element (smyranie w prawo)
 
 //TODO: schowanie info bara - zmiana rozmiaru listview lub możliwość schowania
 
 //  NOWE FUNKCJONALNOŚCI
 //TODO: breadcrumbs przy nazwie aktualnego elementu
-
 //TODO: funkcja cofania zmian - zapisywanie modyfikacji, dodawania, usuwania elementów, przesuwania
 //TODO: moduł obliczeń: inline calc
 //TODO: moduł obliczeń: sumowanie wielu elementów

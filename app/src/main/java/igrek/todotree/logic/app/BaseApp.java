@@ -2,6 +2,7 @@ package igrek.todotree.logic.app;
 
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -143,8 +144,15 @@ public abstract class BaseApp implements ITouchController {
     }
 
     public void showInfo(String info, View view) {
-        Snackbar snackbar = Snackbar.make(view, info, Snackbar.LENGTH_SHORT);
-        snackbar.setAction("Action", null).show();
+        final Snackbar snackbar = Snackbar.make(view, info, Snackbar.LENGTH_SHORT);
+        snackbar.setAction("OK", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                snackbar.dismiss();
+            }
+        });
+        snackbar.setActionTextColor(Color.WHITE);
+        snackbar.show();
         Output.info(info);
     }
 }
