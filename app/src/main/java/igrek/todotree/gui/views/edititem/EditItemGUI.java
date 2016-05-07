@@ -27,8 +27,10 @@ public class EditItemGUI {
         View editItemContentLayout = gui.setMainContentLayout(R.layout.edit_item_content);
 
         etEditItem = (EditText) editItemContentLayout.findViewById(R.id.etEditItemContent);
+        //przycisk zapisu
         Button buttonSaveItem = (Button) editItemContentLayout.findViewById(R.id.buttonSaveItem);
-        Button buttonEditCancel = (Button) editItemContentLayout.findViewById(R.id.buttonEditCancel);
+        //przycisk zapisz i dodaj nowy
+        Button buttonSaveAndAdd = (Button) editItemContentLayout.findViewById(R.id.buttonSaveAndAddItem);
 
         gui.setTitle(parent.getContent());
 
@@ -41,6 +43,13 @@ public class EditItemGUI {
                     gui.hideSoftKeyboard(etEditItem);
                 }
             });
+            buttonSaveAndAdd.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    gui.getGuiListener().onSaveAndAddItem(item, etEditItem.getText().toString());
+                    gui.hideSoftKeyboard(etEditItem);
+                }
+            });
         } else { //nowy element
             etEditItem.setText("");
             buttonSaveItem.setOnClickListener(new View.OnClickListener() {
@@ -50,8 +59,17 @@ public class EditItemGUI {
                     gui.hideSoftKeyboard(etEditItem);
                 }
             });
+            buttonSaveAndAdd.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    gui.getGuiListener().onSaveAndAddItem(null, etEditItem.getText().toString());
+                    gui.hideSoftKeyboard(etEditItem);
+                }
+            });
         }
 
+        //przycisk anuluj
+        Button buttonEditCancel = (Button) editItemContentLayout.findViewById(R.id.buttonEditCancel);
         buttonEditCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

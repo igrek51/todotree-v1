@@ -25,6 +25,8 @@ public interface GUIListener {
 
     void onSavedNewItem(String content);
 
+    void onSaveAndAddItem(TreeItem editedItem, String content);
+
     /**
      * @param position pozycja elementu przed przesuwaniem
      * @param step liczba pozycji do przesunięcia (dodatnia - w dół, ujemna - w górę)

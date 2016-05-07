@@ -29,7 +29,6 @@ import igrek.todotree.system.output.Output;
 //FIXME: przewijanie w trybie landscape
 
 
-//TODO: przycisk dodaj nowy przy edycji - wstawienie nowego elementu zaraz po edytowanym
 //TODO: klawiatura szybkiego wpisywania: godizn, dat, przedziałów godzin, przedziałów dat
 
 //TODO: gesty do obsługi powrotu w górę (smyranie w lewo), dodania nowego elementu, wejścia w element (smyranie w prawo)
@@ -387,6 +386,35 @@ public class App extends BaseApp implements GUIListener {
         state = AppState.ITEMS_LIST;
         gui.showItemsList(treeManager.getCurrentItem());
         gui.scrollToItem(scrollTo);
+    }
+
+    @Override
+    public void onSaveAndAddItem(TreeItem editedItem, String content) {
+        //zapis
+        content = treeManager.trimContent(content);
+        int newItemIndex;
+        if(editedItem == null){ //nowy element
+            newItemIndex = treeManager.getNewItemPosition();
+            if (content.isEmpty()) {
+                showInfo("Pusty element został usunięty.");
+            } else {
+                treeManager.getCurrentItem().add(treeManager.getNewItemPosition(), content);
+                newItemIndex++;
+                showInfo("Zapisano nowy element.");
+            }
+        }else{ //edycja
+            newItemIndex = editedItem.getIndexInParent();
+            if (content.isEmpty()) {
+                treeManager.getCurrentItem().remove(editedItem);
+                showInfo("Pusty element został usunięty.");
+            } else {
+                editedItem.setContent(content);
+                newItemIndex++;
+                showInfo("Zapisano element.");
+            }
+        }
+        //dodanie nowego elementu
+        newItem(newItemIndex);
     }
 
     @Override
