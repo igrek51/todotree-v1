@@ -33,6 +33,12 @@ import igrek.todotree.system.output.Output;
 
 //TODO: schowanie info bara - zmiana rozmiaru listview lub możliwość schowania
 
+//TODO: domek w navbar - przejście do root
+//TODO: przycisk zapisu i wyjścia w navbarze
+//TODO: obsługa backspace przy pisaniu godzin
+//TODO: klawiatura kwoty lub numeryczna
+//TODO: przycisk przewijania na koniec na navbarze
+
 //  NOWE FUNKCJONALNOŚCI
 //TODO: breadcrumbs przy nazwie aktualnego elementu
 //TODO: funkcja cofania zmian - zapisywanie modyfikacji, dodawania, usuwania elementów, przesuwania

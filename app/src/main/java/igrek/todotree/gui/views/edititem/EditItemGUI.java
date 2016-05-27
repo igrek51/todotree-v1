@@ -167,17 +167,16 @@ public class EditItemGUI {
                     return;
                 }
                 // jakieś zjebane zachowanie
-                if(start == 0 && count > 2 && count == currentEdit.length() && before == currentEdit.length() - 1){
+                if (start == 0 && count > 2 && count == currentEdit.length() && before == currentEdit.length() - 1) {
                     return;
                 }
-                if(start == 0 && count > 4 && count == currentEdit.length() && before == currentEdit.length() - 2){
+                if (start == 0 && count > 4 && count == currentEdit.length() && before == currentEdit.length() - 2) {
                     return;
                 }
                 quickInsertFlag = true;
                 CharSequence diffCs = cs.subSequence(start, start + count);
                 if (diffCs.length() > 0) {
                     char diff = diffCs.charAt(diffCs.length() - 1);
-                    Output.log("quickInsert: " + diff + ", start: " + start + ", before: " + before + ", count: " + count);
                     quickInsert(diff);
                 }
                 quickInsertFlag = false;
@@ -264,7 +263,6 @@ public class EditItemGUI {
     private void quickInsertFinish() {
         String edited = etEditItem.getText().toString();
         int cursor = etEditItem.getSelectionStart();
-        Output.log("quickInsertFinish: cursor: " + cursor + ", edited: " + edited);
         if (quickInsertMode == 1) { //godzina
             if (quickInserted.length() >= 3) { // 01:02, 1:02
                 edited = insertAt(edited, ":", cursor - 2);
@@ -330,14 +328,25 @@ public class EditItemGUI {
         return before + c + after;
     }
 
-    private void quickInsertRange(){
+    private void quickInsertRange() {
+        if (quickInsertMode == 1) { //godzina
+            quickInsertFinish();
+        } else if (quickInsertMode == 2) { //data
+            quickInsertFinish();
+        }
         String edited = etEditItem.getText().toString();
         int selStart = etEditItem.getSelectionStart();
         int selEnd = etEditItem.getSelectionEnd();
         String before = edited.substring(0, selStart);
         String after = edited.substring(selEnd);
-        edited = before + " - " + after;
-        selStart += 3;
+        //bez podwójnej spacji przed "-"
+        if (before.length() > 0 && before.charAt(before.length() - 1) == ' ') {
+            edited = before + "- " + after;
+            selStart += 2;
+        } else {
+            edited = before + " - " + after;
+            selStart += 3;
+        }
         etEditItem.setText(edited);
         etEditItem.setSelection(selStart, selStart);
     }
