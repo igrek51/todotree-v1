@@ -15,7 +15,11 @@ import igrek.todotree.logic.datatree.TreeManager;
 import igrek.todotree.logic.exceptions.NoSuperItemException;
 import igrek.todotree.system.output.Output;
 
-//  WERSJA v1.05
+//  WERSJA v1.06
+//TODO: domek w navbar - przejście do root
+//TODO: przycisk zapisu i wyjścia w navbarze
+//TODO: obsługa backspace przy pisaniu godzin
+//TODO: przycisk przewijania na koniec na navbarze
 
 //LANDSCAPE
 //TODO: tryb portrait ekranu na stałe - przycisk przełączania w tryb landscape screen przy pisaniu z klawiatury ekranowej
@@ -33,11 +37,7 @@ import igrek.todotree.system.output.Output;
 
 //TODO: schowanie info bara - zmiana rozmiaru listview lub możliwość schowania
 
-//TODO: domek w navbar - przejście do root
-//TODO: przycisk zapisu i wyjścia w navbarze
-//TODO: obsługa backspace przy pisaniu godzin
-//TODO: klawiatura kwoty lub numeryczna
-//TODO: przycisk przewijania na koniec na navbarze
+//FIXME: klawiatura kwoty lub numeryczna: możliwość wpisywania kilku liczb mieszanych z tekstem
 
 //  NOWE FUNKCJONALNOŚCI
 //TODO: breadcrumbs przy nazwie aktualnego elementu

@@ -109,13 +109,6 @@
                 android:text="@string/buttonEditInsertTime"/>
 
             <Button
-                android:id="@+id/buttonEditInsertRange"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.15"
-                android:text="@string/buttonEditInsertRange"/>
-
-            <Button
                 android:id="@+id/buttonEditInsertDate"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -123,12 +116,33 @@
                 android:text="@string/buttonEditInsertDate"/>
 
             <Button
+                android:id="@+id/buttonEditInsertRange"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.15"
+                android:text="@string/buttonEditInsertRange"/>
+
+            <Button
+                android:id="@+id/buttonEditInsertNumber"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.25"
+                android:text="@string/buttonEditInsertNumber"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="0dp">
+
+            <Button
                 android:id="@+id/buttonEditCancel"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.25"
                 android:text="@string/buttonEditCancel"/>
-
         </LinearLayout>
 
     </LinearLayout>

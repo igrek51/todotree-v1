@@ -3,6 +3,7 @@ package igrek.todotree.gui.views.edititem;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.text.method.DigitsKeyListener;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -153,6 +154,15 @@ public class EditItemGUI {
             }
         });
 
+        //numer
+        Button buttonEditInsertNumber = (Button) editItemContentLayout.findViewById(R.id.buttonEditInsertNumber);
+        buttonEditInsertNumber.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                quickInsertKeyboardToggle(3);
+            }
+        });
+
         quickInsertReset();
 
         etEditItem.addTextChangedListener(new TextWatcher() {
@@ -281,6 +291,8 @@ public class EditItemGUI {
                 cursor++;
                 etEditItem.setText(edited);
             }
+        } else if (quickInsertMode == 3) { //liczba lub waluta
+
         }
         quickInsertReset();
         etEditItem.setSelection(cursor, cursor);
@@ -294,6 +306,8 @@ public class EditItemGUI {
                 quickInsertFinish();
             } else if (quickInsertMode == 2) { //data
                 quickInsertFinish();
+            } else if (quickInsertMode == 3) { //liczba lub waluta
+                quickInsertFinish();
             }
         }
     }
@@ -304,7 +318,12 @@ public class EditItemGUI {
         if (quickInsertMode == mode) {
             quickInsertReset();
         } else {
-            etEditItem.setInputType(InputType.TYPE_CLASS_NUMBER);
+            if(mode == 3){
+                //TODO zjebane jest wpisywanie kilku liczb (ujemnych / przecinkowych), przecinek zamiast kropki, wstawianie "-" i "," w osobnych przyciskach jako tekst
+                etEditItem.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_NUMBER_FLAG_SIGNED);
+            }else {
+                etEditItem.setInputType(InputType.TYPE_CLASS_NUMBER);
+            }
             etEditItem.setImeOptions(EditorInfo.IME_FLAG_NO_EXTRACT_UI | EditorInfo.IME_ACTION_DONE);
             quickInsertMode = mode;
             quickInserted = "";
@@ -332,6 +351,8 @@ public class EditItemGUI {
         if (quickInsertMode == 1) { //godzina
             quickInsertFinish();
         } else if (quickInsertMode == 2) { //data
+            quickInsertFinish();
+        } else if (quickInsertMode == 3) { //liczba lub waluta
             quickInsertFinish();
         }
         String edited = etEditItem.getText().toString();
