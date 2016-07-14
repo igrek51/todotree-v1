@@ -2,6 +2,7 @@ package igrek.todotree.logic.app;
 
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
+import android.view.View;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -16,10 +17,17 @@ import igrek.todotree.logic.exceptions.NoSuperItemException;
 import igrek.todotree.system.output.Output;
 
 //  WERSJA v1.06
+
+//TODO: zapamiętywanie dokładnej pozycji scrolla (każdego poziomu gałęzi) i powracanie do niej z powrotu w górę, zapisywania edycji, anulowania edycji, dodawania elementu, anulowania dodawania
 //TODO: domek w navbar - przejście do root
+
 //TODO: przycisk zapisu i wyjścia w navbarze
-//TODO: obsługa backspace przy pisaniu godzin
 //TODO: przycisk przewijania na koniec na navbarze
+
+//FIXME: klawiatura kwoty lub numeryczna: możliwość wpisywania kilku liczb mieszanych z tekstem
+//FIXME: backspace przy klawiaturze numerycznej powinien cofać wpisane znaki
+//TODO: klawiatura numeryczna: ucinane są literki przed cyframi
+//TODO: przycisk zapisz kończy pisanie klawiatury numerycznej
 
 //LANDSCAPE
 //TODO: tryb portrait ekranu na stałe - przycisk przełączania w tryb landscape screen przy pisaniu z klawiatury ekranowej
@@ -27,19 +35,13 @@ import igrek.todotree.system.output.Output;
 //FIXME: brak dostępności wszystkich menu w trybie landscape (nie scrolluje się)
 
 //SCROLLOWANIE
-//TODO: zapamiętywanie dokładnej pozycji scrolla (każdego poziomu gałęzi) i powracanie do niej z powrotu w górę, zapisywania edycji, anulowania edycji, dodawania elementu, anulowania dodawania
 //TODO: lepsze dopasowanie scrolla przy przejściu w tryb zaznaczania
 //TODO: mniejsza szybkość przewijania
 //FIXME: przewijanie w trybie landscape
 
-
-//TODO: gesty do obsługi powrotu w górę (smyranie w lewo), dodania nowego elementu, wejścia w element (smyranie w prawo)
-
-//TODO: schowanie info bara - zmiana rozmiaru listview lub możliwość schowania
-
-//FIXME: klawiatura kwoty lub numeryczna: możliwość wpisywania kilku liczb mieszanych z tekstem
-
 //  NOWE FUNKCJONALNOŚCI
+//TODO: gesty do obsługi powrotu w górę (smyranie w lewo), dodania nowego elementu, wejścia w element (smyranie w prawo)
+//TODO: schowanie info bara - zmiana rozmiaru listview lub możliwość schowania
 //TODO: breadcrumbs przy nazwie aktualnego elementu
 //TODO: funkcja cofania zmian - zapisywanie modyfikacji, dodawania, usuwania elementów, przesuwania
 //TODO: moduł obliczeń: inline calc
@@ -52,6 +54,8 @@ import igrek.todotree.system.output.Output;
 //TODO: zapisanie stałej konfiguracji w Config lub XML
 //TODO: zmaksymalizowanie obszaru aktywnego przycisków (edycji, przewijania)
 //TODO: wygaszanie ekranu
+//TODO: synchronizacja bazy w internecie, jeśli jest połączenie
+//TODO: okresowe backupy (dzienne)
 
 //TODO: KONFIGURACJA:
 //TODO: ekran konfiguracji
@@ -142,6 +146,10 @@ public class App extends BaseApp implements GUIListener {
         showInfo(info, gui.getMainContent());
     }
 
+    public void showInfoCancellable(String info, View.OnClickListener cancelCallback) {
+        showInfoCancellable(info, gui.getMainContent(), cancelCallback);
+    }
+
 
     @Override
     public void menuInit(Menu menu) {
@@ -187,10 +195,26 @@ public class App extends BaseApp implements GUIListener {
         showInfo("Anulowano edycję elementu.");
     }
 
-    private void removeItem(int position) {
+    private void removeItem(final int position) {
+
+        final TreeItem removing = treeManager.getCurrentItem().getChild(position);
+
         treeManager.getCurrentItem().remove(position);
         updateItemsList();
-        showInfo("Usunięto element.");
+        showInfoCancellable("Usunięto element.", new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                restoreItem(removing, position);
+            }
+        });
+    }
+
+    private void restoreItem(TreeItem restored, int position){
+        treeManager.getCurrentItem().add(position, restored);
+        state = AppState.ITEMS_LIST;
+        gui.showItemsList(treeManager.getCurrentItem());
+        gui.scrollToItem(position);
+        showInfo("Przywrócono usunięty element.");
     }
 
     private void removeSelectedItems(boolean info) {
