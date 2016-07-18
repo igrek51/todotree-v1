@@ -24,7 +24,7 @@ import java.util.List;
 
 import igrek.todotree.gui.GUIListener;
 import igrek.todotree.logic.datatree.TreeItem;
-import igrek.todotree.system.output.Output;
+import igrek.todotree.output.Output;
 
 public class TreeListView extends ListView implements AbsListView.OnScrollListener, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
 
@@ -221,7 +221,7 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
     private int getItemHeight(int position) {
         Integer h = itemHeights.get(position);
         if(h == null){
-            Output.log("Item View = null");
+            Output.warn("Item View = null");
         }
         return h != null ? h : 0;
     }

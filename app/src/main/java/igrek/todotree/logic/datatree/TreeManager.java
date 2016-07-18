@@ -14,13 +14,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+import igrek.todotree.files.Files;
+import igrek.todotree.files.PathBuilder;
 import igrek.todotree.logic.datatree.serializer.TreeSerializer;
 import igrek.todotree.logic.exceptions.NoSuperItemException;
+import igrek.todotree.output.Output;
 import igrek.todotree.settings.Config;
 import igrek.todotree.settings.preferences.Preferences;
-import igrek.todotree.system.files.Files;
-import igrek.todotree.system.files.PathBuilder;
-import igrek.todotree.system.output.Output;
 
 public class TreeManager {
 
@@ -130,16 +130,16 @@ public class TreeManager {
 
     public void loadRootTree(Files files, Preferences preferences) {
         PathBuilder dbFilePath = files.pathSD().append(preferences.dbFilePath);
-        Output.log("Wczytywanie bazy danych z pliku: " + dbFilePath.toString());
+        Output.debug("Wczytywanie bazy danych z pliku: " + dbFilePath.toString());
         if (!files.exists(dbFilePath.toString())) {
-            Output.log("Plik z bazą danych nie istnieje. Domyślna pusta baza danych.");
+            Output.warn("Plik z bazą danych nie istnieje. Domyślna pusta baza danych.");
             return;
         }
         try {
             String fileContent = files.openFileString(dbFilePath.toString());
             TreeItem rootItem = treeSerializer.loadTree(fileContent);
             setRootItem(rootItem);
-            Output.log("Wczytano bazę danych.");
+            Output.debug("Wczytano bazę danych.");
         } catch (IOException | ParseException e) {
             Output.error(e);
         }
@@ -148,11 +148,11 @@ public class TreeManager {
     public void saveRootTree(Files files, Preferences preferences) {
         saveBackupFile(files, preferences);
         PathBuilder dbFilePath = files.pathSD().append(preferences.dbFilePath);
-        Output.log("Zapisywanie bazy danych do pliku: " + dbFilePath.toString());
+        Output.debug("Zapisywanie bazy danych do pliku: " + dbFilePath.toString());
         try {
             String output = treeSerializer.saveTree(getRootItem());
             files.saveFile(dbFilePath.toString(), output);
-            Output.log("Zapisano bazę danych.");
+            Output.debug("Zapisano bazę danych.");
         } catch (IOException e) {
             Output.error(e);
         }
@@ -177,7 +177,7 @@ public class TreeManager {
                 try {
                     date = sdfr.parse(dateStr);
                 } catch (ParseException e) {
-                    Output.log("Niepoprawny format daty w nazwie pliku: " + child);
+                    Output.warn("Niepoprawny format daty w nazwie pliku: " + child);
                 }
                 backups.add(new Pair<>(child, date));
             }
@@ -198,14 +198,14 @@ public class TreeManager {
             Pair<String, Date> pair = backups.get(i);
             PathBuilder toRemovePath = dbDirPath.append(pair.first);
             files.delete(toRemovePath);
-            Output.log("Usunięto stary backup: " + toRemovePath.toString());
+            Output.debug("Usunięto stary backup: " + toRemovePath.toString());
         }
 
         //zapisanie nowego backupa
         PathBuilder backupPath = dbDirPath.append(Config.backup_file_prefix + sdfr.format(new Date()));
         try {
             files.copy(new File(dbFilePath.toString()), new File(backupPath.toString()));
-            Output.log("Utworzono backup: " + backupPath.toString());
+            Output.debug("Utworzono backup: " + backupPath.toString());
         } catch (IOException e) {
             Output.error(e);
         }

@@ -1,5 +1,6 @@
 package igrek.todotree.gui.treelist;
 
+//TODO: można usunąć
 public class ListScrollOffset {
 //    int firstVisiblePosition;
 //    int topview;

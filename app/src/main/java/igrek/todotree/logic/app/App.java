@@ -14,10 +14,10 @@ import igrek.todotree.gui.GUIListener;
 import igrek.todotree.logic.datatree.TreeItem;
 import igrek.todotree.logic.datatree.TreeManager;
 import igrek.todotree.logic.exceptions.NoSuperItemException;
-import igrek.todotree.system.output.Output;
+import igrek.todotree.output.Output;
 
 //  WERSJA v1.06
-//TODO: log leves z songbooka (+ nazwa metody w debug i nazwa klasy)
+//TODO: przenieść todo w miejsce odpowiedzialnych klas
 
 //TODO: domek w navbar - przejście do root
 
@@ -93,7 +93,7 @@ public class App extends BaseApp implements GUIListener {
         gui.showItemsList(treeManager.getCurrentItem());
         state = AppState.ITEMS_LIST;
 
-        Output.log("Aplikacja uruchomiona.");
+        Output.debug("Aplikacja uruchomiona.");
     }
 
     @Override

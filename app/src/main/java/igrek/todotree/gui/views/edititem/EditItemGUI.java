@@ -3,7 +3,6 @@ package igrek.todotree.gui.views.edititem;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.text.method.DigitsKeyListener;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -15,7 +14,6 @@ import android.widget.TextView;
 import igrek.todotree.R;
 import igrek.todotree.gui.GUI;
 import igrek.todotree.logic.datatree.TreeItem;
-import igrek.todotree.system.output.Output;
 
 public class EditItemGUI {
 

@@ -2,7 +2,7 @@ package igrek.todotree.settings.preferences;
 
 import android.app.Activity;
 
-import igrek.todotree.system.output.Output;
+import igrek.todotree.output.Output;
 
 public class Preferences extends BasePreferences {
 
@@ -19,9 +19,9 @@ public class Preferences extends BasePreferences {
     public void preferencesLoad() {
         if (exists("dbFilePath")) {
             dbFilePath = getString("dbFilePath");
-            Output.log("Wczytano ścieżkę do pliku bazy: " + dbFilePath);
+            Output.debug("Wczytano ścieżkę do pliku bazy: " + dbFilePath);
         } else {
-            Output.log("Wczytano domyślną ścieżkę do pliku bazy: " + dbFilePath);
+            Output.debug("Wczytano domyślną ścieżkę do pliku bazy: " + dbFilePath);
         }
     }
 }

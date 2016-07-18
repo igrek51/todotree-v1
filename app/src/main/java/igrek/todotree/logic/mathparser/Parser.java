@@ -1,4 +1,4 @@
-package igrek.todotree.mathparser;
+package igrek.todotree.logic.mathparser;
 
 import java.util.Vector;
 

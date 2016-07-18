@@ -1,4 +1,4 @@
-package igrek.todotree.mathparser;
+package igrek.todotree.logic.mathparser;
 
 public class SegmentType {
     static final int NUMBER = 1;

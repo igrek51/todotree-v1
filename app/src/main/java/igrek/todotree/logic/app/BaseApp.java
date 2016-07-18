@@ -12,11 +12,11 @@ import android.view.View;
 import android.view.WindowManager;
 
 import igrek.todotree.R;
+import igrek.todotree.files.Files;
 import igrek.todotree.logic.touchcontroller.ITouchController;
+import igrek.todotree.output.Output;
 import igrek.todotree.settings.Config;
 import igrek.todotree.settings.preferences.Preferences;
-import igrek.todotree.system.files.Files;
-import igrek.todotree.system.output.Output;
 
 public abstract class BaseApp implements ITouchController {
 
@@ -64,7 +64,7 @@ public abstract class BaseApp implements ITouchController {
 
         //        activity.setContentView(graphics);
 
-        Output.log("Inicjalizacja aplikacji...");
+        Output.debug("Inicjalizacja aplikacji...");
     }
 
     public void pause() {
@@ -80,7 +80,7 @@ public abstract class BaseApp implements ITouchController {
             Output.error("Zamykanie - próba ponownego zamknięcia");
             return;
         }
-        Output.log("Zamykanie aplikacji...");
+        Output.debug("Zamykanie aplikacji...");
         running = false;
         activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         activity.finish();
@@ -106,11 +106,11 @@ public abstract class BaseApp implements ITouchController {
         int screenHeightDp = newConfig.screenHeightDp;
         int orientation = newConfig.orientation;
         int densityDpi = newConfig.densityDpi;
-        Output.log("Rozmiar ekranu zmieniony na: " + screenWidthDp + "dp x " + screenHeightDp + "dp (DPI = " + densityDpi + ")");
+        Output.debug("Rozmiar ekranu zmieniony na: " + screenWidthDp + "dp x " + screenHeightDp + "dp (DPI = " + densityDpi + ")");
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            Output.log("Zmiana orientacji ekranu: landscape");
+            Output.debug("Zmiana orientacji ekranu: landscape");
         } else if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-            Output.log("Zmiana orientacji ekranu: portrait");
+            Output.debug("Zmiana orientacji ekranu: portrait");
         }
     }
 
