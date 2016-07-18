@@ -2,12 +2,10 @@ package igrek.todotree.gui.treelist;
 
 import android.content.Context;
 import android.graphics.Typeface;
-import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -32,7 +30,6 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
     TreeListView listView;
 
     HashMap<Integer, View> storedViews;
-    HashMap<Integer, Integer> itemHeights;
 
     View convertView = null;
     ViewGroup parent = null;
@@ -45,13 +42,11 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
         this.guiListener = guiListener;
         this.listView = listView;
         storedViews = new HashMap<>();
-        itemHeights = new HashMap<>();
     }
 
     public void setDataSource(List<TreeItem> dataSource) {
         this.dataSource = dataSource;
         storedViews = new HashMap<>();
-        itemHeights = new HashMap<>();
         notifyDataSetChanged();
     }
 
@@ -61,10 +56,6 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 
     public void setSelections(List<Integer> selections) {
         this.selections = selections;
-    }
-
-    public HashMap<Integer, Integer> getItemHeights() {
-        return itemHeights;
     }
 
     public View getStoredView(int position) {
@@ -235,17 +226,6 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 
             //zapisanie rozmiaru widoku
             storedViews.put(position, itemView);
-
-            //TODO wyjebać
-            itemView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                @Override
-                public void onGlobalLayout() {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                        itemView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                    }
-                    itemHeights.put(position, itemView.getHeight());
-                }
-            });
 
             return itemView;
         }

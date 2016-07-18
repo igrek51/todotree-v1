@@ -17,9 +17,7 @@ import igrek.todotree.logic.exceptions.NoSuperItemException;
 import igrek.todotree.system.output.Output;
 
 //  WERSJA v1.06
-//TODO uporządkować adapter
-
-//TODO: log leves z songbooka
+//TODO: log leves z songbooka (+ nazwa metody w debug i nazwa klasy)
 
 //TODO: domek w navbar - przejście do root
 
