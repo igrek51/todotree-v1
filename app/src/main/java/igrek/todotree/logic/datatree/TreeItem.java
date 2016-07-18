@@ -123,4 +123,9 @@ public class TreeItem {
             return content + " [" + children.size() + "]";
         }
     }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }

@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -22,6 +23,7 @@ import igrek.todotree.system.files.PathBuilder;
 import igrek.todotree.system.output.Output;
 
 public class TreeManager {
+
     private TreeItem rootItem;
     private TreeItem currentItem;
 
@@ -34,10 +36,13 @@ public class TreeManager {
 
     private List<TreeItem> clipboard = null;
 
+    private HashMap<TreeItem, Integer> storedScrollPositions;
+
     public TreeManager() {
         rootItem = new TreeItem(null, "root");
         currentItem = rootItem;
         editItem = null;
+        storedScrollPositions = new HashMap<>();
     }
 
     public TreeItem getRootItem() {
@@ -83,8 +88,12 @@ public class TreeManager {
         }
     }
 
-    public void goInto(int childIndex) {
-        goTo(currentItem.getChild(childIndex));
+    public void goInto(int childIndex, Integer scrollPos) {
+        if (scrollPos != null) {
+            storeScrollPosition(currentItem, scrollPos);
+        }
+        TreeItem item = currentItem.getChild(childIndex);
+        goTo(item);
     }
 
     public void goTo(TreeItem child) {
@@ -423,5 +432,17 @@ public class TreeManager {
             }
             clipboard = newClipboard;
         }
+    }
+
+    //  Zapamiętywanie pozycji scrolla
+
+    public void storeScrollPosition(TreeItem item, Integer y) {
+        if (item != null && y != null) {
+            storedScrollPositions.put(item, y);
+        }
+    }
+
+    public Integer restoreScrollPosition(TreeItem item) {
+        return storedScrollPositions.get(item);
     }
 }

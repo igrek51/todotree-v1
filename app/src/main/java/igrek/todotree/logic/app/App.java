@@ -17,8 +17,10 @@ import igrek.todotree.logic.exceptions.NoSuperItemException;
 import igrek.todotree.system.output.Output;
 
 //  WERSJA v1.06
+//TODO uporządkować adapter
 
-//TODO: zapamiętywanie dokładnej pozycji scrolla (każdego poziomu gałęzi) i powracanie do niej z powrotu w górę, zapisywania edycji, anulowania edycji, dodawania elementu, anulowania dodawania
+//TODO: log leves z songbooka
+
 //TODO: domek w navbar - przejście do root
 
 //TODO: przycisk zapisu i wyjścia w navbarze
@@ -167,31 +169,24 @@ public class App extends BaseApp implements GUIListener {
         if (position < 0) position = treeManager.getCurrentItem().size();
         if (position > treeManager.getCurrentItem().size())
             position = treeManager.getCurrentItem().size();
+        treeManager.storeScrollPosition(treeManager.getCurrentItem(), gui.getCurrentScrollPos());
         treeManager.setNewItemPosition(position);
         gui.showEditItemPanel(null, treeManager.getCurrentItem());
         state = AppState.EDIT_ITEM_CONTENT;
     }
 
     private void editItem(TreeItem item, TreeItem parent) {
+        treeManager.storeScrollPosition(treeManager.getCurrentItem(), gui.getCurrentScrollPos());
         treeManager.setEditItem(item);
         gui.showEditItemPanel(item, parent);
         state = AppState.EDIT_ITEM_CONTENT;
     }
 
     private void discardEditingItem() {
-        Integer scrollTo = null;
-        if (treeManager.getEditItem() != null) {
-            scrollTo = treeManager.getEditItem().getIndexInParent();
-        }
-        if (treeManager.getNewItemPosition() != null) {
-            scrollTo = treeManager.getNewItemPosition();
-        }
         treeManager.setEditItem(null);
         state = AppState.ITEMS_LIST;
         gui.showItemsList(treeManager.getCurrentItem());
-        if (scrollTo != null) {
-            gui.scrollToItem(scrollTo);
-        }
+        restoreScrollPosition(treeManager.getCurrentItem());
         showInfo("Anulowano edycję elementu.");
     }
 
@@ -242,14 +237,16 @@ public class App extends BaseApp implements GUIListener {
             TreeItem parent = current.getParent();
             treeManager.goUp();
             updateItemsList();
-            if (parent != null) {
-                int childIndex = parent.getChildIndex(current);
-                if (childIndex != -1) {
-                    gui.scrollToItem(childIndex);
-                }
-            }
+            restoreScrollPosition(parent);
         } catch (NoSuperItemException e) {
             exitApp(true);
+        }
+    }
+
+    private void restoreScrollPosition(TreeItem parent) {
+        Integer savedScrollPos = treeManager.restoreScrollPosition(parent);
+        if (savedScrollPos != null) {
+            gui.scrollToPosition(savedScrollPos);
         }
     }
 
@@ -368,7 +365,7 @@ public class App extends BaseApp implements GUIListener {
     @Override
     public void onItemGoIntoClicked(int position, TreeItem item) {
         treeManager.cancelSelectionMode();
-        treeManager.goInto(position);
+        treeManager.goInto(position, gui.getCurrentScrollPos());
         updateItemsList();
         gui.scrollToItem(0);
     }
@@ -385,7 +382,6 @@ public class App extends BaseApp implements GUIListener {
     @Override
     public void onSavedEditedItem(TreeItem editedItem, String content) {
         content = treeManager.trimContent(content);
-        int scrollTo = editedItem.getIndexInParent();
         if (content.isEmpty()) {
             treeManager.getCurrentItem().remove(editedItem);
             showInfo("Pusty element został usunięty.");
@@ -396,13 +392,12 @@ public class App extends BaseApp implements GUIListener {
         treeManager.setEditItem(null);
         state = AppState.ITEMS_LIST;
         gui.showItemsList(treeManager.getCurrentItem());
-        gui.scrollToItem(scrollTo);
+        restoreScrollPosition(treeManager.getCurrentItem());
     }
 
     @Override
     public void onSavedNewItem(String content) {
         content = treeManager.trimContent(content);
-        int scrollTo = treeManager.getNewItemPosition();
         if (content.isEmpty()) {
             showInfo("Pusty element został usunięty.");
         } else {
@@ -412,7 +407,7 @@ public class App extends BaseApp implements GUIListener {
         treeManager.setNewItemPosition(null);
         state = AppState.ITEMS_LIST;
         gui.showItemsList(treeManager.getCurrentItem());
-        gui.scrollToItem(scrollTo);
+        restoreScrollPosition(treeManager.getCurrentItem());
     }
 
     @Override

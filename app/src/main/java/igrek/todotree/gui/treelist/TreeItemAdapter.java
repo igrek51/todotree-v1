@@ -22,7 +22,6 @@ import java.util.List;
 import igrek.todotree.R;
 import igrek.todotree.gui.GUIListener;
 import igrek.todotree.logic.datatree.TreeItem;
-import igrek.todotree.system.output.Output;
 
 public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 
@@ -32,7 +31,7 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
     GUIListener guiListener;
     TreeListView listView;
 
-    HashMap<Integer, View> itemViews;
+    HashMap<Integer, View> storedViews;
     HashMap<Integer, Integer> itemHeights;
 
     View convertView = null;
@@ -45,13 +44,13 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
         this.dataSource = dataSource;
         this.guiListener = guiListener;
         this.listView = listView;
-        itemViews = new HashMap<>();
+        storedViews = new HashMap<>();
         itemHeights = new HashMap<>();
     }
 
     public void setDataSource(List<TreeItem> dataSource) {
         this.dataSource = dataSource;
-        itemViews = new HashMap<>();
+        storedViews = new HashMap<>();
         itemHeights = new HashMap<>();
         notifyDataSetChanged();
     }
@@ -64,31 +63,14 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
         this.selections = selections;
     }
 
-    public Integer getViewHeight(int position, ViewGroup listView) {
-        if (position >= dataSource.size()) return null;
-        if(itemHeights.containsKey(position)) {
-            return itemHeights.get(position);
-        }
-        if (!itemViews.containsKey(position)){
-//            itemView = getView(position, convertView, parent);
-//            itemView.measure(0, 0);
-//            Output.log("no view in map View, position: "+ position + ", new H: " + itemView.getHeight() + ", mh: " + itemView.getMeasuredHeight() + "mhi: " + itemView.getMeasuredHeightAndState());
-            Output.log("no view stored in adapter: " + position);
-            return null;
-        }else {
-            View itemView = itemViews.get(position);
-            return itemView.getHeight();
-        }
-    }
-
     public HashMap<Integer, Integer> getItemHeights() {
         return itemHeights;
     }
 
-    public View getStoredView(int position){
+    public View getStoredView(int position) {
         if (position >= dataSource.size()) return null;
-        if (!itemViews.containsKey(position)) return null;
-        return itemViews.get(position);
+        if (!storedViews.containsKey(position)) return null;
+        return storedViews.get(position);
     }
 
     @Override
@@ -252,7 +234,9 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
             }
 
             //zapisanie rozmiaru widoku
-            itemViews.put(position, itemView);
+            storedViews.put(position, itemView);
+
+            //TODO wyjebać
             itemView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
                 public void onGlobalLayout() {
@@ -260,7 +244,6 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
                         itemView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                     }
                     itemHeights.put(position, itemView.getHeight());
-                    //Output.log("stored height = " + itemView.getHeight() + ", pos: " + position);
                 }
             });
 

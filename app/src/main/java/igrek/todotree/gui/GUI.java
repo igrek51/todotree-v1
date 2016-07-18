@@ -81,7 +81,11 @@ public class GUI extends GUIBase {
     }
 
     public void scrollToItem(int position){
-        itemsListView.scrollTo(position);
+        itemsListView.scrollToItem(position);
+    }
+
+    public void scrollToPosition(int y) {
+        itemsListView.scrollToPosition(y);
     }
 
     public void hideSoftKeyboard() {
@@ -90,5 +94,9 @@ public class GUI extends GUIBase {
 
     public void setTitle(String title){
         actionBar.setTitle(title);
+    }
+
+    public Integer getCurrentScrollPos() {
+        return itemsListView.getCurrentScrollPosition();
     }
 }
