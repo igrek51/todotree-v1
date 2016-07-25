@@ -2,15 +2,15 @@ package igrek.todotree.output;
 
 public enum LogLevel {
 
-    OFF(0), //wyłączony
+    OFF(0),
 
-    ERROR(1), //ERROR
+    ERROR(1),
 
-    WARN(2), //WARN + ERROR
+    WARN(2),
 
-    INFO(3), //INFO + WARN + ERROR
+    INFO(3),
 
-    DEBUG(4); //wszystkie
+    DEBUG(4);
 
     private int levelNumber;
 

@@ -19,15 +19,16 @@ import igrek.todotree.output.Output;
 //  WERSJA v1.06
 //TODO: przenieść todo w miejsce odpowiedzialnych klas
 
-//TODO: domek w navbar - przejście do root
-
-//TODO: przycisk zapisu i wyjścia w navbarze
-//TODO: przycisk przewijania na koniec na navbarze
+//TODO: przycisk przewijania na początek / koniec na navbarze
 
 //FIXME: klawiatura kwoty lub numeryczna: możliwość wpisywania kilku liczb mieszanych z tekstem
 //FIXME: backspace przy klawiaturze numerycznej powinien cofać wpisane znaki
 //TODO: klawiatura numeryczna: ucinane są literki przed cyframi
 //TODO: przycisk zapisz kończy pisanie klawiatury numerycznej
+
+//TODO zmniejszyć padding między przyciskami edycji
+//TODO: jasny kolor confij
+//TODO: wększy padding przycisków edycji i usuwania
 
 //LANDSCAPE
 //TODO: tryb portrait ekranu na stałe - przycisk przełączania w tryb landscape screen przy pisaniu z klawiatury ekranowej
@@ -93,7 +94,7 @@ public class App extends BaseApp implements GUIListener {
         gui.showItemsList(treeManager.getCurrentItem());
         state = AppState.ITEMS_LIST;
 
-        Output.debug("Aplikacja uruchomiona.");
+        Output.info("Aplikacja uruchomiona.");
     }
 
     @Override
@@ -131,6 +132,8 @@ public class App extends BaseApp implements GUIListener {
             pasteItems();
         } else if (id == R.id.action_select_all) {
             toggleSelectAll();
+        } else if (id == R.id.action_goto_root) {
+            goToRoot();
         }
         return false;
     }
@@ -194,7 +197,7 @@ public class App extends BaseApp implements GUIListener {
 
         treeManager.getCurrentItem().remove(position);
         updateItemsList();
-        showInfoCancellable("Usunięto element.", new View.OnClickListener(){
+        showInfoCancellable("Usunięto element.", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 restoreItem(removing, position);
@@ -202,7 +205,7 @@ public class App extends BaseApp implements GUIListener {
         });
     }
 
-    private void restoreItem(TreeItem restored, int position){
+    private void restoreItem(TreeItem restored, int position) {
         treeManager.getCurrentItem().add(position, restored);
         state = AppState.ITEMS_LIST;
         gui.showItemsList(treeManager.getCurrentItem());
@@ -314,13 +317,29 @@ public class App extends BaseApp implements GUIListener {
         }
     }
 
-    private void toggleSelectAll(){
-        if(treeManager.getSelectedItemsCount() == treeManager.getCurrentItem().size()){
+    private void toggleSelectAll() {
+        if (treeManager.getSelectedItemsCount() == treeManager.getCurrentItem().size()) {
             treeManager.cancelSelectionMode();
-        }else{
+        } else {
             selectAllItems(true);
         }
         updateItemsList();
+    }
+
+    private void goToRoot() {
+        if (state == AppState.ITEMS_LIST) {
+            if (treeManager.isSelectionMode()) {
+                treeManager.cancelSelectionMode();
+            }
+            treeManager.goToRoot();
+            updateItemsList();
+        } else if (state == AppState.EDIT_ITEM_CONTENT) {
+            gui.hideSoftKeyboard();
+            discardEditingItem();
+            treeManager.goToRoot();
+            gui.showItemsList(treeManager.getCurrentItem());
+            state = AppState.ITEMS_LIST;
+        }
     }
 
 
@@ -346,9 +365,9 @@ public class App extends BaseApp implements GUIListener {
             treeManager.toggleItemSelected(position);
             updateItemsList();
         } else {
-            if(item.isEmpty()) {
+            if (item.isEmpty()) {
                 onItemEditClicked(position, item);
-            }else{
+            } else {
                 onItemGoIntoClicked(position, item);
             }
         }
@@ -413,7 +432,7 @@ public class App extends BaseApp implements GUIListener {
         //zapis
         content = treeManager.trimContent(content);
         int newItemIndex;
-        if(editedItem == null){ //nowy element
+        if (editedItem == null) { //nowy element
             newItemIndex = treeManager.getNewItemPosition();
             if (content.isEmpty()) {
                 showInfo("Pusty element został usunięty.");
@@ -422,7 +441,7 @@ public class App extends BaseApp implements GUIListener {
                 newItemIndex++;
                 showInfo("Zapisano nowy element.");
             }
-        }else{ //edycja
+        } else { //edycja
             newItemIndex = editedItem.getIndexInParent();
             if (content.isEmpty()) {
                 treeManager.getCurrentItem().remove(editedItem);

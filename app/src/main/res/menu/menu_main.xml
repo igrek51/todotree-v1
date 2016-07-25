@@ -1,7 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto"
       xmlns:tools="http://schemas.android.com/tools"
-      tools:context="igrek.todotree.MainActivity">
+      tools:context=".MainActivity">
     <item
         android:id="@+id/action_minimize"
         android:orderInCategory="100"
@@ -21,11 +21,6 @@
         android:id="@+id/action_exit_without_saving"
         android:orderInCategory="100"
         android:title="@string/action_exit_without_saving"
-        app:showAsAction="never"/>
-    <item
-        android:id="@+id/action_save_exit"
-        android:orderInCategory="100"
-        android:title="@string/action_save_exit"
         app:showAsAction="never"/>
 
     <item
@@ -48,4 +43,17 @@
         android:orderInCategory="100"
         android:title="@string/action_select_all"
         app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/action_goto_root"
+        android:orderInCategory="200"
+        android:title="@string/action_goto_root"
+        android:icon="@drawable/ic_menu_home"
+        app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/action_save_exit"
+        android:orderInCategory="300"
+        android:title="@string/action_save_exit"
+        android:icon="@drawable/ic_menu_save"
+        app:showAsAction="ifRoom"/>
 </menu>

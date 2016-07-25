@@ -37,13 +37,13 @@ public class Output {
     public static void error(Throwable ex) {
         errors++;
         log(ex.getMessage(), LogLevel.ERROR, "[EXCEPTION - " + ex.getClass().getName() + "] ");
-        printStackTrace(ex);
+        printExceptionStackTrace(ex);
     }
 
     public static void errorUncaught(Throwable ex) {
         errors++;
         log(ex.getMessage(), LogLevel.ERROR, "[UNCAUGHT EXCEPTION - " + ex.getClass().getName() + "] ");
-        printStackTrace(ex);
+        printExceptionStackTrace(ex);
     }
 
     public static void errorCritical(final Activity activity, String e) {
@@ -67,7 +67,7 @@ public class Output {
 
     public static void errorCritical(final Activity activity, Throwable ex) {
         String e = ex.getClass().getName() + " - " + ex.getMessage();
-        printStackTrace(ex);
+        printExceptionStackTrace(ex);
         errorCritical(activity, e);
     }
 
@@ -89,16 +89,18 @@ public class Output {
         if (level.getLevelNumber() <= CONSOLE_LEVEL.getLevelNumber()) {
 
             String consoleMessage;
-            if (level.getLevelNumber() <= SHOW_EXECUTION_DETAILS_LEVEL.getLevelNumber()) {
+            if (level.getLevelNumber() >= SHOW_EXECUTION_DETAILS_LEVEL.getLevelNumber()) {
                 final int stackTraceIndex = 4;
 
-                String methodName = Thread.currentThread().getStackTrace()[stackTraceIndex].getMethodName();
-                String fileName = Thread.currentThread().getStackTrace()[stackTraceIndex].getFileName();
-                int lineNumber = Thread.currentThread().getStackTrace()[stackTraceIndex].getLineNumber();
+                StackTraceElement ste = Thread.currentThread().getStackTrace()[stackTraceIndex];
 
-                consoleMessage = logPrefix + errorPrefix() + "(" + fileName + ":" + lineNumber + ")." + methodName + ": " + message;
+                String methodName = ste.getMethodName();
+                String fileName = ste.getFileName();
+                int lineNumber = ste.getLineNumber();
+
+                consoleMessage = logPrefix + errorsCounter() + methodName + "(" + fileName + ":" + lineNumber + "): " + message;
             } else {
-                consoleMessage = logPrefix + errorPrefix() + message;
+                consoleMessage = logPrefix + errorsCounter() + message;
             }
 
             if (level.equals(LogLevel.ERROR)) {
@@ -112,13 +114,26 @@ public class Output {
         }
     }
 
-    private static void printStackTrace(Throwable ex) {
+    public static void printStackTrace() {
+        int i = 0;
+        for (StackTraceElement ste : Thread.currentThread().getStackTrace()) {
+            i++;
+            if (i <= 3) continue;
+            String methodName = ste.getMethodName();
+            String fileName = ste.getFileName();
+            int lineNumber = ste.getLineNumber();
+            String consoleMessage = "[debug] STACK TRACE " + (i - 3) + ": " + methodName + "(" + fileName + ":" + lineNumber + ")";
+            Log.i(LOG_TAG, consoleMessage);
+        }
+    }
+
+    private static void printExceptionStackTrace(Throwable ex) {
         if (SHOW_EXCEPTIONS_TRACE) {
             Log.e(LOG_TAG, Log.getStackTraceString(ex));
         }
     }
 
-    private static String errorPrefix() {
+    private static String errorsCounter() {
         return (errors > 0) ? ("[E:" + errors + "] ") : "";
     }
 
