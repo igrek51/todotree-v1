@@ -145,6 +145,15 @@
                 android:text="@string/buttonEditCancel"/>
         </LinearLayout>
 
+        <igrek.todotree.gui.numkeyboard.NumericKeyboardView
+            android:id="@+id/numericKeyboard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:visibility="gone"/>
+
     </LinearLayout>
 
 </ScrollView>

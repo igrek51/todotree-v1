@@ -19,15 +19,7 @@ import igrek.todotree.output.Output;
 //  WERSJA v1.06
 //TODO: przenieść todo w miejsce odpowiedzialnych klas
 
-//TODO: przycisk przewijania na początek / koniec na navbarze
-
-//FIXME: klawiatura kwoty lub numeryczna: możliwość wpisywania kilku liczb mieszanych z tekstem
-//FIXME: backspace przy klawiaturze numerycznej powinien cofać wpisane znaki
-//TODO: klawiatura numeryczna: ucinane są literki przed cyframi
-//TODO: przycisk zapisz kończy pisanie klawiatury numerycznej
-
 //TODO zmniejszyć padding między przyciskami edycji
-//TODO: jasny kolor confij
 //TODO: wększy padding przycisków edycji i usuwania
 
 //LANDSCAPE
@@ -41,6 +33,8 @@ import igrek.todotree.output.Output;
 //FIXME: przewijanie w trybie landscape
 
 //  NOWE FUNKCJONALNOŚCI
+//TODO: przycisk przewijania na początek / koniec na navbarze
+//TODO: zmniejszyć padding przycisków navbar
 //TODO: gesty do obsługi powrotu w górę (smyranie w lewo), dodania nowego elementu, wejścia w element (smyranie w prawo)
 //TODO: schowanie info bara - zmiana rozmiaru listview lub możliwość schowania
 //TODO: breadcrumbs przy nazwie aktualnego elementu
@@ -132,9 +126,10 @@ public class App extends BaseApp implements GUIListener {
             pasteItems();
         } else if (id == R.id.action_select_all) {
             toggleSelectAll();
-        } else if (id == R.id.action_goto_root) {
-            goToRoot();
         }
+        //        } else if (id == R.id.action_goto_root) {
+        //            goToRoot();
+        //        }
         return false;
     }
 

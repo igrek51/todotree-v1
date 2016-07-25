@@ -10,8 +10,8 @@ import android.widget.RelativeLayout;
 import java.util.List;
 
 import igrek.todotree.R;
+import igrek.todotree.gui.edititem.EditItemGUI;
 import igrek.todotree.gui.treelist.TreeListView;
-import igrek.todotree.gui.views.edititem.EditItemGUI;
 import igrek.todotree.logic.datatree.TreeItem;
 
 public class GUI extends GUIBase {

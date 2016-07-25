@@ -1,8 +1,6 @@
-package igrek.todotree.gui.views.edititem;
+package igrek.todotree.gui.edititem;
 
-import android.text.Editable;
 import android.text.InputType;
-import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -13,17 +11,21 @@ import android.widget.TextView;
 
 import igrek.todotree.R;
 import igrek.todotree.gui.GUI;
+import igrek.todotree.gui.numkeyboard.NumKeyboardListener;
+import igrek.todotree.gui.numkeyboard.NumericKeyboardView;
 import igrek.todotree.logic.datatree.TreeItem;
 
-public class EditItemGUI {
+//TODO: schowanie klawiatury numerycznej po wciśnięciu klawisza powrotu
+//TODO: brak pojawiania się zwykłej klawiatury, na focus edit textu, gdy aktywna jest numeryczna klawiatura
+//TODO przycisk zapisz kończy pisanie klawiatury numerycznej: wykonanie finish i dopisanie znaków
+
+public class EditItemGUI implements NumKeyboardListener {
 
     private GUI gui;
+
     private EditText etEditItem;
     private Button buttonSaveItem;
-    private String lastEditText;
-    private int quickInsertMode = 0; //0 - tekst, 1 - godzina, 2 - data
-    private String quickInserted;
-    private boolean quickInsertFlag = false;
+    NumericKeyboardView numericKeyboard;
 
     public EditItemGUI(GUI gui, final TreeItem item, TreeItem parent) {
         this.gui = gui;
@@ -51,14 +53,14 @@ public class EditItemGUI {
                 @Override
                 public void onClick(View v) {
                     gui.getGuiListener().onSavedEditedItem(item, etEditItem.getText().toString());
-                    gui.hideSoftKeyboard(etEditItem);
+                    hideKeyboard();
                 }
             });
             buttonSaveAndAdd.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     gui.getGuiListener().onSaveAndAddItem(item, etEditItem.getText().toString());
-                    gui.hideSoftKeyboard(etEditItem);
+                    hideKeyboard();
                 }
             });
         } else { //nowy element
@@ -67,14 +69,14 @@ public class EditItemGUI {
                 @Override
                 public void onClick(View v) {
                     gui.getGuiListener().onSavedNewItem(etEditItem.getText().toString());
-                    gui.hideSoftKeyboard(etEditItem);
+                    hideKeyboard();
                 }
             });
             buttonSaveAndAdd.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     gui.getGuiListener().onSaveAndAddItem(null, etEditItem.getText().toString());
-                    gui.hideSoftKeyboard(etEditItem);
+                    hideKeyboard();
                 }
             });
         }
@@ -85,6 +87,7 @@ public class EditItemGUI {
             @Override
             public void onClick(View v) {
                 gui.getGuiListener().onCancelEditedItem(item);
+                hideKeyboard();
             }
         });
 
@@ -93,14 +96,14 @@ public class EditItemGUI {
         quickEditGoBegin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                quickEdit(-2);
+                quickCursorMove(-2);
             }
         });
         ImageButton quickEditGoLeft = (ImageButton) editItemContentLayout.findViewById(R.id.quickEditGoLeft);
         quickEditGoLeft.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                quickEdit(-1);
+                quickCursorMove(-1);
             }
         });
         ImageButton quickEditSelectAll = (ImageButton) editItemContentLayout.findViewById(R.id.quickEditSelectAll);
@@ -114,14 +117,14 @@ public class EditItemGUI {
         quickEditGoRight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                quickEdit(+1);
+                quickCursorMove(+1);
             }
         });
         ImageButton quickEditGoEnd = (ImageButton) editItemContentLayout.findViewById(R.id.quickEditGoEnd);
         quickEditGoEnd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                quickEdit(+2);
+                quickCursorMove(+2);
             }
         });
 
@@ -130,7 +133,7 @@ public class EditItemGUI {
         buttonEditInsertTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                quickInsertKeyboardToggle(1);
+                toggleTypingHour();
             }
         });
 
@@ -139,7 +142,16 @@ public class EditItemGUI {
         buttonEditInsertDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                quickInsertKeyboardToggle(2);
+                toggleTypingDate();
+            }
+        });
+
+        //numer
+        Button buttonEditInsertNumber = (Button) editItemContentLayout.findViewById(R.id.buttonEditInsertNumber);
+        buttonEditInsertNumber.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleTypingNumeric();
             }
         });
 
@@ -149,63 +161,16 @@ public class EditItemGUI {
             @Override
             public void onClick(View v) {
                 quickInsertRange();
+                numericKeyboard.resetInputed();
             }
-        });
-
-        //numer
-        Button buttonEditInsertNumber = (Button) editItemContentLayout.findViewById(R.id.buttonEditInsertNumber);
-        buttonEditInsertNumber.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                quickInsertKeyboardToggle(3);
-            }
-        });
-
-        quickInsertReset();
-
-        etEditItem.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void onTextChanged(CharSequence cs, int start, int before, int count) {
-                if (quickInsertFlag) return;
-                String currentEdit = cs.toString();
-                if (currentEdit.equals(lastEditText)) { //brak zmian
-                    return;
-                }
-                if (before - count == 1 && count > 0) { //backspace
-                    return;
-                }
-                // jakieś zjebane zachowanie
-                if (start == 0 && count > 2 && count == currentEdit.length() && before == currentEdit.length() - 1) {
-                    return;
-                }
-                if (start == 0 && count > 4 && count == currentEdit.length() && before == currentEdit.length() - 2) {
-                    return;
-                }
-                quickInsertFlag = true;
-                CharSequence diffCs = cs.subSequence(start, start + count);
-                if (diffCs.length() > 0) {
-                    char diff = diffCs.charAt(diffCs.length() - 1);
-                    quickInsert(diff);
-                }
-                quickInsertFlag = false;
-            }
-
-            @Override
-            public void beforeTextChanged(CharSequence cs, int start, int count, int after) {
-                if (quickInsertFlag) return;
-                lastEditText = etEditItem.getText().toString();
-            }
-
-            @Override
-            public void afterTextChanged(Editable cs) { }
-
         });
 
         etEditItem.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    quickInsertOK();
+                    //zapis przyciskiem OK
+                    buttonSaveItem.performClick();
                     return true;
                 }
                 return false;
@@ -214,11 +179,16 @@ public class EditItemGUI {
 
         //focus na końcu edytowanego tekstu
         etEditItem.requestFocus();
-        quickEdit(+2);
-        gui.showSoftKeyboard(etEditItem);
+        quickCursorMove(+2);
+
+        numericKeyboard = (NumericKeyboardView) editItemContentLayout.findViewById(R.id.numericKeyboard);
+        numericKeyboard.init(this, etEditItem);
+
+        showAlphanumKeyboard();
     }
 
-    private void quickEdit(int direction) {
+
+    private void quickCursorMove(int direction) {
         if (direction == -2) { //na początek
             etEditItem.setSelection(0);
         } else if (direction == +2) { //na koniec
@@ -251,107 +221,11 @@ public class EditItemGUI {
         etEditItem.setSelection(0, etEditItem.getText().length());
     }
 
-    private void quickInsert(char key) {
-        if (quickInsertMode != 0) {
-            quickInserted += key;
-            if (quickInsertMode == 1) { //godzina
-                if (quickInserted.length() >= 4) {
-                    quickInsertFinish();
-                    return;
-                }
-            } else if (quickInsertMode == 2) { //data
-                if (quickInserted.length() >= 6) {
-                    quickInsertFinish();
-                    return;
-                }
-            }
-        }
-    }
 
-    private void quickInsertFinish() {
-        String edited = etEditItem.getText().toString();
-        int cursor = etEditItem.getSelectionStart();
-        if (quickInsertMode == 1) { //godzina
-            if (quickInserted.length() >= 3) { // 01:02, 1:02
-                edited = insertAt(edited, ":", cursor - 2);
-                cursor++;
-                etEditItem.setText(edited);
-            }
-        } else if (quickInsertMode == 2) { //data
-            if (quickInserted.length() >= 5) { // 01.02.93, 1.02.93
-                edited = insertAt(edited, ".", cursor - 4);
-                cursor++;
-                edited = insertAt(edited, ".", cursor - 2);
-                cursor++;
-                etEditItem.setText(edited);
-            } else if (quickInserted.length() >= 3) { // 01.02, 1.02
-                edited = insertAt(edited, ".", cursor - 2);
-                cursor++;
-                etEditItem.setText(edited);
-            }
-        } else if (quickInsertMode == 3) { //liczba lub waluta
-
-        }
-        quickInsertReset();
-        etEditItem.setSelection(cursor, cursor);
-    }
-
-    private void quickInsertOK() {
-        if (quickInsertMode == 0) { //zapis przyciskiem OK
-            buttonSaveItem.performClick();
-        } else {
-            if (quickInsertMode == 1) { //godzina
-                quickInsertFinish();
-            } else if (quickInsertMode == 2) { //data
-                quickInsertFinish();
-            } else if (quickInsertMode == 3) { //liczba lub waluta
-                quickInsertFinish();
-            }
-        }
-    }
-
-    private void quickInsertKeyboardToggle(int mode) {
-        int selEnd = etEditItem.getSelectionEnd();
-        int selStart = etEditItem.getSelectionStart();
-        if (quickInsertMode == mode) {
-            quickInsertReset();
-        } else {
-            if(mode == 3){
-                //TODO zjebane jest wpisywanie kilku liczb (ujemnych / przecinkowych), przecinek zamiast kropki, wstawianie "-" i "," w osobnych przyciskach jako tekst
-                etEditItem.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_NUMBER_FLAG_SIGNED);
-            }else {
-                etEditItem.setInputType(InputType.TYPE_CLASS_NUMBER);
-            }
-            etEditItem.setImeOptions(EditorInfo.IME_FLAG_NO_EXTRACT_UI | EditorInfo.IME_ACTION_DONE);
-            quickInsertMode = mode;
-            quickInserted = "";
-        }
-        etEditItem.setSelection(selStart, selEnd);
-    }
-
-    private void quickInsertReset() {
-        etEditItem.setInputType(InputType.TYPE_CLASS_TEXT);
-        etEditItem.setImeOptions(EditorInfo.IME_FLAG_NO_EXTRACT_UI | EditorInfo.IME_ACTION_DONE);
-        quickInsertMode = 0;
-        quickInserted = "";
-        quickInsertFlag = false;
-    }
-
-    private String insertAt(String str, String c, int offset) {
-        if (offset < 0) offset = 0;
-        if (offset > str.length()) offset = str.length();
-        String before = str.substring(0, offset);
-        String after = str.substring(offset);
-        return before + c + after;
-    }
 
     private void quickInsertRange() {
-        if (quickInsertMode == 1) { //godzina
-            quickInsertFinish();
-        } else if (quickInsertMode == 2) { //data
-            quickInsertFinish();
-        } else if (quickInsertMode == 3) { //liczba lub waluta
-            quickInsertFinish();
+        if (numericKeyboard.isVisible()) {
+            numericKeyboard.finishTyping();
         }
         String edited = etEditItem.getText().toString();
         int selStart = etEditItem.getSelectionStart();
@@ -368,5 +242,69 @@ public class EditItemGUI {
         }
         etEditItem.setText(edited);
         etEditItem.setSelection(selStart, selStart);
+    }
+
+    private void showAlphanumKeyboard() {
+        int selEnd = etEditItem.getSelectionEnd();
+        int selStart = etEditItem.getSelectionStart();
+
+        numericKeyboard.setVisible(false);
+        gui.showSoftKeyboard(etEditItem);
+
+        etEditItem.setInputType(InputType.TYPE_CLASS_TEXT);
+        etEditItem.setImeOptions(EditorInfo.IME_FLAG_NO_EXTRACT_UI | EditorInfo.IME_ACTION_DONE);
+
+        etEditItem.setSelection(selStart, selEnd);
+    }
+
+    private void showNumericKeyboard() {
+        int selEnd = etEditItem.getSelectionEnd();
+        int selStart = etEditItem.getSelectionStart();
+
+        gui.hideSoftKeyboard(etEditItem);
+        numericKeyboard.setVisible(true);
+
+        //        etEditItem.setInputType(InputType.TYPE_NULL);
+
+        etEditItem.setSelection(selStart, selEnd);
+    }
+
+    private void hideKeyboard() {
+        int selEnd = etEditItem.getSelectionEnd();
+        int selStart = etEditItem.getSelectionStart();
+
+        gui.hideSoftKeyboard(etEditItem);
+        numericKeyboard.setVisible(false);
+
+        etEditItem.setInputType(InputType.TYPE_CLASS_TEXT);
+        etEditItem.setImeOptions(EditorInfo.IME_FLAG_NO_EXTRACT_UI | EditorInfo.IME_ACTION_DONE);
+
+        etEditItem.setSelection(selStart, selEnd);
+    }
+
+    public void toggleTypingHour() {
+        toggleTyping(1);
+    }
+
+    public void toggleTypingDate() {
+        toggleTyping(2);
+    }
+
+    public void toggleTypingNumeric() {
+        toggleTyping(3);
+    }
+
+    public void toggleTyping(int mode) {
+        if (numericKeyboard.isVisible()) {
+            hideKeyboard();
+        } else {
+            showNumericKeyboard();
+            numericKeyboard.startTyping(mode);
+        }
+    }
+
+    @Override
+    public void onNumKeyboardClosed() {
+        showAlphanumKeyboard();
     }
 }

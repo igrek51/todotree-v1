@@ -44,12 +44,12 @@
         android:title="@string/action_select_all"
         app:showAsAction="never"/>
 
-    <item
-        android:id="@+id/action_goto_root"
-        android:orderInCategory="200"
-        android:title="@string/action_goto_root"
-        android:icon="@drawable/ic_menu_home"
-        app:showAsAction="ifRoom"/>
+    <!--<item-->
+        <!--android:id="@+id/action_goto_root"-->
+        <!--android:orderInCategory="200"-->
+        <!--android:title="@string/action_goto_root"-->
+        <!--android:icon="@drawable/ic_menu_home"-->
+        <!--app:showAsAction="ifRoom"/>-->
     <item
         android:id="@+id/action_save_exit"
         android:orderInCategory="300"
