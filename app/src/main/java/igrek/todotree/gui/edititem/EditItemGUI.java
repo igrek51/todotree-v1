@@ -17,7 +17,9 @@ import igrek.todotree.logic.datatree.TreeItem;
 
 //TODO: schowanie klawiatury numerycznej po wciśnięciu klawisza powrotu
 //TODO: brak pojawiania się zwykłej klawiatury, na focus edit textu, gdy aktywna jest numeryczna klawiatura
+//TODO: na on focus edit textu schowanie nieaktywnej klawiatury
 //TODO przycisk zapisz kończy pisanie klawiatury numerycznej: wykonanie finish i dopisanie znaków
+//TODO: przycisk zakresu na klawiaturze numerycznej
 
 public class EditItemGUI implements NumKeyboardListener {
 
@@ -295,8 +297,8 @@ public class EditItemGUI implements NumKeyboardListener {
     }
 
     public void toggleTyping(int mode) {
-        if (numericKeyboard.isVisible()) {
-            hideKeyboard();
+        if (numericKeyboard.isVisible() && numericKeyboard.getTypingMode() == mode) {
+            showAlphanumKeyboard();
         } else {
             showNumericKeyboard();
             numericKeyboard.startTyping(mode);

@@ -12,6 +12,8 @@ import igrek.todotree.R;
 public class NumericKeyboardView extends KeyboardView implements KeyboardView.OnKeyboardActionListener {
 
     //TODO: zmiana kursora bez wpisania tekstu powoduje reset bufora
+    //TODO: spacja na klawiaturze numerycznej
+    //TODO: ? jeden przycisk otwierający klawiaturę numeryczną
 
     private Context context;
     private EditText editText;
@@ -239,5 +241,9 @@ public class NumericKeyboardView extends KeyboardView implements KeyboardView.On
     private void hideAndBack() {
         setVisible(false);
         listener.onNumKeyboardClosed();
+    }
+
+    public int getTypingMode() {
+        return mode;
     }
 }
