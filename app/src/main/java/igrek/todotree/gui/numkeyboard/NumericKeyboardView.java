@@ -11,16 +11,12 @@ import igrek.todotree.R;
 
 public class NumericKeyboardView extends KeyboardView implements KeyboardView.OnKeyboardActionListener {
 
-    //TODO: zmiana kursora bez wpisania tekstu powoduje reset bufora
-    //TODO: spacja na klawiaturze numerycznej
-    //TODO: ? jeden przycisk otwierający klawiaturę numeryczną
-
     private Context context;
     private EditText editText;
 
     NumKeyboardListener listener;
 
-    private StringBuffer inputed = new StringBuffer();
+    private StringBuffer input = new StringBuffer();
 
     private int mode; //1 - godzina, 2 - data, 3 - liczba (waluta)
     
@@ -105,9 +101,11 @@ public class NumericKeyboardView extends KeyboardView implements KeyboardView.On
             typedOK();
         } else if (primaryCode == -3) {
             typedBackspace();
+        } else if (primaryCode == -4) { // _-_
+            //TODO: przycisk zakresu
+        } else if (primaryCode == -5) { //spacja
+            typedSpace();
         }
-        //TODO pozostałe znaki: dwukropek, ...
-        //TODO: złamanie trybu i zmiana na numeryczny po wpisaniu niewłaściwych znaków (lub poprawienie znaków na znaki trybu)
     }
 
     @Override
@@ -119,16 +117,16 @@ public class NumericKeyboardView extends KeyboardView implements KeyboardView.On
     }
 
     private void typedNumber(char c) {
-        inputed.append(c);
+        input.append(c);
         insertString("" + c);
 
         if (mode == 1) { //godzina
-            if (inputed.length() >= 4) {
+            if (input.length() >= 4) {
                 finishTyping();
                 hideAndBack();
             }
         } else if (mode == 2) { //data
-            if (inputed.length() >= 6) {
+            if (input.length() >= 6) {
                 finishTyping();
                 hideAndBack();
             }
@@ -136,11 +134,18 @@ public class NumericKeyboardView extends KeyboardView implements KeyboardView.On
     }
 
     private void typedMinus() {
+        finishTyping();
         insertString("-");
     }
 
     private void typedComma() {
+        finishTyping();
         insertString(",");
+    }
+
+    private void typedSpace() {
+        finishTyping();
+        insertString(" ");
     }
 
     private void typedOK() {
@@ -149,8 +154,8 @@ public class NumericKeyboardView extends KeyboardView implements KeyboardView.On
     }
 
     private void typedBackspace() {
-        if (inputed.length() > 0) {
-            inputed.delete(inputed.length() - 1, inputed.length());
+        if (input.length() > 0) {
+            input.delete(input.length() - 1, input.length());
         }
         int selStart = editText.getSelectionStart();
         int selEnd = editText.getSelectionEnd();
@@ -199,7 +204,7 @@ public class NumericKeyboardView extends KeyboardView implements KeyboardView.On
 
     public void startTyping(int mode) {
         this.mode = mode;
-        inputed = new StringBuffer();
+        input = new StringBuffer();
     }
 
     public void finishTyping() {
@@ -207,22 +212,25 @@ public class NumericKeyboardView extends KeyboardView implements KeyboardView.On
         int cursorEnd = editText.getSelectionEnd();
         String edited = editText.getText().toString();
 
-        if (cursorStart != cursorEnd) return;
+        if (cursorStart != cursorEnd) {
+            input = new StringBuffer();
+            return;
+        }
 
         if (mode == 1) { //godzina
-            if (inputed.length() >= 3) { // 01:02, 1:02
+            if (input.length() >= 3) { // 01:02, 1:02
                 edited = insertAt(edited, ":", cursorStart - 2);
                 cursorStart++;
                 editText.setText(edited);
             }
         } else if (mode == 2) { //data
-            if (inputed.length() >= 5) { // 01.02.93, 1.02.93
+            if (input.length() >= 5) { // 01.02.93, 1.02.93
                 edited = insertAt(edited, ".", cursorStart - 4);
                 cursorStart++;
                 edited = insertAt(edited, ".", cursorStart - 2);
                 cursorStart++;
                 editText.setText(edited);
-            } else if (inputed.length() >= 3) { // 01.02, 1.02
+            } else if (input.length() >= 3) { // 01.02, 1.02
                 edited = insertAt(edited, ".", cursorStart - 2);
                 cursorStart++;
                 editText.setText(edited);
@@ -231,11 +239,11 @@ public class NumericKeyboardView extends KeyboardView implements KeyboardView.On
 
         }
         editText.setSelection(cursorStart, cursorStart);
-        inputed = new StringBuffer();
+        input = new StringBuffer();
     }
 
-    public void resetInputed() {
-        inputed = new StringBuffer();
+    public void resetInput() {
+        input = new StringBuffer();
     }
 
     private void hideAndBack() {

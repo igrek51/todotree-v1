@@ -17,7 +17,7 @@
         tools:context="igrek.todotree.MainActivity">
 
 
-        <EditText
+        <igrek.todotree.gui.edititem.ItemEditText
             android:id="@+id/etEditItemContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

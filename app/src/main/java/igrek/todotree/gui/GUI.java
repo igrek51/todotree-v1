@@ -89,7 +89,11 @@ public class GUI extends GUIBase {
     }
 
     public void hideSoftKeyboard() {
-        hideSoftKeyboard(etEditItem);
+        editItemGUI.hideKeyboards();
+    }
+
+    public boolean editItemBackClicked() {
+        return editItemGUI.editItemBackClicked();
     }
 
     public void setTitle(String title){

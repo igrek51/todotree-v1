@@ -14,18 +14,17 @@ import igrek.todotree.gui.GUI;
 import igrek.todotree.gui.numkeyboard.NumKeyboardListener;
 import igrek.todotree.gui.numkeyboard.NumericKeyboardView;
 import igrek.todotree.logic.datatree.TreeItem;
+import igrek.todotree.output.Output;
 
-//TODO: schowanie klawiatury numerycznej po wciśnięciu klawisza powrotu
-//TODO: brak pojawiania się zwykłej klawiatury, na focus edit textu, gdy aktywna jest numeryczna klawiatura
-//TODO: na on focus edit textu schowanie nieaktywnej klawiatury
-//TODO przycisk zapisz kończy pisanie klawiatury numerycznej: wykonanie finish i dopisanie znaków
+//FIXME: zaznaczanie całego elementu nie zaznacza tylko najpierw przechodzi na pierwszą pozycję
+
 //TODO: przycisk zakresu na klawiaturze numerycznej
 
 public class EditItemGUI implements NumKeyboardListener {
 
     private GUI gui;
 
-    private EditText etEditItem;
+    private ItemEditText etEditItem;
     private Button buttonSaveItem;
     NumericKeyboardView numericKeyboard;
 
@@ -41,7 +40,7 @@ public class EditItemGUI implements NumKeyboardListener {
     public void init(final TreeItem item, TreeItem parent) {
         View editItemContentLayout = gui.setMainContentLayout(R.layout.edit_item_content);
 
-        etEditItem = (EditText) editItemContentLayout.findViewById(R.id.etEditItemContent);
+        etEditItem = (ItemEditText) editItemContentLayout.findViewById(R.id.etEditItemContent);
         //przycisk zapisu
         buttonSaveItem = (Button) editItemContentLayout.findViewById(R.id.buttonSaveItem);
         //przycisk zapisz i dodaj nowy
@@ -54,15 +53,18 @@ public class EditItemGUI implements NumKeyboardListener {
             buttonSaveItem.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (numericKeyboard.isVisible()) {
+                        numericKeyboard.finishTyping();
+                    }
+                    hideKeyboards();
                     gui.getGuiListener().onSavedEditedItem(item, etEditItem.getText().toString());
-                    hideKeyboard();
                 }
             });
             buttonSaveAndAdd.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     gui.getGuiListener().onSaveAndAddItem(item, etEditItem.getText().toString());
-                    hideKeyboard();
+                    hideKeyboards();
                 }
             });
         } else { //nowy element
@@ -71,14 +73,14 @@ public class EditItemGUI implements NumKeyboardListener {
                 @Override
                 public void onClick(View v) {
                     gui.getGuiListener().onSavedNewItem(etEditItem.getText().toString());
-                    hideKeyboard();
+                    hideKeyboards();
                 }
             });
             buttonSaveAndAdd.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     gui.getGuiListener().onSaveAndAddItem(null, etEditItem.getText().toString());
-                    hideKeyboard();
+                    hideKeyboards();
                 }
             });
         }
@@ -89,7 +91,7 @@ public class EditItemGUI implements NumKeyboardListener {
             @Override
             public void onClick(View v) {
                 gui.getGuiListener().onCancelEditedItem(item);
-                hideKeyboard();
+                hideKeyboards();
             }
         });
 
@@ -163,7 +165,7 @@ public class EditItemGUI implements NumKeyboardListener {
             @Override
             public void onClick(View v) {
                 quickInsertRange();
-                numericKeyboard.resetInputed();
+                numericKeyboard.resetInput();
             }
         });
 
@@ -179,12 +181,45 @@ public class EditItemGUI implements NumKeyboardListener {
             }
         });
 
-        //focus na końcu edytowanego tekstu
-        etEditItem.requestFocus();
-        quickCursorMove(+2);
+        etEditItem.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    Output.debug("on focus");
+                    if (numericKeyboard.isVisible()) {
+                        showNumericKeyboard();
+                        numericKeyboard.resetInput();
+                    } else {
+                        showAlphanumKeyboard();
+                    }
+                } else {
+
+                }
+            }
+        });
+
+        etEditItem.setNumKeyboardListener(this);
+
+        etEditItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Output.debug("onClick");
+
+                if (numericKeyboard.isVisible()) {
+                    showNumericKeyboard();
+                    numericKeyboard.resetInput();
+                } else {
+                    showAlphanumKeyboard();
+                }
+            }
+        });
 
         numericKeyboard = (NumericKeyboardView) editItemContentLayout.findViewById(R.id.numericKeyboard);
         numericKeyboard.init(this, etEditItem);
+
+        //focus na końcu edytowanego tekstu
+        etEditItem.requestFocus();
+        quickCursorMove(+2);
 
         showAlphanumKeyboard();
     }
@@ -222,7 +257,6 @@ public class EditItemGUI implements NumKeyboardListener {
     private void quickEditSelectAll() {
         etEditItem.setSelection(0, etEditItem.getText().length());
     }
-
 
 
     private void quickInsertRange() {
@@ -271,7 +305,7 @@ public class EditItemGUI implements NumKeyboardListener {
         etEditItem.setSelection(selStart, selEnd);
     }
 
-    private void hideKeyboard() {
+    public void hideKeyboards() {
         int selEnd = etEditItem.getSelectionEnd();
         int selStart = etEditItem.getSelectionStart();
 
@@ -308,5 +342,28 @@ public class EditItemGUI implements NumKeyboardListener {
     @Override
     public void onNumKeyboardClosed() {
         showAlphanumKeyboard();
+    }
+
+    @Override
+    public void onSelectionChanged(int selStart, int selEnd) {
+
+        //TODO reset inputa klawiatury numerycznej, ale tylko w przypadku ręcznego przesuwania kursora, a nie automatycznego w przypadku pisania
+        //        Output.debug("selection changed");
+        //
+        //        if (numericKeyboard.isVisible()) {
+        //            showNumericKeyboard();
+        //            numericKeyboard.resetInput();
+        //        } else {
+        //            showAlphanumKeyboard();
+        //        }
+        //
+    }
+
+    public boolean editItemBackClicked() {
+        if (numericKeyboard.isVisible()) {
+            hideKeyboards();
+            return true; //przechwycenie wciśnięcia przycisku
+        }
+        return false;
     }
 }

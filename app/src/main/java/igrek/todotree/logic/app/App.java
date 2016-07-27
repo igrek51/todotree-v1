@@ -255,7 +255,7 @@ public class App extends BaseApp implements GUIListener {
                 goUp();
             }
         } else if (state == AppState.EDIT_ITEM_CONTENT) {
-            gui.hideSoftKeyboard();
+            if (gui.editItemBackClicked()) return;
             discardEditingItem();
         }
     }

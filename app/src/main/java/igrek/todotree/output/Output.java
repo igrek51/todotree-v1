@@ -10,6 +10,8 @@ import java.util.List;
 
 public class Output {
 
+    //TODO zwiększyć poziom logowania na info, wprowadzić nowe poziomy
+
     private static List<String> echoes;
     private static int errors = 0;
 
