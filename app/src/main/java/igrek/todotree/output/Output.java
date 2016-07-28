@@ -12,15 +12,15 @@ public class Output {
 
     //TODO zwiększyć poziom logowania na info, wprowadzić nowe poziomy
 
-    private static List<String> echoes;
-    private static int errors = 0;
-
     private static final LogLevel CONSOLE_LEVEL = LogLevel.DEBUG; //widoczne w konsoli
     private static final LogLevel ECHO_LEVEL = LogLevel.OFF; //widoczne dla użytkownika (i przechowywane w historii)
 
     private static final String LOG_TAG = "ylog";
     private static final boolean SHOW_EXCEPTIONS_TRACE = true;
     private static final LogLevel SHOW_EXECUTION_DETAILS_LEVEL = LogLevel.DEBUG;
+
+    private static List<String> echoes;
+    private static int errors = 0;
 
     public Output() {
         reset();
@@ -44,13 +44,13 @@ public class Output {
 
     public static void errorUncaught(Throwable ex) {
         errors++;
-        log(ex.getMessage(), LogLevel.ERROR, "[UNCAUGHT EXCEPTION - " + ex.getClass().getName() + "] ");
+        log(ex.getMessage(), LogLevel.CRITICAL_ERROR, "[UNCAUGHT EXCEPTION - " + ex.getClass().getName() + "] ");
         printExceptionStackTrace(ex);
     }
 
     public static void errorCritical(final Activity activity, String e) {
         errors++;
-        log(e, LogLevel.ERROR, "[CRITICAL ERROR] ");
+        log(e, LogLevel.CRITICAL_ERROR, "[CRITICAL ERROR] ");
         if (activity == null) {
             error("errorCritical: Brak activity");
             return;
@@ -88,10 +88,10 @@ public class Output {
 
     private static void log(String message, LogLevel level, String logPrefix) {
 
-        if (level.getLevelNumber() <= CONSOLE_LEVEL.getLevelNumber()) {
+        if (level.lowerOrEqual(CONSOLE_LEVEL)) {
 
             String consoleMessage;
-            if (level.getLevelNumber() >= SHOW_EXECUTION_DETAILS_LEVEL.getLevelNumber()) {
+            if (level.higherOrEqual(SHOW_EXECUTION_DETAILS_LEVEL)) {
                 final int stackTraceIndex = 4;
 
                 StackTraceElement ste = Thread.currentThread().getStackTrace()[stackTraceIndex];
@@ -100,18 +100,18 @@ public class Output {
                 String fileName = ste.getFileName();
                 int lineNumber = ste.getLineNumber();
 
-                consoleMessage = logPrefix + errorsCounter() + methodName + "(" + fileName + ":" + lineNumber + "): " + message;
+                consoleMessage = logPrefix + methodName + "(" + fileName + ":" + lineNumber + "): " + message;
             } else {
-                consoleMessage = logPrefix + errorsCounter() + message;
+                consoleMessage = logPrefix + message;
             }
 
-            if (level.equals(LogLevel.ERROR)) {
+            if (level.lowerOrEqual(LogLevel.ERROR)) {
                 Log.e(LOG_TAG, consoleMessage);
             } else {
                 Log.i(LOG_TAG, consoleMessage);
             }
         }
-        if (level.getLevelNumber() <= ECHO_LEVEL.getLevelNumber()) {
+        if (level.lowerOrEqual(ECHO_LEVEL)) {
             echoes.add(logPrefix + message);
         }
     }
@@ -182,7 +182,7 @@ public class Output {
         return builder.toString();
     }
 
-    public static void dupa() {
-        log("DUPA " + System.currentTimeMillis(), LogLevel.DEBUG, "[debug] ");
+    public static void debug() {
+        log("Quick Debug: " + System.currentTimeMillis(), LogLevel.DEBUG, "[debug] ");
     }
 }

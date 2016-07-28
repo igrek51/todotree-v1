@@ -130,7 +130,7 @@ public class TreeManager {
 
     public void loadRootTree(Files files, Preferences preferences) {
         PathBuilder dbFilePath = files.pathSD().append(preferences.dbFilePath);
-        Output.debug("Wczytywanie bazy danych z pliku: " + dbFilePath.toString());
+        Output.info("Wczytywanie bazy danych z pliku: " + dbFilePath.toString());
         if (!files.exists(dbFilePath.toString())) {
             Output.warn("Plik z bazą danych nie istnieje. Domyślna pusta baza danych.");
             return;
@@ -139,7 +139,7 @@ public class TreeManager {
             String fileContent = files.openFileString(dbFilePath.toString());
             TreeItem rootItem = treeSerializer.loadTree(fileContent);
             setRootItem(rootItem);
-            Output.debug("Wczytano bazę danych.");
+            Output.info("Wczytano bazę danych.");
         } catch (IOException | ParseException e) {
             Output.error(e);
         }
@@ -148,11 +148,11 @@ public class TreeManager {
     public void saveRootTree(Files files, Preferences preferences) {
         saveBackupFile(files, preferences);
         PathBuilder dbFilePath = files.pathSD().append(preferences.dbFilePath);
-        Output.debug("Zapisywanie bazy danych do pliku: " + dbFilePath.toString());
+        Output.info("Zapisywanie bazy danych do pliku: " + dbFilePath.toString());
         try {
             String output = treeSerializer.saveTree(getRootItem());
             files.saveFile(dbFilePath.toString(), output);
-            Output.debug("Zapisano bazę danych.");
+            Output.info("Zapisano bazę danych.");
         } catch (IOException e) {
             Output.error(e);
         }
@@ -198,14 +198,14 @@ public class TreeManager {
             Pair<String, Date> pair = backups.get(i);
             PathBuilder toRemovePath = dbDirPath.append(pair.first);
             files.delete(toRemovePath);
-            Output.debug("Usunięto stary backup: " + toRemovePath.toString());
+            Output.info("Usunięto stary backup: " + toRemovePath.toString());
         }
 
         //zapisanie nowego backupa
         PathBuilder backupPath = dbDirPath.append(Config.backup_file_prefix + sdfr.format(new Date()));
         try {
             files.copy(new File(dbFilePath.toString()), new File(backupPath.toString()));
-            Output.debug("Utworzono backup: " + backupPath.toString());
+            Output.info("Utworzono backup: " + backupPath.toString());
         } catch (IOException e) {
             Output.error(e);
         }

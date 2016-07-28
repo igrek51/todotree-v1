@@ -19,9 +19,9 @@ public class Preferences extends BasePreferences {
     public void preferencesLoad() {
         if (exists("dbFilePath")) {
             dbFilePath = getString("dbFilePath");
-            Output.debug("Wczytano ścieżkę do pliku bazy: " + dbFilePath);
+            Output.info("Wczytano ścieżkę do pliku bazy: " + dbFilePath);
         } else {
-            Output.debug("Wczytano domyślną ścieżkę do pliku bazy: " + dbFilePath);
+            Output.info("Wczytano domyślną ścieżkę do pliku bazy: " + dbFilePath);
         }
     }
 }
