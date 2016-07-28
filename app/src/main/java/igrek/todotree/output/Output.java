@@ -10,8 +10,6 @@ import java.util.List;
 
 public class Output {
 
-    //TODO zwiększyć poziom logowania na info, wprowadzić nowe poziomy
-
     private static final LogLevel CONSOLE_LEVEL = LogLevel.DEBUG; //widoczne w konsoli
     private static final LogLevel ECHO_LEVEL = LogLevel.OFF; //widoczne dla użytkownika (i przechowywane w historii)
 

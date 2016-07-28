@@ -16,57 +16,38 @@ import igrek.todotree.logic.datatree.TreeManager;
 import igrek.todotree.logic.exceptions.NoSuperItemException;
 import igrek.todotree.output.Output;
 
-//  WERSJA v1.06
-//TODO: przenieść todo w miejsce odpowiedzialnych klas
-
-//TODO zmniejszyć padding między przyciskami edycji
-//TODO: wększy padding przycisków edycji i usuwania
-
-//LANDSCAPE
-//TODO: tryb portrait ekranu na stałe - przycisk przełączania w tryb landscape screen przy pisaniu z klawiatury ekranowej
-//TODO: widoczność przycisków i całego layoutu przy edycji w trybie landscape
-//FIXME: brak dostępności wszystkich menu w trybie landscape (nie scrolluje się)
-
-//SCROLLOWANIE
-//TODO: lepsze dopasowanie scrolla przy przejściu w tryb zaznaczania
-//TODO: mniejsza szybkość przewijania
-//FIXME: przewijanie w trybie landscape
 
 //  NOWE FUNKCJONALNOŚCI
 //TODO: przycisk przewijania na początek / koniec na navbarze
-//TODO: zmniejszyć padding przycisków navbar
+//TODO: zmniejszyć padding przycisków w navbarze
 //TODO: gesty do obsługi powrotu w górę (smyranie w lewo), dodania nowego elementu, wejścia w element (smyranie w prawo)
-//TODO: schowanie info bara - zmiana rozmiaru listview lub możliwość schowania
 //TODO: breadcrumbs przy nazwie aktualnego elementu
 //TODO: funkcja cofania zmian - zapisywanie modyfikacji, dodawania, usuwania elementów, przesuwania
+//TODO: wyjście bez zapisywania bazy jeśli nie było zmian
 //TODO: moduł obliczeń: inline calc
 //TODO: moduł obliczeń: sumowanie wielu elementów
 //TODO: zmiana widoczności opcji menu przy zaznaczaniu wielu elementów i kopiowaniu (niepusty schowek, niepuste zaznaczenie)
 //TODO: zmiana widoczności opcji menu przy edycji elementu
-//TODO: wyjście bez zapisywania bazy jeśli nie było zmian
-//TODO: system logów z wieloma poziomami (info - jeden z poziomów, wyświetlany użytkownikowi): debug, warn, error
 //TODO: klasy elementów: checkable (z pamięcią stanu), separator
-//TODO: zapisanie stałej konfiguracji w Config lub XML
-//TODO: zmaksymalizowanie obszaru aktywnego przycisków (edycji, przewijania)
 //TODO: wygaszanie ekranu
 //TODO: synchronizacja bazy w internecie, jeśli jest połączenie
 //TODO: okresowe backupy (dzienne)
 
-//TODO: KONFIGURACJA:
+//  KONFIGURACJA
 //TODO: ekran konfiguracji
 //TODO: konfiguracja położenia pliku z bazą dancyh
-//TODO: shared preferences: zautomatyzowanie w celu konfiguracji, definicja: typ, nazwa, wartość domyślna, refleksja, automatyczny zapis, odczyt, generowanie fomrularza, tryb landscape screen przy pisaniu z klawiatury ekranowej
+//TODO: shared preferences: zautomatyzowanie w celu konfiguracji, definicja: typ, nazwa, wartość domyślna, refleksja, automatyczny zapis, odczyt, generowanie fomrularza
+//TODO: konfiguracja: wyświetlacz zawsze zapalony, wielkość czcionki, marginesy między elementami
 
-//  BŁĘDY
-//FIXME: przechodzenie wgłąb elementu po szybkim przenoszenie na koniec lub początek listy
+//  LANDSCAPE
+//TODO: tryb portrait ekranu na stałe - przycisk przełączania w tryb landscape screen przy pisaniu z klawiatury ekranowej
+//TODO: widoczność przycisków i całego layoutu przy edycji w trybie landscape
+//FIXME: brak dostępności wszystkich menu w trybie landscape (nie scrolluje się)
+//FIXME: przewijanie w trybie landscape
 
 //  WYGLĄD
-//TODO: płynne przesuwanie elementów przy swappingu
-//TODO: nieprzykrywanie przycisku plus przez info bar
-//TODO: przycisk przesuwania itemów - maksymalna wysokość = wysokość itemu
 //TODO: liczebność elementów folderu jako osobny textedit z szarym kolorem i wyrównany do prawej, w tytule rodzica to samo
-//TODO: motyw kolorystyczny, pasek stanu, zapisanie wszystkich kolorów w xml, metoda do wyciągania kolorów z zasobów
-//TODO: konfiguracja: wyświetlacz zawsze zapalony, wielkość czcionki, marginesy między elementami
+//TODO: zapisanie wszystkich kolorów w xml, metoda do wyciągania kolorów z zasobów
 
 public class App extends BaseApp implements GUIListener {
 

@@ -15,10 +15,14 @@ import igrek.todotree.R;
 import igrek.todotree.files.Files;
 import igrek.todotree.logic.touchcontroller.ITouchController;
 import igrek.todotree.output.Output;
-import igrek.todotree.settings.Config;
-import igrek.todotree.settings.preferences.Preferences;
+import igrek.todotree.preferences.Preferences;
 
 public abstract class BaseApp implements ITouchController {
+
+    public static final int FULLSCREEN_FLAG = WindowManager.LayoutParams.FLAG_FULLSCREEN | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED;
+    public static final boolean FULLSCREEN = false;
+    public static final boolean HIDE_TASKBAR = true;
+    public static final boolean KEEP_SCREEN_ON = true;
 
     public AppCompatActivity activity;
     private Thread.UncaughtExceptionHandler defaultUEH;
@@ -32,8 +36,6 @@ public abstract class BaseApp implements ITouchController {
     public BaseApp(AppCompatActivity aActivity) {
         this.activity = aActivity;
 
-        new Config();
-
         //łapanie niezłapanych wyjątków
         defaultUEH = Thread.getDefaultUncaughtExceptionHandler();
         Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
@@ -46,16 +48,16 @@ public abstract class BaseApp implements ITouchController {
         });
 
         //schowanie paska tytułu
-        if (Config.Screen.hide_taskbar) {
+        if (HIDE_TASKBAR) {
             if (activity.getSupportActionBar() != null) {
                 activity.getSupportActionBar().hide();
             }
         }
         //fullscreen
-        if (Config.Screen.fullscreen) {
-            activity.getWindow().setFlags(Config.Screen.fullscreen_flag, Config.Screen.fullscreen_flag);
+        if (FULLSCREEN) {
+            activity.getWindow().setFlags(FULLSCREEN_FLAG, FULLSCREEN_FLAG);
         }
-        if (Config.Screen.keep_screen_on) {
+        if (KEEP_SCREEN_ON) {
             activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
         new Output();

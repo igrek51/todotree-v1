@@ -19,8 +19,7 @@ import igrek.todotree.files.PathBuilder;
 import igrek.todotree.logic.datatree.serializer.TreeSerializer;
 import igrek.todotree.logic.exceptions.NoSuperItemException;
 import igrek.todotree.output.Output;
-import igrek.todotree.settings.Config;
-import igrek.todotree.settings.preferences.Preferences;
+import igrek.todotree.preferences.Preferences;
 
 public class TreeManager {
 
@@ -159,9 +158,14 @@ public class TreeManager {
     }
 
     //  BACKUP
+    
+    //TODO przenieść do osobnej klasy odpowiedzialnej za Backupy
+
+    public static final String BACKUP_FILE_PREFIX = "backup_";
+    public static final int BACKUP_NUM = 10;
 
     public void saveBackupFile(Files files, Preferences preferences) {
-        if (Config.backup_num == 0) return;
+        if (BACKUP_NUM == 0) return;
         SimpleDateFormat sdfr = new SimpleDateFormat("dd_MM_yyyy-HH_mm_ss", Locale.ENGLISH);
         //usunięcie starych plików
         PathBuilder dbFilePath = files.pathSD().append(preferences.dbFilePath);
@@ -171,8 +175,8 @@ public class TreeManager {
         List<Pair<String, Date>> backups = new ArrayList<>();
         //rozpoznanie plików backup i odczytanie ich dat
         for (String child : children) {
-            if (child.startsWith(Config.backup_file_prefix)) {
-                String dateStr = PathBuilder.removeExtension(child).substring(Config.backup_file_prefix.length());
+            if (child.startsWith(BACKUP_FILE_PREFIX)) {
+                String dateStr = PathBuilder.removeExtension(child).substring(BACKUP_FILE_PREFIX.length());
                 Date date = null;
                 try {
                     date = sdfr.parse(dateStr);
@@ -194,7 +198,7 @@ public class TreeManager {
         });
 
         //usunięcie najstarszych plików
-        for (int i = Config.backup_num - 1; i < backups.size(); i++) {
+        for (int i = BACKUP_NUM - 1; i < backups.size(); i++) {
             Pair<String, Date> pair = backups.get(i);
             PathBuilder toRemovePath = dbDirPath.append(pair.first);
             files.delete(toRemovePath);
@@ -202,7 +206,7 @@ public class TreeManager {
         }
 
         //zapisanie nowego backupa
-        PathBuilder backupPath = dbDirPath.append(Config.backup_file_prefix + sdfr.format(new Date()));
+        PathBuilder backupPath = dbDirPath.append(BACKUP_FILE_PREFIX + sdfr.format(new Date()));
         try {
             files.copy(new File(dbFilePath.toString()), new File(backupPath.toString()));
             Output.info("Utworzono backup: " + backupPath.toString());

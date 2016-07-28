@@ -84,6 +84,9 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
+        //TODO wększy padding przycisków edycji i usuwania, zmaksymalizowanie obszaru aktywnego przycisków (edycji, przewijania)
+        //TODO przycisk przesuwania itemów - maksymalna wysokość = wysokość itemu
+
         if (position == dataSource.size()) {
             //plusik
             View itemPlus = inflater.inflate(R.layout.item_plus, parent, false);

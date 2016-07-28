@@ -17,6 +17,7 @@ import igrek.todotree.gui.numkeyboard.NumericKeyboardView;
 import igrek.todotree.logic.datatree.TreeItem;
 
 //TODO: przycisk zakresu na klawiaturze numerycznej
+//TODO zmniejszyć padding między przyciskami edycji
 
 public class EditItemGUI implements NumKeyboardListener {
 
