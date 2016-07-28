@@ -1,5 +1,6 @@
 package igrek.todotree.gui.edititem;
 
+import android.os.Handler;
 import android.text.InputType;
 import android.view.KeyEvent;
 import android.view.View;
@@ -14,9 +15,6 @@ import igrek.todotree.gui.GUI;
 import igrek.todotree.gui.numkeyboard.NumKeyboardListener;
 import igrek.todotree.gui.numkeyboard.NumericKeyboardView;
 import igrek.todotree.logic.datatree.TreeItem;
-import igrek.todotree.output.Output;
-
-//FIXME: zaznaczanie całego elementu nie zaznacza tylko najpierw przechodzi na pierwszą pozycję
 
 //TODO: przycisk zakresu na klawiaturze numerycznej
 
@@ -181,30 +179,12 @@ public class EditItemGUI implements NumKeyboardListener {
             }
         });
 
-        etEditItem.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-                    Output.debug("on focus");
-                    if (numericKeyboard.isVisible()) {
-                        showNumericKeyboard();
-                        numericKeyboard.resetInput();
-                    } else {
-                        showAlphanumKeyboard();
-                    }
-                } else {
-
-                }
-            }
-        });
-
         etEditItem.setNumKeyboardListener(this);
 
+        //niepotrzebne na focus: etEditItem.setOnFocusChangeListener(new View.OnFocusChangeListener() {
         etEditItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Output.debug("onClick");
-
                 if (numericKeyboard.isVisible()) {
                     showNumericKeyboard();
                     numericKeyboard.resetInput();
@@ -244,7 +224,7 @@ public class EditItemGUI implements NumKeyboardListener {
                 if (direction == -1) { //w lewo
                     selStart--;
                     if (selStart < 0) selStart = 0;
-                } else if (direction == +1) { //w prawo
+                } else { //w prawo
                     selEnd++;
                     if (selEnd > etEditItem.getText().length())
                         selEnd = etEditItem.getText().length();
@@ -255,7 +235,15 @@ public class EditItemGUI implements NumKeyboardListener {
     }
 
     private void quickEditSelectAll() {
-        etEditItem.setSelection(0, etEditItem.getText().length());
+        etEditItem.requestFocus();
+        etEditItem.selectAll();
+        // konieczne, żeby zaznaczyć cały tekst, a nie tylko przejść z kursorem na początek - WTF ???
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                etEditItem.selectAll();
+            }
+        });
     }
 
 
@@ -347,16 +335,6 @@ public class EditItemGUI implements NumKeyboardListener {
     @Override
     public void onSelectionChanged(int selStart, int selEnd) {
 
-        //TODO reset inputa klawiatury numerycznej, ale tylko w przypadku ręcznego przesuwania kursora, a nie automatycznego w przypadku pisania
-        //        Output.debug("selection changed");
-        //
-        //        if (numericKeyboard.isVisible()) {
-        //            showNumericKeyboard();
-        //            numericKeyboard.resetInput();
-        //        } else {
-        //            showAlphanumKeyboard();
-        //        }
-        //
     }
 
     public boolean editItemBackClicked() {

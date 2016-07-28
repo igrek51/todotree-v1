@@ -51,7 +51,7 @@
             android:keyLabel="9"/>
         <Key
             android:codes="-5"
-            android:keyLabel="_"
+            android:keyLabel="space"
             android:keyEdgeFlags="right"/>
     </Row>
     <Row>

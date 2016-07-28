@@ -199,7 +199,7 @@ public class NumericKeyboardView extends KeyboardView implements KeyboardView.On
         edited = before + str + after;
         editText.setText(edited);
 
-        editText.setSelection(selStart + str.length(), selEnd + str.length());
+        editText.setSelection(selStart + str.length(), selStart + str.length());
     }
 
     public void startTyping(int mode) {
@@ -235,9 +235,7 @@ public class NumericKeyboardView extends KeyboardView implements KeyboardView.On
                 cursorStart++;
                 editText.setText(edited);
             }
-        } else if (mode == 3) { //liczba lub waluta
-
-        }
+        }//liczba lub waluta - brak akcji
         editText.setSelection(cursorStart, cursorStart);
         input = new StringBuffer();
     }
