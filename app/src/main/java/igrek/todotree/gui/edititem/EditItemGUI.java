@@ -339,8 +339,8 @@ public class EditItemGUI implements NumKeyboardListener {
     }
 
     public boolean editItemBackClicked() {
+        hideKeyboards();
         if (numericKeyboard.isVisible()) {
-            hideKeyboards();
             return true; //przechwycenie wciśnięcia przycisku
         }
         return false;
