@@ -16,7 +16,6 @@ import igrek.todotree.logic.datatree.TreeManager;
 import igrek.todotree.logic.exceptions.NoSuperItemException;
 import igrek.todotree.output.Output;
 
-
 //  NOWE FUNKCJONALNOŚCI
 //TODO: przycisk przewijania na początek / koniec na navbarze
 //TODO: zmniejszyć padding przycisków w navbarze
@@ -397,10 +396,14 @@ public class App extends BaseApp implements GUIListener {
             treeManager.getCurrentItem().add(treeManager.getNewItemPosition(), content);
             showInfo("Zapisano nowy element.");
         }
-        treeManager.setNewItemPosition(null);
         state = AppState.ITEMS_LIST;
         gui.showItemsList(treeManager.getCurrentItem());
-        restoreScrollPosition(treeManager.getCurrentItem());
+        if (treeManager.getNewItemPosition() == treeManager.getCurrentItem().size() - 1) {
+            gui.scrollToBottom();
+        } else {
+            restoreScrollPosition(treeManager.getCurrentItem());
+        }
+        treeManager.setNewItemPosition(null);
     }
 
     @Override

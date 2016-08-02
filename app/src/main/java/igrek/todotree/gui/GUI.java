@@ -88,6 +88,10 @@ public class GUI extends GUIBase {
         itemsListView.scrollToPosition(y);
     }
 
+    public void scrollToBottom() {
+        itemsListView.scrollToBottom();
+    }
+
     public void hideSoftKeyboard() {
         editItemGUI.hideKeyboards();
     }

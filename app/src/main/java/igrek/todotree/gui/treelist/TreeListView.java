@@ -452,6 +452,10 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
         invalidate();
     }
 
+    public void scrollToBottom() {
+        setSelection(items.size());
+    }
+
     public Integer getCurrentScrollPosition() {
         return getRealScrollPosition();
     }
