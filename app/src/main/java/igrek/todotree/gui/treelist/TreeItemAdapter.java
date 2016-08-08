@@ -23,16 +23,13 @@ import igrek.todotree.logic.datatree.TreeItem;
 
 public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 
-    Context context;
-    List<TreeItem> dataSource;
-    List<Integer> selections = null;
-    GUIListener guiListener;
-    TreeListView listView;
+    private Context context;
+    private List<TreeItem> dataSource;
+    private List<Integer> selections = null;
+    private GUIListener guiListener;
+    private TreeListView listView;
 
-    HashMap<Integer, View> storedViews;
-
-    View convertView = null;
-    ViewGroup parent = null;
+    private HashMap<Integer, View> storedViews;
 
     public TreeItemAdapter(Context context, List<TreeItem> dataSource, GUIListener guiListener, TreeListView listView) {
         super(context, 0, new ArrayList<TreeItem>());
@@ -78,9 +75,6 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-
-        this.convertView = convertView;
-        this.parent = parent;
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -227,8 +221,10 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
                 });
             }
 
-            //zapisanie rozmiaru widoku
+            //zachowanie widoku
             storedViews.put(position, itemView);
+
+            itemView.setOnTouchListener(new TreeItemTouchListener(listView, position));
 
             return itemView;
         }

@@ -22,7 +22,7 @@ public abstract class BaseApp implements ITouchController {
     public static final int FULLSCREEN_FLAG = WindowManager.LayoutParams.FLAG_FULLSCREEN | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED;
     public static final boolean FULLSCREEN = false;
     public static final boolean HIDE_TASKBAR = true;
-    public static final boolean KEEP_SCREEN_ON = true;
+    public static final boolean KEEP_SCREEN_ON = false;
 
     public AppCompatActivity activity;
     private Thread.UncaughtExceptionHandler defaultUEH;

@@ -19,7 +19,6 @@ import igrek.todotree.output.Output;
 //  NOWE FUNKCJONALNOŚCI
 //TODO: przycisk przewijania na początek / koniec na navbarze
 //TODO: zmniejszyć padding przycisków w navbarze
-//TODO: gesty do obsługi powrotu w górę (smyranie w lewo), dodania nowego elementu, wejścia w element (smyranie w prawo)
 //TODO: breadcrumbs przy nazwie aktualnego elementu
 //TODO: funkcja cofania zmian - zapisywanie modyfikacji, dodawania, usuwania elementów, przesuwania
 //TODO: wyjście bez zapisywania bazy jeśli nie było zmian
@@ -28,7 +27,6 @@ import igrek.todotree.output.Output;
 //TODO: zmiana widoczności opcji menu przy zaznaczaniu wielu elementów i kopiowaniu (niepusty schowek, niepuste zaznaczenie)
 //TODO: zmiana widoczności opcji menu przy edycji elementu
 //TODO: klasy elementów: checkable (z pamięcią stanu), separator
-//TODO: wygaszanie ekranu
 //TODO: synchronizacja bazy w internecie, jeśli jest połączenie
 //TODO: okresowe backupy (dzienne)
 

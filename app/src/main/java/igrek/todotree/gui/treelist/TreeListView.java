@@ -45,10 +45,20 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
     private Integer draggedItemViewTop = null;
 
     /** aktualne położenie scrolla */
-    private ListScrollOffset scrollOffset = new ListScrollOffset();
+    private Integer scrollOffset = 0;
     /** położenie scrolla przy rozpoczęciu przeciągania */
-    private ListScrollOffset scrollStart = new ListScrollOffset();
+    private Integer scrollStart = 0;
 
+    /** położenie X punktu rozpoczęcia gestu */
+    private Float gestureStartX;
+    /** położenie Y punktu rozpoczęcia gestu */
+    private Float gestureStartY;
+    /** położenie scrolla podczas rozpoczęcia gestu */
+    private Integer gestureStartScroll;
+    /** numer pozycji, na której rozpoczęto gest */
+    private Integer gestureStartPos;
+
+    /** index widoku na wysokość */
     private HashMap<Integer, Integer> itemHeights = new HashMap<>();
 
     private int scrollState = SCROLL_STATE_IDLE;
@@ -65,6 +75,9 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
 
     private final int HOVER_BORDER_THICKNESS = 5;
     private final int HOVER_BORDER_COLOR = 0xccb0b0b0;
+
+    private final float GESTURE_MIN_DX = 0.3f;
+    private final float GESTURE_MAX_DY = 0.8f;
 
     public TreeListView(Context context) {
         super(context);
@@ -91,11 +104,13 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
         setAdapter(adapter);
     }
 
-
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
+                gestureStartX = event.getX();
+                gestureStartY = event.getY();
+                gestureStartScroll = scrollOffset;
                 break;
             case MotionEvent.ACTION_MOVE:
                 if (draggedItemPos != null) {
@@ -105,13 +120,22 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                itemDraggingStopped();
-                break;
+                if (handleItemGesture(event.getX(), event.getY(), scrollOffset)) {
+                    return super.onTouchEvent(event);
+                }
             case MotionEvent.ACTION_CANCEL:
                 itemDraggingStopped();
+                gestureStartX = null;
+                gestureStartY = null;
+                gestureStartScroll = null;
+                gestureStartPos = null;
                 break;
         }
         return super.onTouchEvent(event);
+    }
+
+    public void onItemTouchDown(int position, MotionEvent event, View v) {
+        gestureStartPos = position;
     }
 
     @Override
@@ -167,6 +191,7 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
         } else {
             //tryb zaznaczania elementów
             guiListener.onItemLongClick(position);
+            gestureStartPos = null;
         }
         return true;
     }
@@ -220,7 +245,7 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
 
     private int getItemHeight(int position) {
         Integer h = itemHeights.get(position);
-        if(h == null){
+        if (h == null) {
             Output.warn("Item View = null");
         }
         return h != null ? h : 0;
@@ -238,7 +263,7 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
         for (int i = 0; i < adapter.getCount(); i++) {
             View mView = adapter.getView(i, null, this);
             mView.measure(measureSpecW, measureSpecH);
-            itemHeights.put(new Integer(i), mView.getMeasuredHeight());
+            itemHeights.put(i, mView.getMeasuredHeight());
         }
     }
 
@@ -258,7 +283,7 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
         draggedItemPos = position;
         draggedItemView = itemView;
         draggedItemViewTop = itemView.getTop();
-        scrollStart.copyFrom(scrollOffset);
+        scrollStart = scrollOffset;
 
         hoverBitmap = getAndAddHoverView(draggedItemView);
         draggedItemView.setVisibility(INVISIBLE);
@@ -267,7 +292,7 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
     }
 
     private void handleItemDragging() {
-        float dyTotal = lastTouchY - startTouchY + (scrollOffset.diff(scrollStart));
+        float dyTotal = lastTouchY - startTouchY + (scrollOffset - scrollStart);
 
         if (draggedItemViewTop == null) {
             Output.error("draggedItemViewTop = null");
@@ -282,22 +307,22 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
         int deltaH = 0;
 
         if (dyTotal > 0) { //przesuwanie w dół
-            while(true) {
+            while (true) {
                 if (draggedItemPos + step + 1 >= items.size()) break;
                 int downHeight = getItemHeight(draggedItemPos + step + 1);
-                if(downHeight == 0) break;
+                if (downHeight == 0) break;
                 if (dyTotal - deltaH > downHeight * ITEMS_REPLACE_COVER) {
                     step++;
                     deltaH += downHeight;
-                }else{
+                } else {
                     break;
                 }
             }
         } else if (dyTotal < 0) { //przesuwanie w górę
-            while(true) {
+            while (true) {
                 if (draggedItemPos + step - 1 < 0) break;
                 int upHeight = getItemHeight(draggedItemPos + step - 1);
-                if(upHeight == 0) break;
+                if (upHeight == 0) break;
                 if (-dyTotal + deltaH > upHeight * ITEMS_REPLACE_COVER) {
                     step--;
                     deltaH -= upHeight;
@@ -335,7 +360,7 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
             //wyłączenie automatycznego ustawiania pozycji hover bitmapy
             draggedItemPos = null;
             //animacja powrotu do aktualnego połozenia elementu
-            hoverBitmapBounds.offsetTo(0, draggedItemViewTop - (scrollOffset.diff(scrollStart)));
+            hoverBitmapBounds.offsetTo(0, draggedItemViewTop - (scrollOffset - scrollStart));
             ObjectAnimator hoverViewAnimator = ObjectAnimator.ofObject(hoverBitmap, "bounds", rectBoundsEvaluator, hoverBitmapBounds);
             hoverViewAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
@@ -397,12 +422,7 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
 
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        scrollOffset.setAbsoluteScroll(getRealScrollPosition());
-        //        if(totalItemCount > 0) {
-        //            scrollOffset.setFirstVisiblePosition(getFirstVisiblePosition());
-        //            scrollOffset.setItemHeights(adapter.getItemHeights());
-        //            scrollOffset.setTopview(getChildAt(0) == null ? 0 : getChildAt(0).getTop());
-        //        }
+        scrollOffset = getRealScrollPosition();
     }
 
     @Override
@@ -420,7 +440,7 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
             return 0;
         }
         int sumh = 0;
-        for(int i=0; i<getFirstVisiblePosition(); i++){
+        for (int i = 0; i < getFirstVisiblePosition(); i++) {
             sumh += getItemHeight(i);
         }
         //separatory
@@ -432,8 +452,8 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
      * @param position pozycja elementu do przescrollowania (-1 - ostatni element)
      */
     public void scrollToItem(int position) {
-        if(position == -1) position = items.size() - 1;
-        if(position < 0) position = 0;
+        if (position == -1) position = items.size() - 1;
+        if (position < 0) position = 0;
         setSelection(position);
         invalidate();
     }
@@ -470,8 +490,8 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
         itemDraggingStopped();
     }
 
-    public boolean onItemMoveLongPressed(int position, TreeItem item){
-        if(position == 0){
+    public boolean onItemMoveLongPressed(int position, TreeItem item) {
+        if (position == 0) {
             //przeniesienie na koniec
             itemDraggingStopped();
             items = guiListener.onItemMoved(position, items.size() - 1);
@@ -479,13 +499,36 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
             scrollToItem(items.size() - 1);
             return true;
         }
-        if(position == items.size() - 1){
+        if (position == items.size() - 1) {
             //przeniesienie na początek
             itemDraggingStopped();
             items = guiListener.onItemMoved(position, -(items.size() - 1));
             adapter.setDataSource(items);
             scrollToItem(0);
             return true;
+        }
+        return false;
+    }
+
+    private boolean handleItemGesture(float gestureX, float gestureY, Integer scrollOffset) {
+        if (gestureStartPos != null && gestureStartX != null && gestureStartY != null) {
+            if (gestureStartPos < items.size()) {
+                float dx = gestureX - gestureStartX;
+                float dy = gestureY - gestureStartY;
+                float dscroll = scrollOffset - gestureStartScroll;
+                dy -= dscroll;
+                int itemH = getItemHeight(gestureStartPos);
+                if (dx >= getWidth() * GESTURE_MIN_DX) { // warunek przesunięcia w prawo
+                    if (Math.abs(dy) <= itemH * GESTURE_MAX_DY) { //zachowanie braku przesunięcia w pionie
+                        //wejście wgłąb elementu smyraniem w prawo
+                        //Output.debug("gesture: go into intercepted, dx: " + (dx / getWidth()) + " , dy: " + (Math.abs(dy) / itemH));
+                        TreeItem item = adapter.getItem(gestureStartPos);
+                        guiListener.onItemGoIntoClicked(gestureStartPos, item);
+                        gestureStartPos = null; //reset
+                        return true;
+                    }
+                }
+            }
         }
         return false;
     }
