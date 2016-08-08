@@ -1,4 +1,4 @@
-package igrek.todotree.files;
+package igrek.todotree.filesystem;
 
 import java.io.File;
 

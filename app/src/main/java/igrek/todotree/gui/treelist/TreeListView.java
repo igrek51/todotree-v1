@@ -26,6 +26,8 @@ import igrek.todotree.gui.GUIListener;
 import igrek.todotree.logic.datatree.TreeItem;
 import igrek.todotree.output.Output;
 
+//FIXME: przewijanie w trybie landscape (za duże skoki)
+
 public class TreeListView extends ListView implements AbsListView.OnScrollListener, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
 
     private List<TreeItem> items;

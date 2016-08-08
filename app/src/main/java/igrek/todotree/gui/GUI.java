@@ -14,6 +14,11 @@ import igrek.todotree.gui.edititem.EditItemGUI;
 import igrek.todotree.gui.treelist.TreeListView;
 import igrek.todotree.logic.datatree.TreeItem;
 
+//  WYGLĄD
+//TODO: liczebność elementów folderu jako osobny textedit z szarym kolorem i wyrównany do prawej, w tytule rodzica to samo
+//TODO: zapisanie wszystkich kolorów w xml, metoda do wyciągania kolorów z zasobów
+//TODO: zmniejszyć padding przycisków w navbarze
+
 public class GUI extends GUIBase {
 
     private EditText etEditItem;
@@ -101,6 +106,7 @@ public class GUI extends GUIBase {
     }
 
     public void setTitle(String title){
+        //TODO: breadcrumbs przy nazwie aktualnego elementu
         actionBar.setTitle(title);
     }
 

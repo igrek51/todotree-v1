@@ -17,34 +17,9 @@ import igrek.todotree.logic.exceptions.NoSuperItemException;
 import igrek.todotree.output.Output;
 
 //  NOWE FUNKCJONALNOŚCI
-//TODO: przycisk przewijania na początek / koniec na navbarze
-//TODO: zmniejszyć padding przycisków w navbarze
-//TODO: breadcrumbs przy nazwie aktualnego elementu
 //TODO: funkcja cofania zmian - zapisywanie modyfikacji, dodawania, usuwania elementów, przesuwania
-//TODO: wyjście bez zapisywania bazy jeśli nie było zmian
-//TODO: moduł obliczeń: inline calc
-//TODO: moduł obliczeń: sumowanie wielu elementów
-//TODO: zmiana widoczności opcji menu przy zaznaczaniu wielu elementów i kopiowaniu (niepusty schowek, niepuste zaznaczenie)
-//TODO: zmiana widoczności opcji menu przy edycji elementu
+//TODO: moduł obliczeń: inline calc, sumowanie wielu elementów, wyciąganie z elementów wartości liczbowych
 //TODO: klasy elementów: checkable (z pamięcią stanu), separator
-//TODO: synchronizacja bazy w internecie, jeśli jest połączenie
-//TODO: okresowe backupy (dzienne)
-
-//  KONFIGURACJA
-//TODO: ekran konfiguracji
-//TODO: konfiguracja położenia pliku z bazą dancyh
-//TODO: shared preferences: zautomatyzowanie w celu konfiguracji, definicja: typ, nazwa, wartość domyślna, refleksja, automatyczny zapis, odczyt, generowanie fomrularza
-//TODO: konfiguracja: wyświetlacz zawsze zapalony, wielkość czcionki, marginesy między elementami
-
-//  LANDSCAPE
-//TODO: tryb portrait ekranu na stałe - przycisk przełączania w tryb landscape screen przy pisaniu z klawiatury ekranowej
-//TODO: widoczność przycisków i całego layoutu przy edycji w trybie landscape
-//FIXME: brak dostępności wszystkich menu w trybie landscape (nie scrolluje się)
-//FIXME: przewijanie w trybie landscape
-
-//  WYGLĄD
-//TODO: liczebność elementów folderu jako osobny textedit z szarym kolorem i wyrównany do prawej, w tytule rodzica to samo
-//TODO: zapisanie wszystkich kolorów w xml, metoda do wyciągania kolorów z zasobów
 
 public class App extends BaseApp implements GUIListener {
 
@@ -59,7 +34,7 @@ public class App extends BaseApp implements GUIListener {
         preferences.preferencesLoad();
 
         treeManager = new TreeManager();
-        treeManager.loadRootTree(files, preferences);
+        treeManager.loadRootTree(filesystem, preferences);
 
         gui = new GUI(activity, this);
         gui.setTouchController(this);
@@ -87,12 +62,12 @@ public class App extends BaseApp implements GUIListener {
             exitApp(true);
             return true;
         } else if (id == R.id.action_save) {
-            treeManager.saveRootTree(files, preferences);
+            treeManager.saveRootTree(filesystem, preferences);
             showInfo("Zapisano bazę danych.");
             return true;
         } else if (id == R.id.action_reload) {
             treeManager = new TreeManager();
-            treeManager.loadRootTree(files, preferences);
+            treeManager.loadRootTree(filesystem, preferences);
             updateItemsList();
             showInfo("Wczytano bazę danych.");
             return true;
@@ -130,6 +105,13 @@ public class App extends BaseApp implements GUIListener {
     @Override
     public void menuInit(Menu menu) {
         super.menuInit(menu);
+
+        //TODO: zmiana widoczności opcji menu przy zaznaczaniu wielu elementów i kopiowaniu (niepusty schowek, niepuste zaznaczenie)
+        //TODO: zmiana widoczności opcji menu przy edycji elementu
+
+        //FIXME: brak dostępności wszystkich menu w trybie landscape (nie scrolluje się)
+        //TODO: widoczność przycisków i całego layoutu przy edycji w trybie landscape
+
         //setMenuItemVisible(R.id.action_copy, false);
         //item.setTitle(title);
         //item.setIcon(iconRes); //int iconRes
@@ -240,7 +222,7 @@ public class App extends BaseApp implements GUIListener {
 
     private void exitApp(boolean withSaving) {
         if (withSaving) {
-            treeManager.saveRootTree(files, preferences);
+            treeManager.saveRootTree(filesystem, preferences);
         }
         quit();
     }

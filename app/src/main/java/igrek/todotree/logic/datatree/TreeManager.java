@@ -14,8 +14,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-import igrek.todotree.files.Files;
-import igrek.todotree.files.PathBuilder;
+import igrek.todotree.filesystem.Filesystem;
+import igrek.todotree.filesystem.PathBuilder;
 import igrek.todotree.logic.datatree.serializer.TreeSerializer;
 import igrek.todotree.logic.exceptions.NoSuperItemException;
 import igrek.todotree.output.Output;
@@ -127,15 +127,15 @@ public class TreeManager {
 
     //  ZAPIS / ODCZYT Z PLIKU
 
-    public void loadRootTree(Files files, Preferences preferences) {
-        PathBuilder dbFilePath = files.pathSD().append(preferences.dbFilePath);
+    public void loadRootTree(Filesystem filesystem, Preferences preferences) {
+        PathBuilder dbFilePath = filesystem.pathSD().append(preferences.dbFilePath);
         Output.info("Wczytywanie bazy danych z pliku: " + dbFilePath.toString());
-        if (!files.exists(dbFilePath.toString())) {
+        if (!filesystem.exists(dbFilePath.toString())) {
             Output.warn("Plik z bazą danych nie istnieje. Domyślna pusta baza danych.");
             return;
         }
         try {
-            String fileContent = files.openFileString(dbFilePath.toString());
+            String fileContent = filesystem.openFileString(dbFilePath.toString());
             TreeItem rootItem = treeSerializer.loadTree(fileContent);
             setRootItem(rootItem);
             Output.info("Wczytano bazę danych.");
@@ -144,13 +144,14 @@ public class TreeManager {
         }
     }
 
-    public void saveRootTree(Files files, Preferences preferences) {
-        saveBackupFile(files, preferences);
-        PathBuilder dbFilePath = files.pathSD().append(preferences.dbFilePath);
+    public void saveRootTree(Filesystem filesystem, Preferences preferences) {
+        //TODO: wyjście bez zapisywania bazy jeśli nie było zmian
+        saveBackupFile(filesystem, preferences);
+        PathBuilder dbFilePath = filesystem.pathSD().append(preferences.dbFilePath);
         Output.info("Zapisywanie bazy danych do pliku: " + dbFilePath.toString());
         try {
             String output = treeSerializer.saveTree(getRootItem());
-            files.saveFile(dbFilePath.toString(), output);
+            filesystem.saveFile(dbFilePath.toString(), output);
             Output.info("Zapisano bazę danych.");
         } catch (IOException e) {
             Output.error(e);
@@ -160,18 +161,19 @@ public class TreeManager {
     //  BACKUP
     
     //TODO przenieść do osobnej klasy odpowiedzialnej za Backupy
+    //TODO: okresowe backupy (dzienne)
 
     public static final String BACKUP_FILE_PREFIX = "backup_";
     public static final int BACKUP_NUM = 10;
 
-    public void saveBackupFile(Files files, Preferences preferences) {
+    public void saveBackupFile(Filesystem filesystem, Preferences preferences) {
         if (BACKUP_NUM == 0) return;
         SimpleDateFormat sdfr = new SimpleDateFormat("dd_MM_yyyy-HH_mm_ss", Locale.ENGLISH);
         //usunięcie starych plików
-        PathBuilder dbFilePath = files.pathSD().append(preferences.dbFilePath);
+        PathBuilder dbFilePath = filesystem.pathSD().append(preferences.dbFilePath);
         PathBuilder dbDirPath = dbFilePath.parent();
 
-        List<String> children = files.listDir(dbDirPath);
+        List<String> children = filesystem.listDir(dbDirPath);
         List<Pair<String, Date>> backups = new ArrayList<>();
         //rozpoznanie plików backup i odczytanie ich dat
         for (String child : children) {
@@ -201,14 +203,14 @@ public class TreeManager {
         for (int i = BACKUP_NUM - 1; i < backups.size(); i++) {
             Pair<String, Date> pair = backups.get(i);
             PathBuilder toRemovePath = dbDirPath.append(pair.first);
-            files.delete(toRemovePath);
+            filesystem.delete(toRemovePath);
             Output.info("Usunięto stary backup: " + toRemovePath.toString());
         }
 
         //zapisanie nowego backupa
         PathBuilder backupPath = dbDirPath.append(BACKUP_FILE_PREFIX + sdfr.format(new Date()));
         try {
-            files.copy(new File(dbFilePath.toString()), new File(backupPath.toString()));
+            filesystem.copy(new File(dbFilePath.toString()), new File(backupPath.toString()));
             Output.info("Utworzono backup: " + backupPath.toString());
         } catch (IOException e) {
             Output.error(e);

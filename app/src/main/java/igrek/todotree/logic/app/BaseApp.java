@@ -12,7 +12,7 @@ import android.view.View;
 import android.view.WindowManager;
 
 import igrek.todotree.R;
-import igrek.todotree.files.Files;
+import igrek.todotree.filesystem.Filesystem;
 import igrek.todotree.logic.touchcontroller.ITouchController;
 import igrek.todotree.output.Output;
 import igrek.todotree.preferences.Preferences;
@@ -30,7 +30,7 @@ public abstract class BaseApp implements ITouchController {
 
     boolean running = true;
 
-    public Files files;
+    public Filesystem filesystem;
     public Preferences preferences;
 
     public BaseApp(AppCompatActivity aActivity) {
@@ -61,10 +61,8 @@ public abstract class BaseApp implements ITouchController {
             activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
         new Output();
-        files = new Files(activity);
+        filesystem = new Filesystem(activity);
         preferences = new Preferences(activity);
-
-        //        activity.setContentView(graphics);
 
         Output.info("Inicjalizacja aplikacji...");
     }

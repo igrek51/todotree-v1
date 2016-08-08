@@ -18,6 +18,7 @@ import igrek.todotree.logic.datatree.TreeItem;
 
 //TODO: przycisk zakresu na klawiaturze numerycznej
 //TODO zmniejszyć padding między przyciskami edycji
+//TODO: tryb portrait ekranu na stałe - przycisk przełączania w tryb landscape screen przy pisaniu z klawiatury ekranowej
 
 public class EditItemGUI implements NumKeyboardListener {
 

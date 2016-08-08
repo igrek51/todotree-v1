@@ -1,4 +1,4 @@
-package igrek.todotree.files;
+package igrek.todotree.filesystem;
 
 import android.app.Activity;
 import android.os.Environment;
@@ -13,11 +13,11 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Files {
+public class Filesystem {
     Activity activity;
     private String pathToExtSD;
 
-    public Files(Activity activity) {
+    public Filesystem(Activity activity) {
         this.activity = activity;
         pathSDInit();
     }
