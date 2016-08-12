@@ -59,6 +59,9 @@ public class App extends BaseApp implements GUIListener {
             exitApp(false);
             return true;
         } else if (id == R.id.action_save_exit) {
+            if (state == AppState.EDIT_ITEM_CONTENT) {
+                gui.requestSaveEditedItem();
+            }
             exitApp(true);
             return true;
         } else if (id == R.id.action_save) {
@@ -80,9 +83,6 @@ public class App extends BaseApp implements GUIListener {
         } else if (id == R.id.action_select_all) {
             toggleSelectAll();
         }
-        //        } else if (id == R.id.action_goto_root) {
-        //            goToRoot();
-        //        }
         return false;
     }
 

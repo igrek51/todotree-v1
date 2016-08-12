@@ -148,11 +148,10 @@ public class TreeManager {
         //TODO: wyjście bez zapisywania bazy jeśli nie było zmian
         saveBackupFile(filesystem, preferences);
         PathBuilder dbFilePath = filesystem.pathSD().append(preferences.dbFilePath);
-        Output.info("Zapisywanie bazy danych do pliku: " + dbFilePath.toString());
+        //        Output.info("Zapisywanie bazy danych do pliku: " + dbFilePath.toString());
         try {
             String output = treeSerializer.saveTree(getRootItem());
             filesystem.saveFile(dbFilePath.toString(), output);
-            Output.info("Zapisano bazę danych.");
         } catch (IOException e) {
             Output.error(e);
         }

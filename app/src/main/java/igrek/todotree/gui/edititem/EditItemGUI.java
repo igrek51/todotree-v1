@@ -27,9 +27,11 @@ public class EditItemGUI implements NumKeyboardListener {
     private ItemEditText etEditItem;
     private Button buttonSaveItem;
     NumericKeyboardView numericKeyboard;
+    TreeItem editedItem = null;
 
     public EditItemGUI(GUI gui, final TreeItem item, TreeItem parent) {
         this.gui = gui;
+        this.editedItem = item;
         init(item, parent);
     }
 
@@ -72,8 +74,11 @@ public class EditItemGUI implements NumKeyboardListener {
             buttonSaveItem.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    gui.getGuiListener().onSavedNewItem(etEditItem.getText().toString());
+                    if (numericKeyboard.isVisible()) {
+                        numericKeyboard.finishTyping();
+                    }
                     hideKeyboards();
+                    gui.getGuiListener().onSavedNewItem(etEditItem.getText().toString());
                 }
             });
             buttonSaveAndAdd.setOnClickListener(new View.OnClickListener() {
@@ -345,5 +350,9 @@ public class EditItemGUI implements NumKeyboardListener {
             return true; //przechwycenie wciśnięcia przycisku
         }
         return false;
+    }
+
+    public void requestSaveEditedItem() {
+        buttonSaveItem.performClick();
     }
 }

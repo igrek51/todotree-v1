@@ -113,4 +113,8 @@ public class GUI extends GUIBase {
     public Integer getCurrentScrollPos() {
         return itemsListView.getCurrentScrollPosition();
     }
+
+    public void requestSaveEditedItem() {
+        editItemGUI.requestSaveEditedItem();
+    }
 }
