@@ -1,5 +1,6 @@
 package igrek.todotree.logic.app;
 
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.View;
@@ -19,7 +20,6 @@ import igrek.todotree.output.Output;
 //  NOWE FUNKCJONALNOŚCI
 //TODO: funkcja cofania zmian - zapisywanie modyfikacji, dodawania, usuwania elementów, przesuwania
 //TODO: moduł obliczeń: inline calc, sumowanie wielu elementów, wyciąganie z elementów wartości liczbowych
-//TODO: klasy elementów: checkable (z pamięcią stanu), separator
 
 public class App extends BaseApp implements GUIListener {
 
@@ -221,10 +221,17 @@ public class App extends BaseApp implements GUIListener {
     }
 
     private void exitApp(boolean withSaving) {
+        gui.showExitScreen();
         if (withSaving) {
             treeManager.saveRootTree(filesystem, preferences);
         }
-        quit();
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                quit();
+            }
+        }, 10); // trzeba odczekać, KURWA MAĆ !!!
     }
 
     private void updateItemsList() {

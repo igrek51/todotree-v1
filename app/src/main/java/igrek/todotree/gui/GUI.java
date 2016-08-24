@@ -72,6 +72,10 @@ public class GUI extends GUIBase {
         etEditItem = editItemGUI.getEtEditItem();
     }
 
+    public void showExitScreen(){
+        View exitScreen = setMainContentLayout(R.layout.exit_screen);
+    }
+
     public void updateItemsList(TreeItem currentItem, List<Integer> selectedPositions) {
         //tytuł gałęzi
         StringBuilder sb = new StringBuilder(currentItem.getContent());
