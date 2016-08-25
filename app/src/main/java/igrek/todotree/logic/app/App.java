@@ -226,12 +226,13 @@ public class App extends BaseApp implements GUIListener {
             treeManager.saveRootTree(filesystem, preferences);
         }
 
+        // FIXME trzeba odczekać, KURWA MAĆ !!!, a i tak nie zawsze działa
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 quit();
             }
-        }, 10); // trzeba odczekać, KURWA MAĆ !!!
+        }, 20);
     }
 
     private void updateItemsList() {
