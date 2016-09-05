@@ -43,6 +43,11 @@
         android:orderInCategory="100"
         android:title="@string/action_select_all"
         app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_sum_selected"
+        android:orderInCategory="100"
+        android:title="@string/action_sum_selected"
+        app:showAsAction="never"/>
 
     <!--<item-->
         <!--android:id="@+id/action_goto_root"-->

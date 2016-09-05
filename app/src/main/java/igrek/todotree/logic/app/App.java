@@ -1,10 +1,14 @@
 package igrek.todotree.logic.app;
 
+import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.View;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -19,7 +23,8 @@ import igrek.todotree.output.Output;
 
 //  NOWE FUNKCJONALNOŚCI
 //TODO: funkcja cofania zmian - zapisywanie modyfikacji, dodawania, usuwania elementów, przesuwania
-//TODO: moduł obliczeń: inline calc, sumowanie wielu elementów, wyciąganie z elementów wartości liczbowych
+//TODO: moduł obliczeń: inline calc, wyciąganie z elementów wartości liczbowych
+//TODO event dispatcher
 
 public class App extends BaseApp implements GUIListener {
 
@@ -82,6 +87,8 @@ public class App extends BaseApp implements GUIListener {
             pasteItems();
         } else if (id == R.id.action_select_all) {
             toggleSelectAll();
+        } else if (id == R.id.action_sum_selected) {
+            sumSelected();
         }
         return false;
     }
@@ -451,6 +458,22 @@ public class App extends BaseApp implements GUIListener {
         } else {
             treeManager.setItemSelected(position, true);
             updateItemsList();
+        }
+    }
+
+    private void sumSelected() {
+        if (treeManager.isSelectionMode()) {
+            BigDecimal sum = treeManager.sumSelected();
+
+            String clipboardStr = sum.toPlainString();
+            clipboardStr = clipboardStr.replace('.', ',');
+
+            ClipboardManager clipboard = (ClipboardManager) activity.getSystemService(Activity.CLIPBOARD_SERVICE);
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
+                ClipData clip = ClipData.newPlainText("Copied Text", clipboardStr);
+                clipboard.setPrimaryClip(clip);
+                showInfo("Skopiowano sumę do schowka: " + clipboardStr);
+            }
         }
     }
 }

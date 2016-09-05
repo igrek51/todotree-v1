@@ -23,4 +23,5 @@
     <string name="buttonEditInsertRange">-</string>
     <string name="buttonEditInsertNumber">12,34</string>
     <string name="action_goto_root">Przejź do root</string>
+    <string name="action_sum_selected">Sumuj zaznaczone</string>
 </resources>

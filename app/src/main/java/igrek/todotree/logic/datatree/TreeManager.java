@@ -4,6 +4,7 @@ import android.util.Pair;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -13,6 +14,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import igrek.todotree.filesystem.Filesystem;
 import igrek.todotree.filesystem.PathBuilder;
@@ -449,5 +452,44 @@ public class TreeManager {
 
     public Integer restoreScrollPosition(TreeItem item) {
         return storedScrollPositions.get(item);
+    }
+
+    // sumowanie wartości pozycji
+
+    public BigDecimal sumSelected() {
+        BigDecimal sum = new BigDecimal(0);
+        for (Integer selectedPos : selectedPositions) {
+            TreeItem selectedItem = getCurrentItem().getChild(selectedPos);
+            BigDecimal itemValue = getItemNumericValue(selectedItem.getContent());
+            if (itemValue != null) {
+                sum = sum.add(itemValue);
+            }
+        }
+        return sum;
+    }
+
+    private BigDecimal getItemNumericValue(String content) {
+
+        content = content.replace(',', '.');
+
+        Pattern pattern = Pattern.compile("^(.*?)(-? ?\\d+(\\.\\d+)?)(.*?)$");
+        Matcher matcher = pattern.matcher(content);
+        if (matcher.matches()) {
+
+            String valueStr = matcher.group(2);
+            valueStr = valueStr.replaceAll(" ", "");
+
+            try {
+                BigDecimal numeric = new BigDecimal(valueStr);
+                return numeric;
+            } catch (NumberFormatException e) {
+                Output.warn("invalid number format: " + valueStr);
+                return null;
+            }
+        } else {
+            Output.warn("numeric value not found in \"" + content + "\"");
+        }
+
+        return null;
     }
 }
