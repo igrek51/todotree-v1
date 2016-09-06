@@ -456,7 +456,7 @@ public class TreeManager {
 
     // sumowanie wartości pozycji
 
-    public BigDecimal sumSelected() {
+    public BigDecimal sumSelected() throws NumberFormatException {
         BigDecimal sum = new BigDecimal(0);
         for (Integer selectedPos : selectedPositions) {
             TreeItem selectedItem = getCurrentItem().getChild(selectedPos);
@@ -468,28 +468,25 @@ public class TreeManager {
         return sum;
     }
 
-    private BigDecimal getItemNumericValue(String content) {
+    private BigDecimal getItemNumericValue(String content) throws NumberFormatException {
 
         content = content.replace(',', '.');
 
-        Pattern pattern = Pattern.compile("^(.*?)(-? ?\\d+(\\.\\d+)?)(.*?)$");
+        Pattern pattern = Pattern.compile("^(-? ?\\d+(\\.\\d+)?)(.*?)$");
         Matcher matcher = pattern.matcher(content);
         if (matcher.matches()) {
 
-            String valueStr = matcher.group(2);
+            String valueStr = matcher.group(1);
             valueStr = valueStr.replaceAll(" ", "");
 
             try {
                 BigDecimal numeric = new BigDecimal(valueStr);
                 return numeric;
             } catch (NumberFormatException e) {
-                Output.warn("invalid number format: " + valueStr);
-                return null;
+                throw new NumberFormatException("Nieprawidłowy format liczby:\n" + valueStr);
             }
         } else {
-            Output.warn("numeric value not found in \"" + content + "\"");
+            throw new NumberFormatException("Brak wartości liczbowej:\n" + content);
         }
-
-        return null;
     }
 }

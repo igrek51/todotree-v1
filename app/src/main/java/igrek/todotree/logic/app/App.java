@@ -463,16 +463,21 @@ public class App extends BaseApp implements GUIListener {
 
     private void sumSelected() {
         if (treeManager.isSelectionMode()) {
-            BigDecimal sum = treeManager.sumSelected();
+            try {
+                BigDecimal sum = treeManager.sumSelected();
 
-            String clipboardStr = sum.toPlainString();
-            clipboardStr = clipboardStr.replace('.', ',');
+                String clipboardStr = sum.toPlainString();
+                clipboardStr = clipboardStr.replace('.', ',');
 
-            ClipboardManager clipboard = (ClipboardManager) activity.getSystemService(Activity.CLIPBOARD_SERVICE);
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
-                ClipData clip = ClipData.newPlainText("Copied Text", clipboardStr);
-                clipboard.setPrimaryClip(clip);
-                showInfo("Skopiowano sumę do schowka: " + clipboardStr);
+                ClipboardManager clipboard = (ClipboardManager) activity.getSystemService(Activity.CLIPBOARD_SERVICE);
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
+                    ClipData clip = ClipData.newPlainText("Copied Text", clipboardStr);
+                    clipboard.setPrimaryClip(clip);
+                    showInfo("Skopiowano sumę do schowka: " + clipboardStr);
+                }
+
+            } catch (NumberFormatException e) {
+                showInfo(e.getMessage());
             }
         }
     }
