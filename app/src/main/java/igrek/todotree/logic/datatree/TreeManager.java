@@ -470,15 +470,25 @@ public class TreeManager {
 
     private BigDecimal getItemNumericValue(String content) throws NumberFormatException {
 
+        String valueStr = null;
+
         content = content.replace(',', '.');
 
         Pattern pattern = Pattern.compile("^(-? ?\\d+(\\.\\d+)?)(.*?)$");
         Matcher matcher = pattern.matcher(content);
         if (matcher.matches()) {
-
-            String valueStr = matcher.group(1);
+            valueStr = matcher.group(1);
             valueStr = valueStr.replaceAll(" ", "");
+        } else {
+            pattern = Pattern.compile("^(.*?)(-? ?\\d+(\\.\\d+)?)$");
+            matcher = pattern.matcher(content);
+            if (matcher.matches()) {
+                valueStr = matcher.group(2);
+                valueStr = valueStr.replaceAll(" ", "");
+            }
+        }
 
+        if (valueStr != null) {
             try {
                 BigDecimal numeric = new BigDecimal(valueStr);
                 return numeric;
