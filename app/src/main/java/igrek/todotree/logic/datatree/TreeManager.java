@@ -1,19 +1,11 @@
 package igrek.todotree.logic.datatree;
 
-import android.util.Pair;
-
-import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -149,7 +141,7 @@ public class TreeManager {
 
     public void saveRootTree(Filesystem filesystem, Preferences preferences) {
         //TODO: wyjście bez zapisywania bazy jeśli nie było zmian
-        saveBackupFile(filesystem, preferences);
+
         PathBuilder dbFilePath = filesystem.pathSD().append(preferences.dbFilePath);
         //        Output.info("Zapisywanie bazy danych do pliku: " + dbFilePath.toString());
         try {
@@ -160,64 +152,7 @@ public class TreeManager {
         }
     }
 
-    //  BACKUP
-    
-    //TODO przenieść do osobnej klasy odpowiedzialnej za Backupy
-    //TODO: okresowe backupy (dzienne)
 
-    public static final String BACKUP_FILE_PREFIX = "backup_";
-    public static final int BACKUP_NUM = 10;
-
-    public void saveBackupFile(Filesystem filesystem, Preferences preferences) {
-        if (BACKUP_NUM == 0) return;
-        SimpleDateFormat sdfr = new SimpleDateFormat("dd_MM_yyyy-HH_mm_ss", Locale.ENGLISH);
-        //usunięcie starych plików
-        PathBuilder dbFilePath = filesystem.pathSD().append(preferences.dbFilePath);
-        PathBuilder dbDirPath = dbFilePath.parent();
-
-        List<String> children = filesystem.listDir(dbDirPath);
-        List<Pair<String, Date>> backups = new ArrayList<>();
-        //rozpoznanie plików backup i odczytanie ich dat
-        for (String child : children) {
-            if (child.startsWith(BACKUP_FILE_PREFIX)) {
-                String dateStr = PathBuilder.removeExtension(child).substring(BACKUP_FILE_PREFIX.length());
-                Date date = null;
-                try {
-                    date = sdfr.parse(dateStr);
-                } catch (ParseException e) {
-                    Output.warn("Niepoprawny format daty w nazwie pliku: " + child);
-                }
-                backups.add(new Pair<>(child, date));
-            }
-        }
-
-        //posortowanie po datach malejąco
-        Collections.sort(backups, new Comparator<Pair<String, Date>>() {
-            @Override
-            public int compare(Pair<String, Date> a, Pair<String, Date> b) {
-                if (a.second == null) return +1;
-                if (b.second == null) return -1;
-                return -a.second.compareTo(b.second);
-            }
-        });
-
-        //usunięcie najstarszych plików
-        for (int i = BACKUP_NUM - 1; i < backups.size(); i++) {
-            Pair<String, Date> pair = backups.get(i);
-            PathBuilder toRemovePath = dbDirPath.append(pair.first);
-            filesystem.delete(toRemovePath);
-            Output.info("Usunięto stary backup: " + toRemovePath.toString());
-        }
-
-        //zapisanie nowego backupa
-        PathBuilder backupPath = dbDirPath.append(BACKUP_FILE_PREFIX + sdfr.format(new Date()));
-        try {
-            filesystem.copy(new File(dbFilePath.toString()), new File(backupPath.toString()));
-            Output.info("Utworzono backup: " + backupPath.toString());
-        } catch (IOException e) {
-            Output.error(e);
-        }
-    }
 
     //  ZMIANA KOLEJNOŚCI
 

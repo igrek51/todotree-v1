@@ -16,6 +16,7 @@ import java.util.List;
 import igrek.todotree.R;
 import igrek.todotree.gui.GUI;
 import igrek.todotree.gui.GUIListener;
+import igrek.todotree.logic.backup.BackupManager;
 import igrek.todotree.logic.datatree.TreeItem;
 import igrek.todotree.logic.datatree.TreeManager;
 import igrek.todotree.logic.exceptions.NoSuperItemException;
@@ -23,13 +24,14 @@ import igrek.todotree.output.Output;
 
 //  NOWE FUNKCJONALNOŚCI
 //TODO: funkcja cofania zmian - zapisywanie modyfikacji, dodawania, usuwania elementów, przesuwania
-//TODO: moduł obliczeń: inline calc, wyciąganie z elementów wartości liczbowych
-//TODO event dispatcher
+//TODO: moduł obliczeń: inline calc
+//TODO event dispatcher, controller, services manager
 
 public class App extends BaseApp implements GUIListener {
 
     TreeManager treeManager;
     GUI gui;
+    BackupManager backupManager;
 
     AppState state;
 
@@ -40,6 +42,8 @@ public class App extends BaseApp implements GUIListener {
 
         treeManager = new TreeManager();
         treeManager.loadRootTree(filesystem, preferences);
+
+        backupManager = new BackupManager(filesystem, preferences);
 
         gui = new GUI(activity, this);
         gui.setTouchController(this);
@@ -70,7 +74,7 @@ public class App extends BaseApp implements GUIListener {
             exitApp(true);
             return true;
         } else if (id == R.id.action_save) {
-            treeManager.saveRootTree(filesystem, preferences);
+            saveDatabase();
             showInfo("Zapisano bazę danych.");
             return true;
         } else if (id == R.id.action_reload) {
@@ -230,10 +234,10 @@ public class App extends BaseApp implements GUIListener {
     private void exitApp(boolean withSaving) {
         gui.showExitScreen();
         if (withSaving) {
-            treeManager.saveRootTree(filesystem, preferences);
+            saveDatabase();
         }
 
-        // FIXME trzeba odczekać, KURWA MAĆ !!!, a i tak nie zawsze działa
+        // FIXME trzeba odczekać min 20 ms, KURWA MAĆ !!!, a i tak nie zawsze działa
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -480,5 +484,10 @@ public class App extends BaseApp implements GUIListener {
                 showInfo(e.getMessage());
             }
         }
+    }
+
+    private void saveDatabase() {
+        treeManager.saveRootTree(filesystem, preferences);
+        backupManager.saveBackupFile();
     }
 }
