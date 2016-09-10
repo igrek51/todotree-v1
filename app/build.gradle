@@ -4,13 +4,35 @@ android {
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
 
-    defaultConfig {
-        applicationId "igrek.todotree"
-        minSdkVersion 13
-        targetSdkVersion 23
-        versionCode 1
-        versionName "1.0"
+    def versionPropsFile = file('version.properties')
+    if (versionPropsFile.canRead()) {
+        def Properties versionProps = new Properties()
+        versionProps.load(new FileInputStream(versionPropsFile))
+
+//        def value = 0
+//        def runTasks = gradle.startParameter.taskNames
+//        if ('assemble' in runTasks || 'assembleRelease' in runTasks || 'aR' in runTasks) {
+//            value = 1;
+//        }
+
+        int code = versionProps['VERSION_CODE'].toInteger() + 1
+        String versionPrefix = versionProps['VERSION_PREFIX']
+
+        versionProps['VERSION_CODE']=code.toString()
+        versionProps['VERSION_NAME']=versionPrefix + code.toString()
+        versionProps.store(versionPropsFile.newWriter(), null)
+
+        defaultConfig {
+            versionCode code
+            versionName versionPrefix + code
+            applicationId "igrek.todotree"
+            minSdkVersion 13
+            targetSdkVersion 23
+        }
+    } else {
+        throw new GradleException("Could not read version.properties!")
     }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -22,6 +44,7 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
+    // błedy przy cleanie - zakomentować:
     compile 'com.android.support:appcompat-v7:23.2.0'
     compile 'com.android.support:design:23.2.0'
 }

@@ -23,8 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import igrek.todotree.gui.GUIListener;
+import igrek.todotree.logger.Logs;
 import igrek.todotree.logic.datatree.TreeItem;
-import igrek.todotree.output.Output;
 
 //FIXME: przewijanie w trybie landscape (za duże skoki)
 
@@ -248,7 +248,7 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
     private int getItemHeight(int position) {
         Integer h = itemHeights.get(position);
         if (h == null) {
-            Output.warn("Item View = null");
+            Logs.warn("Item View = null");
         }
         return h != null ? h : 0;
     }
@@ -297,11 +297,11 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
         float dyTotal = lastTouchY - startTouchY + (scrollOffset - scrollStart);
 
         if (draggedItemViewTop == null) {
-            Output.error("draggedItemViewTop = null");
+            Logs.error("draggedItemViewTop = null");
             return;
         }
         if (draggedItemPos == null) {
-            Output.error("draggedItemPos = null");
+            Logs.error("draggedItemPos = null");
             return;
         }
 
@@ -523,7 +523,7 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
                 if (dx >= getWidth() * GESTURE_MIN_DX) { // warunek przesunięcia w prawo
                     if (Math.abs(dy) <= itemH * GESTURE_MAX_DY) { //zachowanie braku przesunięcia w pionie
                         //wejście wgłąb elementu smyraniem w prawo
-                        //Output.debug("gesture: go into intercepted, dx: " + (dx / getWidth()) + " , dy: " + (Math.abs(dy) / itemH));
+                        //Logs.debug("gesture: go into intercepted, dx: " + (dx / getWidth()) + " , dy: " + (Math.abs(dy) / itemH));
                         TreeItem item = adapter.getItem(gestureStartPos);
                         guiListener.onItemGoIntoClicked(gestureStartPos, item);
                         gestureStartPos = null; //reset

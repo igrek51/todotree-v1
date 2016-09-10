@@ -2,7 +2,8 @@ package igrek.todotree.preferences;
 
 import android.app.Activity;
 
-import igrek.todotree.output.Output;
+import igrek.todotree.logger.Logs;
+import igrek.todotree.logic.controller.services.IService;
 
 //  KONFIGURACJA
 //TODO: ekran konfiguracji
@@ -11,24 +12,27 @@ import igrek.todotree.output.Output;
 
 //TODO: shared preferences: zautomatyzowanie w celu konfiguracji, definicja: typ, nazwa, wartość domyślna, refleksja, automatyczny zapis, odczyt, generowanie fomrularza
 
-public class Preferences extends BasePreferences {
+public class Preferences extends BasePreferences implements IService {
 
     public String dbFilePath = "Android/data/igrek.todotree/todo.dat";
 
     public Preferences(Activity activity){
         super(activity);
+        loadAll();
     }
 
-    public void preferencesSave() {
-        setString("dbFilePath", dbFilePath);
+    public void saveAll() {
+		if(dbFilePath != null){
+ 	       setString("dbFilePath", dbFilePath);
+		}
     }
 
-    public void preferencesLoad() {
+    public void loadAll() {
         if (exists("dbFilePath")) {
             dbFilePath = getString("dbFilePath");
-            Output.info("Wczytano ścieżkę do pliku bazy: " + dbFilePath);
+            Logs.debug("Wczytano ścieżkę do pliku bazy: " + dbFilePath);
         } else {
-            Output.info("Wczytano domyślną ścieżkę do pliku bazy: " + dbFilePath);
+            Logs.debug("Wczytano domyślną ścieżkę do pliku bazy: " + dbFilePath);
         }
     }
 }

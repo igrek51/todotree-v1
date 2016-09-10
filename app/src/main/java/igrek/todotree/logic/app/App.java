@@ -14,20 +14,28 @@ import java.util.Comparator;
 import java.util.List;
 
 import igrek.todotree.R;
+import igrek.todotree.filesystem.Filesystem;
 import igrek.todotree.gui.GUI;
 import igrek.todotree.gui.GUIListener;
+import igrek.todotree.logger.Logs;
 import igrek.todotree.logic.backup.BackupManager;
+import igrek.todotree.logic.controller.AppController;
+import igrek.todotree.logic.controller.dispatcher.IEvent;
+import igrek.todotree.logic.controller.dispatcher.IEventObserver;
 import igrek.todotree.logic.datatree.TreeItem;
 import igrek.todotree.logic.datatree.TreeManager;
+import igrek.todotree.logic.events.AppStartedEvent;
 import igrek.todotree.logic.exceptions.NoSuperItemException;
-import igrek.todotree.output.Output;
+import igrek.todotree.preferences.Preferences;
 
 //  NOWE FUNKCJONALNOŚCI
 //TODO: funkcja cofania zmian - zapisywanie modyfikacji, dodawania, usuwania elementów, przesuwania
 //TODO: moduł obliczeń: inline calc
 //TODO event dispatcher, controller, services manager
 
-public class App extends BaseApp implements GUIListener {
+//TODO Activity server service
+
+public class App extends BaseApp implements GUIListener, IEventObserver {
 
     TreeManager treeManager;
     GUI gui;
@@ -38,24 +46,40 @@ public class App extends BaseApp implements GUIListener {
     public App(AppCompatActivity activity) {
         super(activity);
 
-        preferences.preferencesLoad();
+        new AppController();
+
+        registerServices();
 
         treeManager = new TreeManager();
-        treeManager.loadRootTree(filesystem, preferences);
+        treeManager.loadRootTree();
 
-        backupManager = new BackupManager(filesystem, preferences);
+        backupManager = new BackupManager();
 
         gui = new GUI(activity, this);
-        gui.setTouchController(this);
         gui.showItemsList(treeManager.getCurrentItem());
         state = AppState.ITEMS_LIST;
 
-        Output.info("Aplikacja uruchomiona.");
+        Logs.info("Aplikacja uruchomiona.");
+
+        AppController.registerEventObserver(AppStartedEvent.class, this);
+
+        AppController.sendEvent(new AppStartedEvent());
+    }
+
+    private void registerServices() {
+        AppController.registerService(new Filesystem(activity));
+        AppController.registerService(new Preferences(activity));
+    }
+
+    @Override
+    public void onEvent(IEvent event) {
+
     }
 
     @Override
     public void quit() {
-        preferences.preferencesSave();
+        Preferences preferences = AppController.getService(Preferences.class);
+        preferences.saveAll();
         super.quit();
     }
 
@@ -79,7 +103,7 @@ public class App extends BaseApp implements GUIListener {
             return true;
         } else if (id == R.id.action_reload) {
             treeManager = new TreeManager();
-            treeManager.loadRootTree(filesystem, preferences);
+            treeManager.loadRootTree();
             updateItemsList();
             showInfo("Wczytano bazę danych.");
             return true;
@@ -487,7 +511,7 @@ public class App extends BaseApp implements GUIListener {
     }
 
     private void saveDatabase() {
-        treeManager.saveRootTree(filesystem, preferences);
+        treeManager.saveRootTree();
         backupManager.saveBackupFile();
     }
 }

@@ -12,12 +12,9 @@ import android.view.View;
 import android.view.WindowManager;
 
 import igrek.todotree.R;
-import igrek.todotree.filesystem.Filesystem;
-import igrek.todotree.logic.touchcontroller.ITouchController;
-import igrek.todotree.output.Output;
-import igrek.todotree.preferences.Preferences;
+import igrek.todotree.logger.Logs;
 
-public abstract class BaseApp implements ITouchController {
+public abstract class BaseApp {
 
     public static final int FULLSCREEN_FLAG = WindowManager.LayoutParams.FLAG_FULLSCREEN | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED;
     public static final boolean FULLSCREEN = false;
@@ -30,9 +27,6 @@ public abstract class BaseApp implements ITouchController {
 
     boolean running = true;
 
-    public Filesystem filesystem;
-    public Preferences preferences;
-
     public BaseApp(AppCompatActivity aActivity) {
         this.activity = aActivity;
 
@@ -41,7 +35,7 @@ public abstract class BaseApp implements ITouchController {
         Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
             @Override
             public void uncaughtException(Thread thread, Throwable th) {
-                Output.errorUncaught(th);
+                Logs.errorUncaught(th);
                 //przekazanie dalej do systemu operacyjnego
                 defaultUEH.uncaughtException(thread, th);
             }
@@ -60,11 +54,9 @@ public abstract class BaseApp implements ITouchController {
         if (KEEP_SCREEN_ON) {
             activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
-        new Output();
-        filesystem = new Filesystem(activity);
-        preferences = new Preferences(activity);
+        new Logs();
 
-        Output.info("Inicjalizacja aplikacji...");
+        Logs.info("Inicjalizacja aplikacji...");
     }
 
     public void pause() {
@@ -77,28 +69,13 @@ public abstract class BaseApp implements ITouchController {
 
     public void quit() {
         if (!running) { //próba ponownego zamknięcia
-            Output.warn("Zamykanie - próba ponownego zamknięcia");
+            Logs.warn("Zamykanie - próba ponownego zamknięcia");
             return;
         }
-        Output.info("Zamykanie aplikacji...");
+        Logs.info("Zamykanie aplikacji...");
         running = false;
         activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         activity.finish();
-    }
-
-    @Override
-    public boolean onTouchDown(float x, float y) {
-        return false;
-    }
-
-    @Override
-    public boolean onTouchMove(float x, float y) {
-        return false;
-    }
-
-    @Override
-    public boolean onTouchUp(float x, float y) {
-        return false;
     }
 
     public void onResizeEvent(Configuration newConfig) {
@@ -106,11 +83,11 @@ public abstract class BaseApp implements ITouchController {
         int screenHeightDp = newConfig.screenHeightDp;
         int orientation = newConfig.orientation;
         int densityDpi = newConfig.densityDpi;
-        Output.info("Rozmiar ekranu zmieniony na: " + screenWidthDp + "dp x " + screenHeightDp + "dp (DPI = " + densityDpi + ")");
+        Logs.info("Rozmiar ekranu zmieniony na: " + screenWidthDp + "dp x " + screenHeightDp + "dp (DPI = " + densityDpi + ")");
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            Output.info("Zmiana orientacji ekranu: landscape");
+            Logs.info("Zmiana orientacji ekranu: landscape");
         } else if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-            Output.info("Zmiana orientacji ekranu: portrait");
+            Logs.info("Zmiana orientacji ekranu: portrait");
         }
     }
 
@@ -145,6 +122,7 @@ public abstract class BaseApp implements ITouchController {
         activity.startActivity(startMain);
     }
 
+    //TODO poprawić na jedno show Info z możliwością wyboru akcji i zachowaniem domyślnym, domyślny widok
     public void showInfo(String info, View view) {
         final Snackbar snackbar = Snackbar.make(view, info, Snackbar.LENGTH_SHORT);
         snackbar.setAction("OK", new View.OnClickListener() {
@@ -155,7 +133,7 @@ public abstract class BaseApp implements ITouchController {
         });
         snackbar.setActionTextColor(Color.WHITE);
         snackbar.show();
-        Output.info(info);
+        Logs.info(info);
     }
 
     public void showInfoCancellable(String info, View view, View.OnClickListener cancelCallback) {
@@ -163,6 +141,6 @@ public abstract class BaseApp implements ITouchController {
         snackbar.setAction("Cofnij", cancelCallback);
         snackbar.setActionTextColor(ContextCompat.getColor(activity, R.color.colorPrimary));
         snackbar.show();
-        Output.info(info);
+        Logs.info(info);
     }
 }

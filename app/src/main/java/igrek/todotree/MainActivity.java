@@ -7,8 +7,8 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import igrek.todotree.logger.Logs;
 import igrek.todotree.logic.app.App;
-import igrek.todotree.output.Output;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             app = new App(this);
         } catch (Exception ex) {
-            Output.errorCritical(this, ex);
+            Logs.fatal(this, ex);
         }
     }
 

@@ -11,9 +11,10 @@ import java.util.regex.Pattern;
 
 import igrek.todotree.filesystem.Filesystem;
 import igrek.todotree.filesystem.PathBuilder;
+import igrek.todotree.logger.Logs;
+import igrek.todotree.logic.controller.AppController;
 import igrek.todotree.logic.datatree.serializer.TreeSerializer;
 import igrek.todotree.logic.exceptions.NoSuperItemException;
-import igrek.todotree.output.Output;
 import igrek.todotree.preferences.Preferences;
 
 public class TreeManager {
@@ -122,33 +123,40 @@ public class TreeManager {
 
     //  ZAPIS / ODCZYT Z PLIKU
 
-    public void loadRootTree(Filesystem filesystem, Preferences preferences) {
+    public void loadRootTree() {
+
+        Filesystem filesystem = AppController.getService(Filesystem.class);
+        Preferences preferences = AppController.getService(Preferences.class);
+
         PathBuilder dbFilePath = filesystem.pathSD().append(preferences.dbFilePath);
-        Output.info("Wczytywanie bazy danych z pliku: " + dbFilePath.toString());
+        Logs.info("Wczytywanie bazy danych z pliku: " + dbFilePath.toString());
         if (!filesystem.exists(dbFilePath.toString())) {
-            Output.warn("Plik z bazą danych nie istnieje. Domyślna pusta baza danych.");
+            Logs.warn("Plik z bazą danych nie istnieje. Domyślna pusta baza danych.");
             return;
         }
         try {
             String fileContent = filesystem.openFileString(dbFilePath.toString());
             TreeItem rootItem = treeSerializer.loadTree(fileContent);
             setRootItem(rootItem);
-            Output.info("Wczytano bazę danych.");
+            Logs.info("Wczytano bazę danych.");
         } catch (IOException | ParseException e) {
-            Output.error(e);
+            Logs.error(e);
         }
     }
 
-    public void saveRootTree(Filesystem filesystem, Preferences preferences) {
+    public void saveRootTree() {
         //TODO: wyjście bez zapisywania bazy jeśli nie było zmian
 
+        Filesystem filesystem = AppController.getService(Filesystem.class);
+        Preferences preferences = AppController.getService(Preferences.class);
+
         PathBuilder dbFilePath = filesystem.pathSD().append(preferences.dbFilePath);
-        //        Output.info("Zapisywanie bazy danych do pliku: " + dbFilePath.toString());
+        //        Logs.info("Zapisywanie bazy danych do pliku: " + dbFilePath.toString());
         try {
             String output = treeSerializer.saveTree(getRootItem());
             filesystem.saveFile(dbFilePath.toString(), output);
         } catch (IOException e) {
-            Output.error(e);
+            Logs.error(e);
         }
     }
 

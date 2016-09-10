@@ -13,7 +13,10 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Filesystem {
+import igrek.todotree.logger.Logs;
+import igrek.todotree.logic.controller.services.IService;
+
+public class Filesystem implements IService {
     Activity activity;
     private String pathToExtSD;
 
@@ -51,9 +54,26 @@ public class Filesystem {
         return listDir(path.toString());
     }
 
+    public List<File> listFiles(String path) {
+        List<File> files = new ArrayList<>();
+        File f = new File(path);
+        File file[] = f.listFiles();
+        if (file == null) {
+            Logs.warn("file array null for path: " + path);
+            return files;
+        }
+        for (File aFile : file) {
+            files.add(aFile);
+        }
+        return files;
+    }
+
+    public List<File> listFiles(PathBuilder path) {
+        return listFiles(path.toString());
+    }
+
     public byte[] openFile(String filename) throws IOException {
-        RandomAccessFile f = null;
-        f = new RandomAccessFile(new File(filename), "r");
+        RandomAccessFile f = new RandomAccessFile(new File(filename), "r");
         int length = (int) f.length();
         byte[] data = new byte[length];
         f.readFully(data);

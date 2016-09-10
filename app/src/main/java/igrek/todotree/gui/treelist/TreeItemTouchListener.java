@@ -20,12 +20,12 @@ public class TreeItemTouchListener implements View.OnTouchListener {
                 listView.onItemTouchDown(position, event, v);
                 break;
             //case MotionEvent.ACTION_MOVE:
-            //    Output.debug("Item: ACTION_MOVE");
+            //    Logs.debug("Item: ACTION_MOVE");
             //    break;
             //case MotionEvent.ACTION_UP:
-            //    Output.debug("Item: ACTION_UP");
+            //    Logs.debug("Item: ACTION_UP");
             //case MotionEvent.ACTION_CANCEL:
-            //    Output.debug("Item: ACTION_CANCEL");
+            //    Logs.debug("Item: ACTION_CANCEL");
             //    break;
         }
         return false;

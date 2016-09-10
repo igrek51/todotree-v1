@@ -16,7 +16,8 @@ import java.util.Locale;
 
 import igrek.todotree.filesystem.Filesystem;
 import igrek.todotree.filesystem.PathBuilder;
-import igrek.todotree.output.Output;
+import igrek.todotree.logger.Logs;
+import igrek.todotree.logic.controller.AppController;
 import igrek.todotree.preferences.Preferences;
 
 public class BackupManager {
@@ -33,9 +34,9 @@ public class BackupManager {
     private Filesystem filesystem;
     private Preferences preferences;
 
-    public BackupManager(Filesystem filesystem, Preferences preferences) {
-        this.filesystem = filesystem;
-        this.preferences = preferences;
+    public BackupManager() {
+        preferences = AppController.getService(Preferences.class);
+        filesystem = AppController.getService(Filesystem.class);
     }
 
     public void saveBackupFile() {
@@ -56,9 +57,9 @@ public class BackupManager {
         PathBuilder backupPath = dbDirPath.append(BACKUP_FILE_PREFIX + dateFormat.format(new Date()));
         try {
             filesystem.copy(new File(dbFilePath.toString()), new File(backupPath.toString()));
-            Output.info("Utworzono backup: " + backupPath.toString());
+            Logs.info("Utworzono backup: " + backupPath.toString());
         } catch (IOException e) {
-            Output.error(e);
+            Logs.error(e);
         }
     }
 
@@ -75,7 +76,7 @@ public class BackupManager {
                 try {
                     date = dateFormat.parse(dateStr);
                 } catch (ParseException e) {
-                    Output.warn("Niepoprawny format daty w nazwie pliku: " + child);
+                    Logs.warn("Niepoprawny format daty w nazwie pliku: " + child);
                 }
                 backups.add(new Pair<>(child, date));
             }
@@ -118,7 +119,7 @@ public class BackupManager {
         for (Pair<String, Date> pair : backups) {
             PathBuilder toRemovePath = dbDirPath.append(pair.first);
             filesystem.delete(toRemovePath);
-            Output.info("Usunięto stary backup: " + toRemovePath.toString());
+            Logs.info("Usunięto stary backup: " + toRemovePath.toString());
         }
 
     }
