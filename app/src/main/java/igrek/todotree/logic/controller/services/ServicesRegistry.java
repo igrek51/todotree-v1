@@ -14,8 +14,13 @@ public class ServicesRegistry {
 
     public <T extends IService> void registerService(T service) {
         String className = service.getClass().getName();
+        boolean overwritten = services.get(className) != null;
         services.put(className, service);
-        Logs.debug("Service " + className + " registered");
+        if (!overwritten) {
+            Logs.debug("Service " + className + " registered");
+        } else {
+            Logs.debug("Service " + className + " registered (overwritten)");
+        }
     }
 
     public <T extends IService> T getService(Class<T> clazz) {

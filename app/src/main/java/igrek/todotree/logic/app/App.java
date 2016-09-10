@@ -16,7 +16,6 @@ import java.util.List;
 import igrek.todotree.R;
 import igrek.todotree.filesystem.Filesystem;
 import igrek.todotree.gui.GUI;
-import igrek.todotree.gui.GUIListener;
 import igrek.todotree.logger.Logs;
 import igrek.todotree.logic.backup.BackupManager;
 import igrek.todotree.logic.controller.AppController;
@@ -31,6 +30,7 @@ import igrek.todotree.logic.events.ItemClickedEvent;
 import igrek.todotree.logic.events.ItemEditClickedEvent;
 import igrek.todotree.logic.events.ItemGoIntoClickedEvent;
 import igrek.todotree.logic.events.ItemLongClickEvent;
+import igrek.todotree.logic.events.ItemMovedEvent;
 import igrek.todotree.logic.events.ItemRemoveClickedEvent;
 import igrek.todotree.logic.events.SaveAndAddItemEvent;
 import igrek.todotree.logic.events.SavedEditedItemEvent;
@@ -45,9 +45,7 @@ import igrek.todotree.preferences.Preferences;
 //TODO: moduł obliczeń: inline calc
 //TODO event dispatcher, controller, services manager
 
-//TODO Activity server service
-
-public class App extends BaseApp implements GUIListener, IEventObserver {
+public class App extends BaseApp implements IEventObserver {
 
     TreeManager treeManager;
     GUI gui;
@@ -63,12 +61,12 @@ public class App extends BaseApp implements GUIListener, IEventObserver {
         registerServices();
         registerEventObservers();
 
-        treeManager = new TreeManager();
+        treeManager = AppController.getService(TreeManager.class);
         treeManager.loadRootTree();
 
         backupManager = new BackupManager();
 
-        gui = new GUI(activity, this);
+        gui = new GUI(activity);
         gui.showItemsList(treeManager.getCurrentItem());
         state = AppState.ITEMS_LIST;
 
@@ -78,6 +76,8 @@ public class App extends BaseApp implements GUIListener, IEventObserver {
     private void registerServices() {
         AppController.registerService(new Filesystem(activity));
         AppController.registerService(new Preferences(activity));
+
+        AppController.registerService(new TreeManager());
     }
 
     private void registerEventObservers() {
@@ -94,6 +94,7 @@ public class App extends BaseApp implements GUIListener, IEventObserver {
         AppController.registerEventObserver(SavedNewItemEvent.class, this);
         AppController.registerEventObserver(SelectedItemClickedEvent.class, this);
         AppController.registerEventObserver(ToolbarBackClickedEvent.class, this);
+        AppController.registerEventObserver(ItemMovedEvent.class, this);
     }
 
     @Override
@@ -123,6 +124,7 @@ public class App extends BaseApp implements GUIListener, IEventObserver {
             return true;
         } else if (id == R.id.action_reload) {
             treeManager = new TreeManager();
+            AppController.registerService(treeManager);
             treeManager.loadRootTree();
             updateItemsList();
             showInfo("Wczytano bazę danych.");
@@ -361,14 +363,6 @@ public class App extends BaseApp implements GUIListener, IEventObserver {
     }
 
 
-
-    @Override
-    public List<TreeItem> onItemMoved(int position, int step) {
-        treeManager.move(treeManager.getCurrentItem(), position, step);
-        return treeManager.getCurrentItem().getChildren();
-    }
-
-
     private void sumSelected() {
         if (treeManager.isSelectionMode()) {
             try {
@@ -538,6 +532,12 @@ public class App extends BaseApp implements GUIListener, IEventObserver {
             boolean checked = ((SelectedItemClickedEvent) event).isChecked();
             treeManager.setItemSelected(position, checked);
             updateItemsList();
+
+        } else if (event instanceof ItemMovedEvent) {
+
+            int position = ((ItemMovedEvent) event).getPosition();
+            int step = ((ItemMovedEvent) event).getStep();
+            treeManager.move(treeManager.getCurrentItem(), position, step);
 
         }
     }

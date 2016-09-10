@@ -22,14 +22,15 @@ import android.widget.ListView;
 import java.util.HashMap;
 import java.util.List;
 
-import igrek.todotree.gui.GUIListener;
 import igrek.todotree.logger.Logs;
 import igrek.todotree.logic.controller.AppController;
 import igrek.todotree.logic.datatree.TreeItem;
+import igrek.todotree.logic.datatree.TreeManager;
 import igrek.todotree.logic.events.AddItemClickedEvent;
 import igrek.todotree.logic.events.ItemClickedEvent;
 import igrek.todotree.logic.events.ItemGoIntoClickedEvent;
 import igrek.todotree.logic.events.ItemLongClickEvent;
+import igrek.todotree.logic.events.ItemMovedEvent;
 
 //FIXME: przewijanie w trybie landscape (za duże skoki)
 
@@ -37,7 +38,6 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
 
     private List<TreeItem> items;
     private TreeItemAdapter adapter;
-    private GUIListener guiListener;
 
     /** początkowa pozycja kursora przy rozpoczęciu przeciągania (ulega zmianie przy zamianie elementów) */
     private float startTouchY;
@@ -98,8 +98,7 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
         super(context, attrs);
     }
 
-    public void init(Context context, GUIListener aGuiListener) {
-        this.guiListener = aGuiListener;
+    public void init(Context context) {
         setOnScrollListener(this);
         setOnItemClickListener(this);
         setOnItemLongClickListener(this);
@@ -107,7 +106,7 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
         SMOOTH_SCROLL_EDGE_PX = (int) (SMOOTH_SCROLL_EDGE_DP / metrics.density);
         setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
-        adapter = new TreeItemAdapter(context, null, guiListener, this);
+        adapter = new TreeItemAdapter(context, null, this);
         setAdapter(adapter);
     }
 
@@ -341,7 +340,11 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
 
         if (step != 0) {
             int targetPosition = draggedItemPos + step;
-            items = guiListener.onItemMoved(draggedItemPos, step);
+
+            AppController.sendEvent(new ItemMovedEvent(draggedItemPos, step));
+            TreeManager treeManager = AppController.getService(TreeManager.class);
+            items = treeManager.getCurrentItem().getChildren();
+
             adapter.setDataSource(items);
 
             startTouchY += deltaH;
@@ -501,7 +504,11 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
         if (position == 0) {
             //przeniesienie na koniec
             itemDraggingStopped();
-            items = guiListener.onItemMoved(position, items.size() - 1);
+
+            AppController.sendEvent(new ItemMovedEvent(position, items.size() - 1));
+            TreeManager treeManager = AppController.getService(TreeManager.class);
+            items = treeManager.getCurrentItem().getChildren();
+
             adapter.setDataSource(items);
             scrollToItem(items.size() - 1);
             return true;
@@ -509,7 +516,11 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
         if (position == items.size() - 1) {
             //przeniesienie na początek
             itemDraggingStopped();
-            items = guiListener.onItemMoved(position, -(items.size() - 1));
+
+            AppController.sendEvent(new ItemMovedEvent(position, -(items.size() - 1)));
+            TreeManager treeManager = AppController.getService(TreeManager.class);
+            items = treeManager.getCurrentItem().getChildren();
+
             adapter.setDataSource(items);
             scrollToItem(0);
             return true;

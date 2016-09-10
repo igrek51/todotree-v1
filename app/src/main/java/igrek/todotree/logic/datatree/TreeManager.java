@@ -13,11 +13,12 @@ import igrek.todotree.filesystem.Filesystem;
 import igrek.todotree.filesystem.PathBuilder;
 import igrek.todotree.logger.Logs;
 import igrek.todotree.logic.controller.AppController;
+import igrek.todotree.logic.controller.services.IService;
 import igrek.todotree.logic.datatree.serializer.TreeSerializer;
 import igrek.todotree.logic.exceptions.NoSuperItemException;
 import igrek.todotree.preferences.Preferences;
 
-public class TreeManager {
+public class TreeManager implements IService {
 
     private TreeItem rootItem;
     private TreeItem currentItem;

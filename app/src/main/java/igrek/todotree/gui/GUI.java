@@ -28,8 +28,8 @@ public class GUI extends GUIBase {
     private TreeListView itemsListView;
     private EditItemGUI editItemGUI = null;
 
-    public GUI(AppCompatActivity activity, GUIListener guiListener) {
-        super(activity, guiListener);
+    public GUI(AppCompatActivity activity) {
+        super(activity);
     }
 
     @Override
@@ -60,7 +60,7 @@ public class GUI extends GUIBase {
 
         itemsListView = (TreeListView) itemsListLayout.findViewById(R.id.treeItemsList);
 
-        itemsListView.init(activity, guiListener);
+        itemsListView.init(activity);
 
         itemsListView.setItems(currentItem.getChildren());
 

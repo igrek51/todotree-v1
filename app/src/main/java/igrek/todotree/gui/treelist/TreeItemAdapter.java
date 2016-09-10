@@ -18,7 +18,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import igrek.todotree.R;
-import igrek.todotree.gui.GUIListener;
 import igrek.todotree.logic.controller.AppController;
 import igrek.todotree.logic.datatree.TreeItem;
 import igrek.todotree.logic.events.AddItemClickedEvent;
@@ -33,17 +32,15 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
     private Context context;
     private List<TreeItem> dataSource;
     private List<Integer> selections = null;
-    private GUIListener guiListener;
     private TreeListView listView;
 
     private HashMap<Integer, View> storedViews;
 
-    public TreeItemAdapter(Context context, List<TreeItem> dataSource, GUIListener guiListener, TreeListView listView) {
+    public TreeItemAdapter(Context context, List<TreeItem> dataSource, TreeListView listView) {
         super(context, 0, new ArrayList<TreeItem>());
         this.context = context;
         if (dataSource == null) dataSource = new ArrayList<>();
         this.dataSource = dataSource;
-        this.guiListener = guiListener;
         this.listView = listView;
         storedViews = new HashMap<>();
     }

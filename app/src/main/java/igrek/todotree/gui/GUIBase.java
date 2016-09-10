@@ -11,21 +11,15 @@ import android.widget.RelativeLayout;
 public class GUIBase {
 
     protected AppCompatActivity activity;
-    protected GUIListener guiListener;
 
     protected InputMethodManager imm;
 
     protected RelativeLayout mainContent;
 
-    public GUIBase(AppCompatActivity activity, GUIListener guiListener) {
+    public GUIBase(AppCompatActivity activity) {
         this.activity = activity;
-        this.guiListener = guiListener;
         imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
         init();
-    }
-
-    public GUIListener getGuiListener() {
-        return guiListener;
     }
 
     protected void init() {
