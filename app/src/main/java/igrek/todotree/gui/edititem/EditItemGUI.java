@@ -14,7 +14,12 @@ import igrek.todotree.R;
 import igrek.todotree.gui.GUI;
 import igrek.todotree.gui.numkeyboard.NumKeyboardListener;
 import igrek.todotree.gui.numkeyboard.NumericKeyboardView;
+import igrek.todotree.logic.controller.AppController;
 import igrek.todotree.logic.datatree.TreeItem;
+import igrek.todotree.logic.events.CancelEditedItemEvent;
+import igrek.todotree.logic.events.SaveAndAddItemEvent;
+import igrek.todotree.logic.events.SavedEditedItemEvent;
+import igrek.todotree.logic.events.SavedNewItemEvent;
 
 //TODO: przycisk zakresu na klawiaturze numerycznej
 //TODO zmniejszyć padding między przyciskami edycji
@@ -59,13 +64,13 @@ public class EditItemGUI implements NumKeyboardListener {
                         numericKeyboard.finishTyping();
                     }
                     hideKeyboards();
-                    gui.getGuiListener().onSavedEditedItem(item, etEditItem.getText().toString());
+                    AppController.sendEvent(new SavedEditedItemEvent(item, etEditItem.getText().toString()));
                 }
             });
             buttonSaveAndAdd.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    gui.getGuiListener().onSaveAndAddItem(item, etEditItem.getText().toString());
+                    AppController.sendEvent(new SaveAndAddItemEvent(item, etEditItem.getText().toString()));
                     hideKeyboards();
                 }
             });
@@ -78,13 +83,13 @@ public class EditItemGUI implements NumKeyboardListener {
                         numericKeyboard.finishTyping();
                     }
                     hideKeyboards();
-                    gui.getGuiListener().onSavedNewItem(etEditItem.getText().toString());
+                    AppController.sendEvent(new SavedNewItemEvent(etEditItem.getText().toString()));
                 }
             });
             buttonSaveAndAdd.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    gui.getGuiListener().onSaveAndAddItem(null, etEditItem.getText().toString());
+                    AppController.sendEvent(new SaveAndAddItemEvent(null, etEditItem.getText().toString()));
                     hideKeyboards();
                 }
             });
@@ -95,7 +100,7 @@ public class EditItemGUI implements NumKeyboardListener {
         buttonEditCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                gui.getGuiListener().onCancelEditedItem(item);
+                AppController.sendEvent(new CancelEditedItemEvent(item));
                 hideKeyboards();
             }
         });

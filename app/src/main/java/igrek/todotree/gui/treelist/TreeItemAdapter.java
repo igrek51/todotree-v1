@@ -19,7 +19,14 @@ import java.util.List;
 
 import igrek.todotree.R;
 import igrek.todotree.gui.GUIListener;
+import igrek.todotree.logic.controller.AppController;
 import igrek.todotree.logic.datatree.TreeItem;
+import igrek.todotree.logic.events.AddItemClickedEvent;
+import igrek.todotree.logic.events.AddItemClickedPosEvent;
+import igrek.todotree.logic.events.ItemEditClickedEvent;
+import igrek.todotree.logic.events.ItemGoIntoClickedEvent;
+import igrek.todotree.logic.events.ItemRemoveClickedEvent;
+import igrek.todotree.logic.events.SelectedItemClickedEvent;
 
 public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 
@@ -91,7 +98,7 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
             plusButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    guiListener.onAddItemClicked();
+                    AppController.sendEvent(new AddItemClickedEvent());
                 }
             });
 
@@ -121,7 +128,7 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
                 editButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        guiListener.onItemEditClicked(position, item);
+                        AppController.sendEvent(new ItemEditClickedEvent(position, item));
                     }
                 });
             } else {
@@ -136,7 +143,7 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
                 goIntoButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        guiListener.onItemGoIntoClicked(position, item);
+                        AppController.sendEvent(new ItemGoIntoClickedEvent(position, item));
                     }
                 });
             } else {
@@ -150,7 +157,7 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
             removeButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    guiListener.onItemRemoveClicked(position, item);
+                    AppController.sendEvent(new ItemRemoveClickedEvent(position, item));
                 }
             });
 
@@ -192,7 +199,7 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
                 addButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        guiListener.onAddItemClicked(position);
+                        AppController.sendEvent(new AddItemClickedPosEvent(position));
                     }
                 });
             } else {
@@ -216,7 +223,7 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
                 cbItemSelected.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        guiListener.onSelectedClicked(position, item, isChecked);
+                        AppController.sendEvent(new SelectedItemClickedEvent(position, item, isChecked));
                     }
                 });
             }

@@ -12,7 +12,9 @@ import java.util.List;
 import igrek.todotree.R;
 import igrek.todotree.gui.edititem.EditItemGUI;
 import igrek.todotree.gui.treelist.TreeListView;
+import igrek.todotree.logic.controller.AppController;
 import igrek.todotree.logic.datatree.TreeItem;
+import igrek.todotree.logic.events.ToolbarBackClickedEvent;
 
 //  WYGLĄD
 //TODO: liczebność elementów folderu jako osobny textedit z szarym kolorem i wyrównany do prawej, w tytule rodzica to samo
@@ -45,7 +47,7 @@ public class GUI extends GUIBase {
         toolbar1.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                guiListener.onToolbarBackClicked();
+                AppController.sendEvent(new ToolbarBackClickedEvent());
             }
         });
 

@@ -24,7 +24,12 @@ import java.util.List;
 
 import igrek.todotree.gui.GUIListener;
 import igrek.todotree.logger.Logs;
+import igrek.todotree.logic.controller.AppController;
 import igrek.todotree.logic.datatree.TreeItem;
+import igrek.todotree.logic.events.AddItemClickedEvent;
+import igrek.todotree.logic.events.ItemClickedEvent;
+import igrek.todotree.logic.events.ItemGoIntoClickedEvent;
+import igrek.todotree.logic.events.ItemLongClickEvent;
 
 //FIXME: przewijanie w trybie landscape (za duże skoki)
 
@@ -176,11 +181,11 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
     public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
         if (position == items.size()) {
             //nowy element
-            guiListener.onAddItemClicked();
+            AppController.sendEvent(new AddItemClickedEvent());
         } else {
             //istniejący element
             TreeItem item = adapter.getItem(position);
-            guiListener.onItemClicked(position, item);
+            AppController.sendEvent(new ItemClickedEvent(position, item));
         }
     }
 
@@ -189,10 +194,10 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
         itemDraggingStopped();
         if (position == items.size()) {
             //nowy element na końcu
-            guiListener.onAddItemClicked();
+            AppController.sendEvent(new AddItemClickedEvent());
         } else {
             //tryb zaznaczania elementów
-            guiListener.onItemLongClick(position);
+            AppController.sendEvent(new ItemLongClickEvent(position));
             gestureStartPos = null;
         }
         return true;
@@ -525,7 +530,7 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
                         //wejście wgłąb elementu smyraniem w prawo
                         //Logs.debug("gesture: go into intercepted, dx: " + (dx / getWidth()) + " , dy: " + (Math.abs(dy) / itemH));
                         TreeItem item = adapter.getItem(gestureStartPos);
-                        guiListener.onItemGoIntoClicked(gestureStartPos, item);
+                        AppController.sendEvent(new ItemGoIntoClickedEvent(gestureStartPos, item));
                         gestureStartPos = null; //reset
                         return true;
                     }

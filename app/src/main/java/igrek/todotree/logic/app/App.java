@@ -24,7 +24,19 @@ import igrek.todotree.logic.controller.dispatcher.IEvent;
 import igrek.todotree.logic.controller.dispatcher.IEventObserver;
 import igrek.todotree.logic.datatree.TreeItem;
 import igrek.todotree.logic.datatree.TreeManager;
-import igrek.todotree.logic.events.AppStartedEvent;
+import igrek.todotree.logic.events.AddItemClickedEvent;
+import igrek.todotree.logic.events.AddItemClickedPosEvent;
+import igrek.todotree.logic.events.CancelEditedItemEvent;
+import igrek.todotree.logic.events.ItemClickedEvent;
+import igrek.todotree.logic.events.ItemEditClickedEvent;
+import igrek.todotree.logic.events.ItemGoIntoClickedEvent;
+import igrek.todotree.logic.events.ItemLongClickEvent;
+import igrek.todotree.logic.events.ItemRemoveClickedEvent;
+import igrek.todotree.logic.events.SaveAndAddItemEvent;
+import igrek.todotree.logic.events.SavedEditedItemEvent;
+import igrek.todotree.logic.events.SavedNewItemEvent;
+import igrek.todotree.logic.events.SelectedItemClickedEvent;
+import igrek.todotree.logic.events.ToolbarBackClickedEvent;
 import igrek.todotree.logic.exceptions.NoSuperItemException;
 import igrek.todotree.preferences.Preferences;
 
@@ -49,6 +61,7 @@ public class App extends BaseApp implements GUIListener, IEventObserver {
         new AppController();
 
         registerServices();
+        registerEventObservers();
 
         treeManager = new TreeManager();
         treeManager.loadRootTree();
@@ -60,10 +73,6 @@ public class App extends BaseApp implements GUIListener, IEventObserver {
         state = AppState.ITEMS_LIST;
 
         Logs.info("Aplikacja uruchomiona.");
-
-        AppController.registerEventObserver(AppStartedEvent.class, this);
-
-        AppController.sendEvent(new AppStartedEvent());
     }
 
     private void registerServices() {
@@ -71,9 +80,20 @@ public class App extends BaseApp implements GUIListener, IEventObserver {
         AppController.registerService(new Preferences(activity));
     }
 
-    @Override
-    public void onEvent(IEvent event) {
-
+    private void registerEventObservers() {
+        AppController.registerEventObserver(AddItemClickedEvent.class, this);
+        AppController.registerEventObserver(AddItemClickedPosEvent.class, this);
+        AppController.registerEventObserver(CancelEditedItemEvent.class, this);
+        AppController.registerEventObserver(ItemClickedEvent.class, this);
+        AppController.registerEventObserver(ItemEditClickedEvent.class, this);
+        AppController.registerEventObserver(ItemGoIntoClickedEvent.class, this);
+        AppController.registerEventObserver(ItemLongClickEvent.class, this);
+        AppController.registerEventObserver(ItemRemoveClickedEvent.class, this);
+        AppController.registerEventObserver(SaveAndAddItemEvent.class, this);
+        AppController.registerEventObserver(SavedEditedItemEvent.class, this);
+        AppController.registerEventObserver(SavedNewItemEvent.class, this);
+        AppController.registerEventObserver(SelectedItemClickedEvent.class, this);
+        AppController.registerEventObserver(ToolbarBackClickedEvent.class, this);
     }
 
     @Override
@@ -341,122 +361,6 @@ public class App extends BaseApp implements GUIListener, IEventObserver {
     }
 
 
-    @Override
-    public void onToolbarBackClicked() {
-        backClicked();
-    }
-
-    @Override
-    public void onAddItemClicked() {
-        onAddItemClicked(-1);
-    }
-
-    @Override
-    public void onAddItemClicked(int position) {
-        treeManager.cancelSelectionMode();
-        newItem(position);
-    }
-
-    @Override
-    public void onItemClicked(int position, TreeItem item) {
-        if (treeManager.isSelectionMode()) {
-            treeManager.toggleItemSelected(position);
-            updateItemsList();
-        } else {
-            if (item.isEmpty()) {
-                onItemEditClicked(position, item);
-            } else {
-                onItemGoIntoClicked(position, item);
-            }
-        }
-    }
-
-    @Override
-    public void onItemEditClicked(int position, TreeItem item) {
-        treeManager.cancelSelectionMode();
-        editItem(item, treeManager.getCurrentItem());
-    }
-
-    @Override
-    public void onItemGoIntoClicked(int position, TreeItem item) {
-        treeManager.cancelSelectionMode();
-        treeManager.goInto(position, gui.getCurrentScrollPos());
-        updateItemsList();
-        gui.scrollToItem(0);
-    }
-
-    @Override
-    public void onItemRemoveClicked(int position, TreeItem item) {
-        if (treeManager.isSelectionMode()) {
-            removeSelectedItems(true);
-        } else {
-            removeItem(position);
-        }
-    }
-
-    @Override
-    public void onSavedEditedItem(TreeItem editedItem, String content) {
-        content = treeManager.trimContent(content);
-        if (content.isEmpty()) {
-            treeManager.getCurrentItem().remove(editedItem);
-            showInfo("Pusty element został usunięty.");
-        } else {
-            editedItem.setContent(content);
-            showInfo("Zapisano element.");
-        }
-        treeManager.setEditItem(null);
-        state = AppState.ITEMS_LIST;
-        gui.showItemsList(treeManager.getCurrentItem());
-        restoreScrollPosition(treeManager.getCurrentItem());
-    }
-
-    @Override
-    public void onSavedNewItem(String content) {
-        content = treeManager.trimContent(content);
-        if (content.isEmpty()) {
-            showInfo("Pusty element został usunięty.");
-        } else {
-            treeManager.getCurrentItem().add(treeManager.getNewItemPosition(), content);
-            showInfo("Zapisano nowy element.");
-        }
-        state = AppState.ITEMS_LIST;
-        gui.showItemsList(treeManager.getCurrentItem());
-        if (treeManager.getNewItemPosition() == treeManager.getCurrentItem().size() - 1) {
-            gui.scrollToBottom();
-        } else {
-            restoreScrollPosition(treeManager.getCurrentItem());
-        }
-        treeManager.setNewItemPosition(null);
-    }
-
-    @Override
-    public void onSaveAndAddItem(TreeItem editedItem, String content) {
-        //zapis
-        content = treeManager.trimContent(content);
-        int newItemIndex;
-        if (editedItem == null) { //nowy element
-            newItemIndex = treeManager.getNewItemPosition();
-            if (content.isEmpty()) {
-                showInfo("Pusty element został usunięty.");
-            } else {
-                treeManager.getCurrentItem().add(treeManager.getNewItemPosition(), content);
-                newItemIndex++;
-                showInfo("Zapisano nowy element.");
-            }
-        } else { //edycja
-            newItemIndex = editedItem.getIndexInParent();
-            if (content.isEmpty()) {
-                treeManager.getCurrentItem().remove(editedItem);
-                showInfo("Pusty element został usunięty.");
-            } else {
-                editedItem.setContent(content);
-                newItemIndex++;
-                showInfo("Zapisano element.");
-            }
-        }
-        //dodanie nowego elementu
-        newItem(newItemIndex);
-    }
 
     @Override
     public List<TreeItem> onItemMoved(int position, int step) {
@@ -464,30 +368,6 @@ public class App extends BaseApp implements GUIListener, IEventObserver {
         return treeManager.getCurrentItem().getChildren();
     }
 
-    @Override
-    public void onCancelEditedItem(TreeItem editedItem) {
-        gui.hideSoftKeyboard();
-        discardEditingItem();
-    }
-
-    @Override
-    public void onSelectedClicked(int position, TreeItem item, boolean checked) {
-        treeManager.setItemSelected(position, checked);
-        updateItemsList();
-    }
-
-    @Override
-    public void onItemLongClick(int position) {
-        if (!treeManager.isSelectionMode()) {
-            treeManager.startSelectionMode();
-            treeManager.setItemSelected(position, true);
-            updateItemsList();
-            gui.scrollToItem(position);
-        } else {
-            treeManager.setItemSelected(position, true);
-            updateItemsList();
-        }
-    }
 
     private void sumSelected() {
         if (treeManager.isSelectionMode()) {
@@ -513,5 +393,152 @@ public class App extends BaseApp implements GUIListener, IEventObserver {
     private void saveDatabase() {
         treeManager.saveRootTree();
         backupManager.saveBackupFile();
+    }
+
+    @Override
+    public void onEvent(IEvent event) {
+        //TODO zrobić z tym porządek
+        if (event instanceof ToolbarBackClickedEvent) {
+
+            backClicked();
+
+        } else if (event instanceof AddItemClickedEvent) {
+
+            //TODO zamienić na jeden event
+            AppController.sendEvent(new AddItemClickedPosEvent(-1));
+
+        } else if (event instanceof AddItemClickedPosEvent) {
+
+            treeManager.cancelSelectionMode();
+            newItem(((AddItemClickedPosEvent) event).getPosition());
+
+        } else if (event instanceof CancelEditedItemEvent) {
+
+            gui.hideSoftKeyboard();
+            discardEditingItem();
+
+        } else if (event instanceof ItemClickedEvent) {
+
+            int position = ((ItemClickedEvent) event).getPosition();
+            TreeItem item = ((ItemClickedEvent) event).getTreeItem();
+            if (treeManager.isSelectionMode()) {
+                treeManager.toggleItemSelected(position);
+                updateItemsList();
+            } else {
+                if (item.isEmpty()) {
+                    AppController.sendEvent(new ItemEditClickedEvent(position, item));
+                } else {
+                    AppController.sendEvent(new ItemGoIntoClickedEvent(position, item));
+                }
+            }
+
+        } else if (event instanceof ItemEditClickedEvent) {
+
+            treeManager.cancelSelectionMode();
+            editItem(((ItemEditClickedEvent) event).getTreeItem(), treeManager.getCurrentItem());
+
+        } else if (event instanceof ItemGoIntoClickedEvent) {
+
+            treeManager.cancelSelectionMode();
+            treeManager.goInto(((ItemGoIntoClickedEvent) event).getPosition(), gui.getCurrentScrollPos());
+            updateItemsList();
+            gui.scrollToItem(0);
+
+        } else if (event instanceof ItemLongClickEvent) {
+
+            int position = ((ItemLongClickEvent) event).getPosition();
+            if (!treeManager.isSelectionMode()) {
+                treeManager.startSelectionMode();
+                treeManager.setItemSelected(position, true);
+                updateItemsList();
+                gui.scrollToItem(position);
+            } else {
+                treeManager.setItemSelected(position, true);
+                updateItemsList();
+            }
+
+        } else if (event instanceof ItemRemoveClickedEvent) {
+
+            if (treeManager.isSelectionMode()) {
+                removeSelectedItems(true);
+            } else {
+                removeItem(((ItemRemoveClickedEvent) event).getPosition());
+            }
+
+        } else if (event instanceof SaveAndAddItemEvent) {
+
+            String content = ((SaveAndAddItemEvent) event).getContent();
+            TreeItem editedItem = ((SaveAndAddItemEvent) event).getEditedItem();
+            //zapis
+            content = treeManager.trimContent(content);
+            int newItemIndex;
+            if (editedItem == null) { //nowy element
+                newItemIndex = treeManager.getNewItemPosition();
+                if (content.isEmpty()) {
+                    showInfo("Pusty element został usunięty.");
+                } else {
+                    treeManager.getCurrentItem().add(treeManager.getNewItemPosition(), content);
+                    newItemIndex++;
+                    showInfo("Zapisano nowy element.");
+                }
+            } else { //edycja
+                newItemIndex = editedItem.getIndexInParent();
+                if (content.isEmpty()) {
+                    treeManager.getCurrentItem().remove(editedItem);
+                    showInfo("Pusty element został usunięty.");
+                } else {
+                    editedItem.setContent(content);
+                    newItemIndex++;
+                    showInfo("Zapisano element.");
+                }
+            }
+            //dodanie nowego elementu
+            newItem(newItemIndex);
+
+        } else if (event instanceof SavedEditedItemEvent) {
+
+            TreeItem editedItem = ((SavedEditedItemEvent) event).getEditedItem();
+            String content = ((SavedEditedItemEvent) event).getContent();
+
+            content = treeManager.trimContent(content);
+            if (content.isEmpty()) {
+                treeManager.getCurrentItem().remove(editedItem);
+                showInfo("Pusty element został usunięty.");
+            } else {
+                editedItem.setContent(content);
+                showInfo("Zapisano element.");
+            }
+            treeManager.setEditItem(null);
+            state = AppState.ITEMS_LIST;
+            gui.showItemsList(treeManager.getCurrentItem());
+            restoreScrollPosition(treeManager.getCurrentItem());
+
+        } else if (event instanceof SavedNewItemEvent) {
+
+            String content = ((SavedNewItemEvent) event).getContent();
+            content = treeManager.trimContent(content);
+            if (content.isEmpty()) {
+                showInfo("Pusty element został usunięty.");
+            } else {
+                treeManager.getCurrentItem().add(treeManager.getNewItemPosition(), content);
+                showInfo("Zapisano nowy element.");
+            }
+            state = AppState.ITEMS_LIST;
+            gui.showItemsList(treeManager.getCurrentItem());
+            if (treeManager.getNewItemPosition() == treeManager.getCurrentItem().size() - 1) {
+                gui.scrollToBottom();
+            } else {
+                restoreScrollPosition(treeManager.getCurrentItem());
+            }
+            treeManager.setNewItemPosition(null);
+
+        } else if (event instanceof SelectedItemClickedEvent) {
+
+            int position = ((SelectedItemClickedEvent) event).getPosition();
+            boolean checked = ((SelectedItemClickedEvent) event).isChecked();
+            treeManager.setItemSelected(position, checked);
+            updateItemsList();
+
+        }
     }
 }
