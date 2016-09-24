@@ -3,7 +3,6 @@ package igrek.todotree.logic.app;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.View;
@@ -26,6 +25,7 @@ import igrek.todotree.logic.datatree.TreeManager;
 import igrek.todotree.logic.events.AddItemClickedEvent;
 import igrek.todotree.logic.events.AddItemClickedPosEvent;
 import igrek.todotree.logic.events.CancelEditedItemEvent;
+import igrek.todotree.logic.events.ExitAppEvent;
 import igrek.todotree.logic.events.ItemClickedEvent;
 import igrek.todotree.logic.events.ItemEditClickedEvent;
 import igrek.todotree.logic.events.ItemGoIntoClickedEvent;
@@ -95,6 +95,7 @@ public class App extends BaseApp implements IEventObserver {
         AppController.registerEventObserver(SelectedItemClickedEvent.class, this);
         AppController.registerEventObserver(ToolbarBackClickedEvent.class, this);
         AppController.registerEventObserver(ItemMovedEvent.class, this);
+        AppController.registerEventObserver(ExitAppEvent.class, this);
     }
 
     @Override
@@ -209,7 +210,7 @@ public class App extends BaseApp implements IEventObserver {
 
         treeManager.getCurrentItem().remove(position);
         updateItemsList();
-        showInfoCancellable("Usunięto element.", new View.OnClickListener() {
+        showInfoCancellable("Usunięto element: " + removing.getContent(), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 restoreItem(removing, position);
@@ -278,18 +279,11 @@ public class App extends BaseApp implements IEventObserver {
     }
 
     private void exitApp(boolean withSaving) {
-        gui.showExitScreen();
+        //TODO Najpierw wyświetlić exit screen, potem zapisywać bazę
         if (withSaving) {
             saveDatabase();
         }
-
-        // FIXME trzeba odczekać min 20 ms, KURWA MAĆ !!!, a i tak nie zawsze działa
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                quit();
-            }
-        }, 20);
+        gui.showExitScreen();
     }
 
     private void updateItemsList() {
@@ -539,6 +533,8 @@ public class App extends BaseApp implements IEventObserver {
             int step = ((ItemMovedEvent) event).getStep();
             treeManager.move(treeManager.getCurrentItem(), position, step);
 
+        } else if (event instanceof ExitAppEvent) {
+            quit();
         }
     }
 }

@@ -1,9 +1,11 @@
 package igrek.todotree.gui;
 
+import android.os.Handler;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 
@@ -14,6 +16,7 @@ import igrek.todotree.gui.edititem.EditItemGUI;
 import igrek.todotree.gui.treelist.TreeListView;
 import igrek.todotree.logic.controller.AppController;
 import igrek.todotree.logic.datatree.TreeItem;
+import igrek.todotree.logic.events.ExitAppEvent;
 import igrek.todotree.logic.events.ToolbarBackClickedEvent;
 
 //  WYGLĄD
@@ -74,14 +77,28 @@ public class GUI extends GUIBase {
         etEditItem = editItemGUI.getEtEditItem();
     }
 
-    public void showExitScreen(){
+    public void showExitScreen() {
         View exitScreen = setMainContentLayout(R.layout.exit_screen);
+
+        //TODO dalej jest zjebane
+        final ViewTreeObserver vto = exitScreen.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        AppController.sendEvent(new ExitAppEvent());
+                    }
+                }, 150);
+            }
+        });
     }
 
     public void updateItemsList(TreeItem currentItem, List<Integer> selectedPositions) {
         //tytuł gałęzi
         StringBuilder sb = new StringBuilder(currentItem.getContent());
-        if(!currentItem.isEmpty()) {
+        if (!currentItem.isEmpty()) {
             sb.append(" [");
             sb.append(currentItem.size());
             sb.append("]");
@@ -91,7 +108,7 @@ public class GUI extends GUIBase {
         itemsListView.setItemsAndSelected(currentItem.getChildren(), selectedPositions);
     }
 
-    public void scrollToItem(int position){
+    public void scrollToItem(int position) {
         itemsListView.scrollToItem(position);
     }
 
@@ -111,7 +128,7 @@ public class GUI extends GUIBase {
         return editItemGUI.editItemBackClicked();
     }
 
-    public void setTitle(String title){
+    public void setTitle(String title) {
         //TODO: breadcrumbs przy nazwie aktualnego elementu
         actionBar.setTitle(title);
     }
