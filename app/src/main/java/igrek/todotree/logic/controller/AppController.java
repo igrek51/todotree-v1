@@ -40,6 +40,11 @@ public class AppController {
         getInstance().eventDispatcher.registerEventObserver(eventClass, observer);
     }
 
+    //TODO czyszczenie nie dla wszystkich tylko dla konkretnych odbiorców
+    public static void clearEventObservers(Class<? extends IEvent> eventClass) {
+        getInstance().eventDispatcher.clearEventObservers(eventClass);
+    }
+
     public static void sendEvent(IEvent event) {
         getInstance().eventDispatcher.sendEvent(event);
     }

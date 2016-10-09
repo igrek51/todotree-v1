@@ -15,17 +15,19 @@ import igrek.todotree.gui.GUI;
 import igrek.todotree.gui.numkeyboard.NumKeyboardListener;
 import igrek.todotree.gui.numkeyboard.NumericKeyboardView;
 import igrek.todotree.logic.controller.AppController;
+import igrek.todotree.logic.controller.dispatcher.IEvent;
+import igrek.todotree.logic.controller.dispatcher.IEventObserver;
 import igrek.todotree.logic.datatree.TreeItem;
 import igrek.todotree.logic.events.CancelEditedItemEvent;
+import igrek.todotree.logic.events.RangeCharQuickInsertEvent;
 import igrek.todotree.logic.events.SaveAndAddItemEvent;
 import igrek.todotree.logic.events.SavedEditedItemEvent;
 import igrek.todotree.logic.events.SavedNewItemEvent;
 
-//TODO: przycisk zakresu na klawiaturze numerycznej
 //TODO zmniejszyć padding między przyciskami edycji
 //TODO: tryb portrait ekranu na stałe - przycisk przełączania w tryb landscape screen przy pisaniu z klawiatury ekranowej
 
-public class EditItemGUI implements NumKeyboardListener {
+public class EditItemGUI implements NumKeyboardListener, IEventObserver {
 
     private GUI gui;
 
@@ -37,6 +39,10 @@ public class EditItemGUI implements NumKeyboardListener {
     public EditItemGUI(GUI gui, final TreeItem item, TreeItem parent) {
         this.gui = gui;
         this.editedItem = item;
+
+        AppController.clearEventObservers(RangeCharQuickInsertEvent.class);
+        AppController.registerEventObserver(RangeCharQuickInsertEvent.class, this);
+
         init(item, parent);
     }
 
@@ -359,5 +365,12 @@ public class EditItemGUI implements NumKeyboardListener {
 
     public void requestSaveEditedItem() {
         buttonSaveItem.performClick();
+    }
+
+    @Override
+    public void onEvent(IEvent event) {
+        if (event instanceof RangeCharQuickInsertEvent) {
+            quickInsertRange();
+        }
     }
 }

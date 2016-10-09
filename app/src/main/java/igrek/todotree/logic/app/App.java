@@ -43,7 +43,6 @@ import igrek.todotree.preferences.Preferences;
 //  NOWE FUNKCJONALNOŚCI
 //TODO: funkcja cofania zmian - zapisywanie modyfikacji, dodawania, usuwania elementów, przesuwania
 //TODO: moduł obliczeń: inline calc
-//TODO event dispatcher, controller, services manager
 
 public class App extends BaseApp implements IEventObserver {
 

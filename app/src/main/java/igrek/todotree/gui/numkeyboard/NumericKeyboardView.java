@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.EditText;
 
 import igrek.todotree.R;
+import igrek.todotree.logic.controller.AppController;
+import igrek.todotree.logic.events.RangeCharQuickInsertEvent;
 
 public class NumericKeyboardView extends KeyboardView implements KeyboardView.OnKeyboardActionListener {
 
@@ -102,7 +104,7 @@ public class NumericKeyboardView extends KeyboardView implements KeyboardView.On
         } else if (primaryCode == -3) {
             typedBackspace();
         } else if (primaryCode == -4) { // _-_
-            //TODO: przycisk zakresu
+            AppController.sendEvent(new RangeCharQuickInsertEvent());
         } else if (primaryCode == -5) { //spacja
             typedSpace();
         }
