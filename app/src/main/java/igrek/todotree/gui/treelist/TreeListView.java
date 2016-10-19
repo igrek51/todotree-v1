@@ -33,6 +33,7 @@ import igrek.todotree.logic.events.ItemLongClickEvent;
 import igrek.todotree.logic.events.ItemMovedEvent;
 
 //FIXME: przewijanie w trybie landscape (za duże skoki)
+//FIXME po zamianie elementów, elementy czasem znikają są ukryte
 
 public class TreeListView extends ListView implements AbsListView.OnScrollListener, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
 
@@ -83,7 +84,7 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
     private final int HOVER_BORDER_THICKNESS = 5;
     private final int HOVER_BORDER_COLOR = 0xccb0b0b0;
 
-    private final float GESTURE_MIN_DX = 0.3f;
+    private final float GESTURE_MIN_DX = 0.27f;
     private final float GESTURE_MAX_DY = 0.8f;
 
     public TreeListView(Context context) {

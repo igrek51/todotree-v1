@@ -13,6 +13,7 @@ import android.view.WindowManager;
 
 import igrek.todotree.R;
 import igrek.todotree.logger.Logs;
+import igrek.todotree.logic.controller.AppController;
 
 public abstract class BaseApp {
 
@@ -29,6 +30,9 @@ public abstract class BaseApp {
 
     public BaseApp(AppCompatActivity aActivity) {
         this.activity = aActivity;
+
+        // WYCZYSZCZENIE REJESTRU USŁUG I LISTENERÓW EVENTÓW
+        new AppController();
 
         //łapanie niezłapanych wyjątków
         defaultUEH = Thread.getDefaultUncaughtExceptionHandler();

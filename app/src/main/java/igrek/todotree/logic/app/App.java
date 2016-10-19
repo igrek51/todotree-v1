@@ -40,7 +40,6 @@ import igrek.todotree.logic.events.ToolbarBackClickedEvent;
 import igrek.todotree.logic.exceptions.NoSuperItemException;
 import igrek.todotree.preferences.Preferences;
 
-//  NOWE FUNKCJONALNOŚCI
 //TODO: funkcja cofania zmian - zapisywanie modyfikacji, dodawania, usuwania elementów, przesuwania
 //TODO: moduł obliczeń: inline calc
 
@@ -54,8 +53,6 @@ public class App extends BaseApp implements IEventObserver {
 
     public App(AppCompatActivity activity) {
         super(activity);
-
-        new AppController();
 
         registerServices();
         registerEventObservers();
