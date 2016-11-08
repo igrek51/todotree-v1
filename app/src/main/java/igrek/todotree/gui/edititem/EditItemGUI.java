@@ -225,7 +225,19 @@ public class EditItemGUI implements NumKeyboardListener, IEventObserver {
 
     private void quickCursorMove(int direction) {
         if (direction == -2) { //na początek
+
+            // WTF ??? - zjebane, ale tak trzeba, by ujarzmić ten przeskakujący kursor
+            etEditItem.requestFocus();
+            etEditItem.selectAll();
             etEditItem.setSelection(0);
+
+            new Handler().post(new Runnable() {
+                @Override
+                public void run() {
+                    etEditItem.setSelection(0);
+                }
+            });
+
         } else if (direction == +2) { //na koniec
             etEditItem.setSelection(etEditItem.getText().length());
         } else if (direction == -1 || direction == +1) {

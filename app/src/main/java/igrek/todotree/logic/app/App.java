@@ -42,7 +42,6 @@ import igrek.todotree.preferences.Preferences;
 
 //TODO ukryta blokada, brak zapisu
 //TODO kopiowanie / wklejanie pojedynczych elementów ze schowka
-//FIXME fix edycji tekstu z kursorem na początku
 
 //TODO: funkcja cofania zmian - zapisywanie modyfikacji, dodawania, usuwania elementów, przesuwania
 //TODO: moduł obliczeń: inline calc
