@@ -40,8 +40,10 @@ import igrek.todotree.logic.events.ToolbarBackClickedEvent;
 import igrek.todotree.logic.exceptions.NoSuperItemException;
 import igrek.todotree.preferences.Preferences;
 
+import static android.content.ClipDescription.MIMETYPE_TEXT_PLAIN;
+
 //TODO ukryta blokada, brak zapisu
-//TODO kopiowanie / wklejanie pojedynczych elementów ze schowka
+//TODO brak zapisu bazy jeśli nie było zmian
 
 //TODO: funkcja cofania zmian - zapisywanie modyfikacji, dodawania, usuwania elementów, przesuwania
 //TODO: moduł obliczeń: inline calc
@@ -297,8 +299,17 @@ public class App extends BaseApp implements IEventObserver {
                 TreeItem selectedItem = treeManager.getCurrentItem().getChild(selectedItemId);
                 treeManager.addToClipboard(selectedItem);
             }
-            if (info) {
-                showInfo("Skopiowano zaznaczone elementy: " + treeManager.getSelectedItemsCount());
+            //jeśli zaznaczony jeden element - skopiowanie do schowka
+            if (treeManager.getClipboardSize() == 1) {
+                TreeItem item = treeManager.getClipboard().get(0);
+                copyToSystemClipboard(item.getContent());
+                if (info) {
+                    showInfo("Skopiowano element: " + item.getContent());
+                }
+            } else {
+                if (info) {
+                    showInfo("Skopiowano zaznaczone elementy: " + treeManager.getClipboardSize());
+                }
             }
         }
     }
@@ -311,7 +322,16 @@ public class App extends BaseApp implements IEventObserver {
 
     private void pasteItems() {
         if (treeManager.isClipboardEmpty()) {
-            showInfo("Schowek jest pusty.");
+            String systemClipboard = getSystemClipboard();
+            if (systemClipboard != null) {
+                //wklejanie 1 elementu z systemowego schowka
+                treeManager.getCurrentItem().add(systemClipboard);
+                showInfo("Wklejono element: " + systemClipboard);
+                updateItemsList();
+                gui.scrollToItem(-1);
+            } else {
+                showInfo("Schowek jest pusty.");
+            }
         } else {
             for (TreeItem clipboardItem : treeManager.getClipboard()) {
                 clipboardItem.setParent(treeManager.getCurrentItem());
@@ -364,12 +384,8 @@ public class App extends BaseApp implements IEventObserver {
                 String clipboardStr = sum.toPlainString();
                 clipboardStr = clipboardStr.replace('.', ',');
 
-                ClipboardManager clipboard = (ClipboardManager) activity.getSystemService(Activity.CLIPBOARD_SERVICE);
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
-                    ClipData clip = ClipData.newPlainText("Copied Text", clipboardStr);
-                    clipboard.setPrimaryClip(clip);
-                    showInfo("Skopiowano sumę do schowka: " + clipboardStr);
-                }
+                copyToSystemClipboard(clipboardStr);
+                showInfo("Skopiowano sumę do schowka: " + clipboardStr);
 
             } catch (NumberFormatException e) {
                 showInfo(e.getMessage());
@@ -380,6 +396,25 @@ public class App extends BaseApp implements IEventObserver {
     private void saveDatabase() {
         treeManager.saveRootTree();
         backupManager.saveBackupFile();
+    }
+
+    private void copyToSystemClipboard(String text) {
+        ClipboardManager clipboard = (ClipboardManager) activity.getSystemService(Activity.CLIPBOARD_SERVICE);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
+            ClipData clip = ClipData.newPlainText("Copied Text", text);
+            clipboard.setPrimaryClip(clip);
+        }
+    }
+
+    private String getSystemClipboard() {
+        ClipboardManager clipboard = (ClipboardManager) activity.getSystemService(Activity.CLIPBOARD_SERVICE);
+        if (clipboard.hasPrimaryClip() && clipboard.getPrimaryClipDescription().hasMimeType(MIMETYPE_TEXT_PLAIN)) {
+            ClipData.Item item = clipboard.getPrimaryClip().getItemAt(0);
+            if (item == null) return null;
+            if (item.getText() == null) return null;
+            return item.getText().toString();
+        }
+        return null;
     }
 
     @Override
