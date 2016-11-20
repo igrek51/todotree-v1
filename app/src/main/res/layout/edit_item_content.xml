@@ -37,18 +37,18 @@
             <Button
                 android:id="@+id/buttonSaveItem"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_weight="1"
-                android:text="@string/button_save"/>
+                android:text="@string/button_save"
+                style="@style/AppThemeEditButtons"/>
 
             <Button
                 android:id="@+id/buttonSaveAndAddItem"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_weight="1"
-                android:text="@string/button_save_and_add"/>
+                android:text="@string/button_save_and_add"
+                style="@style/AppThemeEditButtons"/>
 
         </LinearLayout>
 
@@ -61,37 +61,37 @@
             <ImageButton
                 android:id="@+id/quickEditGoBegin"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:src="@android:drawable/ic_media_previous"/>
+                android:src="@android:drawable/ic_media_previous"
+                style="@style/AppThemeEditButtons"/>
 
             <ImageButton
                 android:id="@+id/quickEditGoLeft"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:src="@android:drawable/ic_media_rew"/>
+                android:src="@android:drawable/ic_media_rew"
+                style="@style/AppThemeEditButtons"/>
 
             <ImageButton
                 android:id="@+id/quickEditSelectAll"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:src="@drawable/ic_media_fullscreen"/>
+                android:src="@drawable/ic_media_fullscreen"
+                style="@style/AppThemeEditButtons"/>
 
             <ImageButton
                 android:id="@+id/quickEditGoRight"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:src="@android:drawable/ic_media_ff"/>
+                android:src="@android:drawable/ic_media_ff"
+                style="@style/AppThemeEditButtons"/>
 
             <ImageButton
                 android:id="@+id/quickEditGoEnd"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:src="@android:drawable/ic_media_next"/>
+                android:src="@android:drawable/ic_media_next"
+                style="@style/AppThemeEditButtons"/>
 
         </LinearLayout>
 
@@ -104,30 +104,30 @@
             <Button
                 android:id="@+id/buttonEditInsertTime"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
                 android:layout_weight="0.3"
-                android:text="@string/buttonEditInsertTime"/>
+                android:text="@string/buttonEditInsertTime"
+                style="@style/AppThemeEditButtons"/>
 
             <Button
                 android:id="@+id/buttonEditInsertDate"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
                 android:layout_weight="0.3"
-                android:text="@string/buttonEditInsertDate"/>
+                android:text="@string/buttonEditInsertDate"
+                style="@style/AppThemeEditButtons"/>
 
             <Button
                 android:id="@+id/buttonEditInsertRange"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
                 android:layout_weight="0.15"
-                android:text="@string/buttonEditInsertRange"/>
+                android:text="@string/buttonEditInsertRange"
+                style="@style/AppThemeEditButtons"/>
 
             <Button
                 android:id="@+id/buttonEditInsertNumber"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
                 android:layout_weight="0.25"
-                android:text="@string/buttonEditInsertNumber"/>
+                android:text="@string/buttonEditInsertNumber"
+                style="@style/AppThemeEditButtons"/>
 
         </LinearLayout>
 
@@ -140,9 +140,9 @@
             <Button
                 android:id="@+id/buttonEditCancel"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
                 android:layout_weight="0.25"
-                android:text="@string/buttonEditCancel"/>
+                android:text="@string/buttonEditCancel"
+                style="@style/AppThemeEditButtons"/>
         </LinearLayout>
 
         <igrek.todotree.gui.numkeyboard.NumericKeyboardView

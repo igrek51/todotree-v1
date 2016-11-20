@@ -24,7 +24,6 @@ import igrek.todotree.logic.events.SaveAndAddItemEvent;
 import igrek.todotree.logic.events.SavedEditedItemEvent;
 import igrek.todotree.logic.events.SavedNewItemEvent;
 
-//TODO zmniejszyć padding między przyciskami edycji
 //TODO: tryb portrait ekranu na stałe - przycisk przełączania w tryb landscape screen przy pisaniu z klawiatury ekranowej
 
 public class EditItemGUI implements NumKeyboardListener, IEventObserver {
