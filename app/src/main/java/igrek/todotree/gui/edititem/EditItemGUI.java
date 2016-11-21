@@ -21,6 +21,7 @@ import igrek.todotree.logic.datatree.TreeItem;
 import igrek.todotree.logic.events.CancelEditedItemEvent;
 import igrek.todotree.logic.events.RangeCharQuickInsertEvent;
 import igrek.todotree.logic.events.SaveAndAddItemEvent;
+import igrek.todotree.logic.events.SaveAndGoIntoItemEvent;
 import igrek.todotree.logic.events.SavedEditedItemEvent;
 import igrek.todotree.logic.events.SavedNewItemEvent;
 
@@ -58,6 +59,8 @@ public class EditItemGUI implements NumKeyboardListener, IEventObserver {
         buttonSaveItem = (Button) editItemContentLayout.findViewById(R.id.buttonSaveItem);
         //przycisk zapisz i dodaj nowy
         Button buttonSaveAndAdd = (Button) editItemContentLayout.findViewById(R.id.buttonSaveAndAddItem);
+        //przycisk zapisz i wejdź
+        Button buttonSaveAndGotInto = (Button) editItemContentLayout.findViewById(R.id.buttonSaveAndGoInto);
 
         gui.setTitle(parent.getContent());
 
@@ -80,6 +83,13 @@ public class EditItemGUI implements NumKeyboardListener, IEventObserver {
                     hideKeyboards();
                 }
             });
+            buttonSaveAndGotInto.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AppController.sendEvent(new SaveAndGoIntoItemEvent(item, etEditItem.getText().toString()));
+                    hideKeyboards();
+                }
+            });
         } else { //nowy element
             etEditItem.setText("");
             buttonSaveItem.setOnClickListener(new View.OnClickListener() {
@@ -96,6 +106,13 @@ public class EditItemGUI implements NumKeyboardListener, IEventObserver {
                 @Override
                 public void onClick(View v) {
                     AppController.sendEvent(new SaveAndAddItemEvent(null, etEditItem.getText().toString()));
+                    hideKeyboards();
+                }
+            });
+            buttonSaveAndGotInto.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AppController.sendEvent(new SaveAndGoIntoItemEvent(null, etEditItem.getText().toString()));
                     hideKeyboards();
                 }
             });

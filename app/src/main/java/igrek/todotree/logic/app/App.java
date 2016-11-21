@@ -33,6 +33,7 @@ import igrek.todotree.logic.events.ItemLongClickEvent;
 import igrek.todotree.logic.events.ItemMovedEvent;
 import igrek.todotree.logic.events.ItemRemoveClickedEvent;
 import igrek.todotree.logic.events.SaveAndAddItemEvent;
+import igrek.todotree.logic.events.SaveAndGoIntoItemEvent;
 import igrek.todotree.logic.events.SavedEditedItemEvent;
 import igrek.todotree.logic.events.SavedNewItemEvent;
 import igrek.todotree.logic.events.SelectedItemClickedEvent;
@@ -91,6 +92,7 @@ public class App extends BaseApp implements IEventObserver {
         AppController.registerEventObserver(ItemLongClickEvent.class, this);
         AppController.registerEventObserver(ItemRemoveClickedEvent.class, this);
         AppController.registerEventObserver(SaveAndAddItemEvent.class, this);
+        AppController.registerEventObserver(SaveAndGoIntoItemEvent.class, this);
         AppController.registerEventObserver(SavedEditedItemEvent.class, this);
         AppController.registerEventObserver(SavedNewItemEvent.class, this);
         AppController.registerEventObserver(SelectedItemClickedEvent.class, this);
@@ -516,6 +518,37 @@ public class App extends BaseApp implements IEventObserver {
             }
             //dodanie nowego elementu
             newItem(newItemIndex);
+        } else if (event instanceof SaveAndGoIntoItemEvent) {
+
+            String content = ((SaveAndGoIntoItemEvent) event).getContent();
+            TreeItem editedItem = ((SaveAndGoIntoItemEvent) event).getEditedItem();
+            //zapis
+            content = treeManager.trimContent(content);
+            Integer editedItemIndex = null;
+            if (editedItem == null) { //nowy element
+                if (content.isEmpty()) {
+                    showInfo("Pusty element został usunięty.");
+                } else {
+                    editedItemIndex = treeManager.getNewItemPosition();
+                    treeManager.getCurrentItem().add(treeManager.getNewItemPosition(), content);
+                    showInfo("Zapisano nowy element.");
+                }
+            } else { //edycja
+                if (content.isEmpty()) {
+                    treeManager.getCurrentItem().remove(editedItem);
+                    showInfo("Pusty element został usunięty.");
+                } else {
+                    editedItemIndex = editedItem.getIndexInParent();
+                    editedItem.setContent(content);
+                    showInfo("Zapisano element.");
+                }
+            }
+            if (editedItemIndex != null) {
+                //wejście wewnątrz
+                treeManager.goInto(editedItemIndex, gui.getCurrentScrollPos());
+                //dodawanie nowego elementu na końcu
+                newItem(-1);
+            }
 
         } else if (event instanceof SavedEditedItemEvent) {
 

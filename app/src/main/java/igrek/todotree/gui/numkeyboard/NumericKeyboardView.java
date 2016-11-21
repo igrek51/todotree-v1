@@ -254,4 +254,5 @@ public class NumericKeyboardView extends KeyboardView implements KeyboardView.On
     public int getTypingMode() {
         return mode;
     }
+
 }

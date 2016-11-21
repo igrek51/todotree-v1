@@ -17,7 +17,8 @@
     <string name="action_cut">Wytnij</string>
     <string name="action_paste">Wklej</string>
     <string name="action_select_all">Zaznacz wszystko</string>
-    <string name="button_save_and_add">Zapisz i Dodaj</string>
+    <string name="button_save_and_add">i dodaj</string>
+    <string name="button_save_and_go_into">i wejdź</string>
     <string name="buttonEditInsertTime">HH:mm</string>
     <string name="buttonEditInsertDate">dd.MM.yy</string>
     <string name="buttonEditInsertRange">-</string>
