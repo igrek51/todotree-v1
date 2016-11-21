@@ -20,13 +20,11 @@ import igrek.todotree.logic.controller.dispatcher.IEventObserver;
 import igrek.todotree.logic.datatree.TreeItem;
 import igrek.todotree.logic.events.CancelEditedItemEvent;
 import igrek.todotree.logic.events.RangeCharQuickInsertEvent;
+import igrek.todotree.logic.events.RotateScreenEvent;
 import igrek.todotree.logic.events.SaveAndAddItemEvent;
 import igrek.todotree.logic.events.SaveAndGoIntoItemEvent;
 import igrek.todotree.logic.events.SavedEditedItemEvent;
 import igrek.todotree.logic.events.SavedNewItemEvent;
-
-//TODO tryb portrait ekranu na stałe, przycisk przełączania w tryb landscape screen przy pisaniu z klawiatury ekranowej
-//TODO przycisk zapisz i wejdź
 
 public class EditItemGUI implements NumKeyboardListener, IEventObserver {
 
@@ -61,6 +59,8 @@ public class EditItemGUI implements NumKeyboardListener, IEventObserver {
         Button buttonSaveAndAdd = (Button) editItemContentLayout.findViewById(R.id.buttonSaveAndAddItem);
         //przycisk zapisz i wejdź
         Button buttonSaveAndGotInto = (Button) editItemContentLayout.findViewById(R.id.buttonSaveAndGoInto);
+        //przycisk obrotu ekranu
+        final ImageButton rotateScreenBtn = (ImageButton) editItemContentLayout.findViewById(R.id.rotateScreenBtn);
 
         gui.setTitle(parent.getContent());
 
@@ -117,6 +117,13 @@ public class EditItemGUI implements NumKeyboardListener, IEventObserver {
                 }
             });
         }
+
+        rotateScreenBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AppController.sendEvent(new RotateScreenEvent());
+            }
+        });
 
         //przycisk anuluj
         Button buttonEditCancel = (Button) editItemContentLayout.findViewById(R.id.buttonEditCancel);

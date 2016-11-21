@@ -1,12 +1,13 @@
 package igrek.todotree.gui;
 
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.os.Handler;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import android.widget.EditText;
 import android.widget.RelativeLayout;
 
 import java.util.List;
@@ -15,8 +16,11 @@ import igrek.todotree.R;
 import igrek.todotree.gui.edititem.EditItemGUI;
 import igrek.todotree.gui.treelist.TreeListView;
 import igrek.todotree.logic.controller.AppController;
+import igrek.todotree.logic.controller.dispatcher.IEvent;
+import igrek.todotree.logic.controller.dispatcher.IEventObserver;
 import igrek.todotree.logic.datatree.TreeItem;
 import igrek.todotree.logic.events.ExitAppEvent;
+import igrek.todotree.logic.events.RotateScreenEvent;
 import igrek.todotree.logic.events.ToolbarBackClickedEvent;
 
 //  WYGLĄD
@@ -24,15 +28,16 @@ import igrek.todotree.logic.events.ToolbarBackClickedEvent;
 //TODO: zapisanie wszystkich kolorów w xml, metoda do wyciągania kolorów z zasobów
 //TODO: zmniejszyć padding przycisków w navbarze
 
-public class GUI extends GUIBase {
+public class GUI extends GUIBase implements IEventObserver {
 
-    private EditText etEditItem;
     private ActionBar actionBar;
     private TreeListView itemsListView;
     private EditItemGUI editItemGUI = null;
 
     public GUI(AppCompatActivity activity) {
         super(activity);
+
+        AppController.registerEventObserver(RotateScreenEvent.class, this);
     }
 
     @Override
@@ -59,22 +64,19 @@ public class GUI extends GUIBase {
     }
 
     public void showItemsList(final TreeItem currentItem) {
+        setOrientationPortrait();
+
         View itemsListLayout = setMainContentLayout(R.layout.items_list);
 
         itemsListView = (TreeListView) itemsListLayout.findViewById(R.id.treeItemsList);
-
         itemsListView.init(activity);
-
         itemsListView.setItems(currentItem.getChildren());
-
-        //itemsListView.setOnTouchListener(this);
 
         updateItemsList(currentItem, null);
     }
 
     public void showEditItemPanel(final TreeItem item, TreeItem parent) {
         editItemGUI = new EditItemGUI(this, item, parent);
-        etEditItem = editItemGUI.getEtEditItem();
     }
 
     public void showExitScreen() {
@@ -129,7 +131,7 @@ public class GUI extends GUIBase {
     }
 
     public void setTitle(String title) {
-        //TODO: breadcrumbs przy nazwie aktualnego elementu
+        //TODO breadcrumbs przy nazwie aktualnego elementu
         actionBar.setTitle(title);
     }
 
@@ -139,5 +141,28 @@ public class GUI extends GUIBase {
 
     public void requestSaveEditedItem() {
         editItemGUI.requestSaveEditedItem();
+    }
+
+    private void rotateScreen() {
+        int orientation = activity.getResources().getConfiguration().orientation;
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        } else if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+            activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+        }
+    }
+
+    private void setOrientationPortrait() {
+        int orientation = activity.getResources().getConfiguration().orientation;
+        if (orientation != Configuration.ORIENTATION_PORTRAIT) {
+            activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
+    }
+
+    @Override
+    public void onEvent(IEvent event) {
+        if (event instanceof RotateScreenEvent) {
+            rotateScreen();
+        }
     }
 }
