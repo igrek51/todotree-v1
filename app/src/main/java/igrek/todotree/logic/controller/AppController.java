@@ -44,6 +44,8 @@ public class AppController {
     }
 
     //TODO czyszczenie nie dla wszystkich tylko dla konkretnych odbiorców
+    //TODO poprawić strukturę aplikacji tak, aby nie musieć czyścić observerów
+    @Deprecated
     public static void clearEventObservers(Class<? extends IEvent> eventClass) {
         getInstance().eventDispatcher.clearEventObservers(eventClass);
     }

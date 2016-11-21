@@ -24,7 +24,8 @@ import igrek.todotree.logic.events.SaveAndAddItemEvent;
 import igrek.todotree.logic.events.SavedEditedItemEvent;
 import igrek.todotree.logic.events.SavedNewItemEvent;
 
-//TODO: tryb portrait ekranu na stałe - przycisk przełączania w tryb landscape screen przy pisaniu z klawiatury ekranowej
+//TODO tryb portrait ekranu na stałe, przycisk przełączania w tryb landscape screen przy pisaniu z klawiatury ekranowej
+//TODO przycisk zapisz i wejdź
 
 public class EditItemGUI implements NumKeyboardListener, IEventObserver {
 
