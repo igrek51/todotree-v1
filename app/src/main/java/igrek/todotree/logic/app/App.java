@@ -170,9 +170,6 @@ public class App extends BaseApp implements IEventObserver {
         //TODO: zmiana widoczności opcji menu przy zaznaczaniu wielu elementów i kopiowaniu (niepusty schowek, niepuste zaznaczenie)
         //TODO: zmiana widoczności opcji menu przy edycji elementu
 
-        //FIXME: brak dostępności wszystkich menu w trybie landscape (nie scrolluje się)
-        //TODO: widoczność przycisków i całego layoutu przy edycji w trybie landscape
-
         //setMenuItemVisible(R.id.action_copy, false);
         //item.setTitle(title);
         //item.setIcon(iconRes); //int iconRes
@@ -421,7 +418,7 @@ public class App extends BaseApp implements IEventObserver {
 
     @Override
     public void onEvent(IEvent event) {
-        //TODO zrobić z tym porządek
+        //TODO przenieść eventy do odpowiedzialnych klas
         if (event instanceof ToolbarBackClickedEvent) {
 
             backClicked();

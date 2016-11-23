@@ -32,7 +32,6 @@ import igrek.todotree.logic.events.ItemGoIntoClickedEvent;
 import igrek.todotree.logic.events.ItemLongClickEvent;
 import igrek.todotree.logic.events.ItemMovedEvent;
 
-//FIXME przewijanie w trybie landscape (za duże skoki)
 //FIXME po zamianie elementów, elementy czasem znikają są ukryte
 //FIXME przenoszenie przez większy element zmienia offset elementu przenoszonego
 

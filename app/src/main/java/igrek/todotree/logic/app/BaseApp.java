@@ -126,7 +126,7 @@ public abstract class BaseApp {
         activity.startActivity(startMain);
     }
 
-    //TODO poprawić na jedno show Info z możliwością wyboru akcji i zachowaniem domyślnym, domyślny widok
+    //TODO show info - merge z songbook
     public void showInfo(String info, View view) {
         final Snackbar snackbar = Snackbar.make(view, info, Snackbar.LENGTH_SHORT);
         snackbar.setAction("OK", new View.OnClickListener() {

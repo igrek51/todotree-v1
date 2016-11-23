@@ -43,8 +43,8 @@ public class AppController {
         getInstance().eventDispatcher.registerEventObserver(eventClass, observer);
     }
 
-    //TODO czyszczenie nie dla wszystkich tylko dla konkretnych odbiorców
     //TODO poprawić strukturę aplikacji tak, aby nie musieć czyścić observerów
+    //TODO czyszczenie nie dla wszystkich tylko dla konkretnych odbiorców
     @Deprecated
     public static void clearEventObservers(Class<? extends IEvent> eventClass) {
         getInstance().eventDispatcher.clearEventObservers(eventClass);

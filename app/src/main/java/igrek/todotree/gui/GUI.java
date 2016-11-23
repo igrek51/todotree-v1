@@ -23,11 +23,6 @@ import igrek.todotree.logic.events.ExitAppEvent;
 import igrek.todotree.logic.events.RotateScreenEvent;
 import igrek.todotree.logic.events.ToolbarBackClickedEvent;
 
-//  WYGLĄD
-//TODO: liczebność elementów folderu jako osobny textedit z szarym kolorem i wyrównany do prawej, w tytule rodzica to samo
-//TODO: zapisanie wszystkich kolorów w xml, metoda do wyciągania kolorów z zasobów
-//TODO: zmniejszyć padding przycisków w navbarze
-
 public class GUI extends GUIBase implements IEventObserver {
 
     private ActionBar actionBar;

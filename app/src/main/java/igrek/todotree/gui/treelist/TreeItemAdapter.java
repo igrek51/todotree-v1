@@ -82,8 +82,7 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        //TODO wększy padding przycisków edycji i usuwania, zmaksymalizowanie obszaru aktywnego przycisków (edycji, przewijania)
-        //TODO przycisk przesuwania itemów - maksymalna wysokość = wysokość itemu
+        //TODO wększy padding przycisków edycji i usuwania, zmaksymalizowanie obszaru aktywnego przycisków (edycji, przesuwania)
 
         if (position == dataSource.size()) {
             //plusik
@@ -106,16 +105,24 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 
             //zawartość tekstowa elementu
             TextView textView = (TextView) itemView.findViewById(R.id.tvItemContent);
-            StringBuilder contentBuilder = new StringBuilder(item.getContent());
             if (!item.isEmpty()) {
-                contentBuilder.append(" [");
-                contentBuilder.append(item.size());
-                contentBuilder.append("]");
                 textView.setTypeface(null, Typeface.BOLD);
             } else {
                 textView.setTypeface(null, Typeface.NORMAL);
             }
-            textView.setText(contentBuilder.toString());
+            textView.setText(item.getContent());
+
+            // ilość potomków
+            TextView tvItemChildSize = (TextView) itemView.findViewById(R.id.tvItemChildSize);
+            if (!item.isEmpty()) {
+                StringBuilder contentBuilder = new StringBuilder();
+                contentBuilder.append("[");
+                contentBuilder.append(item.size());
+                contentBuilder.append("]");
+                tvItemChildSize.setText(contentBuilder.toString());
+            } else {
+                tvItemChildSize.setText("");
+            }
 
             //edycja elementu
             ImageButton editButton = (ImageButton) itemView.findViewById(R.id.buttonItemEdit);
