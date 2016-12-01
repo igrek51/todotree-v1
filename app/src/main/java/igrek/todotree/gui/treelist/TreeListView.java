@@ -33,7 +33,6 @@ import igrek.todotree.logic.events.ItemLongClickEvent;
 import igrek.todotree.logic.events.ItemMovedEvent;
 
 //FIXME po zamianie elementów, elementy czasem znikają są ukryte
-//FIXME po scrollowaniu i dojechaniu do końca - nie wykonuje się przenoszenie - trzeba wymusić ręcznie (zruszyć)
 
 public class TreeListView extends ListView implements AbsListView.OnScrollListener, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
 
@@ -459,7 +458,11 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
         this.scrollState = scrollState;
         if (scrollState == SCROLL_STATE_IDLE) {
             if (draggedItemPos != null) {
-                handleScrolling();
+                boolean scrollingResult = handleScrolling();
+                // nie da się scrollować - dojechano do końca zakresu
+                if (!scrollingResult) {
+                    handleItemDragging(); // sprawdzenie, czy elementy powinny zostać przemieszczone
+                }
             }
         }
     }
