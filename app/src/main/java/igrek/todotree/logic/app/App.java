@@ -43,7 +43,7 @@ import igrek.todotree.preferences.Preferences;
 
 import static android.content.ClipDescription.MIMETYPE_TEXT_PLAIN;
 
-//TODO ukryta blokada, brak zapisu
+//TODO ukryta blokada - wejście w element tylko gestem, specjalny element typu protected
 //TODO brak zapisu bazy jeśli nie było zmian
 
 //TODO: funkcja cofania zmian - zapisywanie modyfikacji, dodawania, usuwania elementów, przesuwania

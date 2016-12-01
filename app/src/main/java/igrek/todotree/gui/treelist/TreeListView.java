@@ -33,7 +33,7 @@ import igrek.todotree.logic.events.ItemLongClickEvent;
 import igrek.todotree.logic.events.ItemMovedEvent;
 
 //FIXME po zamianie elementów, elementy czasem znikają są ukryte
-//FIXME przenoszenie przez większy element zmienia offset elementu przenoszonego
+//FIXME po scrollowaniu i dojechaniu do końca - nie wykonuje się przenoszenie - trzeba wymusić ręcznie (zruszyć)
 
 public class TreeListView extends ListView implements AbsListView.OnScrollListener, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
 
@@ -299,6 +299,7 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
     }
 
     private void handleItemDragging() {
+
         float dyTotal = lastTouchY - startTouchY + (scrollOffset - scrollStart);
 
         if (draggedItemViewTop == null) {
@@ -345,6 +346,23 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
             AppController.sendEvent(new ItemMovedEvent(draggedItemPos, step));
             TreeManager treeManager = AppController.getService(TreeManager.class);
             items = treeManager.getCurrentItem().getChildren();
+
+            //update mapy wysokości
+            if (step > 0) {
+                Integer draggedItemHeight = itemHeights.get(draggedItemPos);
+                for (int i = draggedItemPos; i < targetPosition; i++) {
+                    Integer nextHeight = itemHeights.get(i + 1);
+                    itemHeights.put(i, nextHeight);
+                }
+                itemHeights.put(targetPosition, draggedItemHeight);
+            } else if (step < 0) {
+                Integer draggedItemHeight = itemHeights.get(draggedItemPos);
+                for (int i = draggedItemPos; i > targetPosition; i--) {
+                    Integer nextHeight = itemHeights.get(i - 1);
+                    itemHeights.put(i, nextHeight);
+                }
+                itemHeights.put(targetPosition, draggedItemHeight);
+            }
 
             adapter.setDataSource(items);
 
