@@ -32,8 +32,6 @@ import igrek.todotree.logic.events.ItemGoIntoClickedEvent;
 import igrek.todotree.logic.events.ItemLongClickEvent;
 import igrek.todotree.logic.events.ItemMovedEvent;
 
-//FIXME po zamianie elementów, elementy czasem znikają są ukryte
-
 public class TreeListView extends ListView implements AbsListView.OnScrollListener, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
 
     private List<TreeItem> items;
@@ -70,7 +68,8 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
 
     private int scrollState = SCROLL_STATE_IDLE;
 
-    private BitmapDrawable hoverBitmap;
+    private BitmapDrawable hoverBitmap = null;
+    private BitmapDrawable hoverBitmapAnimation = null;
     private Rect hoverBitmapBounds;
 
     private final int SMOOTH_SCROLL_EDGE_DP = 160;
@@ -161,6 +160,9 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
         if (hoverBitmap != null) {
             updateHoverBitmap();
             hoverBitmap.draw(canvas);
+        }
+        if (hoverBitmapAnimation != null) {
+            hoverBitmapAnimation.draw(canvas);
         }
     }
 
@@ -387,9 +389,19 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
         if (draggedItemPos != null && draggedItemViewTop != null) {
             //wyłączenie automatycznego ustawiania pozycji hover bitmapy
             draggedItemPos = null;
+
             //animacja powrotu do aktualnego połozenia elementu
+            // kopia referencji na czas trwania animacji
+            hoverBitmapAnimation = hoverBitmap;
             hoverBitmapBounds.offsetTo(0, draggedItemViewTop - (scrollOffset - scrollStart));
-            ObjectAnimator hoverViewAnimator = ObjectAnimator.ofObject(hoverBitmap, "bounds", rectBoundsEvaluator, hoverBitmapBounds);
+            final Rect hoverBitmapBoundsCopy = new Rect(hoverBitmapBounds);
+            final View draggedItemViewCopy = draggedItemView;
+
+            draggedItemView = null;
+            hoverBitmap = null;
+            draggedItemViewTop = null;
+
+            ObjectAnimator hoverViewAnimator = ObjectAnimator.ofObject(hoverBitmapAnimation, "bounds", rectBoundsEvaluator, hoverBitmapBoundsCopy);
             hoverViewAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
                 public void onAnimationUpdate(ValueAnimator valueAnimator) {
@@ -404,12 +416,10 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
 
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    if (draggedItemView != null) {
-                        draggedItemView.setVisibility(VISIBLE);
+                    if (draggedItemViewCopy != null) {
+                        draggedItemViewCopy.setVisibility(VISIBLE);
                     }
-                    draggedItemView = null;
-                    hoverBitmap = null;
-                    draggedItemViewTop = null;
+                    hoverBitmapAnimation = null;
                     setEnabled(true);
                     invalidate();
                 }
