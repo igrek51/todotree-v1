@@ -43,7 +43,6 @@ import igrek.todotree.preferences.Preferences;
 
 import static android.content.ClipDescription.MIMETYPE_TEXT_PLAIN;
 
-//TODO ukryta blokada - wejście w element tylko gestem, specjalny element typu protected
 //TODO brak zapisu bazy jeśli nie było zmian
 
 //TODO: funkcja cofania zmian - zapisywanie modyfikacji, dodawania, usuwania elementów, przesuwania
@@ -449,7 +448,12 @@ public class App extends BaseApp implements IEventObserver {
                 if (item.isEmpty()) {
                     AppController.sendEvent(new ItemEditClickedEvent(position, item));
                 } else {
-                    AppController.sendEvent(new ItemGoIntoClickedEvent(position, item));
+
+                    // blokada wejścia wgłąb na pierwszym poziomie poprzez kliknięcie
+                    if (treeManager.getCurrentItem().getParent() != null) {
+                        AppController.sendEvent(new ItemGoIntoClickedEvent(position, item));
+                    }
+
                 }
             }
 

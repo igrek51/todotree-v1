@@ -153,6 +153,8 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
             } else {
                 goIntoButton.setVisibility(View.GONE);
             }
+            // ukryte wejście wgłąb elementu - blokada
+            goIntoButton.setVisibility(View.GONE);
 
             //usuwanie elementu
             ImageButton removeButton = (ImageButton) itemView.findViewById(R.id.buttonItemRemove);
