@@ -34,6 +34,9 @@ public class TreeManager implements IService {
 
     private HashMap<TreeItem, Integer> storedScrollPositions;
 
+    /** czy wystąpiło pierwsze wejście wgłąb elementu */
+    public boolean firstGoInto = false;
+
     public TreeManager() {
         rootItem = new TreeItem(null, "root");
         currentItem = rootItem;

@@ -450,7 +450,7 @@ public class App extends BaseApp implements IEventObserver {
                 } else {
 
                     // blokada wejścia wgłąb na pierwszym poziomie poprzez kliknięcie
-                    if (treeManager.getCurrentItem().getParent() != null) {
+                    if (treeManager.firstGoInto || treeManager.getCurrentItem().getParent() != null) {
                         AppController.sendEvent(new ItemGoIntoClickedEvent(position, item));
                     }
 
@@ -464,6 +464,7 @@ public class App extends BaseApp implements IEventObserver {
 
         } else if (event instanceof ItemGoIntoClickedEvent) {
 
+            treeManager.firstGoInto = true;
             treeManager.cancelSelectionMode();
             treeManager.goInto(((ItemGoIntoClickedEvent) event).getPosition(), gui.getCurrentScrollPos());
             updateItemsList();
