@@ -58,7 +58,7 @@ public class EditItemGUI implements NumKeyboardListener, IEventObserver {
         //przycisk zapisz i dodaj nowy
         Button buttonSaveAndAdd = (Button) editItemContentLayout.findViewById(R.id.buttonSaveAndAddItem);
         //przycisk zapisz i wejdź
-        Button buttonSaveAndGotInto = (Button) editItemContentLayout.findViewById(R.id.buttonSaveAndGoInto);
+        Button buttonSaveAndGoInto = (Button) editItemContentLayout.findViewById(R.id.buttonSaveAndGoInto);
         //przycisk obrotu ekranu
         final ImageButton rotateScreenBtn = (ImageButton) editItemContentLayout.findViewById(R.id.rotateScreenBtn);
 
@@ -83,7 +83,7 @@ public class EditItemGUI implements NumKeyboardListener, IEventObserver {
                     hideKeyboards();
                 }
             });
-            buttonSaveAndGotInto.setOnClickListener(new View.OnClickListener() {
+            buttonSaveAndGoInto.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     AppController.sendEvent(new SaveAndGoIntoItemEvent(item, etEditItem.getText().toString()));
@@ -109,7 +109,7 @@ public class EditItemGUI implements NumKeyboardListener, IEventObserver {
                     hideKeyboards();
                 }
             });
-            buttonSaveAndGotInto.setOnClickListener(new View.OnClickListener() {
+            buttonSaveAndGoInto.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     AppController.sendEvent(new SaveAndGoIntoItemEvent(null, etEditItem.getText().toString()));

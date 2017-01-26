@@ -501,7 +501,12 @@ public class App extends BaseApp implements IEventObserver {
             if (editedItem == null) { //nowy element
                 newItemIndex = treeManager.getNewItemPosition();
                 if (content.isEmpty()) {
+                    treeManager.setEditItem(null);
+                    state = AppState.ITEMS_LIST;
+                    gui.showItemsList(treeManager.getCurrentItem());
+                    restoreScrollPosition(treeManager.getCurrentItem());
                     showInfo("Pusty element został usunięty.");
+                    return;
                 } else {
                     treeManager.getCurrentItem().add(treeManager.getNewItemPosition(), content);
                     newItemIndex++;
@@ -511,7 +516,12 @@ public class App extends BaseApp implements IEventObserver {
                 newItemIndex = editedItem.getIndexInParent();
                 if (content.isEmpty()) {
                     treeManager.getCurrentItem().remove(editedItem);
+                    treeManager.setEditItem(null);
+                    state = AppState.ITEMS_LIST;
+                    gui.showItemsList(treeManager.getCurrentItem());
+                    restoreScrollPosition(treeManager.getCurrentItem());
                     showInfo("Pusty element został usunięty.");
+                    return;
                 } else {
                     editedItem.setContent(content);
                     newItemIndex++;
@@ -529,6 +539,10 @@ public class App extends BaseApp implements IEventObserver {
             Integer editedItemIndex = null;
             if (editedItem == null) { //nowy element
                 if (content.isEmpty()) {
+                    treeManager.setEditItem(null);
+                    state = AppState.ITEMS_LIST;
+                    gui.showItemsList(treeManager.getCurrentItem());
+                    restoreScrollPosition(treeManager.getCurrentItem());
                     showInfo("Pusty element został usunięty.");
                 } else {
                     editedItemIndex = treeManager.getNewItemPosition();
@@ -538,6 +552,10 @@ public class App extends BaseApp implements IEventObserver {
             } else { //edycja
                 if (content.isEmpty()) {
                     treeManager.getCurrentItem().remove(editedItem);
+                    treeManager.setEditItem(null);
+                    state = AppState.ITEMS_LIST;
+                    gui.showItemsList(treeManager.getCurrentItem());
+                    restoreScrollPosition(treeManager.getCurrentItem());
                     showInfo("Pusty element został usunięty.");
                 } else {
                     editedItemIndex = editedItem.getIndexInParent();
