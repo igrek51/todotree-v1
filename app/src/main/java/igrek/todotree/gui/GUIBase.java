@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.RelativeLayout;
 
-public class GUIBase {
+public abstract class GUIBase {
 
     protected AppCompatActivity activity;
 
@@ -19,7 +19,7 @@ public class GUIBase {
     public GUIBase(AppCompatActivity activity) {
         this.activity = activity;
         imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-        init();
+        init(); //TODO bad practice
     }
 
     protected void init() {
