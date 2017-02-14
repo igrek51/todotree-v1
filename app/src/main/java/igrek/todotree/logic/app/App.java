@@ -485,10 +485,13 @@ public class App extends BaseApp implements IEventObserver {
 
         } else if (event instanceof ItemRemoveClickedEvent) {
 
-            if (treeManager.isSelectionMode()) {
-                removeSelectedItems(true);
-            } else {
-                removeItem(((ItemRemoveClickedEvent) event).getPosition());
+            // removing locked before going into first element
+            if (treeManager.firstGoInto || treeManager.getCurrentItem().getParent() != null) {
+                if (treeManager.isSelectionMode()) {
+                    removeSelectedItems(true);
+                } else {
+                    removeItem(((ItemRemoveClickedEvent) event).getPosition());
+                }
             }
 
         } else if (event instanceof SaveAndAddItemEvent) {

@@ -38,10 +38,11 @@ public class GUI extends GUIBase implements IEventObserver {
 
     @Override
     protected void init() {
-        activity.setContentView(R.layout.activity_main);
 
-        // forbid creating the thumbnails
+        // prohibit from creating the thumbnails
         activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
+
+        activity.setContentView(R.layout.activity_main);
 
         //toolbar
         Toolbar toolbar1 = (Toolbar) activity.findViewById(R.id.toolbar1);
@@ -79,6 +80,7 @@ public class GUI extends GUIBase implements IEventObserver {
     }
 
     public void showExitScreen() {
+
         View exitScreen = setMainContentLayout(R.layout.exit_screen);
 
         //TODO dalej jest zjebane
