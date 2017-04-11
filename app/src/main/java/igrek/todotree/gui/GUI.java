@@ -93,7 +93,7 @@ public class GUI extends GUIBase implements IEventObserver {
                     public void run() {
                         AppController.sendEvent(new ExitAppEvent());
                     }
-                }, 150);
+                }, 200);
             }
         });
     }
