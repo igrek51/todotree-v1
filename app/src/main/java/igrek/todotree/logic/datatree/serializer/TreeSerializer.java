@@ -16,7 +16,7 @@ public class TreeSerializer {
     //  WCZYTYWANIE Z PLIKU
 
     public TreeItem loadTree(String data) throws ParseException {
-        TreeItem rootItem = new TreeItem(null, "root");
+        TreeItem rootItem = new TreeItem(null, "/");
         if (!data.isEmpty()) {
             //wyłuskanie wierszy
             String[] lines = data.split("\n");

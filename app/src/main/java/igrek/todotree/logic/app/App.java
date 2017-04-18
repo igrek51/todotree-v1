@@ -178,7 +178,7 @@ public class App extends BaseApp implements IEventObserver {
     /**
      * @param position pozycja nowego elementu (0 - początek, ujemna wartość - na końcu listy)
      */
-    public void newItem(int position) {
+    private void newItem(int position) {
         if (position < 0) position = treeManager.getCurrentItem().size();
         if (position > treeManager.getCurrentItem().size())
             position = treeManager.getCurrentItem().size();
@@ -243,8 +243,8 @@ public class App extends BaseApp implements IEventObserver {
         treeManager.cancelSelectionMode();
         updateItemsList();
     }
-
-    public void goUp() {
+    
+    private void goUp() {
         try {
             TreeItem current = treeManager.getCurrentItem();
             TreeItem parent = current.getParent();
