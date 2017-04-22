@@ -2,16 +2,11 @@ package igrek.todotree.logic.app;
 
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Color;
-import android.support.design.widget.Snackbar;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.WindowManager;
 
-import igrek.todotree.R;
 import igrek.todotree.logger.Logs;
 import igrek.todotree.logic.controller.AppController;
 
@@ -118,33 +113,11 @@ public abstract class BaseApp {
     public boolean optionsSelect(int id) {
         return false;
     }
-
-    public void minimize() {
+    
+    protected void minimize() {
         Intent startMain = new Intent(Intent.ACTION_MAIN);
         startMain.addCategory(Intent.CATEGORY_HOME);
         startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         activity.startActivity(startMain);
-    }
-
-    //TODO show info - merge z songbook
-    public void showInfo(String info, View view) {
-        final Snackbar snackbar = Snackbar.make(view, info, Snackbar.LENGTH_SHORT);
-        snackbar.setAction("OK", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                snackbar.dismiss();
-            }
-        });
-        snackbar.setActionTextColor(Color.WHITE);
-        snackbar.show();
-        Logs.info(info);
-    }
-
-    public void showInfoCancellable(String info, View view, View.OnClickListener cancelCallback) {
-        final Snackbar snackbar = Snackbar.make(view, info, Snackbar.LENGTH_LONG);
-        snackbar.setAction("Cofnij", cancelCallback);
-        snackbar.setActionTextColor(ContextCompat.getColor(activity, R.color.colorPrimary));
-        snackbar.show();
-        Logs.info(info);
     }
 }
