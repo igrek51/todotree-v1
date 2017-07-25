@@ -8,10 +8,8 @@ import android.view.View;
 import java.util.HashMap;
 
 import igrek.todotree.logger.Logs;
-import igrek.todotree.logic.controller.AppController;
-import igrek.todotree.logic.controller.services.IService;
 
-public class UserInfoService implements IService {
+public class UserInfoService {
     
     private Activity activity;
     private View mainView = null;
@@ -20,7 +18,6 @@ public class UserInfoService implements IService {
     
     public UserInfoService(Activity activity) {
         this.activity = activity;
-        AppController.registerService(this);
     }
     
     public String resString(int resourceId) {

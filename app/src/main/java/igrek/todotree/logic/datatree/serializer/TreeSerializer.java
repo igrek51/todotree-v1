@@ -8,13 +8,12 @@ import igrek.todotree.logic.datatree.TreeItem;
 import igrek.todotree.logic.exceptions.NoMatchingBracketException;
 
 public class TreeSerializer {
-
+    
     public TreeSerializer() {
-
     }
-
+    
     //  WCZYTYWANIE Z PLIKU
-
+    
     public TreeItem loadTree(String data) throws ParseException {
         TreeItem rootItem = new TreeItem(null, "/");
         if (!data.isEmpty()) {
@@ -32,11 +31,10 @@ public class TreeSerializer {
         }
         return rootItem;
     }
-
-
+    
+    
     /**
      * ładuje zawartość elementów z tekstowych wierszy i dodaje do wybranego elementu
-     *
      * @param parent element, do którego dodane odczytane potomki
      * @param lines  lista wierszy, z których zostaną dodane elementy
      * @throws ParseException
@@ -69,7 +67,7 @@ public class TreeSerializer {
             }
         }
     }
-
+    
     /**
      * @param lines      lista wierszy
      * @param startIndex indeks wiersza będącego klamrą otwierającą
@@ -91,15 +89,16 @@ public class TreeSerializer {
         }
         throw new NoMatchingBracketException();
     }
-
-
+    
+    
     //  ZAPIS DO PLIKU
-
+    
     private void saveTreeItems(TreeItem parent, int level, StringBuilder output) {
         StringBuilder indentBuilder = new StringBuilder();
-        for (int i = 0; i < level; i++) indentBuilder.append("\t");
+        for (int i = 0; i < level; i++)
+            indentBuilder.append("\t");
         String indents = indentBuilder.toString();
-
+        
         output.append(indents);
         output.append(parent.getContent());
         output.append("\n");
@@ -113,7 +112,7 @@ public class TreeSerializer {
             output.append("}\n");
         }
     }
-
+    
     public String saveTree(TreeItem root) {
         StringBuilder output = new StringBuilder();
         for (TreeItem child : root.getChildren()) {

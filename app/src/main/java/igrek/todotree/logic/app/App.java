@@ -12,8 +12,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import igrek.todotree.R;
-import igrek.todotree.filesystem.Filesystem;
+import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.gui.GUI;
 import igrek.todotree.logger.Logs;
 import igrek.todotree.logic.backup.BackupManager;
@@ -48,42 +50,42 @@ import static android.content.ClipDescription.MIMETYPE_TEXT_PLAIN;
 //TODO brak zapisu bazy jeśli nie było zmian
 
 //TODO: funkcja cofania zmian - zapisywanie modyfikacji, dodawania, usuwania elementów, przesuwania
-//TODO: moduł obliczeń: inline calc
 
 public class App extends BaseApp implements IEventObserver {
 	
-	private TreeManager treeManager;
+	@Inject
+	TreeManager treeManager;
+	@Inject
+	BackupManager backupManager;
+	@Inject
+	UserInfoService userInfo;
+	@Inject
+	Preferences preferences;
+	
 	private GUI gui;
-	private BackupManager backupManager;
-	private UserInfoService userInfo;
 	
 	private AppState state;
 	
 	public App(AppCompatActivity activity) {
 		super(activity);
+		// Dagger init
+		DaggerIOC.init(activity);
+		DaggerIOC.getAppComponent().inject(this);
+	}
+	
+	@Override
+	public void init() {
+		super.init();
 		
-		registerServices();
 		registerEventObservers();
 		
-		treeManager = AppController.getService(TreeManager.class);
 		treeManager.loadRootTree();
-		
-		backupManager = new BackupManager();
 		
 		gui = new GUI(activity);
 		gui.showItemsList(treeManager.getCurrentItem());
 		state = AppState.ITEMS_LIST;
 		
-		Logs.info("Aplikacja uruchomiona.");
-	}
-	
-	private void registerServices() {
-		AppController.registerService(new Filesystem(activity));
-		AppController.registerService(new Preferences(activity));
-		
-		AppController.registerService(new TreeManager());
-		
-		userInfo = new UserInfoService(activity);
+		Logs.info("Application started.");
 	}
 	
 	private void registerEventObservers() {
@@ -107,7 +109,6 @@ public class App extends BaseApp implements IEventObserver {
 	
 	@Override
 	public void quit() {
-		Preferences preferences = AppController.getService(Preferences.class);
 		preferences.saveAll();
 		super.quit();
 	}
@@ -131,8 +132,7 @@ public class App extends BaseApp implements IEventObserver {
 			showInfo("Zapisano bazę danych.");
 			return true;
 		} else if (id == R.id.action_reload) {
-			treeManager = new TreeManager();
-			AppController.registerService(treeManager);
+			treeManager.reset();
 			treeManager.loadRootTree();
 			updateItemsList();
 			showInfo("Wczytano bazę danych.");
@@ -409,10 +409,8 @@ public class App extends BaseApp implements IEventObserver {
 	
 	private void copyToSystemClipboard(String text) {
 		ClipboardManager clipboard = (ClipboardManager) activity.getSystemService(Activity.CLIPBOARD_SERVICE);
-		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
-			ClipData clip = ClipData.newPlainText("Copied Text", text);
-			clipboard.setPrimaryClip(clip);
-		}
+		ClipData clip = ClipData.newPlainText("Copied Text", text);
+		clipboard.setPrimaryClip(clip);
 	}
 	
 	private String getSystemClipboard() {

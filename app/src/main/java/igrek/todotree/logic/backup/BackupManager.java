@@ -14,10 +14,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import igrek.todotree.filesystem.Filesystem;
+import igrek.todotree.filesystem.FilesystemService;
 import igrek.todotree.filesystem.PathBuilder;
 import igrek.todotree.logger.Logs;
-import igrek.todotree.logic.controller.AppController;
 import igrek.todotree.preferences.Preferences;
 
 public class BackupManager {
@@ -30,13 +29,13 @@ public class BackupManager {
     public static final int BACKUP_LAST_VERSIONS = 10;
     /** backupy z ostatnich dni */
     public static final int BACKUP_LAST_DAYS = 14;
-
-    private Filesystem filesystem;
+    
+    private FilesystemService filesystem;
     private Preferences preferences;
-
-    public BackupManager() {
-        preferences = AppController.getService(Preferences.class);
-        filesystem = AppController.getService(Filesystem.class);
+    
+    public BackupManager(Preferences preferences, FilesystemService filesystem) {
+        this.preferences = preferences;
+        this.filesystem = filesystem;
     }
 
     public void saveBackupFile() {

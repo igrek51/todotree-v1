@@ -19,7 +19,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         try {
             app = new App(this);
-        } catch (Exception ex) {
+			app.init();
+		} catch (Exception ex) {
             Logs.fatal(this, ex);
         }
     }
