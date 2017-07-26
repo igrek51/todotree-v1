@@ -16,6 +16,7 @@ import igrek.todotree.logic.datatree.serializer.TreeSerializer;
 import igrek.todotree.logic.exceptions.NoSuperItemException;
 import igrek.todotree.preferences.Preferences;
 
+//TODO RESPONSIBILITY separation
 public class TreeManager {
 	
 	private FilesystemService filesystem;

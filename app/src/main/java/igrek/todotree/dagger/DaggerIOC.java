@@ -3,6 +3,8 @@ package igrek.todotree.dagger;
 
 import android.app.Activity;
 
+import igrek.todotree.logic.app.App;
+
 public class DaggerIOC {
 	
 	private static AppFactoryComponent appComponent;
@@ -13,13 +15,9 @@ public class DaggerIOC {
 		return appComponent;
 	}
 	
-	public static void init(Activity activity) {
-		appComponent = initDagger(activity);
-	}
-	
-	private static AppFactoryComponent initDagger(Activity activity) {
-		return DaggerAppFactoryComponent.builder()
-				.appFactoryModule(new AppFactoryModule(activity))
+	public static void init(App app, Activity activity) {
+		appComponent = DaggerAppFactoryComponent.builder()
+				.appFactoryModule(new AppFactoryModule(app, activity))
 				.build();
 	}
 }

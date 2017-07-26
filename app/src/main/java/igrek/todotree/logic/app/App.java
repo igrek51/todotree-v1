@@ -3,7 +3,6 @@ package igrek.todotree.logic.app;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 
@@ -14,10 +13,10 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import igrek.todotree.R;
 import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.gui.GUI;
 import igrek.todotree.logger.Logs;
+import igrek.todotree.logic.LogicActionController;
 import igrek.todotree.logic.backup.BackupManager;
 import igrek.todotree.logic.controller.AppController;
 import igrek.todotree.logic.controller.dispatcher.IEvent;
@@ -65,13 +64,15 @@ public class App extends BaseApp implements IEventObserver {
 	Preferences preferences;
 	@Inject
 	GUI gui;
+	@Inject
+	LogicActionController actionController;
 	
 	private AppState state;
 	
 	public App(AppCompatActivity activity) {
 		super(activity);
 		// Dagger init
-		DaggerIOC.init(activity);
+		DaggerIOC.init(this, activity);
 		DaggerIOC.getAppComponent().inject(this);
 	}
 	
@@ -85,6 +86,7 @@ public class App extends BaseApp implements IEventObserver {
 		
 		gui = new GUI(activity);
 		gui.showItemsList(treeManager.getCurrentItem());
+		
 		state = AppState.ITEMS_LIST;
 		
 		Logs.info("Application started.");
@@ -109,6 +111,14 @@ public class App extends BaseApp implements IEventObserver {
 		AppController.registerEventObserver(ExitAppEvent.class, this);
 	}
 	
+	public AppState getState() {
+		return state;
+	}
+	
+	public void setState(AppState state) {
+		this.state = state;
+	}
+	
 	@Override
 	public void quit() {
 		preferences.saveAll();
@@ -117,40 +127,7 @@ public class App extends BaseApp implements IEventObserver {
 	
 	@Override
 	public boolean optionsSelect(int id) {
-		if (id == R.id.action_minimize) {
-			minimize();
-			return true;
-		} else if (id == R.id.action_exit_without_saving) {
-			exitApp(false);
-			return true;
-		} else if (id == R.id.action_save_exit) {
-			if (state == AppState.EDIT_ITEM_CONTENT) {
-				gui.requestSaveEditedItem();
-			}
-			exitApp(true);
-			return true;
-		} else if (id == R.id.action_save) {
-			saveDatabase();
-			showInfo("Zapisano bazę danych.");
-			return true;
-		} else if (id == R.id.action_reload) {
-			treeManager.reset();
-			treeManager.loadRootTree();
-			updateItemsList();
-			showInfo("Wczytano bazę danych.");
-			return true;
-		} else if (id == R.id.action_copy) {
-			copySelectedItems(true);
-		} else if (id == R.id.action_cut) {
-			cutSelectedItems();
-		} else if (id == R.id.action_paste) {
-			pasteItems();
-		} else if (id == R.id.action_select_all) {
-			toggleSelectAll();
-		} else if (id == R.id.action_sum_selected) {
-			sumSelected();
-		}
-		return false;
+		return actionController.optionsSelect(id);
 	}
 	
 	@Override
@@ -158,16 +135,6 @@ public class App extends BaseApp implements IEventObserver {
 		backClicked();
 		return true;
 	}
-	
-	
-	private void showInfo(String info) {
-		userInfo.showActionInfo(info, gui.getMainContent(), "OK", null, null);
-	}
-	
-	private void showInfoCancellable(String info, InfoBarClickAction cancelCallback) {
-		userInfo.showActionInfo(info, gui.getMainContent(), "Cofnij", cancelCallback, ContextCompat.getColor(activity, R.color.colorPrimary));
-	}
-	
 	
 	@Override
 	public void menuInit(Menu menu) {
@@ -208,7 +175,7 @@ public class App extends BaseApp implements IEventObserver {
 		state = AppState.ITEMS_LIST;
 		gui.showItemsList(treeManager.getCurrentItem());
 		restoreScrollPosition(treeManager.getCurrentItem());
-		showInfo("Anulowano edycję elementu.");
+		userInfo.showInfo("Anulowano edycję elementu.");
 	}
 	
 	private void removeItem(final int position) {
@@ -217,7 +184,7 @@ public class App extends BaseApp implements IEventObserver {
 		
 		treeManager.getCurrentItem().remove(position);
 		updateItemsList();
-		showInfoCancellable("Usunięto element: " + removing.getContent(), new InfoBarClickAction() {
+		userInfo.showInfoCancellable("Usunięto element: " + removing.getContent(), new InfoBarClickAction() {
 			@Override
 			public void onClick() {
 				restoreItem(removing, position);
@@ -230,7 +197,7 @@ public class App extends BaseApp implements IEventObserver {
 		state = AppState.ITEMS_LIST;
 		gui.showItemsList(treeManager.getCurrentItem());
 		gui.scrollToItem(position);
-		showInfo("Przywrócono usunięty element.");
+		userInfo.showInfo("Przywrócono usunięty element.");
 	}
 	
 	private void removeSelectedItems(boolean info) {
@@ -246,7 +213,7 @@ public class App extends BaseApp implements IEventObserver {
 			treeManager.getCurrentItem().remove(id);
 		}
 		if (info) {
-			showInfo("Usunięto zaznaczone elementy: " + selectedIds.size());
+			userInfo.showInfo("Usunięto zaznaczone elementy: " + selectedIds.size());
 		}
 		treeManager.cancelSelectionMode();
 		updateItemsList();
@@ -286,7 +253,7 @@ public class App extends BaseApp implements IEventObserver {
 		}
 	}
 	
-	private void exitApp(boolean withSaving) {
+	public void exitApp(boolean withSaving) {
 		//TODO Najpierw wyświetlić exit screen, potem zapisywać bazę
 		if (withSaving) {
 			saveDatabase();
@@ -311,11 +278,11 @@ public class App extends BaseApp implements IEventObserver {
 				TreeItem item = treeManager.getClipboard().get(0);
 				copyToSystemClipboard(item.getContent());
 				if (info) {
-					showInfo("Skopiowano element: " + item.getContent());
+					userInfo.showInfo("Skopiowano element: " + item.getContent());
 				}
 			} else {
 				if (info) {
-					showInfo("Skopiowano zaznaczone elementy: " + treeManager.getClipboardSize());
+					userInfo.showInfo("Skopiowano zaznaczone elementy: " + treeManager.getClipboardSize());
 				}
 			}
 		}
@@ -324,10 +291,10 @@ public class App extends BaseApp implements IEventObserver {
 	private void cutSelectedItems() {
 		if (treeManager.isSelectionMode() && treeManager.getSelectedItemsCount() > 0) {
 			copySelectedItems(false);
-			showInfo("Wycięto zaznaczone elementy: " + treeManager.getSelectedItemsCount());
+			userInfo.showInfo("Wycięto zaznaczone elementy: " + treeManager.getSelectedItemsCount());
 			removeSelectedItems(false);
 		} else {
-			showInfo("Brak zaznaczonych elementów");
+			userInfo.showInfo("Brak zaznaczonych elementów");
 		}
 	}
 	
@@ -337,18 +304,18 @@ public class App extends BaseApp implements IEventObserver {
 			if (systemClipboard != null) {
 				//wklejanie 1 elementu z systemowego schowka
 				treeManager.getCurrentItem().add(systemClipboard);
-				showInfo("Wklejono element: " + systemClipboard);
+				userInfo.showInfo("Wklejono element: " + systemClipboard);
 				updateItemsList();
 				gui.scrollToItem(-1);
 			} else {
-				showInfo("Schowek jest pusty.");
+				userInfo.showInfo("Schowek jest pusty.");
 			}
 		} else {
 			for (TreeItem clipboardItem : treeManager.getClipboard()) {
 				clipboardItem.setParent(treeManager.getCurrentItem());
 				treeManager.addToCurrent(clipboardItem);
 			}
-			showInfo("Wklejono elementy: " + treeManager.getClipboardSize());
+			userInfo.showInfo("Wklejono elementy: " + treeManager.getClipboardSize());
 			treeManager.recopyClipboard();
 			updateItemsList();
 			gui.scrollToItem(-1);
@@ -370,22 +337,6 @@ public class App extends BaseApp implements IEventObserver {
 		updateItemsList();
 	}
 	
-	private void goToRoot() {
-		if (state == AppState.ITEMS_LIST) {
-			if (treeManager.isSelectionMode()) {
-				treeManager.cancelSelectionMode();
-			}
-			treeManager.goToRoot();
-			updateItemsList();
-		} else if (state == AppState.EDIT_ITEM_CONTENT) {
-			gui.hideSoftKeyboard();
-			discardEditingItem();
-			treeManager.goToRoot();
-			gui.showItemsList(treeManager.getCurrentItem());
-			state = AppState.ITEMS_LIST;
-		}
-	}
-	
 	
 	private void sumSelected() {
 		if (treeManager.isSelectionMode()) {
@@ -396,10 +347,10 @@ public class App extends BaseApp implements IEventObserver {
 				clipboardStr = clipboardStr.replace('.', ',');
 				
 				copyToSystemClipboard(clipboardStr);
-				showInfo("Skopiowano sumę do schowka: " + clipboardStr);
+				userInfo.showInfo("Skopiowano sumę do schowka: " + clipboardStr);
 				
 			} catch (NumberFormatException e) {
-				showInfo(e.getMessage());
+				userInfo.showInfo(e.getMessage());
 			}
 		}
 	}
@@ -525,12 +476,12 @@ public class App extends BaseApp implements IEventObserver {
 					state = AppState.ITEMS_LIST;
 					gui.showItemsList(treeManager.getCurrentItem());
 					restoreScrollPosition(treeManager.getCurrentItem());
-					showInfo("Pusty element został usunięty.");
+					userInfo.showInfo("Pusty element został usunięty.");
 					return;
 				} else {
 					treeManager.getCurrentItem().add(treeManager.getNewItemPosition(), content);
 					newItemIndex++;
-					showInfo("Zapisano nowy element.");
+					userInfo.showInfo("Zapisano nowy element.");
 				}
 			} else { //edycja
 				newItemIndex = editedItem.getIndexInParent();
@@ -540,12 +491,12 @@ public class App extends BaseApp implements IEventObserver {
 					state = AppState.ITEMS_LIST;
 					gui.showItemsList(treeManager.getCurrentItem());
 					restoreScrollPosition(treeManager.getCurrentItem());
-					showInfo("Pusty element został usunięty.");
+					userInfo.showInfo("Pusty element został usunięty.");
 					return;
 				} else {
 					editedItem.setContent(content);
 					newItemIndex++;
-					showInfo("Zapisano element.");
+					userInfo.showInfo("Zapisano element.");
 				}
 			}
 			//dodanie nowego elementu
@@ -563,11 +514,11 @@ public class App extends BaseApp implements IEventObserver {
 					state = AppState.ITEMS_LIST;
 					gui.showItemsList(treeManager.getCurrentItem());
 					restoreScrollPosition(treeManager.getCurrentItem());
-					showInfo("Pusty element został usunięty.");
+					userInfo.showInfo("Pusty element został usunięty.");
 				} else {
 					editedItemIndex = treeManager.getNewItemPosition();
 					treeManager.getCurrentItem().add(treeManager.getNewItemPosition(), content);
-					showInfo("Zapisano nowy element.");
+					userInfo.showInfo("Zapisano nowy element.");
 				}
 			} else { //edycja
 				if (content.isEmpty()) {
@@ -576,11 +527,11 @@ public class App extends BaseApp implements IEventObserver {
 					state = AppState.ITEMS_LIST;
 					gui.showItemsList(treeManager.getCurrentItem());
 					restoreScrollPosition(treeManager.getCurrentItem());
-					showInfo("Pusty element został usunięty.");
+					userInfo.showInfo("Pusty element został usunięty.");
 				} else {
 					editedItemIndex = editedItem.getIndexInParent();
 					editedItem.setContent(content);
-					showInfo("Zapisano element.");
+					userInfo.showInfo("Zapisano element.");
 				}
 			}
 			if (editedItemIndex != null) {
@@ -598,10 +549,10 @@ public class App extends BaseApp implements IEventObserver {
 			content = treeManager.trimContent(content);
 			if (content.isEmpty()) {
 				treeManager.getCurrentItem().remove(editedItem);
-				showInfo("Pusty element został usunięty.");
+				userInfo.showInfo("Pusty element został usunięty.");
 			} else {
 				editedItem.setContent(content);
-				showInfo("Zapisano element.");
+				userInfo.showInfo("Zapisano element.");
 			}
 			treeManager.setEditItem(null);
 			state = AppState.ITEMS_LIST;
@@ -613,10 +564,10 @@ public class App extends BaseApp implements IEventObserver {
 			String content = ((SavedNewItemEvent) event).getContent();
 			content = treeManager.trimContent(content);
 			if (content.isEmpty()) {
-				showInfo("Pusty element został usunięty.");
+				userInfo.showInfo("Pusty element został usunięty.");
 			} else {
 				treeManager.getCurrentItem().add(treeManager.getNewItemPosition(), content);
-				showInfo("Zapisano nowy element.");
+				userInfo.showInfo("Zapisano nowy element.");
 			}
 			state = AppState.ITEMS_LIST;
 			gui.showItemsList(treeManager.getCurrentItem());

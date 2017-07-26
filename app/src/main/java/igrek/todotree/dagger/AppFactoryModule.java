@@ -10,6 +10,7 @@ import dagger.Provides;
 import igrek.todotree.filesystem.FilesystemService;
 import igrek.todotree.gui.GUI;
 import igrek.todotree.logic.LogicActionController;
+import igrek.todotree.logic.app.App;
 import igrek.todotree.logic.backup.BackupManager;
 import igrek.todotree.logic.datatree.TreeManager;
 import igrek.todotree.logic.datatree.serializer.TreeSerializer;
@@ -19,10 +20,18 @@ import igrek.todotree.resources.UserInfoService;
 @Module
 public class AppFactoryModule {
 	
+	private App app;
 	private Activity activity;
 	
-	public AppFactoryModule(Activity activity) {
+	public AppFactoryModule(App app, Activity activity) {
+		this.app = app;
 		this.activity = activity;
+	}
+	
+	@Provides
+	@Singleton
+	App provideApp() {
+		return app;
 	}
 	
 	@Provides
@@ -63,8 +72,8 @@ public class AppFactoryModule {
 	
 	@Provides
 	@Singleton
-	UserInfoService provideUserInfoService(Activity activity) {
-		return new UserInfoService(activity);
+	UserInfoService provideUserInfoService(Activity activity, GUI gui) {
+		return new UserInfoService(activity, gui);
 	}
 	
 	@Provides
@@ -75,8 +84,8 @@ public class AppFactoryModule {
 	
 	@Provides
 	@Singleton
-	LogicActionController provideLogicActionController(TreeManager treeManager, GUI gui) {
-		return new LogicActionController(treeManager, gui);
+	LogicActionController provideLogicActionController(TreeManager treeManager, GUI gui, UserInfoService userInfo, App app) {
+		return new LogicActionController(treeManager, gui, userInfo, app);
 	}
 	
 	@Provides

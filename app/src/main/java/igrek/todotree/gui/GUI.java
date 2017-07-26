@@ -8,7 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import android.view.WindowManager;
 import android.widget.RelativeLayout;
 
 import java.util.List;
@@ -38,9 +37,6 @@ public class GUI extends GUIBase implements IEventObserver {
     
     @Override
     protected void init() {
-        
-        // prohibit from creating the thumbnails
-        activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
         
         activity.setContentView(R.layout.activity_main);
         

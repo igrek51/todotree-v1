@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.WindowManager;
 
 import igrek.todotree.logger.Logs;
 import igrek.todotree.logic.app.App;
@@ -16,6 +17,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+	
+		// prohibit from creating the thumbnails
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
+		
         super.onCreate(savedInstanceState);
         try {
             app = new App(this);
