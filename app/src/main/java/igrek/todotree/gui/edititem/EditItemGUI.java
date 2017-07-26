@@ -10,10 +10,14 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import javax.inject.Inject;
+
 import igrek.todotree.R;
+import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.gui.GUI;
 import igrek.todotree.gui.numkeyboard.NumKeyboardListener;
 import igrek.todotree.gui.numkeyboard.NumericKeyboardView;
+import igrek.todotree.logic.LogicActionController;
 import igrek.todotree.logic.controller.AppController;
 import igrek.todotree.logic.controller.dispatcher.IEvent;
 import igrek.todotree.logic.controller.dispatcher.IEventObserver;
@@ -28,385 +32,390 @@ import igrek.todotree.logic.events.SavedNewItemEvent;
 
 public class EditItemGUI implements NumKeyboardListener, IEventObserver {
 
-    private GUI gui;
+	private GUI gui;
 
-    private ItemEditText etEditItem;
-    private Button buttonSaveItem;
-    NumericKeyboardView numericKeyboard;
-    TreeItem editedItem = null;
+	private ItemEditText etEditItem;
+	private Button buttonSaveItem;
+	NumericKeyboardView numericKeyboard;
+	TreeItem editedItem = null;
+	
+	@Inject
+	LogicActionController actionController;
 
-    public EditItemGUI(GUI gui, final TreeItem item, TreeItem parent) {
-        this.gui = gui;
-        this.editedItem = item;
+	public EditItemGUI(GUI gui, final TreeItem item, TreeItem parent) {
+		this.gui = gui;
+		this.editedItem = item;
+		
+		DaggerIOC.getAppComponent().inject(this);
 
-        AppController.clearEventObservers(RangeCharQuickInsertEvent.class);
-        AppController.registerEventObserver(RangeCharQuickInsertEvent.class, this);
+		AppController.clearEventObservers(RangeCharQuickInsertEvent.class);
+		AppController.registerEventObserver(RangeCharQuickInsertEvent.class, this);
 
-        init(item, parent);
-    }
+		init(item, parent);
+	}
 
-    public EditText getEtEditItem() {
-        return etEditItem;
-    }
+	public EditText getEtEditItem() {
+		return etEditItem;
+	}
 
-    public void init(final TreeItem item, TreeItem parent) {
-        View editItemContentLayout = gui.setMainContentLayout(R.layout.edit_item_content);
+	public void init(final TreeItem item, TreeItem parent) {
+		View editItemContentLayout = gui.setMainContentLayout(R.layout.edit_item_content);
 
-        etEditItem = (ItemEditText) editItemContentLayout.findViewById(R.id.etEditItemContent);
-        //przycisk zapisu
-        buttonSaveItem = (Button) editItemContentLayout.findViewById(R.id.buttonSaveItem);
-        //przycisk zapisz i dodaj nowy
-        Button buttonSaveAndAdd = (Button) editItemContentLayout.findViewById(R.id.buttonSaveAndAddItem);
-        //przycisk zapisz i wejdź
-        Button buttonSaveAndGoInto = (Button) editItemContentLayout.findViewById(R.id.buttonSaveAndGoInto);
-        //przycisk obrotu ekranu
-        final ImageButton rotateScreenBtn = (ImageButton) editItemContentLayout.findViewById(R.id.rotateScreenBtn);
+		etEditItem = (ItemEditText) editItemContentLayout.findViewById(R.id.etEditItemContent);
+		//przycisk zapisu
+		buttonSaveItem = (Button) editItemContentLayout.findViewById(R.id.buttonSaveItem);
+		//przycisk zapisz i dodaj nowy
+		Button buttonSaveAndAdd = (Button) editItemContentLayout.findViewById(R.id.buttonSaveAndAddItem);
+		//przycisk zapisz i wejdź
+		Button buttonSaveAndGoInto = (Button) editItemContentLayout.findViewById(R.id.buttonSaveAndGoInto);
+		//przycisk obrotu ekranu
+		final ImageButton rotateScreenBtn = (ImageButton) editItemContentLayout.findViewById(R.id.rotateScreenBtn);
 
-        gui.setTitle(parent.getContent());
+		gui.setTitle(parent.getContent());
 
-        if (item != null) { //edycja
-            etEditItem.setText(item.getContent());
-            buttonSaveItem.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (numericKeyboard.isVisible()) {
-                        numericKeyboard.finishTyping();
-                    }
-                    hideKeyboards();
-                    AppController.sendEvent(new SavedEditedItemEvent(item, etEditItem.getText().toString()));
-                }
-            });
-            buttonSaveAndAdd.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    AppController.sendEvent(new SaveAndAddItemEvent(item, etEditItem.getText().toString()));
-                    hideKeyboards();
-                }
-            });
-            buttonSaveAndGoInto.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    AppController.sendEvent(new SaveAndGoIntoItemEvent(item, etEditItem.getText().toString()));
-                    hideKeyboards();
-                }
-            });
-        } else { //nowy element
-            etEditItem.setText("");
-            buttonSaveItem.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (numericKeyboard.isVisible()) {
-                        numericKeyboard.finishTyping();
-                    }
-                    hideKeyboards();
-                    AppController.sendEvent(new SavedNewItemEvent(etEditItem.getText().toString()));
-                }
-            });
-            buttonSaveAndAdd.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    AppController.sendEvent(new SaveAndAddItemEvent(null, etEditItem.getText().toString()));
-                    hideKeyboards();
-                }
-            });
-            buttonSaveAndGoInto.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    AppController.sendEvent(new SaveAndGoIntoItemEvent(null, etEditItem.getText().toString()));
-                    hideKeyboards();
-                }
-            });
-        }
+		if (item != null) { //edycja
+			etEditItem.setText(item.getContent());
+			buttonSaveItem.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					if (numericKeyboard.isVisible()) {
+						numericKeyboard.finishTyping();
+					}
+					hideKeyboards();
+					actionController.editedItemSaved(item, etEditItem.getText().toString());
+				}
+			});
+			buttonSaveAndAdd.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					actionController.saveAndAddItemClicked(item, etEditItem.getText().toString());
+					hideKeyboards();
+				}
+			});
+			buttonSaveAndGoInto.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					actionController.saveAndGoIntoItemClicked(item, etEditItem.getText().toString());
+					hideKeyboards();
+				}
+			});
+		} else { //nowy element
+			etEditItem.setText("");
+			buttonSaveItem.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					if (numericKeyboard.isVisible()) {
+						numericKeyboard.finishTyping();
+					}
+					hideKeyboards();
+					actionController.newItemSaved(etEditItem.getText().toString());
+				}
+			});
+			buttonSaveAndAdd.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					actionController.saveAndAddItemClicked(null, etEditItem.getText().toString());
+					hideKeyboards();
+				}
+			});
+			buttonSaveAndGoInto.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					actionController.saveAndGoIntoItemClicked(null, etEditItem.getText().toString());
+					hideKeyboards();
+				}
+			});
+		}
 
-        rotateScreenBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AppController.sendEvent(new RotateScreenEvent());
-            }
-        });
+		rotateScreenBtn.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				AppController.sendEvent(new RotateScreenEvent());
+			}
+		});
 
-        //przycisk anuluj
-        Button buttonEditCancel = (Button) editItemContentLayout.findViewById(R.id.buttonEditCancel);
-        buttonEditCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AppController.sendEvent(new CancelEditedItemEvent(item));
-                hideKeyboards();
-            }
-        });
+		//przycisk anuluj
+		Button buttonEditCancel = (Button) editItemContentLayout.findViewById(R.id.buttonEditCancel);
+		buttonEditCancel.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				actionController.cancelEditedItem();
+				hideKeyboards();
+			}
+		});
 
-        //przyciski zmiany kursora i zaznaczenia
-        ImageButton quickEditGoBegin = (ImageButton) editItemContentLayout.findViewById(R.id.quickEditGoBegin);
-        quickEditGoBegin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                quickCursorMove(-2);
-            }
-        });
-        ImageButton quickEditGoLeft = (ImageButton) editItemContentLayout.findViewById(R.id.quickEditGoLeft);
-        quickEditGoLeft.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                quickCursorMove(-1);
-            }
-        });
-        ImageButton quickEditSelectAll = (ImageButton) editItemContentLayout.findViewById(R.id.quickEditSelectAll);
-        quickEditSelectAll.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                quickEditSelectAll();
-            }
-        });
-        ImageButton quickEditGoRight = (ImageButton) editItemContentLayout.findViewById(R.id.quickEditGoRight);
-        quickEditGoRight.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                quickCursorMove(+1);
-            }
-        });
-        ImageButton quickEditGoEnd = (ImageButton) editItemContentLayout.findViewById(R.id.quickEditGoEnd);
-        quickEditGoEnd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                quickCursorMove(+2);
-            }
-        });
+		//przyciski zmiany kursora i zaznaczenia
+		ImageButton quickEditGoBegin = (ImageButton) editItemContentLayout.findViewById(R.id.quickEditGoBegin);
+		quickEditGoBegin.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				quickCursorMove(-2);
+			}
+		});
+		ImageButton quickEditGoLeft = (ImageButton) editItemContentLayout.findViewById(R.id.quickEditGoLeft);
+		quickEditGoLeft.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				quickCursorMove(-1);
+			}
+		});
+		ImageButton quickEditSelectAll = (ImageButton) editItemContentLayout.findViewById(R.id.quickEditSelectAll);
+		quickEditSelectAll.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				quickEditSelectAll();
+			}
+		});
+		ImageButton quickEditGoRight = (ImageButton) editItemContentLayout.findViewById(R.id.quickEditGoRight);
+		quickEditGoRight.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				quickCursorMove(+1);
+			}
+		});
+		ImageButton quickEditGoEnd = (ImageButton) editItemContentLayout.findViewById(R.id.quickEditGoEnd);
+		quickEditGoEnd.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				quickCursorMove(+2);
+			}
+		});
 
-        //klawiatura dodawania godziny
-        Button buttonEditInsertTime = (Button) editItemContentLayout.findViewById(R.id.buttonEditInsertTime);
-        buttonEditInsertTime.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toggleTypingHour();
-            }
-        });
+		//klawiatura dodawania godziny
+		Button buttonEditInsertTime = (Button) editItemContentLayout.findViewById(R.id.buttonEditInsertTime);
+		buttonEditInsertTime.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				toggleTypingHour();
+			}
+		});
 
-        //klawiatura dodawania daty
-        Button buttonEditInsertDate = (Button) editItemContentLayout.findViewById(R.id.buttonEditInsertDate);
-        buttonEditInsertDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toggleTypingDate();
-            }
-        });
+		//klawiatura dodawania daty
+		Button buttonEditInsertDate = (Button) editItemContentLayout.findViewById(R.id.buttonEditInsertDate);
+		buttonEditInsertDate.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				toggleTypingDate();
+			}
+		});
 
-        //numer
-        Button buttonEditInsertNumber = (Button) editItemContentLayout.findViewById(R.id.buttonEditInsertNumber);
-        buttonEditInsertNumber.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toggleTypingNumeric();
-            }
-        });
+		//numer
+		Button buttonEditInsertNumber = (Button) editItemContentLayout.findViewById(R.id.buttonEditInsertNumber);
+		buttonEditInsertNumber.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				toggleTypingNumeric();
+			}
+		});
 
-        //dodawanie przedziału
-        Button buttonEditInsertRange = (Button) editItemContentLayout.findViewById(R.id.buttonEditInsertRange);
-        buttonEditInsertRange.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                quickInsertRange();
-                numericKeyboard.resetInput();
-            }
-        });
+		//dodawanie przedziału
+		Button buttonEditInsertRange = (Button) editItemContentLayout.findViewById(R.id.buttonEditInsertRange);
+		buttonEditInsertRange.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				quickInsertRange();
+				numericKeyboard.resetInput();
+			}
+		});
 
-        etEditItem.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    //zapis przyciskiem OK
-                    buttonSaveItem.performClick();
-                    return true;
-                }
-                return false;
-            }
-        });
+		etEditItem.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+			@Override
+			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+				if (actionId == EditorInfo.IME_ACTION_DONE) {
+					//zapis przyciskiem OK
+					buttonSaveItem.performClick();
+					return true;
+				}
+				return false;
+			}
+		});
 
-        etEditItem.setNumKeyboardListener(this);
+		etEditItem.setNumKeyboardListener(this);
 
-        //niepotrzebne na focus: etEditItem.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-        etEditItem.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (numericKeyboard.isVisible()) {
-                    showNumericKeyboard();
-                    numericKeyboard.resetInput();
-                } else {
-                    showAlphanumKeyboard();
-                }
-            }
-        });
+		//niepotrzebne na focus: etEditItem.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+		etEditItem.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if (numericKeyboard.isVisible()) {
+					showNumericKeyboard();
+					numericKeyboard.resetInput();
+				} else {
+					showAlphanumKeyboard();
+				}
+			}
+		});
 
-        numericKeyboard = (NumericKeyboardView) editItemContentLayout.findViewById(R.id.numericKeyboard);
-        numericKeyboard.init(this, etEditItem);
+		numericKeyboard = (NumericKeyboardView) editItemContentLayout.findViewById(R.id.numericKeyboard);
+		numericKeyboard.init(this, etEditItem);
 
-        //focus na końcu edytowanego tekstu
-        etEditItem.requestFocus();
-        quickCursorMove(+2);
+		//focus na końcu edytowanego tekstu
+		etEditItem.requestFocus();
+		quickCursorMove(+2);
 
-        showAlphanumKeyboard();
-    }
-
-
-    private void quickCursorMove(int direction) {
-        if (direction == -2) { //na początek
-
-            // WTF ??? - zjebane, ale tak trzeba, by ujarzmić ten przeskakujący kursor
-            etEditItem.requestFocus();
-            etEditItem.selectAll();
-            etEditItem.setSelection(0);
-
-            new Handler().post(new Runnable() {
-                @Override
-                public void run() {
-                    etEditItem.setSelection(0);
-                }
-            });
-
-        } else if (direction == +2) { //na koniec
-            etEditItem.setSelection(etEditItem.getText().length());
-        } else if (direction == -1 || direction == +1) {
-            int selStart = etEditItem.getSelectionStart();
-            int selEnd = etEditItem.getSelectionEnd();
-            if (selStart == selEnd) { //brak zaznaczenia
-                selStart += direction;
-                if (selStart < 0) selStart = 0;
-                if (selStart > etEditItem.getText().length())
-                    selStart = etEditItem.getText().length();
-                etEditItem.setSelection(selStart);
-            } else { //zaznaczenie wielu znaków
-                //poszerzenie zaznaczenia
-                if (direction == -1) { //w lewo
-                    selStart--;
-                    if (selStart < 0) selStart = 0;
-                } else { //w prawo
-                    selEnd++;
-                    if (selEnd > etEditItem.getText().length())
-                        selEnd = etEditItem.getText().length();
-                }
-                etEditItem.setSelection(selStart, selEnd);
-            }
-        }
-    }
-
-    private void quickEditSelectAll() {
-        etEditItem.requestFocus();
-        etEditItem.selectAll();
-        // konieczne, żeby zaznaczyć cały tekst, a nie tylko przejść z kursorem na początek - WTF ???
-        new Handler().post(new Runnable() {
-            @Override
-            public void run() {
-                etEditItem.selectAll();
-            }
-        });
-    }
+		showAlphanumKeyboard();
+	}
 
 
-    private void quickInsertRange() {
-        if (numericKeyboard.isVisible()) {
-            numericKeyboard.finishTyping();
-        }
-        String edited = etEditItem.getText().toString();
-        int selStart = etEditItem.getSelectionStart();
-        int selEnd = etEditItem.getSelectionEnd();
-        String before = edited.substring(0, selStart);
-        String after = edited.substring(selEnd);
-        //bez podwójnej spacji przed "-"
-        if (before.length() > 0 && before.charAt(before.length() - 1) == ' ') {
-            edited = before + "- " + after;
-            selStart += 2;
-        } else {
-            edited = before + " - " + after;
-            selStart += 3;
-        }
-        etEditItem.setText(edited);
-        etEditItem.setSelection(selStart, selStart);
-    }
+	private void quickCursorMove(int direction) {
+		if (direction == -2) { //na początek
 
-    private void showAlphanumKeyboard() {
-        int selEnd = etEditItem.getSelectionEnd();
-        int selStart = etEditItem.getSelectionStart();
+			// WTF ??? - zjebane, ale tak trzeba, by ujarzmić ten przeskakujący kursor
+			etEditItem.requestFocus();
+			etEditItem.selectAll();
+			etEditItem.setSelection(0);
 
-        numericKeyboard.setVisible(false);
-        gui.showSoftKeyboard(etEditItem);
+			new Handler().post(new Runnable() {
+				@Override
+				public void run() {
+					etEditItem.setSelection(0);
+				}
+			});
 
-        etEditItem.setInputType(InputType.TYPE_CLASS_TEXT);
-        etEditItem.setImeOptions(EditorInfo.IME_FLAG_NO_EXTRACT_UI | EditorInfo.IME_ACTION_DONE);
+		} else if (direction == +2) { //na koniec
+			etEditItem.setSelection(etEditItem.getText().length());
+		} else if (direction == -1 || direction == +1) {
+			int selStart = etEditItem.getSelectionStart();
+			int selEnd = etEditItem.getSelectionEnd();
+			if (selStart == selEnd) { //brak zaznaczenia
+				selStart += direction;
+				if (selStart < 0) selStart = 0;
+				if (selStart > etEditItem.getText().length())
+					selStart = etEditItem.getText().length();
+				etEditItem.setSelection(selStart);
+			} else { //zaznaczenie wielu znaków
+				//poszerzenie zaznaczenia
+				if (direction == -1) { //w lewo
+					selStart--;
+					if (selStart < 0) selStart = 0;
+				} else { //w prawo
+					selEnd++;
+					if (selEnd > etEditItem.getText().length())
+						selEnd = etEditItem.getText().length();
+				}
+				etEditItem.setSelection(selStart, selEnd);
+			}
+		}
+	}
 
-        etEditItem.setSelection(selStart, selEnd);
-    }
+	private void quickEditSelectAll() {
+		etEditItem.requestFocus();
+		etEditItem.selectAll();
+		// konieczne, żeby zaznaczyć cały tekst, a nie tylko przejść z kursorem na początek - WTF ???
+		new Handler().post(new Runnable() {
+			@Override
+			public void run() {
+				etEditItem.selectAll();
+			}
+		});
+	}
 
-    private void showNumericKeyboard() {
-        int selEnd = etEditItem.getSelectionEnd();
-        int selStart = etEditItem.getSelectionStart();
 
-        gui.hideSoftKeyboard(etEditItem);
-        numericKeyboard.setVisible(true);
+	private void quickInsertRange() {
+		if (numericKeyboard.isVisible()) {
+			numericKeyboard.finishTyping();
+		}
+		String edited = etEditItem.getText().toString();
+		int selStart = etEditItem.getSelectionStart();
+		int selEnd = etEditItem.getSelectionEnd();
+		String before = edited.substring(0, selStart);
+		String after = edited.substring(selEnd);
+		//bez podwójnej spacji przed "-"
+		if (before.length() > 0 && before.charAt(before.length() - 1) == ' ') {
+			edited = before + "- " + after;
+			selStart += 2;
+		} else {
+			edited = before + " - " + after;
+			selStart += 3;
+		}
+		etEditItem.setText(edited);
+		etEditItem.setSelection(selStart, selStart);
+	}
 
-        //        etEditItem.setInputType(InputType.TYPE_NULL);
+	private void showAlphanumKeyboard() {
+		int selEnd = etEditItem.getSelectionEnd();
+		int selStart = etEditItem.getSelectionStart();
 
-        etEditItem.setSelection(selStart, selEnd);
-    }
+		numericKeyboard.setVisible(false);
+		gui.showSoftKeyboard(etEditItem);
 
-    public void hideKeyboards() {
-        int selEnd = etEditItem.getSelectionEnd();
-        int selStart = etEditItem.getSelectionStart();
+		etEditItem.setInputType(InputType.TYPE_CLASS_TEXT);
+		etEditItem.setImeOptions(EditorInfo.IME_FLAG_NO_EXTRACT_UI | EditorInfo.IME_ACTION_DONE);
 
-        gui.hideSoftKeyboard(etEditItem);
-        numericKeyboard.setVisible(false);
+		etEditItem.setSelection(selStart, selEnd);
+	}
 
-        etEditItem.setInputType(InputType.TYPE_CLASS_TEXT);
-        etEditItem.setImeOptions(EditorInfo.IME_FLAG_NO_EXTRACT_UI | EditorInfo.IME_ACTION_DONE);
+	private void showNumericKeyboard() {
+		int selEnd = etEditItem.getSelectionEnd();
+		int selStart = etEditItem.getSelectionStart();
 
-        etEditItem.setSelection(selStart, selEnd);
-    }
+		gui.hideSoftKeyboard(etEditItem);
+		numericKeyboard.setVisible(true);
 
-    public void toggleTypingHour() {
-        toggleTyping(1);
-    }
+		//        etEditItem.setInputType(InputType.TYPE_NULL);
 
-    public void toggleTypingDate() {
-        toggleTyping(2);
-    }
+		etEditItem.setSelection(selStart, selEnd);
+	}
 
-    public void toggleTypingNumeric() {
-        toggleTyping(3);
-    }
+	public void hideKeyboards() {
+		int selEnd = etEditItem.getSelectionEnd();
+		int selStart = etEditItem.getSelectionStart();
 
-    public void toggleTyping(int mode) {
-        if (numericKeyboard.isVisible() && numericKeyboard.getTypingMode() == mode) {
-            showAlphanumKeyboard();
-        } else {
-            showNumericKeyboard();
-            numericKeyboard.startTyping(mode);
-        }
-    }
+		gui.hideSoftKeyboard(etEditItem);
+		numericKeyboard.setVisible(false);
 
-    @Override
-    public void onNumKeyboardClosed() {
-        showAlphanumKeyboard();
-    }
+		etEditItem.setInputType(InputType.TYPE_CLASS_TEXT);
+		etEditItem.setImeOptions(EditorInfo.IME_FLAG_NO_EXTRACT_UI | EditorInfo.IME_ACTION_DONE);
 
-    @Override
-    public void onSelectionChanged(int selStart, int selEnd) {
+		etEditItem.setSelection(selStart, selEnd);
+	}
 
-    }
+	public void toggleTypingHour() {
+		toggleTyping(1);
+	}
 
-    public boolean editItemBackClicked() {
-        hideKeyboards();
-        if (numericKeyboard.isVisible()) {
-            return true; //przechwycenie wciśnięcia przycisku
-        }
-        return false;
-    }
+	public void toggleTypingDate() {
+		toggleTyping(2);
+	}
 
-    public void requestSaveEditedItem() {
-        buttonSaveItem.performClick();
-    }
+	public void toggleTypingNumeric() {
+		toggleTyping(3);
+	}
 
-    @Override
-    public void onEvent(IEvent event) {
-        if (event instanceof RangeCharQuickInsertEvent) {
-            quickInsertRange();
-        }
-    }
+	public void toggleTyping(int mode) {
+		if (numericKeyboard.isVisible() && numericKeyboard.getTypingMode() == mode) {
+			showAlphanumKeyboard();
+		} else {
+			showNumericKeyboard();
+			numericKeyboard.startTyping(mode);
+		}
+	}
+
+	@Override
+	public void onNumKeyboardClosed() {
+		showAlphanumKeyboard();
+	}
+
+	@Override
+	public void onSelectionChanged(int selStart, int selEnd) {
+
+	}
+
+	public boolean editItemBackClicked() {
+		hideKeyboards();
+		if (numericKeyboard.isVisible()) {
+			return true; //przechwycenie wciśnięcia przycisku
+		}
+		return false;
+	}
+
+	public void requestSaveEditedItem() {
+		buttonSaveItem.performClick();
+	}
+
+	@Override
+	public void onEvent(IEvent event) {
+		if (event instanceof RangeCharQuickInsertEvent) {
+			quickInsertRange();
+		}
+	}
 }

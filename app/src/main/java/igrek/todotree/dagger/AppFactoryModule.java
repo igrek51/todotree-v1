@@ -9,6 +9,7 @@ import dagger.Module;
 import dagger.Provides;
 import igrek.todotree.filesystem.FilesystemService;
 import igrek.todotree.gui.GUI;
+import igrek.todotree.logic.ClipboardManager;
 import igrek.todotree.logic.LogicActionController;
 import igrek.todotree.logic.app.App;
 import igrek.todotree.logic.backup.BackupManager;
@@ -84,14 +85,20 @@ public class AppFactoryModule {
 	
 	@Provides
 	@Singleton
-	LogicActionController provideLogicActionController(TreeManager treeManager, GUI gui, UserInfoService userInfo, App app) {
-		return new LogicActionController(treeManager, gui, userInfo, app);
+	LogicActionController provideLogicActionController(TreeManager treeManager, BackupManager backupManager, GUI gui, UserInfoService userInfo, ClipboardManager clipboardManager, App app) {
+		return new LogicActionController(treeManager, backupManager, gui, userInfo, clipboardManager, app);
 	}
 	
 	@Provides
 	@Singleton
 	GUI provideGUI(AppCompatActivity activity) {
 		return new GUI(activity);
+	}
+	
+	@Provides
+	@Singleton
+	ClipboardManager provideClipboardManager(Activity activity) {
+		return new ClipboardManager(activity);
 	}
 	
 }
