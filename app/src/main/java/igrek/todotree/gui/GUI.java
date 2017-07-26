@@ -12,7 +12,10 @@ import android.widget.RelativeLayout;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import igrek.todotree.R;
+import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.gui.edititem.EditItemGUI;
 import igrek.todotree.gui.treelist.TreeListView;
 import igrek.todotree.logic.LogicActionController;
@@ -20,20 +23,20 @@ import igrek.todotree.logic.controller.AppController;
 import igrek.todotree.logic.controller.dispatcher.IEvent;
 import igrek.todotree.logic.controller.dispatcher.IEventObserver;
 import igrek.todotree.logic.datatree.TreeItem;
-import igrek.todotree.logic.events.ExitAppEvent;
 import igrek.todotree.logic.events.RotateScreenEvent;
-import igrek.todotree.logic.events.ToolbarBackClickedEvent;
 
 public class GUI extends GUIBase implements IEventObserver {
 	
 	private ActionBar actionBar;
 	private TreeListView itemsListView;
 	private EditItemGUI editItemGUI;
-	private LogicActionController actionController;
+	@Inject
+	LogicActionController actionController;
 	
-	public GUI(AppCompatActivity activity, LogicActionController actionController) {
+	public GUI(AppCompatActivity activity) {
 		super(activity);
-		this.actionController = actionController;
+		
+		DaggerIOC.getAppComponent().inject(this);
 		
 		AppController.registerEventObserver(RotateScreenEvent.class, this);
 	}
