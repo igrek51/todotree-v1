@@ -32,7 +32,7 @@ public class GUI extends GUIBase implements IEventObserver {
     
     public GUI(AppCompatActivity activity) {
         super(activity);
-    
+        
         AppController.registerEventObserver(RotateScreenEvent.class, this);
     }
     
@@ -69,13 +69,13 @@ public class GUI extends GUIBase implements IEventObserver {
     
     public void showItemsList(final TreeItem currentItem) {
         setOrientationPortrait();
-    
+        
         View itemsListLayout = setMainContentLayout(R.layout.items_list);
-    
+        
         itemsListView = (TreeListView) itemsListLayout.findViewById(R.id.treeItemsList);
         itemsListView.init(activity);
         itemsListView.setItems(currentItem.getChildren());
-    
+        
         updateItemsList(currentItem, null);
     }
     
@@ -141,7 +141,6 @@ public class GUI extends GUIBase implements IEventObserver {
     }
     
     public void setTitle(String title) {
-        //TODO breadcrumbs przy nazwie aktualnego elementu
         actionBar.setTitle(title);
     }
     

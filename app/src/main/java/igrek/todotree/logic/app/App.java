@@ -51,6 +51,8 @@ import static android.content.ClipDescription.MIMETYPE_TEXT_PLAIN;
 
 //TODO: funkcja cofania zmian - zapisywanie modyfikacji, dodawania, usuwania elementów, przesuwania
 
+//TODO SERWISY: do blokowania bazy, do pobierania treści komunikatów
+
 public class App extends BaseApp implements IEventObserver {
 	
 	@Inject
@@ -61,8 +63,8 @@ public class App extends BaseApp implements IEventObserver {
 	UserInfoService userInfo;
 	@Inject
 	Preferences preferences;
-	
-	private GUI gui;
+	@Inject
+	GUI gui;
 	
 	private AppState state;
 	
@@ -505,6 +507,8 @@ public class App extends BaseApp implements IEventObserver {
 				} else {
 					removeItem(((ItemRemoveClickedEvent) event).getPosition());
 				}
+			} else {
+				Logs.warn("Database is locked");
 			}
 			
 		} else if (event instanceof SaveAndAddItemEvent) {
