@@ -24,14 +24,19 @@ public class App extends BaseApp {
 	
 	@Inject
 	TreeManager treeManager;
+	
 	@Inject
 	BackupManager backupManager;
+	
 	@Inject
 	UserInfoService userInfo;
+	
 	@Inject
 	Preferences preferences;
+	
 	@Inject
 	GUI gui;
+	
 	@Inject
 	LogicActionController actionController;
 	

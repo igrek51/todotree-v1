@@ -25,10 +25,10 @@ public abstract class BaseApp {
 	
 	public BaseApp(AppCompatActivity activity) {
 		this.activity = activity;
+		Logs.info("Application initializing...");
 	}
 	
 	public void init() {
-		Logs.info("Application initializing...");
 		
 		//TODO do wyjebania
 		// CLEAR EVENT LISTENERS

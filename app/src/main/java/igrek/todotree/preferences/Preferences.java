@@ -2,6 +2,9 @@ package igrek.todotree.preferences;
 
 import android.app.Activity;
 
+import javax.inject.Inject;
+
+import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.logger.Logs;
 
 //  KONFIGURACJA
@@ -11,12 +14,18 @@ import igrek.todotree.logger.Logs;
 //TODO: shared preferences: zautomatyzowanie w celu konfiguracji, definicja: typ, nazwa, wartość domyślna, refleksja, automatyczny zapis, odczyt, generowanie fomrularza
 
 public class Preferences extends BasePreferences {
-    
-    public String dbFilePath = "Android/data/igrek.todotree2/todo.dat";
-
-    public Preferences(Activity activity){
-        super(activity);
-        loadAll();
+	
+	@Inject
+	Activity activity;
+	
+	public String dbFilePath = "Android/data/igrek.todotree2/todo.dat";
+	
+	public Preferences() {
+		super();
+		DaggerIOC.getAppComponent().inject(this);
+		
+		init(activity);
+		loadAll();
     }
 
     public void saveAll() {

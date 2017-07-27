@@ -4,14 +4,19 @@ package igrek.todotree.logic;
 import android.app.Activity;
 import android.content.ClipData;
 
+import javax.inject.Inject;
+
+import igrek.todotree.dagger.DaggerIOC;
+
 import static android.content.ClipDescription.MIMETYPE_TEXT_PLAIN;
 
 public class ClipboardManager {
 	
-	private Activity activity;
+	@Inject
+	Activity activity;
 	
-	public ClipboardManager(Activity activity) {
-		this.activity = activity;
+	public ClipboardManager() {
+		DaggerIOC.getAppComponent().inject(this);
 	}
 	
 	public void copyToSystemClipboard(String text) {

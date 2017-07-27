@@ -47,34 +47,36 @@ public class AppFactoryModule {
 		return (AppCompatActivity) activity;
 	}
 	
+	//	SERVICES
+	
 	@Provides
 	@Singleton
-	FilesystemService provideFilesystemService(Activity activity) {
-		return new FilesystemService(activity);
+	FilesystemService provideFilesystemService() {
+		return new FilesystemService();
 	}
 	
 	@Provides
 	@Singleton
-	TreeManager provideTreeManager(FilesystemService filesystem, Preferences preferences, TreeSerializer treeSerializer) {
-		return new TreeManager(filesystem, preferences, treeSerializer);
+	TreeManager provideTreeManager() {
+		return new TreeManager();
 	}
 	
 	@Provides
 	@Singleton
-	Preferences providePreferences(Activity activity) {
-		return new Preferences(activity);
+	Preferences providePreferences() {
+		return new Preferences();
 	}
 	
 	@Provides
 	@Singleton
-	BackupManager provideBackupManager(Preferences preferences, FilesystemService filesystem) {
-		return new BackupManager(preferences, filesystem);
+	BackupManager provideBackupManager() {
+		return new BackupManager();
 	}
 	
 	@Provides
 	@Singleton
-	UserInfoService provideUserInfoService(Activity activity, GUI gui) {
-		return new UserInfoService(activity, gui);
+	UserInfoService provideUserInfoService() {
+		return new UserInfoService();
 	}
 	
 	@Provides
@@ -85,20 +87,20 @@ public class AppFactoryModule {
 	
 	@Provides
 	@Singleton
-	LogicActionController provideLogicActionController(TreeManager treeManager, BackupManager backupManager, GUI gui, UserInfoService userInfo, ClipboardManager clipboardManager, App app) {
-		return new LogicActionController(treeManager, backupManager, gui, userInfo, clipboardManager, app);
+	LogicActionController provideLogicActionController() {
+		return new LogicActionController();
 	}
 	
 	@Provides
 	@Singleton
-	GUI provideGUI(AppCompatActivity activity) {
-		return new GUI(activity);
+	GUI provideGUI() {
+		return new GUI();
 	}
 	
 	@Provides
 	@Singleton
-	ClipboardManager provideClipboardManager(Activity activity) {
-		return new ClipboardManager(activity);
+	ClipboardManager provideClipboardManager() {
+		return new ClipboardManager();
 	}
 	
 }

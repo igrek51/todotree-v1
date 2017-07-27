@@ -9,6 +9,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.inject.Inject;
+
+import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.filesystem.FilesystemService;
 import igrek.todotree.filesystem.PathBuilder;
 import igrek.todotree.logger.Logs;
@@ -19,11 +22,14 @@ import igrek.todotree.preferences.Preferences;
 //TODO RESPONSIBILITY separation
 public class TreeManager {
 	
-	private FilesystemService filesystem;
+	@Inject
+	FilesystemService filesystem;
 	
-	private Preferences preferences;
+	@Inject
+	Preferences preferences;
 	
-	private TreeSerializer treeSerializer;
+	@Inject
+	TreeSerializer treeSerializer;
 	
 	private TreeItem rootItem;
 	private TreeItem currentItem;
@@ -40,10 +46,8 @@ public class TreeManager {
 	/** czy wystąpiło pierwsze wejście wgłąb elementu */
 	public boolean firstGoInto = false;
 	
-	public TreeManager(FilesystemService filesystem, Preferences preferences, TreeSerializer treeSerializer) {
-		this.filesystem = filesystem;
-		this.preferences = preferences;
-		this.treeSerializer = treeSerializer;
+	public TreeManager() {
+		DaggerIOC.getAppComponent().inject(this);
 		reset();
 	}
 	

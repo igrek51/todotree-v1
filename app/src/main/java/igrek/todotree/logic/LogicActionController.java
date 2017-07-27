@@ -6,16 +6,17 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import igrek.todotree.R;
+import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.gui.GUI;
 import igrek.todotree.logger.Logs;
 import igrek.todotree.logic.app.App;
 import igrek.todotree.logic.app.AppState;
 import igrek.todotree.logic.backup.BackupManager;
-import igrek.todotree.logic.controller.dispatcher.IEvent;
 import igrek.todotree.logic.datatree.TreeItem;
 import igrek.todotree.logic.datatree.TreeManager;
-import igrek.todotree.logic.events.ExitAppEvent;
 import igrek.todotree.logic.exceptions.NoSuperItemException;
 import igrek.todotree.resources.InfoBarClickAction;
 import igrek.todotree.resources.UserInfoService;
@@ -23,20 +24,26 @@ import igrek.todotree.resources.UserInfoService;
 
 public class LogicActionController {
 	
-	private TreeManager treeManager;
-	private BackupManager backupManager;
-	private GUI gui;
-	private UserInfoService userInfo;
-	private ClipboardManager clipboardManager;
-	private App app;
+	@Inject
+	TreeManager treeManager;
 	
-	public LogicActionController(TreeManager treeManager, BackupManager backupManager, GUI gui, UserInfoService userInfo, ClipboardManager clipboardManager, App app) {
-		this.treeManager = treeManager;
-		this.backupManager = backupManager;
-		this.gui = gui;
-		this.userInfo = userInfo;
-		this.clipboardManager = clipboardManager;
-		this.app = app;
+	@Inject
+	BackupManager backupManager;
+	
+	@Inject
+	GUI gui;
+	
+	@Inject
+	UserInfoService userInfo;
+	
+	@Inject
+	ClipboardManager clipboardManager;
+	
+	@Inject
+	App app;
+	
+	public LogicActionController() {
+		DaggerIOC.getAppComponent().inject(this);
 	}
 	
 	public boolean optionsSelect(int id) {
@@ -476,10 +483,12 @@ public class LogicActionController {
 		newItem(position);
 	}
 	
-	public void addItemClicked() {//TODO zamienić na jeden event
+	public void addItemClicked() {
 		addItemClickedPos(-1);
 	}
 	
-	public void toolbarBackClicked() {backClicked();}
+	public void toolbarBackClicked() {
+		backClicked();
+	}
 	
 }

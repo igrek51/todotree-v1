@@ -14,12 +14,21 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import javax.inject.Inject;
+
+import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.filesystem.FilesystemService;
 import igrek.todotree.filesystem.PathBuilder;
 import igrek.todotree.logger.Logs;
 import igrek.todotree.preferences.Preferences;
 
 public class BackupManager {
+	
+	@Inject
+	FilesystemService filesystem;
+	
+	@Inject
+	Preferences preferences;
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("dd_MM_yyyy-HH_mm_ss", Locale.ENGLISH);
 
@@ -29,14 +38,10 @@ public class BackupManager {
     public static final int BACKUP_LAST_VERSIONS = 10;
     /** backupy z ostatnich dni */
     public static final int BACKUP_LAST_DAYS = 14;
-    
-    private FilesystemService filesystem;
-    private Preferences preferences;
-    
-    public BackupManager(Preferences preferences, FilesystemService filesystem) {
-        this.preferences = preferences;
-        this.filesystem = filesystem;
-    }
+	
+	public BackupManager() {
+		DaggerIOC.getAppComponent().inject(this);
+	}
 
     public void saveBackupFile() {
 
