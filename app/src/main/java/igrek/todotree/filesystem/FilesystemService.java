@@ -13,20 +13,16 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-
-import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.logger.Logs;
 
 public class FilesystemService {
 	
-	@Inject
-	Activity activity;
+	private Activity activity;
 	
 	private String pathToExtSD;
 	
-	public FilesystemService() {
-		DaggerIOC.getAppComponent().inject(this);
+	public FilesystemService(Activity activity) {
+		this.activity = activity;
 		
 		// TODO get Android app private directory
 		

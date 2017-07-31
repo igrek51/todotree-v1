@@ -9,19 +9,21 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.RelativeLayout;
 
 public abstract class GUIBase {
-    
-    private AppCompatActivity activity;
-    
-    private InputMethodManager imm;
-    
-    RelativeLayout mainContent;
-    
-    GUIBase() {
-    }
-    
-    protected void init(AppCompatActivity activity) {
+
+    protected AppCompatActivity activity;
+
+    protected InputMethodManager imm;
+
+    protected RelativeLayout mainContent;
+
+    public GUIBase(AppCompatActivity activity) {
         this.activity = activity;
         imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        init(); //TODO bad practice
+    }
+
+    protected void init() {
+
     }
 
     public RelativeLayout getMainContent() {

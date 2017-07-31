@@ -9,12 +9,9 @@ public class BasePreferences {
     public static final String SHARED_PREFERENCES_NAME = "ToDoTreeUserPreferences";
 
     protected SharedPreferences sharedPreferences;
-	
-	public BasePreferences() {
-	}
-	
-	protected void init(Activity activity) {
-		sharedPreferences = activity.getApplicationContext().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+
+    public BasePreferences(Activity activity) {
+        sharedPreferences = activity.getApplicationContext().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
     }
 
     public void clear() {

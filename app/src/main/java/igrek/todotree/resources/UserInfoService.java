@@ -8,27 +8,22 @@ import android.view.View;
 
 import java.util.HashMap;
 
-import javax.inject.Inject;
-
 import igrek.todotree.R;
-import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.gui.GUI;
 import igrek.todotree.logger.Logs;
 
 public class UserInfoService {
 	
-	@Inject
-	Activity activity;
-	
-	@Inject
-	GUI gui;
+	private Activity activity;
+	private GUI gui;
 	
 	private View mainView = null;
 	
 	private HashMap<View, Snackbar> infobars = new HashMap<>();
 	
-	public UserInfoService() {
-		DaggerIOC.getAppComponent().inject(this);
+	public UserInfoService(Activity activity, GUI gui) {
+		this.activity = activity;
+		this.gui = gui;
 	}
 	
 	public String resString(int resourceId) {

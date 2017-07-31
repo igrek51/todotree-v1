@@ -27,29 +27,22 @@ import igrek.todotree.logic.events.RotateScreenEvent;
 
 public class GUI extends GUIBase implements IEventObserver {
 	
-	@Inject
-	LogicActionController actionController;
-	
-	@Inject
-	AppCompatActivity activity;
-	
 	private ActionBar actionBar;
 	private TreeListView itemsListView;
 	private EditItemGUI editItemGUI;
+	@Inject
+	LogicActionController actionController;
 	
-	public GUI() {
-		super();
+	public GUI(AppCompatActivity activity) {
+		super(activity);
 		
 		DaggerIOC.getAppComponent().inject(this);
-		
-		init(activity);
 		
 		AppController.registerEventObserver(RotateScreenEvent.class, this);
 	}
 	
 	@Override
-	protected void init(AppCompatActivity activity) {
-		super.init(activity);
+	protected void init() {
 		
 		activity.setContentView(R.layout.activity_main);
 		
