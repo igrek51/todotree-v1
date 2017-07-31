@@ -4,6 +4,7 @@ import igrek.todotree.logic.controller.dispatcher.EventDispatcher;
 import igrek.todotree.logic.controller.dispatcher.IEvent;
 import igrek.todotree.logic.controller.dispatcher.IEventObserver;
 
+//TODO do wyjebania
 public class AppController {
 	
 	private EventDispatcher eventDispatcher;

@@ -7,16 +7,16 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import igrek.todotree.filesystem.FilesystemService;
+import igrek.todotree.app.App;
 import igrek.todotree.gui.GUI;
-import igrek.todotree.logic.ClipboardManager;
 import igrek.todotree.logic.LogicActionController;
-import igrek.todotree.logic.app.App;
-import igrek.todotree.logic.backup.BackupManager;
-import igrek.todotree.logic.datatree.TreeManager;
-import igrek.todotree.logic.datatree.serializer.TreeSerializer;
-import igrek.todotree.preferences.Preferences;
-import igrek.todotree.resources.UserInfoService;
+import igrek.todotree.services.backup.BackupManager;
+import igrek.todotree.services.clipboard.ClipboardManager;
+import igrek.todotree.services.datatree.TreeManager;
+import igrek.todotree.services.datatree.serializer.TreeSerializer;
+import igrek.todotree.services.filesystem.FilesystemService;
+import igrek.todotree.services.preferences.Preferences;
+import igrek.todotree.services.resources.resources.UserInfoService;
 
 @Module
 public class AppFactoryModule {

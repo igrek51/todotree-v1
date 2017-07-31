@@ -3,7 +3,7 @@ package igrek.todotree.dagger;
 
 import android.app.Activity;
 
-import igrek.todotree.logic.app.App;
+import igrek.todotree.app.App;
 
 public class DaggerIOC {
 	

@@ -7,17 +7,18 @@ import java.util.Comparator;
 import java.util.List;
 
 import igrek.todotree.R;
+import igrek.todotree.app.App;
+import igrek.todotree.app.AppState;
+import igrek.todotree.exceptions.NoSuperItemException;
 import igrek.todotree.gui.GUI;
 import igrek.todotree.logger.Logs;
-import igrek.todotree.logic.app.App;
-import igrek.todotree.logic.app.AppState;
-import igrek.todotree.logic.backup.BackupManager;
-import igrek.todotree.logic.datatree.TreeItem;
-import igrek.todotree.logic.datatree.TreeManager;
-import igrek.todotree.logic.exceptions.NoSuperItemException;
-import igrek.todotree.preferences.Preferences;
-import igrek.todotree.resources.InfoBarClickAction;
-import igrek.todotree.resources.UserInfoService;
+import igrek.todotree.services.backup.BackupManager;
+import igrek.todotree.services.clipboard.ClipboardManager;
+import igrek.todotree.services.datatree.TreeItem;
+import igrek.todotree.services.datatree.TreeManager;
+import igrek.todotree.services.preferences.Preferences;
+import igrek.todotree.services.resources.resources.InfoBarClickAction;
+import igrek.todotree.services.resources.resources.UserInfoService;
 
 
 public class LogicActionController {

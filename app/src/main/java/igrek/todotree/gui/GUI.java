@@ -20,8 +20,8 @@ import igrek.todotree.logic.LogicActionController;
 import igrek.todotree.logic.controller.AppController;
 import igrek.todotree.logic.controller.dispatcher.IEvent;
 import igrek.todotree.logic.controller.dispatcher.IEventObserver;
-import igrek.todotree.logic.datatree.TreeItem;
 import igrek.todotree.logic.events.RotateScreenEvent;
+import igrek.todotree.services.datatree.TreeItem;
 
 public class GUI extends BaseGUI implements IEventObserver {
 	

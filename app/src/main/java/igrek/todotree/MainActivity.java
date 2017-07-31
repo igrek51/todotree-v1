@@ -8,8 +8,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
 
+import igrek.todotree.app.App;
 import igrek.todotree.logger.Logs;
-import igrek.todotree.logic.app.App;
 
 public class MainActivity extends AppCompatActivity {
 	
