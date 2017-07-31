@@ -111,6 +111,7 @@ public class TreeManager {
 	
 	public void loadRootTree() {
 		
+		filesystem.mkdirIfNotExist(filesystem.pathSD().toString());
 		PathBuilder dbFilePath = filesystem.pathSD().append(preferences.dbFilePath);
 		Logs.info("Wczytywanie bazy danych z pliku: " + dbFilePath.toString());
 		if (!filesystem.exists(dbFilePath.toString())) {

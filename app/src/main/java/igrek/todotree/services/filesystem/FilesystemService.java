@@ -13,8 +13,6 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
 
-import igrek.todotree.logger.Logs;
-
 public class FilesystemService {
 	
 	private String pathToExtSD;
@@ -22,10 +20,6 @@ public class FilesystemService {
 	
 	public FilesystemService(Activity activity) {
 		this.activity = activity;
-		
-		Logs.debug("Application data dir: " + activity.getApplicationInfo().dataDir);
-		
-		// TODO get Android app private directory
 		
 		pathSDInit();
 	}
@@ -39,6 +33,11 @@ public class FilesystemService {
 	
 	public PathBuilder pathSD() {
 		return new PathBuilder(pathToExtSD);
+	}
+	
+	public boolean mkdirIfNotExist(String path) {
+		File f = new File(path);
+		return !f.exists() && f.mkdirs();
 	}
 	
 	private List<String> listDir(String path) {
