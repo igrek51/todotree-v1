@@ -6,18 +6,17 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import javax.inject.Inject;
 
 import igrek.todotree.R;
+import igrek.todotree.controller.LogicActionController;
 import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.gui.GUI;
 import igrek.todotree.gui.numkeyboard.NumKeyboardListener;
 import igrek.todotree.gui.numkeyboard.NumericKeyboardView;
-import igrek.todotree.controller.LogicActionController;
 import igrek.todotree.services.datatree.TreeItem;
 
 public class EditItemGUI implements NumKeyboardListener {
@@ -26,26 +25,20 @@ public class EditItemGUI implements NumKeyboardListener {
 	
 	private ItemEditText etEditItem;
 	private Button buttonSaveItem;
-	NumericKeyboardView numericKeyboard;
-	TreeItem editedItem = null;
+	private NumericKeyboardView numericKeyboard;
 	
 	@Inject
 	LogicActionController actionController;
 	
 	public EditItemGUI(GUI gui, final TreeItem item, TreeItem parent) {
 		this.gui = gui;
-		this.editedItem = item;
 		
 		DaggerIOC.getAppComponent().inject(this);
 		
 		init(item, parent);
 	}
 	
-	public EditText getEtEditItem() {
-		return etEditItem;
-	}
-	
-	public void init(final TreeItem item, TreeItem parent) {
+	private void init(final TreeItem item, TreeItem parent) {
 		View editItemContentLayout = gui.setMainContentLayout(R.layout.edit_item_content);
 		
 		etEditItem = (ItemEditText) editItemContentLayout.findViewById(R.id.etEditItemContent);
@@ -360,19 +353,19 @@ public class EditItemGUI implements NumKeyboardListener {
 		etEditItem.setSelection(selStart, selEnd);
 	}
 	
-	public void toggleTypingHour() {
+	private void toggleTypingHour() {
 		toggleTyping(1);
 	}
 	
-	public void toggleTypingDate() {
+	private void toggleTypingDate() {
 		toggleTyping(2);
 	}
 	
-	public void toggleTypingNumeric() {
+	private void toggleTypingNumeric() {
 		toggleTyping(3);
 	}
 	
-	public void toggleTyping(int mode) {
+	private void toggleTyping(int mode) {
 		if (numericKeyboard.isVisible() && numericKeyboard.getTypingMode() == mode) {
 			showAlphanumKeyboard();
 		} else {
@@ -393,10 +386,7 @@ public class EditItemGUI implements NumKeyboardListener {
 	
 	public boolean editItemBackClicked() {
 		hideKeyboards();
-		if (numericKeyboard.isVisible()) {
-			return true; //przechwycenie wciśnięcia przycisku
-		}
-		return false;
+		return numericKeyboard.isVisible(); //przechwycenie wciśnięcia przycisku
 	}
 	
 	public void requestSaveEditedItem() {

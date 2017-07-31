@@ -4,13 +4,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-public class BasePreferences {
+class BasePreferences {
 	
-	public static final String SHARED_PREFERENCES_NAME = "ToDoTreeUserPreferences";
+	private static final String SHARED_PREFERENCES_NAME = "ToDoTreeUserPreferences";
 	
-	protected SharedPreferences sharedPreferences;
+	private SharedPreferences sharedPreferences;
 	
-	public BasePreferences(Activity activity) {
+	BasePreferences(Activity activity) {
 		sharedPreferences = activity.getApplicationContext()
 				.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 	}

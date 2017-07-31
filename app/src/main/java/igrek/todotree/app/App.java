@@ -9,7 +9,6 @@ import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.gui.GUI;
 import igrek.todotree.logger.Logs;
 import igrek.todotree.services.datatree.TreeManager;
-import igrek.todotree.services.preferences.Preferences;
 
 //TODO brak zapisu bazy jeśli nie było zmian
 
@@ -21,9 +20,6 @@ public class App extends BaseApp {
 	
 	@Inject
 	TreeManager treeManager;
-	
-	@Inject
-	Preferences preferences;
 	
 	@Inject
 	GUI gui;

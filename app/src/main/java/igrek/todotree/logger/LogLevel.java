@@ -1,6 +1,6 @@
 package igrek.todotree.logger;
 
-public enum LogLevel {
+enum LogLevel {
 	
 	OFF(0), //only for settings
 	
@@ -25,16 +25,8 @@ public enum LogLevel {
 		this.levelNumber = levelNumber;
 	}
 	
-	public boolean lower(LogLevel level2) {
-		return levelNumber < level2.levelNumber;
-	}
-	
 	public boolean lowerOrEqual(LogLevel level2) {
 		return levelNumber <= level2.levelNumber;
-	}
-	
-	public boolean higher(LogLevel level2) {
-		return levelNumber > level2.levelNumber;
 	}
 	
 	public boolean higherOrEqual(LogLevel level2) {

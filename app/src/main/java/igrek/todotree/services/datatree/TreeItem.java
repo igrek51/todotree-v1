@@ -19,7 +19,7 @@ public class TreeItem {
 	 * konstruktor kopiujący (razem z zawartością), element nadrzędny nie ma rodzica!
 	 * @param source źródłowy element
 	 */
-	public TreeItem(TreeItem source) {
+	TreeItem(TreeItem source) {
 		this.content = source.content;
 		this.children = new ArrayList<>();
 		for (TreeItem sourceChild : source.children) {
@@ -60,7 +60,7 @@ public class TreeItem {
 		return children.get(index);
 	}
 	
-	public int getChildIndex(TreeItem child) {
+	private int getChildIndex(TreeItem child) {
 		for (int i = 0; i < children.size(); i++) {
 			if (children.get(i) == child) {
 				return i;

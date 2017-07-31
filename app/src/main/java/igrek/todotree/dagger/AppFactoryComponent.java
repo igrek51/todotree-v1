@@ -5,10 +5,10 @@ import javax.inject.Singleton;
 
 import dagger.Component;
 import igrek.todotree.app.App;
+import igrek.todotree.controller.LogicActionController;
 import igrek.todotree.gui.edititem.EditItemGUI;
 import igrek.todotree.gui.numkeyboard.NumericKeyboardView;
 import igrek.todotree.gui.treelist.TreeListView;
-import igrek.todotree.controller.LogicActionController;
 
 @Singleton
 @Component(modules = {AppFactoryModule.class})

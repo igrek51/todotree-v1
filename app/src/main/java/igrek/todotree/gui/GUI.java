@@ -13,10 +13,10 @@ import android.widget.RelativeLayout;
 import java.util.List;
 
 import igrek.todotree.R;
+import igrek.todotree.controller.LogicActionController;
 import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.gui.edititem.EditItemGUI;
 import igrek.todotree.gui.treelist.TreeListView;
-import igrek.todotree.controller.LogicActionController;
 import igrek.todotree.services.datatree.TreeItem;
 
 public class GUI extends BaseGUI {
@@ -72,7 +72,7 @@ public class GUI extends BaseGUI {
 		updateItemsList(currentItem, null);
 	}
 	
-	public EditItemGUI getEditItemGUI(){
+	public EditItemGUI getEditItemGUI() {
 		return editItemGUI;
 	}
 	

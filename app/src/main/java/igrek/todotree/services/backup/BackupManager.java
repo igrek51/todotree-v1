@@ -23,12 +23,12 @@ public class BackupManager {
 	
 	private SimpleDateFormat dateFormat = new SimpleDateFormat("dd_MM_yyyy-HH_mm_ss", Locale.ENGLISH);
 	
-	public static final String BACKUP_FILE_PREFIX = "backup_";
+	private static final String BACKUP_FILE_PREFIX = "backup_";
 	
 	/** backupy z ostatnio zapisanych baz */
-	public static final int BACKUP_LAST_VERSIONS = 10;
+	private static final int BACKUP_LAST_VERSIONS = 10;
 	/** backupy z ostatnich dni */
-	public static final int BACKUP_LAST_DAYS = 14;
+	private static final int BACKUP_LAST_DAYS = 14;
 	
 	private FilesystemService filesystem;
 	private Preferences preferences;

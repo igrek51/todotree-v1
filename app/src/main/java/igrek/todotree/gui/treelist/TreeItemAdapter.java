@@ -2,6 +2,7 @@ package igrek.todotree.gui.treelist;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -21,7 +22,7 @@ import igrek.todotree.R;
 import igrek.todotree.controller.LogicActionController;
 import igrek.todotree.services.datatree.TreeItem;
 
-public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
+class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 	
 	private Context context;
 	private List<TreeItem> dataSource;
@@ -31,7 +32,7 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 	
 	private HashMap<Integer, View> storedViews;
 	
-	public TreeItemAdapter(Context context, List<TreeItem> dataSource, TreeListView listView, LogicActionController actionController) {
+	TreeItemAdapter(Context context, List<TreeItem> dataSource, TreeListView listView, LogicActionController actionController) {
 		super(context, 0, new ArrayList<TreeItem>());
 		this.context = context;
 		if (dataSource == null)
@@ -42,7 +43,7 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 		storedViews = new HashMap<>();
 	}
 	
-	public void setDataSource(List<TreeItem> dataSource) {
+	void setDataSource(List<TreeItem> dataSource) {
 		this.dataSource = dataSource;
 		storedViews = new HashMap<>();
 		notifyDataSetChanged();
@@ -52,11 +53,11 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 		return dataSource.get(position);
 	}
 	
-	public void setSelections(List<Integer> selections) {
+	void setSelections(List<Integer> selections) {
 		this.selections = selections;
 	}
 	
-	public View getStoredView(int position) {
+	View getStoredView(int position) {
 		if (position >= dataSource.size())
 			return null;
 		if (!storedViews.containsKey(position))
@@ -78,8 +79,9 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 		return (long) position;
 	}
 	
+	@NonNull
 	@Override
-	public View getView(final int position, View convertView, ViewGroup parent) {
+	public View getView(final int position, View convertView, @NonNull ViewGroup parent) {
 		
 		LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		
@@ -116,11 +118,8 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 			// ilość potomków
 			TextView tvItemChildSize = (TextView) itemView.findViewById(R.id.tvItemChildSize);
 			if (!item.isEmpty()) {
-				StringBuilder contentBuilder = new StringBuilder();
-				contentBuilder.append("[");
-				contentBuilder.append(item.size());
-				contentBuilder.append("]");
-				tvItemChildSize.setText(contentBuilder.toString());
+				String contentBuilder = "[" + item.size() + "]";
+				tvItemChildSize.setText(contentBuilder);
 			} else {
 				tvItemChildSize.setText("");
 			}

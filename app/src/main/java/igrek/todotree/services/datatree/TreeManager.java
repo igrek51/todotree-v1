@@ -28,7 +28,6 @@ public class TreeManager {
 	private TreeItem rootItem;
 	private TreeItem currentItem;
 	
-	private TreeItem editItem = null;
 	private Integer newItemPosition = null;
 	
 	private List<Integer> selectedPositions = null;
@@ -50,15 +49,14 @@ public class TreeManager {
 	public void reset() {
 		rootItem = new TreeItem(null, "/");
 		currentItem = rootItem;
-		editItem = null;
 		storedScrollPositions = new HashMap<>();
 	}
 	
-	public TreeItem getRootItem() {
+	private TreeItem getRootItem() {
 		return rootItem;
 	}
 	
-	public void setRootItem(TreeItem rootItem) {
+	private void setRootItem(TreeItem rootItem) {
 		this.rootItem = rootItem;
 		this.currentItem = rootItem;
 	}
@@ -67,17 +65,11 @@ public class TreeManager {
 		return currentItem;
 	}
 	
-	public TreeItem getEditItem() {
-		return editItem;
-	}
-	
-	public void setEditItem(TreeItem editItem) {
-		this.editItem = editItem;
+	public void setEditItem() {
 		this.newItemPosition = null;
 	}
 	
 	public void setNewItemPosition(Integer newItemPosition) {
-		this.editItem = null;
 		this.newItemPosition = newItemPosition;
 	}
 	
@@ -105,34 +97,14 @@ public class TreeManager {
 		goTo(item);
 	}
 	
-	public void goTo(TreeItem child) {
+	private void goTo(TreeItem child) {
 		currentItem = child;
-	}
-	
-	public void goToRoot() {
-		goTo(rootItem);
 	}
 	
 	//  DODAWANIE / USUWANIE ELEMENTÓW
 	
 	public void addToCurrent(TreeItem newItem) {
 		currentItem.add(newItem);
-	}
-	
-	public void deleteFromCurrent(int location) {
-		currentItem.remove(location);
-	}
-	
-	//  EDYCJA
-	
-	public void saveItemContent(TreeItem item, String content) {
-		item.setContent(content);
-	}
-	
-	public void saveItemContent(String content) {
-		if (editItem != null) {
-			editItem.setContent(content);
-		}
 	}
 	
 	//  ZAPIS / ODCZYT Z PLIKU
@@ -171,7 +143,7 @@ public class TreeManager {
 	
 	//  ZMIANA KOLEJNOŚCI
 	
-	public void replace(TreeItem parent, int pos1, int pos2) {
+	private void replace(TreeItem parent, int pos1, int pos2) {
 		if (pos1 == pos2)
 			return;
 		if (pos1 < 0 || pos2 < 0)
@@ -194,7 +166,7 @@ public class TreeManager {
 	 * @param parent   przodek przesuwanego elementu
 	 * @param position pozycja elementu przed przesuwaniem
 	 */
-	public void moveUp(TreeItem parent, int position) {
+	private void moveUp(TreeItem parent, int position) {
 		if (position <= 0)
 			return;
 		replace(parent, position, position - 1);
@@ -205,7 +177,7 @@ public class TreeManager {
 	 * @param parent   przodek przesuwanego elementu
 	 * @param position pozycja elementu przed przesuwaniem
 	 */
-	public void moveDown(TreeItem parent, int position) {
+	private void moveDown(TreeItem parent, int position) {
 		if (position >= parent.size() - 1)
 			return;
 		replace(parent, position, position + 1);
@@ -233,35 +205,6 @@ public class TreeManager {
 			position--;
 		}
 		return targetPosition;
-	}
-	
-	/**
-	 * przesuwa element z pozycji do wybranego miejsca
-	 * @param parent         przodek przesuwanego elementu
-	 * @param position       pozycja elementu przed przesuwaniem
-	 * @param targetPosition pozycja elemetnu po przesuwaniu
-	 */
-	public void moveTo(TreeItem parent, int position, int targetPosition) {
-		if (targetPosition < 0)
-			targetPosition = 0;
-		if (targetPosition >= parent.size())
-			targetPosition = parent.size() - 1;
-		while (position < targetPosition) {
-			moveDown(parent, position);
-			position++;
-		}
-		while (position > targetPosition) {
-			moveUp(parent, position);
-			position--;
-		}
-	}
-	
-	public void moveToEnd(TreeItem parent, int position) {
-		moveTo(parent, position, parent.size() - 1);
-	}
-	
-	public void moveToBegining(TreeItem parent, int position) {
-		moveTo(parent, position, 0);
 	}
 	
 	//  OBCINANIE NIEDOZWOLONYCH ZNAKÓW
@@ -313,9 +256,7 @@ public class TreeManager {
 	}
 	
 	public boolean isSelectionMode() {
-		if (selectedPositions == null)
-			return false;
-		return selectedPositions.size() > 0;
+		return selectedPositions != null && selectedPositions.size() > 0;
 	}
 	
 	public void startSelectionMode() {
@@ -330,27 +271,23 @@ public class TreeManager {
 		if (!isSelectionMode()) {
 			startSelectionMode();
 		}
-		if (selectedState == true) {
-			if (isItemSelected(position)) {
-				return;
-			} else {
+		if (selectedState) {
+			if (!isItemSelected(position)) {
 				selectedPositions.add(position);
 			}
 		} else {
 			if (isItemSelected(position)) {
-				selectedPositions.remove(new Integer(position));
+				selectedPositions.remove(Integer.valueOf(position));
 				if (selectedPositions.isEmpty()) {
 					selectedPositions = null;
 				}
-			} else {
-				return;
 			}
 		}
 	}
 	
-	public boolean isItemSelected(int position) {
+	private boolean isItemSelected(int position) {
 		for (Integer pos : selectedPositions) {
-			if (pos.intValue() == position) {
+			if (pos == position) {
 				return true;
 			}
 		}
@@ -374,9 +311,7 @@ public class TreeManager {
 	}
 	
 	public boolean isClipboardEmpty() {
-		if (clipboard == null)
-			return true;
-		return clipboard.size() == 0;
+		return clipboard == null || clipboard.size() == 0;
 	}
 	
 	public void clearClipboard() {
@@ -448,8 +383,7 @@ public class TreeManager {
 		
 		if (valueStr != null) {
 			try {
-				BigDecimal numeric = new BigDecimal(valueStr);
-				return numeric;
+				return new BigDecimal(valueStr);
 			} catch (NumberFormatException e) {
 				throw new NumberFormatException("Nieprawidłowy format liczby:\n" + valueStr);
 			}

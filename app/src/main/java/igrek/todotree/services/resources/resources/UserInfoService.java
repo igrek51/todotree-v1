@@ -26,13 +26,8 @@ public class UserInfoService {
 		this.gui = gui;
 	}
 	
-	public String resString(int resourceId) {
+	private String resString(int resourceId) {
 		return activity.getResources().getString(resourceId);
-	}
-	
-	public void setMainView(View mainView) {
-		this.mainView = mainView;
-		infobars.clear();
 	}
 	
 	/**
@@ -41,7 +36,7 @@ public class UserInfoService {
 	 * @param actionName tekst przycisku akcji (jeśli null - brak przycisku akcji)
 	 * @param action     akcja kliknięcia przycisku (jeśli null - schowanie wyświetlanego tekstu)
 	 */
-	public void showActionInfo(String info, View view, String actionName, InfoBarClickAction action, Integer color) {
+	private void showActionInfo(String info, View view, String actionName, InfoBarClickAction action, Integer color) {
 		
 		if (view == null) {
 			view = mainView;
@@ -81,17 +76,6 @@ public class UserInfoService {
 		snackbar.show();
 		infobars.put(view, snackbar);
 		Logs.info(info);
-	}
-	
-	public void showActionInfo(int resourceId, View view, String actionName, InfoBarClickAction action, Integer color) {
-		showActionInfo(resString(resourceId), view, actionName, action, color);
-	}
-	
-	public void hideInfo(View view) {
-		final Snackbar snackbar = infobars.get(view);
-		if (snackbar != null) {
-			snackbar.dismiss();
-		}
 	}
 	
 	

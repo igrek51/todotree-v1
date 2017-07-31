@@ -37,33 +37,36 @@ public class TreeSerializer {
 	 * ładuje zawartość elementów z tekstowych wierszy i dodaje do wybranego elementu
 	 * @param parent element, do którego dodane odczytane potomki
 	 * @param lines  lista wierszy, z których zostaną dodane elementy
-	 * @throws ParseException
+	 * @throws ParseException in case of invalid format
 	 */
 	private void loadTreeItems(TreeItem parent, List<String> lines) throws ParseException {
 		for (int i = 0; i < lines.size(); i++) {
 			String line = lines.get(i);
-			if (line.equals("{")) {
-				try {
-					int closingBracketIndex = findClosingBracket(lines, i);
-					//jeśli cokolwiek jest w środku bloku
-					if (closingBracketIndex - i >= 2) {
-						List<String> subLines = lines.subList(i + 1, closingBracketIndex);
-						TreeItem lastChild = parent.getLastChild();
-						if (lastChild == null) {
-							throw new ParseException("Brak pasującego elementu przed otwarciem nawiasu", i);
+			switch (line) {
+				case "{":
+					try {
+						int closingBracketIndex = findClosingBracket(lines, i);
+						//jeśli cokolwiek jest w środku bloku
+						if (closingBracketIndex - i >= 2) {
+							List<String> subLines = lines.subList(i + 1, closingBracketIndex);
+							TreeItem lastChild = parent.getLastChild();
+							if (lastChild == null) {
+								throw new ParseException("Brak pasującego elementu przed otwarciem nawiasu", i);
+							}
+							loadTreeItems(lastChild, subLines);
 						}
-						loadTreeItems(lastChild, subLines);
+						//przeskoczenie już przeanalizowanych wierszy
+						i = closingBracketIndex;
+					} catch (NoMatchingBracketException ex) {
+						throw new ParseException("Nie odnaleziono pasującego nawiasu domykającego", i);
 					}
-					//przeskoczenie już przeanalizowanych wierszy
-					i = closingBracketIndex;
-				} catch (NoMatchingBracketException ex) {
-					throw new ParseException("Nie odnaleziono pasującego nawiasu domykającego", i);
-				}
-			} else if (line.equals("}")) {
-				//nawiasy domykające zostały już przeanalizowane
-				throw new ParseException("Nadmiarowy nawias domykający", i);
-			} else {
-				parent.add(line);
+					break;
+				case "}":
+					//nawiasy domykające zostały już przeanalizowane
+					throw new ParseException("Nadmiarowy nawias domykający", i);
+				default:
+					parent.add(line);
+					break;
 			}
 		}
 	}

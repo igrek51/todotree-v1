@@ -1,11 +1,9 @@
 package igrek.todotree.app;
 
 public enum AppState {
-	ITEMS_LIST(1), EDIT_ITEM_CONTENT(2);
 	
-	int id;
+	ITEMS_LIST,
 	
-	AppState(int id) {
-		this.id = id;
-	}
+	EDIT_ITEM_CONTENT;
+	
 }

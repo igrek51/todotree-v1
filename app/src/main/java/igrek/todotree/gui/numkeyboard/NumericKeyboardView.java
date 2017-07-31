@@ -165,7 +165,7 @@ public class NumericKeyboardView extends KeyboardView implements KeyboardView.On
 		hideAndBack();
 	}
 	
-	private void typedHyphen(){
+	private void typedHyphen() {
 		EditItemGUI editItem = gui.getEditItemGUI();
 		if (editItem != null) {
 			editItem.quickInsertRange();

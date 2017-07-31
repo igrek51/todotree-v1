@@ -1,6 +1,5 @@
 package igrek.todotree.services.filesystem;
 
-import android.app.Activity;
 import android.os.Environment;
 
 import java.io.File;
@@ -13,16 +12,11 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
 
-import igrek.todotree.logger.Logs;
-
 public class FilesystemService {
-	
-	private Activity activity;
 	
 	private String pathToExtSD;
 	
-	public FilesystemService(Activity activity) {
-		this.activity = activity;
+	public FilesystemService() {
 		
 		// TODO get Android app private directory
 		
@@ -40,11 +34,7 @@ public class FilesystemService {
 		return new PathBuilder(pathToExtSD);
 	}
 	
-	public String internalAppDirectory() {
-		return activity.getFilesDir().toString();
-	}
-	
-	public List<String> listDir(String path) {
+	private List<String> listDir(String path) {
 		List<String> lista = new ArrayList<>();
 		File f = new File(path);
 		File file[] = f.listFiles();
@@ -58,25 +48,7 @@ public class FilesystemService {
 		return listDir(path.toString());
 	}
 	
-	public List<File> listFiles(String path) {
-		List<File> files = new ArrayList<>();
-		File f = new File(path);
-		File file[] = f.listFiles();
-		if (file == null) {
-			Logs.warn("file array null for path: " + path);
-			return files;
-		}
-		for (File aFile : file) {
-			files.add(aFile);
-		}
-		return files;
-	}
-	
-	public List<File> listFiles(PathBuilder path) {
-		return listFiles(path.toString());
-	}
-	
-	public byte[] openFile(String filename) throws IOException {
+	private byte[] openFile(String filename) throws IOException {
 		RandomAccessFile f = new RandomAccessFile(new File(filename), "r");
 		int length = (int) f.length();
 		byte[] data = new byte[length];
@@ -90,7 +62,7 @@ public class FilesystemService {
 		return new String(bytes, "UTF-8");
 	}
 	
-	public void saveFile(String filename, byte[] data) throws IOException {
+	private void saveFile(String filename, byte[] data) throws IOException {
 		File file = new File(filename);
 		FileOutputStream fos;
 		fos = new FileOutputStream(file);
@@ -103,22 +75,12 @@ public class FilesystemService {
 		saveFile(filename, str.getBytes());
 	}
 	
-	public boolean isDirectory(String path) {
-		File f = new File(path);
-		return f.exists() && f.isDirectory();
-	}
-	
-	public boolean isFile(String path) {
-		File f = new File(path);
-		return f.exists() && f.isFile();
-	}
-	
 	public boolean exists(String path) {
 		File f = new File(path);
 		return f.exists();
 	}
 	
-	public boolean delete(String path) {
+	private boolean delete(String path) {
 		File file = new File(path);
 		return file.delete();
 	}

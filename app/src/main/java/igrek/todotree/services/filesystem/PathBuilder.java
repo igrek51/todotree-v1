@@ -3,17 +3,18 @@ package igrek.todotree.services.filesystem;
 import java.io.File;
 
 public class PathBuilder {
-	String pathstr;
 	
-	public PathBuilder(String pathstr) {
+	private String pathstr;
+	
+	PathBuilder(String pathstr) {
 		this.pathstr = cutSlashFromEnd(pathstr);
 	}
 	
 	/**
-	 * konstruktor kopiujący
-	 * @param src
+	 * copy constructor
+	 * @param src source
 	 */
-	public PathBuilder(PathBuilder src) {
+	private PathBuilder(PathBuilder src) {
 		this.pathstr = src.pathstr;
 	}
 	
@@ -26,21 +27,14 @@ public class PathBuilder {
 		return new File(pathstr);
 	}
 	
-	public static String cutSlashFromBeginning(String pathstr) {
-		while (pathstr.length() > 0 && pathstr.charAt(0) == '/') {
-			pathstr = pathstr.substring(1);
-		}
-		return pathstr;
-	}
-	
-	public static String cutSlashFromEnd(String pathstr) {
+	private static String cutSlashFromEnd(String pathstr) {
 		while (pathstr.length() > 0 && pathstr.charAt(pathstr.length() - 1) == '/') {
 			pathstr = pathstr.substring(0, pathstr.length() - 1);
 		}
 		return pathstr;
 	}
 	
-	public static String trimSlash(String pathstr) {
+	private static String trimSlash(String pathstr) {
 		while (pathstr.length() > 0 && pathstr.charAt(0) == '/') {
 			pathstr = pathstr.substring(1);
 		}

@@ -50,8 +50,8 @@ public class AppFactoryModule {
 	
 	@Provides
 	@Singleton
-	FilesystemService provideFilesystemService(Activity activity) {
-		return new FilesystemService(activity);
+	FilesystemService provideFilesystemService() {
+		return new FilesystemService();
 	}
 	
 	@Provides

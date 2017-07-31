@@ -2,27 +2,26 @@ package igrek.todotree.app;
 
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.WindowManager;
 
 import igrek.todotree.logger.Logs;
 
 public abstract class BaseApp {
 	
-	public static final int FULLSCREEN_FLAG = WindowManager.LayoutParams.FLAG_FULLSCREEN | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED;
-	public static final boolean FULLSCREEN = false;
-	public static final boolean HIDE_TASKBAR = true;
-	public static final boolean KEEP_SCREEN_ON = false;
+	private static final int FULLSCREEN_FLAG = WindowManager.LayoutParams.FLAG_FULLSCREEN | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED;
+	private static final boolean FULLSCREEN = false;
+	private static final boolean HIDE_TASKBAR = true;
+	private static final boolean KEEP_SCREEN_ON = false;
 	
 	public AppCompatActivity activity;
 	private Thread.UncaughtExceptionHandler defaultUEH;
-	protected Menu menu;
 	
-	boolean running = true;
+	private boolean running = true;
 	
-	public BaseApp(AppCompatActivity activity) {
+	BaseApp(AppCompatActivity activity) {
 		this.activity = activity;
 	}
 	
@@ -72,6 +71,7 @@ public abstract class BaseApp {
 		activity.finish();
 	}
 	
+	@RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
 	public void onResizeEvent(Configuration newConfig) {
 		int screenWidthDp = newConfig.screenWidthDp;
 		int screenHeightDp = newConfig.screenHeightDp;
@@ -82,17 +82,6 @@ public abstract class BaseApp {
 			Logs.debug("Screen orientation changed: landscape");
 		} else if (orientation == Configuration.ORIENTATION_PORTRAIT) {
 			Logs.debug("Screen orientation changed: portrait");
-		}
-	}
-	
-	public void menuInit(Menu menu) {
-		this.menu = menu;
-	}
-	
-	public void setMenuItemVisible(int id, boolean visibility) {
-		MenuItem item = menu.findItem(id);
-		if (item != null) {
-			item.setVisible(visibility);
 		}
 	}
 	

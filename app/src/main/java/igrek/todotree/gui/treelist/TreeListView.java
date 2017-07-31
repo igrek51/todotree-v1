@@ -24,9 +24,9 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import igrek.todotree.controller.LogicActionController;
 import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.logger.Logs;
-import igrek.todotree.controller.LogicActionController;
 import igrek.todotree.services.datatree.TreeItem;
 import igrek.todotree.services.datatree.TreeManager;
 
@@ -289,7 +289,7 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
 			return new Rect(interpolate(startValue.left, endValue.left, fraction), interpolate(startValue.top, endValue.top, fraction), interpolate(startValue.right, endValue.right, fraction), interpolate(startValue.bottom, endValue.bottom, fraction));
 		}
 		
-		public int interpolate(int start, int end, float fraction) {
+		int interpolate(int start, int end, float fraction) {
 			return (int) (start + fraction * (end - start));
 		}
 	};
@@ -583,7 +583,6 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
 					if (Math.abs(dy) <= itemH * GESTURE_MAX_DY) { //zachowanie braku przesunięcia w pionie
 						//wejście wgłąb elementu smyraniem w prawo
 						//Logs.debug("gesture: go into intercepted, dx: " + (dx / getWidth()) + " , dy: " + (Math.abs(dy) / itemH));
-						TreeItem item = adapter.getItem(gestureStartPos);
 						actionController.itemGoIntoClicked(gestureStartPos);
 						gestureStartPos = null; //reset
 						return true;
