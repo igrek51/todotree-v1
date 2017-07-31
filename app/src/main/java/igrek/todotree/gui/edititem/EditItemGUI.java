@@ -12,7 +12,7 @@ import android.widget.TextView;
 import javax.inject.Inject;
 
 import igrek.todotree.R;
-import igrek.todotree.controller.LogicActionController;
+import igrek.todotree.controller.MainController;
 import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.gui.GUI;
 import igrek.todotree.gui.numkeyboard.NumKeyboardListener;
@@ -28,7 +28,7 @@ public class EditItemGUI implements NumKeyboardListener {
 	private NumericKeyboardView numericKeyboard;
 	
 	@Inject
-	LogicActionController actionController;
+	MainController actionController;
 	
 	public EditItemGUI(GUI gui, final TreeItem item, TreeItem parent) {
 		this.gui = gui;

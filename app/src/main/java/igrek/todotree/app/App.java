@@ -4,7 +4,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import javax.inject.Inject;
 
-import igrek.todotree.controller.LogicActionController;
+import igrek.todotree.controller.MainController;
 import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.gui.GUI;
 import igrek.todotree.logger.Logs;
@@ -19,7 +19,7 @@ public class App extends BaseApp {
 	GUI gui;
 	
 	@Inject
-	LogicActionController actionController;
+	MainController actionController;
 	
 	public App(AppCompatActivity activity) {
 		super(activity);

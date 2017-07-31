@@ -2,18 +2,16 @@ package igrek.todotree.gui;
 
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
-import android.os.Handler;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.widget.RelativeLayout;
 
 import java.util.List;
 
 import igrek.todotree.R;
-import igrek.todotree.controller.LogicActionController;
+import igrek.todotree.controller.MainController;
 import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.gui.edititem.EditItemGUI;
 import igrek.todotree.gui.treelist.TreeListView;
@@ -25,7 +23,7 @@ public class GUI extends BaseGUI {
 	private TreeListView itemsListView;
 	private EditItemGUI editItemGUI;
 	
-	LogicActionController actionController;
+	MainController actionController;
 	
 	public GUI(AppCompatActivity activity) {
 		super(activity);

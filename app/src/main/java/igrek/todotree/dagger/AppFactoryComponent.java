@@ -5,7 +5,7 @@ import javax.inject.Singleton;
 
 import dagger.Component;
 import igrek.todotree.app.App;
-import igrek.todotree.controller.LogicActionController;
+import igrek.todotree.controller.MainController;
 import igrek.todotree.gui.edititem.EditItemGUI;
 import igrek.todotree.gui.numkeyboard.NumericKeyboardView;
 import igrek.todotree.gui.treelist.TreeListView;
@@ -24,6 +24,6 @@ public interface AppFactoryComponent {
 	
 	void inject(NumericKeyboardView there);
 	
-	LogicActionController getActionController();
+	MainController getActionController();
 	
 }

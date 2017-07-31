@@ -24,7 +24,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import igrek.todotree.controller.LogicActionController;
+import igrek.todotree.controller.MainController;
 import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.logger.Logs;
 import igrek.todotree.services.datatree.TreeItem;
@@ -36,7 +36,7 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
 	TreeManager treeManager;
 	
 	@Inject
-	LogicActionController actionController;
+	MainController actionController;
 	
 	private List<TreeItem> items;
 	private TreeItemAdapter adapter;

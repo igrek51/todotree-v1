@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import igrek.todotree.R;
-import igrek.todotree.controller.LogicActionController;
+import igrek.todotree.controller.MainController;
 import igrek.todotree.services.datatree.TreeItem;
 
 class TreeItemAdapter extends ArrayAdapter<TreeItem> {
@@ -28,11 +28,11 @@ class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 	private List<TreeItem> dataSource;
 	private List<Integer> selections = null;
 	private TreeListView listView;
-	private LogicActionController actionController;
+	private MainController actionController;
 	
 	private HashMap<Integer, View> storedViews;
 	
-	TreeItemAdapter(Context context, List<TreeItem> dataSource, TreeListView listView, LogicActionController actionController) {
+	TreeItemAdapter(Context context, List<TreeItem> dataSource, TreeListView listView, MainController actionController) {
 		super(context, 0, new ArrayList<TreeItem>());
 		this.context = context;
 		if (dataSource == null)

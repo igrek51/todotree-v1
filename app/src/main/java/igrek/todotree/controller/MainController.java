@@ -27,12 +27,9 @@ import igrek.todotree.services.resources.resources.InfoBarClickAction;
 import igrek.todotree.services.resources.resources.UserInfoService;
 
 //TODO brak zapisu bazy jeśli nie było zmian
-
 //TODO: funkcja cofania zmian - zapisywanie modyfikacji, dodawania, usuwania elementów, przesuwania
 
-//TODO SERWISY: do blokowania bazy, do pobierania treści komunikatów, stan aplikacji
-
-public class LogicActionController {
+public class MainController {
 	
 	private TreeManager treeManager;
 	private BackupManager backupManager;
@@ -44,7 +41,7 @@ public class LogicActionController {
 	private AppData appData;
 	private DatabaseLock lock;
 	
-	public LogicActionController(TreeManager treeManager, BackupManager backupManager, GUI gui, UserInfoService userInfo, ClipboardManager clipboardManager, Preferences preferences, App app, AppData appData, DatabaseLock lock) {
+	public MainController(TreeManager treeManager, BackupManager backupManager, GUI gui, UserInfoService userInfo, ClipboardManager clipboardManager, Preferences preferences, App app, AppData appData, DatabaseLock lock) {
 		// TODO split responsibilities to multiple services
 		this.treeManager = treeManager;
 		this.backupManager = backupManager;
@@ -65,20 +62,13 @@ public class LogicActionController {
 			exitApp(false);
 			return true;
 		} else if (id == R.id.action_save_exit) {
-			if (appData.getState() == AppState.EDIT_ITEM_CONTENT) {
-				gui.requestSaveEditedItem();
-			}
-			exitApp(true);
+			optionSaveAndExit();
 			return true;
 		} else if (id == R.id.action_save) {
-			saveDatabase();
-			userInfo.showInfo("Zapisano bazę danych.");
+			optionSave();
 			return true;
 		} else if (id == R.id.action_reload) {
-			treeManager.reset();
-			treeManager.loadRootTree();
-			updateItemsList();
-			userInfo.showInfo("Wczytano bazę danych.");
+			optionReload();
 			return true;
 		} else if (id == R.id.action_copy) {
 			copySelectedItems(true);
@@ -92,6 +82,25 @@ public class LogicActionController {
 			sumSelected();
 		}
 		return false;
+	}
+	
+	private void optionReload() {
+		treeManager.reset();
+		treeManager.loadRootTree();
+		updateItemsList();
+		userInfo.showInfo("Database loaded.");
+	}
+	
+	private void optionSave() {
+		saveDatabase();
+		userInfo.showInfo("Database saved.");
+	}
+	
+	private void optionSaveAndExit() {
+		if (appData.getState() == AppState.EDIT_ITEM_CONTENT) {
+			gui.requestSaveEditedItem();
+		}
+		exitApp(true);
 	}
 	
 	private void saveDatabase() {
@@ -156,7 +165,7 @@ public class LogicActionController {
 		appData.setState(AppState.ITEMS_LIST);
 		gui.showItemsList(treeManager.getCurrentItem());
 		restoreScrollPosition(treeManager.getCurrentItem());
-		userInfo.showInfo("Anulowano edycję elementu.");
+		userInfo.showInfo("Cancelled editing item.");
 	}
 	
 	private void removeItem(final int position) {
@@ -165,20 +174,20 @@ public class LogicActionController {
 		
 		treeManager.getCurrentItem().remove(position);
 		updateItemsList();
-		userInfo.showInfoCancellable("Usunięto element: " + removing.getContent(), new InfoBarClickAction() {
+		userInfo.showInfoCancellable("Item removed: " + removing.getContent(), new InfoBarClickAction() {
 			@Override
 			public void onClick() {
-				restoreItem(removing, position);
+				restoreRemovedItem(removing, position);
 			}
 		});
 	}
 	
-	private void restoreItem(TreeItem restored, int position) {
+	private void restoreRemovedItem(TreeItem restored, int position) {
 		treeManager.getCurrentItem().add(position, restored);
 		appData.setState(AppState.ITEMS_LIST);
 		gui.showItemsList(treeManager.getCurrentItem());
 		gui.scrollToItem(position);
-		userInfo.showInfo("Przywrócono usunięty element.");
+		userInfo.showInfo("Removed item restored.");
 	}
 	
 	private void removeSelectedItems(boolean info) {
@@ -194,7 +203,7 @@ public class LogicActionController {
 			treeManager.getCurrentItem().remove(id);
 		}
 		if (info) {
-			userInfo.showInfo("Usunięto zaznaczone elementy: " + selectedIds.size());
+			userInfo.showInfo("Selected items removed: " + selectedIds.size());
 		}
 		treeManager.cancelSelectionMode();
 		updateItemsList();
@@ -246,11 +255,11 @@ public class LogicActionController {
 				TreeItem item = treeManager.getClipboard().get(0);
 				clipboardManager.copyToSystemClipboard(item.getContent());
 				if (info) {
-					userInfo.showInfo("Skopiowano element: " + item.getContent());
+					userInfo.showInfo("Item copied: " + item.getContent());
 				}
 			} else {
 				if (info) {
-					userInfo.showInfo("Skopiowano zaznaczone elementy: " + treeManager.getClipboardSize());
+					userInfo.showInfo("Selected items copied: " + treeManager.getClipboardSize());
 				}
 			}
 		}
@@ -259,10 +268,10 @@ public class LogicActionController {
 	private void cutSelectedItems() {
 		if (treeManager.isSelectionMode() && treeManager.getSelectedItemsCount() > 0) {
 			copySelectedItems(false);
-			userInfo.showInfo("Wycięto zaznaczone elementy: " + treeManager.getSelectedItemsCount());
+			userInfo.showInfo("Selected items cut: " + treeManager.getSelectedItemsCount());
 			removeSelectedItems(false);
 		} else {
-			userInfo.showInfo("Brak zaznaczonych elementów");
+			userInfo.showInfo("No selected items");
 		}
 	}
 	
@@ -272,18 +281,18 @@ public class LogicActionController {
 			if (systemClipboard != null) {
 				//wklejanie 1 elementu z systemowego schowka
 				treeManager.getCurrentItem().add(systemClipboard);
-				userInfo.showInfo("Wklejono element: " + systemClipboard);
+				userInfo.showInfo("Item pasted: " + systemClipboard);
 				updateItemsList();
 				gui.scrollToItem(-1);
 			} else {
-				userInfo.showInfo("Schowek jest pusty.");
+				userInfo.showInfo("Clipboard is empty.");
 			}
 		} else {
 			for (TreeItem clipboardItem : treeManager.getClipboard()) {
 				clipboardItem.setParent(treeManager.getCurrentItem());
 				treeManager.addToCurrent(clipboardItem);
 			}
-			userInfo.showInfo("Wklejono elementy: " + treeManager.getClipboardSize());
+			userInfo.showInfo("Items pasted: " + treeManager.getClipboardSize());
 			treeManager.recopyClipboard();
 			updateItemsList();
 			gui.scrollToItem(-1);
@@ -315,7 +324,7 @@ public class LogicActionController {
 				clipboardStr = clipboardStr.replace('.', ',');
 				
 				clipboardManager.copyToSystemClipboard(clipboardStr);
-				userInfo.showInfo("Skopiowano sumę do schowka: " + clipboardStr);
+				userInfo.showInfo("Sum copied to clipboard: " + clipboardStr);
 				
 			} catch (NumberFormatException e) {
 				userInfo.showInfo(e.getMessage());
@@ -341,10 +350,10 @@ public class LogicActionController {
 	public void newItemSaved(String content) {
 		content = treeManager.trimContent(content);
 		if (content.isEmpty()) {
-			userInfo.showInfo("Pusty element został usunięty.");
+			userInfo.showInfo("Empty item has been removed.");
 		} else {
 			treeManager.getCurrentItem().add(treeManager.getNewItemPosition(), content);
-			userInfo.showInfo("Zapisano nowy element.");
+			userInfo.showInfo("New item has been saved.");
 		}
 		appData.setState(AppState.ITEMS_LIST);
 		gui.showItemsList(treeManager.getCurrentItem());
@@ -359,11 +368,12 @@ public class LogicActionController {
 	public void editedItemSaved(TreeItem editedItem, String content) {
 		content = treeManager.trimContent(content);
 		if (content.isEmpty()) {
+			// TODO repeatable code
 			treeManager.getCurrentItem().remove(editedItem);
-			userInfo.showInfo("Pusty element został usunięty.");
+			userInfo.showInfo("Empty item has been removed.");
 		} else {
 			editedItem.setContent(content);
-			userInfo.showInfo("Zapisano element.");
+			userInfo.showInfo("Item has been saved.");
 		}
 		treeManager.setEditItem();
 		appData.setState(AppState.ITEMS_LIST);
@@ -377,15 +387,16 @@ public class LogicActionController {
 		Integer editedItemIndex = null;
 		if (editedItem == null) { //nowy element
 			if (content.isEmpty()) {
+				// repeatable code
 				treeManager.setEditItem();
 				appData.setState(AppState.ITEMS_LIST);
 				gui.showItemsList(treeManager.getCurrentItem());
 				restoreScrollPosition(treeManager.getCurrentItem());
-				userInfo.showInfo("Pusty element został usunięty.");
+				userInfo.showInfo("Empty item has been removed.");
 			} else {
 				editedItemIndex = treeManager.getNewItemPosition();
 				treeManager.getCurrentItem().add(treeManager.getNewItemPosition(), content);
-				userInfo.showInfo("Zapisano nowy element.");
+				userInfo.showInfo("New item has been saved.");
 			}
 		} else { //edycja
 			if (content.isEmpty()) {
@@ -394,11 +405,11 @@ public class LogicActionController {
 				appData.setState(AppState.ITEMS_LIST);
 				gui.showItemsList(treeManager.getCurrentItem());
 				restoreScrollPosition(treeManager.getCurrentItem());
-				userInfo.showInfo("Pusty element został usunięty.");
+				userInfo.showInfo("Empty item has been removed.");
 			} else {
 				editedItemIndex = editedItem.getIndexInParent();
 				editedItem.setContent(content);
-				userInfo.showInfo("Zapisano element.");
+				userInfo.showInfo("Item has been saved.");
 			}
 		}
 		if (editedItemIndex != null) {
@@ -416,31 +427,33 @@ public class LogicActionController {
 		if (editedItem == null) { //nowy element
 			newItemIndex = treeManager.getNewItemPosition();
 			if (content.isEmpty()) {
+				// TODO repeatable code
 				treeManager.setEditItem();
 				appData.setState(AppState.ITEMS_LIST);
 				gui.showItemsList(treeManager.getCurrentItem());
 				restoreScrollPosition(treeManager.getCurrentItem());
-				userInfo.showInfo("Pusty element został usunięty.");
+				userInfo.showInfo("Empty item has been removed.");
 				return;
 			} else {
 				treeManager.getCurrentItem().add(treeManager.getNewItemPosition(), content);
 				newItemIndex++;
-				userInfo.showInfo("Zapisano nowy element.");
+				userInfo.showInfo("New item has been saved.");
 			}
 		} else { //edycja
 			newItemIndex = editedItem.getIndexInParent();
 			if (content.isEmpty()) {
+				// TODO repeatable code
 				treeManager.getCurrentItem().remove(editedItem);
 				treeManager.setEditItem();
 				appData.setState(AppState.ITEMS_LIST);
 				gui.showItemsList(treeManager.getCurrentItem());
 				restoreScrollPosition(treeManager.getCurrentItem());
-				userInfo.showInfo("Pusty element został usunięty.");
+				userInfo.showInfo("Empty item has been removed.");
 				return;
 			} else {
 				editedItem.setContent(content);
 				newItemIndex++;
-				userInfo.showInfo("Zapisano element.");
+				userInfo.showInfo("Item has been saved.");
 			}
 		}
 		//dodanie nowego elementu
@@ -449,7 +462,7 @@ public class LogicActionController {
 	
 	public void itemRemoveClicked(int position) {// removing locked before going into first element
 		if (lock.isLocked()) {
-			Logs.warn("Database is locked");
+			Logs.warn("Database is locked.");
 		} else {
 			if (treeManager.isSelectionMode()) {
 				removeSelectedItems(true);
@@ -472,7 +485,10 @@ public class LogicActionController {
 	}
 	
 	public void itemGoIntoClicked(int position) {
-		lock.setLocked(false);
+		if (lock.isLocked()) {
+			lock.setLocked(false);
+			Logs.debug("Database unlocked.");
+		}
 		treeManager.cancelSelectionMode();
 		treeManager.goInto(position, gui.getCurrentScrollPos());
 		updateItemsList();
@@ -495,7 +511,7 @@ public class LogicActionController {
 				
 				// blokada wejścia wgłąb na pierwszym poziomie poprzez kliknięcie
 				if (lock.isLocked()) {
-					Logs.warn("Database is locked");
+					Logs.warn("Database is locked.");
 				} else {
 					itemGoIntoClicked(position);
 				}
@@ -518,6 +534,8 @@ public class LogicActionController {
 		addItemClickedPos(-1);
 	}
 	
-	public void toolbarBackClicked() {backClicked();}
+	public void toolbarBackClicked() {
+		backClicked();
+	}
 	
 }
