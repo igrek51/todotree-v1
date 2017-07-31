@@ -8,8 +8,9 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import igrek.todotree.app.App;
-import igrek.todotree.gui.GUI;
+import igrek.todotree.app.AppData;
 import igrek.todotree.controller.LogicActionController;
+import igrek.todotree.gui.GUI;
 import igrek.todotree.services.backup.BackupManager;
 import igrek.todotree.services.clipboard.ClipboardManager;
 import igrek.todotree.services.datatree.TreeManager;
@@ -85,8 +86,8 @@ public class AppFactoryModule {
 	
 	@Provides
 	@Singleton
-	LogicActionController provideLogicActionController(TreeManager treeManager, BackupManager backupManager, GUI gui, UserInfoService userInfo, ClipboardManager clipboardManager, Preferences preferences, App app) {
-		return new LogicActionController(treeManager, backupManager, gui, userInfo, clipboardManager, preferences, app);
+	LogicActionController provideLogicActionController(TreeManager treeManager, BackupManager backupManager, GUI gui, UserInfoService userInfo, ClipboardManager clipboardManager, Preferences preferences, App app, AppData appData) {
+		return new LogicActionController(treeManager, backupManager, gui, userInfo, clipboardManager, preferences, app, appData);
 	}
 	
 	@Provides
@@ -99,6 +100,12 @@ public class AppFactoryModule {
 	@Singleton
 	ClipboardManager provideClipboardManager(Activity activity) {
 		return new ClipboardManager(activity);
+	}
+	
+	@Provides
+	@Singleton
+	AppData provideAppData() {
+		return new AppData();
 	}
 	
 }

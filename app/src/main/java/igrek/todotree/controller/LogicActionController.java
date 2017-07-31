@@ -8,6 +8,7 @@ import java.util.List;
 
 import igrek.todotree.R;
 import igrek.todotree.app.App;
+import igrek.todotree.app.AppData;
 import igrek.todotree.app.AppState;
 import igrek.todotree.exceptions.NoSuperItemException;
 import igrek.todotree.gui.GUI;
@@ -30,8 +31,9 @@ public class LogicActionController {
 	private ClipboardManager clipboardManager;
 	private Preferences preferences;
 	private App app;
+	private AppData appData;
 	
-	public LogicActionController(TreeManager treeManager, BackupManager backupManager, GUI gui, UserInfoService userInfo, ClipboardManager clipboardManager, Preferences preferences, App app) {
+	public LogicActionController(TreeManager treeManager, BackupManager backupManager, GUI gui, UserInfoService userInfo, ClipboardManager clipboardManager, Preferences preferences, App app, AppData appData) {
 		// split responsibilities to multiple services
 		this.treeManager = treeManager;
 		this.backupManager = backupManager;
@@ -40,6 +42,7 @@ public class LogicActionController {
 		this.clipboardManager = clipboardManager;
 		this.preferences = preferences;
 		this.app = app;
+		this.appData = appData;
 	}
 	
 	public boolean optionsSelect(int id) {
@@ -50,7 +53,7 @@ public class LogicActionController {
 			exitApp(false);
 			return true;
 		} else if (id == R.id.action_save_exit) {
-			if (app.getState() == AppState.EDIT_ITEM_CONTENT) {
+			if (appData.getState() == AppState.EDIT_ITEM_CONTENT) {
 				gui.requestSaveEditedItem();
 			}
 			exitApp(true);
@@ -84,12 +87,12 @@ public class LogicActionController {
 		backupManager.saveBackupFile();
 	}
 	
-	public void updateItemsList() {
+	private void updateItemsList() {
 		gui.updateItemsList(treeManager.getCurrentItem(), treeManager.getSelectedItems());
-		app.setState(AppState.ITEMS_LIST);
+		appData.setState(AppState.ITEMS_LIST);
 	}
 	
-	public void exitApp(boolean withSaving) {
+	private void exitApp(boolean withSaving) {
 		//TODO Najpierw wyświetlić exit screen, potem zapisywać bazę
 		if (withSaving) {
 			saveDatabase();
@@ -101,7 +104,7 @@ public class LogicActionController {
 	/**
 	 * @param position pozycja nowego elementu (0 - początek, ujemna wartość - na końcu listy)
 	 */
-	public void newItem(int position) {
+	private void newItem(int position) {
 		if (position < 0)
 			position = treeManager.getCurrentItem().size();
 		if (position > treeManager.getCurrentItem().size())
@@ -109,25 +112,25 @@ public class LogicActionController {
 		treeManager.storeScrollPosition(treeManager.getCurrentItem(), gui.getCurrentScrollPos());
 		treeManager.setNewItemPosition(position);
 		gui.showEditItemPanel(null, treeManager.getCurrentItem());
-		app.setState(AppState.EDIT_ITEM_CONTENT);
+		appData.setState(AppState.EDIT_ITEM_CONTENT);
 	}
 	
-	public void editItem(TreeItem item, TreeItem parent) {
+	private void editItem(TreeItem item, TreeItem parent) {
 		treeManager.storeScrollPosition(treeManager.getCurrentItem(), gui.getCurrentScrollPos());
 		treeManager.setEditItem(item);
 		gui.showEditItemPanel(item, parent);
-		app.setState(AppState.EDIT_ITEM_CONTENT);
+		appData.setState(AppState.EDIT_ITEM_CONTENT);
 	}
 	
-	public void discardEditingItem() {
+	private void discardEditingItem() {
 		treeManager.setEditItem(null);
-		app.setState(AppState.ITEMS_LIST);
+		appData.setState(AppState.ITEMS_LIST);
 		gui.showItemsList(treeManager.getCurrentItem());
 		restoreScrollPosition(treeManager.getCurrentItem());
 		userInfo.showInfo("Anulowano edycję elementu.");
 	}
 	
-	public void removeItem(final int position) {
+	private void removeItem(final int position) {
 		
 		final TreeItem removing = treeManager.getCurrentItem().getChild(position);
 		
@@ -143,13 +146,13 @@ public class LogicActionController {
 	
 	private void restoreItem(TreeItem restored, int position) {
 		treeManager.getCurrentItem().add(position, restored);
-		app.setState(AppState.ITEMS_LIST);
+		appData.setState(AppState.ITEMS_LIST);
 		gui.showItemsList(treeManager.getCurrentItem());
 		gui.scrollToItem(position);
 		userInfo.showInfo("Przywrócono usunięty element.");
 	}
 	
-	public void removeSelectedItems(boolean info) {
+	private void removeSelectedItems(boolean info) {
 		List<Integer> selectedIds = treeManager.getSelectedItems();
 		//posortowanie malejąco (żeby przy usuwaniu nie nadpisać indeksów)
 		Collections.sort(selectedIds, new Comparator<Integer>() {
@@ -180,7 +183,7 @@ public class LogicActionController {
 		}
 	}
 	
-	public void restoreScrollPosition(TreeItem parent) {
+	private void restoreScrollPosition(TreeItem parent) {
 		Integer savedScrollPos = treeManager.restoreScrollPosition(parent);
 		if (savedScrollPos != null) {
 			gui.scrollToPosition(savedScrollPos);
@@ -188,14 +191,14 @@ public class LogicActionController {
 	}
 	
 	public void backClicked() {
-		if (app.getState() == AppState.ITEMS_LIST) {
+		if (appData.getState() == AppState.ITEMS_LIST) {
 			if (treeManager.isSelectionMode()) {
 				treeManager.cancelSelectionMode();
 				updateItemsList();
 			} else {
 				goUp();
 			}
-		} else if (app.getState() == AppState.EDIT_ITEM_CONTENT) {
+		} else if (appData.getState() == AppState.EDIT_ITEM_CONTENT) {
 			if (gui.editItemBackClicked())
 				return;
 			discardEditingItem();
@@ -314,7 +317,7 @@ public class LogicActionController {
 			treeManager.getCurrentItem().add(treeManager.getNewItemPosition(), content);
 			userInfo.showInfo("Zapisano nowy element.");
 		}
-		app.setState(AppState.ITEMS_LIST);
+		appData.setState(AppState.ITEMS_LIST);
 		gui.showItemsList(treeManager.getCurrentItem());
 		if (treeManager.getNewItemPosition() == treeManager.getCurrentItem().size() - 1) {
 			gui.scrollToBottom();
@@ -334,7 +337,7 @@ public class LogicActionController {
 			userInfo.showInfo("Zapisano element.");
 		}
 		treeManager.setEditItem(null);
-		app.setState(AppState.ITEMS_LIST);
+		appData.setState(AppState.ITEMS_LIST);
 		gui.showItemsList(treeManager.getCurrentItem());
 		restoreScrollPosition(treeManager.getCurrentItem());
 	}
@@ -346,7 +349,7 @@ public class LogicActionController {
 		if (editedItem == null) { //nowy element
 			if (content.isEmpty()) {
 				treeManager.setEditItem(null);
-				app.setState(AppState.ITEMS_LIST);
+				appData.setState(AppState.ITEMS_LIST);
 				gui.showItemsList(treeManager.getCurrentItem());
 				restoreScrollPosition(treeManager.getCurrentItem());
 				userInfo.showInfo("Pusty element został usunięty.");
@@ -359,7 +362,7 @@ public class LogicActionController {
 			if (content.isEmpty()) {
 				treeManager.getCurrentItem().remove(editedItem);
 				treeManager.setEditItem(null);
-				app.setState(AppState.ITEMS_LIST);
+				appData.setState(AppState.ITEMS_LIST);
 				gui.showItemsList(treeManager.getCurrentItem());
 				restoreScrollPosition(treeManager.getCurrentItem());
 				userInfo.showInfo("Pusty element został usunięty.");
@@ -385,7 +388,7 @@ public class LogicActionController {
 			newItemIndex = treeManager.getNewItemPosition();
 			if (content.isEmpty()) {
 				treeManager.setEditItem(null);
-				app.setState(AppState.ITEMS_LIST);
+				appData.setState(AppState.ITEMS_LIST);
 				gui.showItemsList(treeManager.getCurrentItem());
 				restoreScrollPosition(treeManager.getCurrentItem());
 				userInfo.showInfo("Pusty element został usunięty.");
@@ -400,7 +403,7 @@ public class LogicActionController {
 			if (content.isEmpty()) {
 				treeManager.getCurrentItem().remove(editedItem);
 				treeManager.setEditItem(null);
-				app.setState(AppState.ITEMS_LIST);
+				appData.setState(AppState.ITEMS_LIST);
 				gui.showItemsList(treeManager.getCurrentItem());
 				restoreScrollPosition(treeManager.getCurrentItem());
 				userInfo.showInfo("Pusty element został usunięty.");
