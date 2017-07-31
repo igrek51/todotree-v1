@@ -28,7 +28,7 @@ public class GUI extends BaseGUI implements IEventObserver {
 	private ActionBar actionBar;
 	private TreeListView itemsListView;
 	private EditItemGUI editItemGUI;
-
+	
 	LogicActionController actionController;
 	
 	public GUI(AppCompatActivity activity) {

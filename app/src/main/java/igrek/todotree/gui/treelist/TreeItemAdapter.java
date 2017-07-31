@@ -19,73 +19,76 @@ import java.util.List;
 
 import igrek.todotree.R;
 import igrek.todotree.logic.LogicActionController;
-import igrek.todotree.logic.controller.AppController;
 import igrek.todotree.logic.datatree.TreeItem;
-import igrek.todotree.logic.events.SelectedItemClickedEvent;
 
 public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
-
+	
 	private Context context;
 	private List<TreeItem> dataSource;
 	private List<Integer> selections = null;
 	private TreeListView listView;
-    private LogicActionController actionController;
-
+	private LogicActionController actionController;
+	
 	private HashMap<Integer, View> storedViews;
-
+	
 	public TreeItemAdapter(Context context, List<TreeItem> dataSource, TreeListView listView, LogicActionController actionController) {
 		super(context, 0, new ArrayList<TreeItem>());
 		this.context = context;
-		if (dataSource == null) dataSource = new ArrayList<>();
+		if (dataSource == null)
+			dataSource = new ArrayList<>();
 		this.dataSource = dataSource;
 		this.listView = listView;
 		this.actionController = actionController;
 		storedViews = new HashMap<>();
 	}
-
+	
 	public void setDataSource(List<TreeItem> dataSource) {
 		this.dataSource = dataSource;
 		storedViews = new HashMap<>();
 		notifyDataSetChanged();
 	}
-
+	
 	public TreeItem getItem(int position) {
 		return dataSource.get(position);
 	}
-
+	
 	public void setSelections(List<Integer> selections) {
 		this.selections = selections;
 	}
-
+	
 	public View getStoredView(int position) {
-		if (position >= dataSource.size()) return null;
-		if (!storedViews.containsKey(position)) return null;
+		if (position >= dataSource.size())
+			return null;
+		if (!storedViews.containsKey(position))
+			return null;
 		return storedViews.get(position);
 	}
-
+	
 	@Override
 	public int getCount() {
 		return dataSource.size() + 1;
 	}
-
+	
 	@Override
 	public long getItemId(int position) {
-		if (position < 0) return -1;
-		if (position >= dataSource.size()) return -1;
+		if (position < 0)
+			return -1;
+		if (position >= dataSource.size())
+			return -1;
 		return (long) position;
 	}
-
+	
 	@Override
 	public View getView(final int position, View convertView, ViewGroup parent) {
-
+		
 		LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
+		
 		//TODO wększy padding przycisków edycji i usuwania, zmaksymalizowanie obszaru aktywnego przycisków (edycji, przesuwania)
-
+		
 		if (position == dataSource.size()) {
 			//plusik
 			View itemPlus = inflater.inflate(R.layout.item_plus, parent, false);
-
+			
 			ImageButton plusButton = (ImageButton) itemPlus.findViewById(R.id.buttonAddNewItem);
 			plusButton.setFocusableInTouchMode(false);
 			plusButton.setFocusable(false);
@@ -95,12 +98,12 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 					actionController.addItemClicked();
 				}
 			});
-
+			
 			return itemPlus;
 		} else {
 			final View itemView = inflater.inflate(R.layout.tree_item, parent, false);
 			final TreeItem item = dataSource.get(position);
-
+			
 			//zawartość tekstowa elementu
 			TextView textView = (TextView) itemView.findViewById(R.id.tvItemContent);
 			if (!item.isEmpty()) {
@@ -109,7 +112,7 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 				textView.setTypeface(null, Typeface.NORMAL);
 			}
 			textView.setText(item.getContent());
-
+			
 			// ilość potomków
 			TextView tvItemChildSize = (TextView) itemView.findViewById(R.id.tvItemChildSize);
 			if (!item.isEmpty()) {
@@ -121,7 +124,7 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 			} else {
 				tvItemChildSize.setText("");
 			}
-
+			
 			//edycja elementu
 			ImageButton editButton = (ImageButton) itemView.findViewById(R.id.buttonItemEdit);
 			editButton.setFocusableInTouchMode(false);
@@ -130,13 +133,13 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 				editButton.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
-                        actionController.itemEditClicked(item);
+						actionController.itemEditClicked(item);
 					}
 				});
 			} else {
 				editButton.setVisibility(View.GONE);
 			}
-
+			
 			//wejście w element
 			ImageButton goIntoButton = (ImageButton) itemView.findViewById(R.id.buttonItemGoInto);
 			goIntoButton.setFocusableInTouchMode(false);
@@ -145,7 +148,7 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 				goIntoButton.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
-                        actionController.itemGoIntoClicked(position);
+						actionController.itemGoIntoClicked(position);
 					}
 				});
 			} else {
@@ -153,7 +156,7 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 			}
 			// ukryte wejście wgłąb elementu - blokada
 			goIntoButton.setVisibility(View.GONE);
-
+			
 			//usuwanie elementu
 			ImageButton removeButton = (ImageButton) itemView.findViewById(R.id.buttonItemRemove);
 			removeButton.setFocusableInTouchMode(false);
@@ -164,7 +167,7 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 					actionController.itemRemoveClicked(position);
 				}
 			});
-
+			
 			//przesuwanie
 			final ImageButton moveButton = (ImageButton) itemView.findViewById(R.id.buttonItemMove);
 			moveButton.setFocusableInTouchMode(false);
@@ -175,10 +178,12 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 					public boolean onTouch(View v, MotionEvent event) {
 						switch (event.getAction()) {
 							case MotionEvent.ACTION_DOWN:
-								listView.onItemMoveButtonPressed(position, item, itemView, event.getX(), event.getY() + moveButton.getTop());
+								listView.onItemMoveButtonPressed(position, item, itemView, event.getX(), event
+										.getY() + moveButton.getTop());
 								return false;
 							case MotionEvent.ACTION_UP:
-								listView.onItemMoveButtonReleased(position, item, itemView, event.getX(), event.getY() + moveButton.getTop());
+								listView.onItemMoveButtonReleased(position, item, itemView, event.getX(), event
+										.getY() + moveButton.getTop());
 								return true;
 						}
 						return false;
@@ -194,7 +199,7 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 				moveButton.setVisibility(View.INVISIBLE);
 				moveButton.setLayoutParams(new RelativeLayout.LayoutParams(0, 0));
 			}
-
+			
 			//dodawanie nowego elementu
 			ImageButton addButton = (ImageButton) itemView.findViewById(R.id.buttonItemAddHere);
 			addButton.setFocusableInTouchMode(false);
@@ -203,18 +208,18 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 				addButton.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
-                        actionController.addItemClickedPos(position);
+						actionController.addItemClickedPos(position);
 					}
 				});
 			} else {
 				addButton.setVisibility(View.GONE);
 			}
-
+			
 			//checkbox do zaznaczania wielu elementów
 			CheckBox cbItemSelected = (CheckBox) itemView.findViewById(R.id.cbItemSelected);
 			cbItemSelected.setFocusableInTouchMode(false);
 			cbItemSelected.setFocusable(false);
-
+			
 			if (selections == null) {
 				cbItemSelected.setVisibility(View.GONE);
 			} else {
@@ -231,14 +236,14 @@ public class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 					}
 				});
 			}
-
+			
 			//zachowanie widoku
 			storedViews.put(position, itemView);
-
+			
 			itemView.setOnTouchListener(new TreeItemTouchListener(listView, position));
-
+			
 			return itemView;
 		}
 	}
-
+	
 }

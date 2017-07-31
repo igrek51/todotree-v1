@@ -85,8 +85,8 @@ public class AppFactoryModule {
 	
 	@Provides
 	@Singleton
-	LogicActionController provideLogicActionController(TreeManager treeManager, BackupManager backupManager, GUI gui, UserInfoService userInfo, ClipboardManager clipboardManager, App app) {
-		return new LogicActionController(treeManager, backupManager, gui, userInfo, clipboardManager, app);
+	LogicActionController provideLogicActionController(TreeManager treeManager, BackupManager backupManager, GUI gui, UserInfoService userInfo, ClipboardManager clipboardManager, Preferences preferences, App app) {
+		return new LogicActionController(treeManager, backupManager, gui, userInfo, clipboardManager, preferences, app);
 	}
 	
 	@Provides

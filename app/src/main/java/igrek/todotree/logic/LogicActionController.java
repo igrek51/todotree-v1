@@ -12,11 +12,10 @@ import igrek.todotree.logger.Logs;
 import igrek.todotree.logic.app.App;
 import igrek.todotree.logic.app.AppState;
 import igrek.todotree.logic.backup.BackupManager;
-import igrek.todotree.logic.controller.dispatcher.IEvent;
 import igrek.todotree.logic.datatree.TreeItem;
 import igrek.todotree.logic.datatree.TreeManager;
-import igrek.todotree.logic.events.ExitAppEvent;
 import igrek.todotree.logic.exceptions.NoSuperItemException;
+import igrek.todotree.preferences.Preferences;
 import igrek.todotree.resources.InfoBarClickAction;
 import igrek.todotree.resources.UserInfoService;
 
@@ -28,14 +27,17 @@ public class LogicActionController {
 	private GUI gui;
 	private UserInfoService userInfo;
 	private ClipboardManager clipboardManager;
+	private Preferences preferences;
 	private App app;
 	
-	public LogicActionController(TreeManager treeManager, BackupManager backupManager, GUI gui, UserInfoService userInfo, ClipboardManager clipboardManager, App app) {
+	public LogicActionController(TreeManager treeManager, BackupManager backupManager, GUI gui, UserInfoService userInfo, ClipboardManager clipboardManager, Preferences preferences, App app) {
+		// split responsibilities to multiple services
 		this.treeManager = treeManager;
 		this.backupManager = backupManager;
 		this.gui = gui;
 		this.userInfo = userInfo;
 		this.clipboardManager = clipboardManager;
+		this.preferences = preferences;
 		this.app = app;
 	}
 	
@@ -290,6 +292,7 @@ public class LogicActionController {
 	
 	
 	public void exitAppRequested() {
+		preferences.saveAll();
 		app.quit();
 	}
 	
@@ -381,7 +384,7 @@ public class LogicActionController {
 			newItemIndex = treeManager.getNewItemPosition();
 			if (content.isEmpty()) {
 				treeManager.setEditItem(null);
-				app.setState( AppState.ITEMS_LIST);
+				app.setState(AppState.ITEMS_LIST);
 				gui.showItemsList(treeManager.getCurrentItem());
 				restoreScrollPosition(treeManager.getCurrentItem());
 				userInfo.showInfo("Pusty element został usunięty.");

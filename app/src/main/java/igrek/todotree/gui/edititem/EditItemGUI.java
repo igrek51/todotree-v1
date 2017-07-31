@@ -22,18 +22,13 @@ import igrek.todotree.logic.controller.AppController;
 import igrek.todotree.logic.controller.dispatcher.IEvent;
 import igrek.todotree.logic.controller.dispatcher.IEventObserver;
 import igrek.todotree.logic.datatree.TreeItem;
-import igrek.todotree.logic.events.CancelEditedItemEvent;
 import igrek.todotree.logic.events.RangeCharQuickInsertEvent;
 import igrek.todotree.logic.events.RotateScreenEvent;
-import igrek.todotree.logic.events.SaveAndAddItemEvent;
-import igrek.todotree.logic.events.SaveAndGoIntoItemEvent;
-import igrek.todotree.logic.events.SavedEditedItemEvent;
-import igrek.todotree.logic.events.SavedNewItemEvent;
 
 public class EditItemGUI implements NumKeyboardListener, IEventObserver {
-
+	
 	private GUI gui;
-
+	
 	private ItemEditText etEditItem;
 	private Button buttonSaveItem;
 	NumericKeyboardView numericKeyboard;
@@ -41,26 +36,26 @@ public class EditItemGUI implements NumKeyboardListener, IEventObserver {
 	
 	@Inject
 	LogicActionController actionController;
-
+	
 	public EditItemGUI(GUI gui, final TreeItem item, TreeItem parent) {
 		this.gui = gui;
 		this.editedItem = item;
 		
 		DaggerIOC.getAppComponent().inject(this);
-
+		
 		AppController.clearEventObservers(RangeCharQuickInsertEvent.class);
 		AppController.registerEventObserver(RangeCharQuickInsertEvent.class, this);
-
+		
 		init(item, parent);
 	}
-
+	
 	public EditText getEtEditItem() {
 		return etEditItem;
 	}
-
+	
 	public void init(final TreeItem item, TreeItem parent) {
 		View editItemContentLayout = gui.setMainContentLayout(R.layout.edit_item_content);
-
+		
 		etEditItem = (ItemEditText) editItemContentLayout.findViewById(R.id.etEditItemContent);
 		//przycisk zapisu
 		buttonSaveItem = (Button) editItemContentLayout.findViewById(R.id.buttonSaveItem);
@@ -70,9 +65,9 @@ public class EditItemGUI implements NumKeyboardListener, IEventObserver {
 		Button buttonSaveAndGoInto = (Button) editItemContentLayout.findViewById(R.id.buttonSaveAndGoInto);
 		//przycisk obrotu ekranu
 		final ImageButton rotateScreenBtn = (ImageButton) editItemContentLayout.findViewById(R.id.rotateScreenBtn);
-
+		
 		gui.setTitle(parent.getContent());
-
+		
 		if (item != null) { //edycja
 			etEditItem.setText(item.getContent());
 			buttonSaveItem.setOnClickListener(new View.OnClickListener() {
@@ -95,7 +90,8 @@ public class EditItemGUI implements NumKeyboardListener, IEventObserver {
 			buttonSaveAndGoInto.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					actionController.saveAndGoIntoItemClicked(item, etEditItem.getText().toString());
+					actionController.saveAndGoIntoItemClicked(item, etEditItem.getText()
+							.toString());
 					hideKeyboards();
 				}
 			});
@@ -121,19 +117,20 @@ public class EditItemGUI implements NumKeyboardListener, IEventObserver {
 			buttonSaveAndGoInto.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					actionController.saveAndGoIntoItemClicked(null, etEditItem.getText().toString());
+					actionController.saveAndGoIntoItemClicked(null, etEditItem.getText()
+							.toString());
 					hideKeyboards();
 				}
 			});
 		}
-
+		
 		rotateScreenBtn.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				AppController.sendEvent(new RotateScreenEvent());
 			}
 		});
-
+		
 		//przycisk anuluj
 		Button buttonEditCancel = (Button) editItemContentLayout.findViewById(R.id.buttonEditCancel);
 		buttonEditCancel.setOnClickListener(new View.OnClickListener() {
@@ -143,7 +140,7 @@ public class EditItemGUI implements NumKeyboardListener, IEventObserver {
 				hideKeyboards();
 			}
 		});
-
+		
 		//przyciski zmiany kursora i zaznaczenia
 		ImageButton quickEditGoBegin = (ImageButton) editItemContentLayout.findViewById(R.id.quickEditGoBegin);
 		quickEditGoBegin.setOnClickListener(new View.OnClickListener() {
@@ -180,7 +177,7 @@ public class EditItemGUI implements NumKeyboardListener, IEventObserver {
 				quickCursorMove(+2);
 			}
 		});
-
+		
 		//klawiatura dodawania godziny
 		Button buttonEditInsertTime = (Button) editItemContentLayout.findViewById(R.id.buttonEditInsertTime);
 		buttonEditInsertTime.setOnClickListener(new View.OnClickListener() {
@@ -189,7 +186,7 @@ public class EditItemGUI implements NumKeyboardListener, IEventObserver {
 				toggleTypingHour();
 			}
 		});
-
+		
 		//klawiatura dodawania daty
 		Button buttonEditInsertDate = (Button) editItemContentLayout.findViewById(R.id.buttonEditInsertDate);
 		buttonEditInsertDate.setOnClickListener(new View.OnClickListener() {
@@ -198,7 +195,7 @@ public class EditItemGUI implements NumKeyboardListener, IEventObserver {
 				toggleTypingDate();
 			}
 		});
-
+		
 		//numer
 		Button buttonEditInsertNumber = (Button) editItemContentLayout.findViewById(R.id.buttonEditInsertNumber);
 		buttonEditInsertNumber.setOnClickListener(new View.OnClickListener() {
@@ -207,7 +204,7 @@ public class EditItemGUI implements NumKeyboardListener, IEventObserver {
 				toggleTypingNumeric();
 			}
 		});
-
+		
 		//dodawanie przedziału
 		Button buttonEditInsertRange = (Button) editItemContentLayout.findViewById(R.id.buttonEditInsertRange);
 		buttonEditInsertRange.setOnClickListener(new View.OnClickListener() {
@@ -217,7 +214,7 @@ public class EditItemGUI implements NumKeyboardListener, IEventObserver {
 				numericKeyboard.resetInput();
 			}
 		});
-
+		
 		etEditItem.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 			@Override
 			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -229,9 +226,9 @@ public class EditItemGUI implements NumKeyboardListener, IEventObserver {
 				return false;
 			}
 		});
-
+		
 		etEditItem.setNumKeyboardListener(this);
-
+		
 		//niepotrzebne na focus: etEditItem.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 		etEditItem.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -244,33 +241,33 @@ public class EditItemGUI implements NumKeyboardListener, IEventObserver {
 				}
 			}
 		});
-
+		
 		numericKeyboard = (NumericKeyboardView) editItemContentLayout.findViewById(R.id.numericKeyboard);
 		numericKeyboard.init(this, etEditItem);
-
+		
 		//focus na końcu edytowanego tekstu
 		etEditItem.requestFocus();
 		quickCursorMove(+2);
-
+		
 		showAlphanumKeyboard();
 	}
-
-
+	
+	
 	private void quickCursorMove(int direction) {
 		if (direction == -2) { //na początek
-
+			
 			// WTF ??? - zjebane, ale tak trzeba, by ujarzmić ten przeskakujący kursor
 			etEditItem.requestFocus();
 			etEditItem.selectAll();
 			etEditItem.setSelection(0);
-
+			
 			new Handler().post(new Runnable() {
 				@Override
 				public void run() {
 					etEditItem.setSelection(0);
 				}
 			});
-
+			
 		} else if (direction == +2) { //na koniec
 			etEditItem.setSelection(etEditItem.getText().length());
 		} else if (direction == -1 || direction == +1) {
@@ -278,7 +275,8 @@ public class EditItemGUI implements NumKeyboardListener, IEventObserver {
 			int selEnd = etEditItem.getSelectionEnd();
 			if (selStart == selEnd) { //brak zaznaczenia
 				selStart += direction;
-				if (selStart < 0) selStart = 0;
+				if (selStart < 0)
+					selStart = 0;
 				if (selStart > etEditItem.getText().length())
 					selStart = etEditItem.getText().length();
 				etEditItem.setSelection(selStart);
@@ -286,7 +284,8 @@ public class EditItemGUI implements NumKeyboardListener, IEventObserver {
 				//poszerzenie zaznaczenia
 				if (direction == -1) { //w lewo
 					selStart--;
-					if (selStart < 0) selStart = 0;
+					if (selStart < 0)
+						selStart = 0;
 				} else { //w prawo
 					selEnd++;
 					if (selEnd > etEditItem.getText().length())
@@ -296,7 +295,7 @@ public class EditItemGUI implements NumKeyboardListener, IEventObserver {
 			}
 		}
 	}
-
+	
 	private void quickEditSelectAll() {
 		etEditItem.requestFocus();
 		etEditItem.selectAll();
@@ -308,8 +307,8 @@ public class EditItemGUI implements NumKeyboardListener, IEventObserver {
 			}
 		});
 	}
-
-
+	
+	
 	private void quickInsertRange() {
 		if (numericKeyboard.isVisible()) {
 			numericKeyboard.finishTyping();
@@ -330,57 +329,57 @@ public class EditItemGUI implements NumKeyboardListener, IEventObserver {
 		etEditItem.setText(edited);
 		etEditItem.setSelection(selStart, selStart);
 	}
-
+	
 	private void showAlphanumKeyboard() {
 		int selEnd = etEditItem.getSelectionEnd();
 		int selStart = etEditItem.getSelectionStart();
-
+		
 		numericKeyboard.setVisible(false);
 		gui.showSoftKeyboard(etEditItem);
-
+		
 		etEditItem.setInputType(InputType.TYPE_CLASS_TEXT);
 		etEditItem.setImeOptions(EditorInfo.IME_FLAG_NO_EXTRACT_UI | EditorInfo.IME_ACTION_DONE);
-
+		
 		etEditItem.setSelection(selStart, selEnd);
 	}
-
+	
 	private void showNumericKeyboard() {
 		int selEnd = etEditItem.getSelectionEnd();
 		int selStart = etEditItem.getSelectionStart();
-
+		
 		gui.hideSoftKeyboard(etEditItem);
 		numericKeyboard.setVisible(true);
-
+		
 		//        etEditItem.setInputType(InputType.TYPE_NULL);
-
+		
 		etEditItem.setSelection(selStart, selEnd);
 	}
-
+	
 	public void hideKeyboards() {
 		int selEnd = etEditItem.getSelectionEnd();
 		int selStart = etEditItem.getSelectionStart();
-
+		
 		gui.hideSoftKeyboard(etEditItem);
 		numericKeyboard.setVisible(false);
-
+		
 		etEditItem.setInputType(InputType.TYPE_CLASS_TEXT);
 		etEditItem.setImeOptions(EditorInfo.IME_FLAG_NO_EXTRACT_UI | EditorInfo.IME_ACTION_DONE);
-
+		
 		etEditItem.setSelection(selStart, selEnd);
 	}
-
+	
 	public void toggleTypingHour() {
 		toggleTyping(1);
 	}
-
+	
 	public void toggleTypingDate() {
 		toggleTyping(2);
 	}
-
+	
 	public void toggleTypingNumeric() {
 		toggleTyping(3);
 	}
-
+	
 	public void toggleTyping(int mode) {
 		if (numericKeyboard.isVisible() && numericKeyboard.getTypingMode() == mode) {
 			showAlphanumKeyboard();
@@ -389,17 +388,17 @@ public class EditItemGUI implements NumKeyboardListener, IEventObserver {
 			numericKeyboard.startTyping(mode);
 		}
 	}
-
+	
 	@Override
 	public void onNumKeyboardClosed() {
 		showAlphanumKeyboard();
 	}
-
+	
 	@Override
 	public void onSelectionChanged(int selStart, int selEnd) {
-
+		
 	}
-
+	
 	public boolean editItemBackClicked() {
 		hideKeyboards();
 		if (numericKeyboard.isVisible()) {
@@ -407,11 +406,11 @@ public class EditItemGUI implements NumKeyboardListener, IEventObserver {
 		}
 		return false;
 	}
-
+	
 	public void requestSaveEditedItem() {
 		buttonSaveItem.performClick();
 	}
-
+	
 	@Override
 	public void onEvent(IEvent event) {
 		if (event instanceof RangeCharQuickInsertEvent) {

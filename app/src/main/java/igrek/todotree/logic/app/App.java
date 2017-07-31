@@ -9,10 +9,8 @@ import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.gui.GUI;
 import igrek.todotree.logger.Logs;
 import igrek.todotree.logic.LogicActionController;
-import igrek.todotree.logic.backup.BackupManager;
 import igrek.todotree.logic.datatree.TreeManager;
 import igrek.todotree.preferences.Preferences;
-import igrek.todotree.resources.UserInfoService;
 
 //TODO brak zapisu bazy jeśli nie było zmian
 
@@ -24,12 +22,6 @@ public class App extends BaseApp {
 	
 	@Inject
 	TreeManager treeManager;
-	
-	@Inject
-	BackupManager backupManager;
-	
-	@Inject
-	UserInfoService userInfo;
 	
 	@Inject
 	Preferences preferences;
@@ -70,12 +62,6 @@ public class App extends BaseApp {
 	
 	public void setState(AppState state) {
 		this.state = state;
-	}
-	
-	@Override
-	public void quit() {
-		preferences.saveAll();
-		super.quit();
 	}
 	
 	@Override

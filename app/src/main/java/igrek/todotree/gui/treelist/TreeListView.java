@@ -27,14 +27,8 @@ import javax.inject.Inject;
 import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.logger.Logs;
 import igrek.todotree.logic.LogicActionController;
-import igrek.todotree.logic.controller.AppController;
 import igrek.todotree.logic.datatree.TreeItem;
 import igrek.todotree.logic.datatree.TreeManager;
-import igrek.todotree.logic.events.AddItemClickedEvent;
-import igrek.todotree.logic.events.ItemClickedEvent;
-import igrek.todotree.logic.events.ItemGoIntoClickedEvent;
-import igrek.todotree.logic.events.ItemLongClickEvent;
-import igrek.todotree.logic.events.ItemMovedEvent;
 
 public class TreeListView extends ListView implements AbsListView.OnScrollListener, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
 	
