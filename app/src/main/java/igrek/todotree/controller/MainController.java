@@ -165,7 +165,7 @@ public class MainController {
 		appData.setState(AppState.ITEMS_LIST);
 		gui.showItemsList(treeManager.getCurrentItem());
 		restoreScrollPosition(treeManager.getCurrentItem());
-		userInfo.showInfo("Cancelled editing item.");
+		userInfo.showInfo("Editing item cancelled.");
 	}
 	
 	private void removeItem(final int position) {
@@ -501,6 +501,11 @@ public class MainController {
 	}
 	
 	public void itemClicked(int position, TreeItem item) {
+		// blokada wejścia wgłąb na pierwszym poziomie poprzez kliknięcie
+		if (lock.isLocked()) {
+			Logs.warn("Database is locked.");
+			return;
+		}
 		if (treeManager.isSelectionMode()) {
 			treeManager.toggleItemSelected(position);
 			updateItemsList();
@@ -508,14 +513,7 @@ public class MainController {
 			if (item.isEmpty()) {
 				itemEditClicked(item);
 			} else {
-				
-				// blokada wejścia wgłąb na pierwszym poziomie poprzez kliknięcie
-				if (lock.isLocked()) {
-					Logs.warn("Database is locked.");
-				} else {
-					itemGoIntoClicked(position);
-				}
-				
+				itemGoIntoClicked(position);
 			}
 		}
 	}
