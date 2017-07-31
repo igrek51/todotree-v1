@@ -1,5 +1,6 @@
 package igrek.todotree.services.filesystem;
 
+import android.app.Activity;
 import android.os.Environment;
 
 import java.io.File;
@@ -12,11 +13,17 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
 
+import igrek.todotree.logger.Logs;
+
 public class FilesystemService {
 	
 	private String pathToExtSD;
+	private Activity activity;
 	
-	public FilesystemService() {
+	public FilesystemService(Activity activity) {
+		this.activity = activity;
+		
+		Logs.debug("Application data dir: " + activity.getApplicationInfo().dataDir);
 		
 		// TODO get Android app private directory
 		

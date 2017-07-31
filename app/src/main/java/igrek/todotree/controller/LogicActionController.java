@@ -1,6 +1,10 @@
 package igrek.todotree.controller;
 
 
+import android.os.Handler;
+import android.view.View;
+import android.view.ViewTreeObserver;
+
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Comparator;
@@ -21,6 +25,11 @@ import igrek.todotree.services.preferences.Preferences;
 import igrek.todotree.services.resources.resources.InfoBarClickAction;
 import igrek.todotree.services.resources.resources.UserInfoService;
 
+//TODO brak zapisu bazy jeśli nie było zmian
+
+//TODO: funkcja cofania zmian - zapisywanie modyfikacji, dodawania, usuwania elementów, przesuwania
+
+//TODO SERWISY: do blokowania bazy, do pobierania treści komunikatów, stan aplikacji
 
 public class LogicActionController {
 	
@@ -92,12 +101,29 @@ public class LogicActionController {
 		appData.setState(AppState.ITEMS_LIST);
 	}
 	
-	private void exitApp(boolean withSaving) {
-		//TODO Najpierw wyświetlić exit screen, potem zapisywać bazę
+	private void exitApp(final boolean withSaving) {
+		// show exit screen and wait for rendered
+		View exitScreen = gui.showExitScreen();
+		
+		final ViewTreeObserver vto = exitScreen.getViewTreeObserver();
+		vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+			@Override
+			public void onGlobalLayout() {
+				new Handler().post(new Runnable() {
+					@Override
+					public void run() {
+						saveAndExit(withSaving);
+					}
+				});
+			}
+		});
+	}
+	
+	private void saveAndExit(boolean withSaving) {
 		if (withSaving) {
 			saveDatabase();
 		}
-		gui.showExitScreen();
+		exitAppRequested();
 	}
 	
 	
@@ -295,7 +321,7 @@ public class LogicActionController {
 	}
 	
 	
-	public void exitAppRequested() {
+	private void exitAppRequested() {
 		preferences.saveAll();
 		app.quit();
 	}
@@ -483,7 +509,7 @@ public class LogicActionController {
 		newItem(position);
 	}
 	
-	public void addItemClicked() {//TODO zamienić na jeden event
+	public void addItemClicked() {
 		addItemClickedPos(-1);
 	}
 	

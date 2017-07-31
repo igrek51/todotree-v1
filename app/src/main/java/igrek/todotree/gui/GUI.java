@@ -81,23 +81,8 @@ public class GUI extends BaseGUI {
 		editItemGUI = new EditItemGUI(this, item, parent);
 	}
 	
-	public void showExitScreen() {
-		
-		View exitScreen = setMainContentLayout(R.layout.exit_screen);
-		
-		//TODO dalej jest zjebane
-		final ViewTreeObserver vto = exitScreen.getViewTreeObserver();
-		vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-			@Override
-			public void onGlobalLayout() {
-				new Handler().postDelayed(new Runnable() {
-					@Override
-					public void run() {
-						actionController.exitAppRequested();
-					}
-				}, 200);
-			}
-		});
+	public View showExitScreen() {
+		return setMainContentLayout(R.layout.exit_screen);
 	}
 	
 	public void updateItemsList(TreeItem currentItem, List<Integer> selectedPositions) {

@@ -10,12 +10,6 @@ import igrek.todotree.gui.GUI;
 import igrek.todotree.logger.Logs;
 import igrek.todotree.services.datatree.TreeManager;
 
-//TODO brak zapisu bazy jeśli nie było zmian
-
-//TODO: funkcja cofania zmian - zapisywanie modyfikacji, dodawania, usuwania elementów, przesuwania
-
-//TODO SERWISY: do blokowania bazy, do pobierania treści komunikatów, stan aplikacji
-
 public class App extends BaseApp {
 	
 	@Inject
