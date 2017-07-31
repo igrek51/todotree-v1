@@ -8,7 +8,6 @@ import android.view.MenuItem;
 import android.view.WindowManager;
 
 import igrek.todotree.logger.Logs;
-import igrek.todotree.controller.controller.AppController;
 
 public abstract class BaseApp {
 	
@@ -29,10 +28,6 @@ public abstract class BaseApp {
 	
 	public void init() {
 		Logs.info("Application initializing...");
-		
-		//TODO do wyjebania
-		// CLEAR EVENT LISTENERS
-		new AppController();
 		
 		// catch all uncaught exceptions
 		defaultUEH = Thread.getDefaultUncaughtExceptionHandler();
