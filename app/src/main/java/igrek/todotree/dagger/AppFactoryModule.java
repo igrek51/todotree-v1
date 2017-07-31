@@ -16,6 +16,7 @@ import igrek.todotree.services.clipboard.ClipboardManager;
 import igrek.todotree.services.datatree.TreeManager;
 import igrek.todotree.services.datatree.serializer.TreeSerializer;
 import igrek.todotree.services.filesystem.FilesystemService;
+import igrek.todotree.services.lock.DatabaseLock;
 import igrek.todotree.services.preferences.Preferences;
 import igrek.todotree.services.resources.resources.UserInfoService;
 
@@ -86,8 +87,8 @@ public class AppFactoryModule {
 	
 	@Provides
 	@Singleton
-	LogicActionController provideLogicActionController(TreeManager treeManager, BackupManager backupManager, GUI gui, UserInfoService userInfo, ClipboardManager clipboardManager, Preferences preferences, App app, AppData appData) {
-		return new LogicActionController(treeManager, backupManager, gui, userInfo, clipboardManager, preferences, app, appData);
+	LogicActionController provideLogicActionController(TreeManager treeManager, BackupManager backupManager, GUI gui, UserInfoService userInfo, ClipboardManager clipboardManager, Preferences preferences, App app, AppData appData, DatabaseLock lock) {
+		return new LogicActionController(treeManager, backupManager, gui, userInfo, clipboardManager, preferences, app, appData, lock);
 	}
 	
 	@Provides
@@ -106,6 +107,12 @@ public class AppFactoryModule {
 	@Singleton
 	AppData provideAppData() {
 		return new AppData();
+	}
+	
+	@Provides
+	@Singleton
+	DatabaseLock provideDatabaseLock() {
+		return new DatabaseLock();
 	}
 	
 }

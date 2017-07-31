@@ -21,6 +21,7 @@ import igrek.todotree.services.backup.BackupManager;
 import igrek.todotree.services.clipboard.ClipboardManager;
 import igrek.todotree.services.datatree.TreeItem;
 import igrek.todotree.services.datatree.TreeManager;
+import igrek.todotree.services.lock.DatabaseLock;
 import igrek.todotree.services.preferences.Preferences;
 import igrek.todotree.services.resources.resources.InfoBarClickAction;
 import igrek.todotree.services.resources.resources.UserInfoService;
@@ -41,8 +42,9 @@ public class LogicActionController {
 	private Preferences preferences;
 	private App app;
 	private AppData appData;
+	private DatabaseLock lock;
 	
-	public LogicActionController(TreeManager treeManager, BackupManager backupManager, GUI gui, UserInfoService userInfo, ClipboardManager clipboardManager, Preferences preferences, App app, AppData appData) {
+	public LogicActionController(TreeManager treeManager, BackupManager backupManager, GUI gui, UserInfoService userInfo, ClipboardManager clipboardManager, Preferences preferences, App app, AppData appData, DatabaseLock lock) {
 		// TODO split responsibilities to multiple services
 		this.treeManager = treeManager;
 		this.backupManager = backupManager;
@@ -52,6 +54,7 @@ public class LogicActionController {
 		this.preferences = preferences;
 		this.app = app;
 		this.appData = appData;
+		this.lock = lock;
 	}
 	
 	public boolean optionsSelect(int id) {
@@ -445,14 +448,14 @@ public class LogicActionController {
 	}
 	
 	public void itemRemoveClicked(int position) {// removing locked before going into first element
-		if (treeManager.firstGoInto || treeManager.getCurrentItem().getParent() != null) {
+		if (lock.isLocked()) {
+			Logs.warn("Database is locked");
+		} else {
 			if (treeManager.isSelectionMode()) {
 				removeSelectedItems(true);
 			} else {
 				removeItem(position);
 			}
-		} else {
-			Logs.warn("Database is locked");
 		}
 	}
 	
@@ -469,7 +472,7 @@ public class LogicActionController {
 	}
 	
 	public void itemGoIntoClicked(int position) {
-		treeManager.firstGoInto = true;
+		lock.setLocked(false);
 		treeManager.cancelSelectionMode();
 		treeManager.goInto(position, gui.getCurrentScrollPos());
 		updateItemsList();
@@ -491,7 +494,9 @@ public class LogicActionController {
 			} else {
 				
 				// blokada wejścia wgłąb na pierwszym poziomie poprzez kliknięcie
-				if (treeManager.firstGoInto || treeManager.getCurrentItem().getParent() != null) {
+				if (lock.isLocked()) {
+					Logs.warn("Database is locked");
+				} else {
 					itemGoIntoClicked(position);
 				}
 				

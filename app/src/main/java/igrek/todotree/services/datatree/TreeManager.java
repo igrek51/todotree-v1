@@ -36,9 +36,6 @@ public class TreeManager {
 	
 	private HashMap<TreeItem, Integer> storedScrollPositions;
 	
-	/** czy wystąpiło pierwsze wejście wgłąb elementu */
-	public boolean firstGoInto = false;
-	
 	public TreeManager(FilesystemService filesystem, Preferences preferences, TreeSerializer treeSerializer) {
 		this.filesystem = filesystem;
 		this.preferences = preferences;
