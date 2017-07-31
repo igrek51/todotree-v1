@@ -1,4 +1,4 @@
-package igrek.todotree.logic;
+package igrek.todotree.controller;
 
 
 import java.math.BigDecimal;

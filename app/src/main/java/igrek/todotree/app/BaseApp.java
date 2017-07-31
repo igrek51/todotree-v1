@@ -8,7 +8,7 @@ import android.view.MenuItem;
 import android.view.WindowManager;
 
 import igrek.todotree.logger.Logs;
-import igrek.todotree.logic.controller.AppController;
+import igrek.todotree.controller.controller.AppController;
 
 public abstract class BaseApp {
 	

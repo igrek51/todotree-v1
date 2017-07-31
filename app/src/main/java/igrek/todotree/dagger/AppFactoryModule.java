@@ -9,7 +9,7 @@ import dagger.Module;
 import dagger.Provides;
 import igrek.todotree.app.App;
 import igrek.todotree.gui.GUI;
-import igrek.todotree.logic.LogicActionController;
+import igrek.todotree.controller.LogicActionController;
 import igrek.todotree.services.backup.BackupManager;
 import igrek.todotree.services.clipboard.ClipboardManager;
 import igrek.todotree.services.datatree.TreeManager;

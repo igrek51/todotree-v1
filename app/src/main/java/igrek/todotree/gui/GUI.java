@@ -16,14 +16,10 @@ import igrek.todotree.R;
 import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.gui.edititem.EditItemGUI;
 import igrek.todotree.gui.treelist.TreeListView;
-import igrek.todotree.logic.LogicActionController;
-import igrek.todotree.logic.controller.AppController;
-import igrek.todotree.logic.controller.dispatcher.IEvent;
-import igrek.todotree.logic.controller.dispatcher.IEventObserver;
-import igrek.todotree.logic.events.RotateScreenEvent;
+import igrek.todotree.controller.LogicActionController;
 import igrek.todotree.services.datatree.TreeItem;
 
-public class GUI extends BaseGUI implements IEventObserver {
+public class GUI extends BaseGUI {
 	
 	private ActionBar actionBar;
 	private TreeListView itemsListView;
@@ -33,8 +29,6 @@ public class GUI extends BaseGUI implements IEventObserver {
 	
 	public GUI(AppCompatActivity activity) {
 		super(activity);
-		
-		AppController.registerEventObserver(RotateScreenEvent.class, this);
 	}
 	
 	public void lazyInit() {
@@ -76,6 +70,10 @@ public class GUI extends BaseGUI implements IEventObserver {
 		itemsListView.setItems(currentItem.getChildren());
 		
 		updateItemsList(currentItem, null);
+	}
+	
+	public EditItemGUI getEditItemGUI(){
+		return editItemGUI;
 	}
 	
 	public void showEditItemPanel(final TreeItem item, TreeItem parent) {
@@ -151,7 +149,7 @@ public class GUI extends BaseGUI implements IEventObserver {
 		editItemGUI.requestSaveEditedItem();
 	}
 	
-	private void rotateScreen() {
+	public void rotateScreen() {
 		int orientation = activity.getResources().getConfiguration().orientation;
 		if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
 			activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -164,13 +162,6 @@ public class GUI extends BaseGUI implements IEventObserver {
 		int orientation = activity.getResources().getConfiguration().orientation;
 		if (orientation != Configuration.ORIENTATION_PORTRAIT) {
 			activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-		}
-	}
-	
-	@Override
-	public void onEvent(IEvent event) {
-		if (event instanceof RotateScreenEvent) {
-			rotateScreen();
 		}
 	}
 }

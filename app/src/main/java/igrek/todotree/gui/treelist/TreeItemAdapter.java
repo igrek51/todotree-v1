@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import igrek.todotree.R;
-import igrek.todotree.logic.LogicActionController;
+import igrek.todotree.controller.LogicActionController;
 import igrek.todotree.services.datatree.TreeItem;
 
 public class TreeItemAdapter extends ArrayAdapter<TreeItem> {

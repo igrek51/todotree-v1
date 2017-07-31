@@ -17,15 +17,10 @@ import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.gui.GUI;
 import igrek.todotree.gui.numkeyboard.NumKeyboardListener;
 import igrek.todotree.gui.numkeyboard.NumericKeyboardView;
-import igrek.todotree.logic.LogicActionController;
-import igrek.todotree.logic.controller.AppController;
-import igrek.todotree.logic.controller.dispatcher.IEvent;
-import igrek.todotree.logic.controller.dispatcher.IEventObserver;
-import igrek.todotree.logic.events.RangeCharQuickInsertEvent;
-import igrek.todotree.logic.events.RotateScreenEvent;
+import igrek.todotree.controller.LogicActionController;
 import igrek.todotree.services.datatree.TreeItem;
 
-public class EditItemGUI implements NumKeyboardListener, IEventObserver {
+public class EditItemGUI implements NumKeyboardListener {
 	
 	private GUI gui;
 	
@@ -42,9 +37,6 @@ public class EditItemGUI implements NumKeyboardListener, IEventObserver {
 		this.editedItem = item;
 		
 		DaggerIOC.getAppComponent().inject(this);
-		
-		AppController.clearEventObservers(RangeCharQuickInsertEvent.class);
-		AppController.registerEventObserver(RangeCharQuickInsertEvent.class, this);
 		
 		init(item, parent);
 	}
@@ -127,7 +119,7 @@ public class EditItemGUI implements NumKeyboardListener, IEventObserver {
 		rotateScreenBtn.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				AppController.sendEvent(new RotateScreenEvent());
+				gui.rotateScreen();
 			}
 		});
 		
@@ -309,7 +301,7 @@ public class EditItemGUI implements NumKeyboardListener, IEventObserver {
 	}
 	
 	
-	private void quickInsertRange() {
+	public void quickInsertRange() {
 		if (numericKeyboard.isVisible()) {
 			numericKeyboard.finishTyping();
 		}
@@ -409,12 +401,5 @@ public class EditItemGUI implements NumKeyboardListener, IEventObserver {
 	
 	public void requestSaveEditedItem() {
 		buttonSaveItem.performClick();
-	}
-	
-	@Override
-	public void onEvent(IEvent event) {
-		if (event instanceof RangeCharQuickInsertEvent) {
-			quickInsertRange();
-		}
 	}
 }
