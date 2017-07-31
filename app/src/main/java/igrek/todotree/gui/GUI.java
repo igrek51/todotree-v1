@@ -12,8 +12,6 @@ import android.widget.RelativeLayout;
 
 import java.util.List;
 
-import javax.inject.Inject;
-
 import igrek.todotree.R;
 import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.gui.edititem.EditItemGUI;
@@ -25,24 +23,23 @@ import igrek.todotree.logic.controller.dispatcher.IEventObserver;
 import igrek.todotree.logic.datatree.TreeItem;
 import igrek.todotree.logic.events.RotateScreenEvent;
 
-public class GUI extends GUIBase implements IEventObserver {
+public class GUI extends BaseGUI implements IEventObserver {
 	
 	private ActionBar actionBar;
 	private TreeListView itemsListView;
 	private EditItemGUI editItemGUI;
-	@Inject
+
 	LogicActionController actionController;
 	
 	public GUI(AppCompatActivity activity) {
 		super(activity);
 		
-		DaggerIOC.getAppComponent().inject(this);
-		
 		AppController.registerEventObserver(RotateScreenEvent.class, this);
 	}
 	
-	@Override
-	protected void init() {
+	public void lazyInit() {
+		
+		actionController = DaggerIOC.getAppComponent().getActionController();
 		
 		activity.setContentView(R.layout.activity_main);
 		

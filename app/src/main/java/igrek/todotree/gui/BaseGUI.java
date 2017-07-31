@@ -8,22 +8,17 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.RelativeLayout;
 
-public abstract class GUIBase {
+public abstract class BaseGUI {
 
     protected AppCompatActivity activity;
 
     protected InputMethodManager imm;
 
     protected RelativeLayout mainContent;
-
-    public GUIBase(AppCompatActivity activity) {
+    
+    public BaseGUI(AppCompatActivity activity) {
         this.activity = activity;
         imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-        init(); //TODO bad practice
-    }
-
-    protected void init() {
-
     }
 
     public RelativeLayout getMainContent() {
