@@ -28,9 +28,9 @@ public class Preferences extends BasePreferences {
 	private void loadAll() {
 		if (exists("dbFilePath")) {
 			dbFilePath = getString("dbFilePath");
-			Logs.debug("Wczytano ścieżkę do pliku bazy: " + dbFilePath);
+			Logs.debug("Database path loaded: " + dbFilePath);
 		} else {
-			Logs.debug("Wczytano domyślną ścieżkę do pliku bazy: " + dbFilePath);
+			Logs.debug("Default database path loaded: " + dbFilePath);
 		}
 	}
 }

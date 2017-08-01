@@ -51,19 +51,19 @@ public class TreeSerializer {
 							List<String> subLines = lines.subList(i + 1, closingBracketIndex);
 							TreeItem lastChild = parent.getLastChild();
 							if (lastChild == null) {
-								throw new ParseException("Brak pasującego elementu przed otwarciem nawiasu", i);
+								throw new ParseException("No matching element before opening bracket", i);
 							}
 							loadTreeItems(lastChild, subLines);
 						}
 						//przeskoczenie już przeanalizowanych wierszy
 						i = closingBracketIndex;
 					} catch (NoMatchingBracketException ex) {
-						throw new ParseException("Nie odnaleziono pasującego nawiasu domykającego", i);
+						throw new ParseException("No matching closing bracket", i);
 					}
 					break;
 				case "}":
 					//nawiasy domykające zostały już przeanalizowane
-					throw new ParseException("Nadmiarowy nawias domykający", i);
+					throw new ParseException("Redundant closing bracket", i);
 				default:
 					parent.add(line);
 					break;

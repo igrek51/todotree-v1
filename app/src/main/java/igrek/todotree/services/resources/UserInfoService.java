@@ -1,4 +1,4 @@
-package igrek.todotree.services.resources.resources;
+package igrek.todotree.services.resources;
 
 import android.app.Activity;
 import android.graphics.Color;
@@ -84,6 +84,6 @@ public class UserInfoService {
 	}
 	
 	public void showInfoCancellable(String info, InfoBarClickAction cancelCallback) {
-		showActionInfo(info, gui.getMainContent(), "Cofnij", cancelCallback, ContextCompat.getColor(activity, R.color.colorPrimary));
+		showActionInfo(info, gui.getMainContent(), "Undo", cancelCallback, ContextCompat.getColor(activity, R.color.colorPrimary));
 	}
 }

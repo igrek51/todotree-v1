@@ -23,8 +23,8 @@ import igrek.todotree.services.datatree.TreeItem;
 import igrek.todotree.services.datatree.TreeManager;
 import igrek.todotree.services.lock.DatabaseLock;
 import igrek.todotree.services.preferences.Preferences;
-import igrek.todotree.services.resources.resources.InfoBarClickAction;
-import igrek.todotree.services.resources.resources.UserInfoService;
+import igrek.todotree.services.resources.InfoBarClickAction;
+import igrek.todotree.services.resources.UserInfoService;
 
 //TODO brak zapisu bazy jeśli nie było zmian
 //TODO: funkcja cofania zmian - zapisywanie modyfikacji, dodawania, usuwania elementów, przesuwania

@@ -57,7 +57,7 @@ public class BackupManager {
 		PathBuilder backupPath = dbDirPath.append(BACKUP_FILE_PREFIX + dateFormat.format(new Date()));
 		try {
 			filesystem.copy(new File(dbFilePath.toString()), new File(backupPath.toString()));
-			Logs.info("Utworzono backup: " + backupPath.toString());
+			Logs.info("Backup created: " + backupPath.toString());
 		} catch (IOException e) {
 			Logs.error(e);
 		}
@@ -77,7 +77,7 @@ public class BackupManager {
 				try {
 					date = dateFormat.parse(dateStr);
 				} catch (ParseException e) {
-					Logs.warn("Niepoprawny format daty w nazwie pliku: " + child);
+					Logs.warn("Invalid date format in file name: " + child);
 				}
 				backups.add(new Pair<>(child, date));
 			}
@@ -122,7 +122,7 @@ public class BackupManager {
 		for (Pair<String, Date> pair : backups) {
 			PathBuilder toRemovePath = dbDirPath.append(pair.first);
 			filesystem.delete(toRemovePath);
-			Logs.info("Usunięto stary backup: " + toRemovePath.toString());
+			Logs.info("Old backup has been removed: " + toRemovePath.toString());
 		}
 		
 	}

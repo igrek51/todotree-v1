@@ -26,7 +26,7 @@ public abstract class BaseApp {
 	}
 	
 	public void init() {
-		Logs.info("Application initializing...");
+		Logs.info("Initializing application...");
 		
 		// catch all uncaught exceptions
 		defaultUEH = Thread.getDefaultUncaughtExceptionHandler();

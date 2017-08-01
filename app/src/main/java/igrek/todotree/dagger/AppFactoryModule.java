@@ -18,7 +18,7 @@ import igrek.todotree.services.datatree.serializer.TreeSerializer;
 import igrek.todotree.services.filesystem.FilesystemService;
 import igrek.todotree.services.lock.DatabaseLock;
 import igrek.todotree.services.preferences.Preferences;
-import igrek.todotree.services.resources.resources.UserInfoService;
+import igrek.todotree.services.resources.UserInfoService;
 
 @Module
 public class AppFactoryModule {

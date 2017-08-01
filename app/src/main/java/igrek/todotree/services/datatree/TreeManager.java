@@ -80,7 +80,7 @@ public class TreeManager {
 		if (currentItem == rootItem) {
 			throw new NoSuperItemException();
 		} else if (currentItem.getParent() == null) {
-			throw new IllegalStateException("parent = null. To się nie powinno zdarzyć");
+			throw new IllegalStateException("parent = null. This should not happen");
 		} else {
 			currentItem = currentItem.getParent();
 		}
@@ -110,16 +110,16 @@ public class TreeManager {
 		
 		filesystem.mkdirIfNotExist(filesystem.pathSD().toString());
 		PathBuilder dbFilePath = filesystem.pathSD().append(preferences.dbFilePath);
-		Logs.info("Wczytywanie bazy danych z pliku: " + dbFilePath.toString());
+		Logs.info("Loading database from file: " + dbFilePath.toString());
 		if (!filesystem.exists(dbFilePath.toString())) {
-			Logs.warn("Plik z bazą danych nie istnieje. Domyślna pusta baza danych.");
+			Logs.warn("Database file does not exist. Default empty database created.");
 			return;
 		}
 		try {
 			String fileContent = filesystem.openFileString(dbFilePath.toString());
 			TreeItem rootItem = treeSerializer.loadTree(fileContent);
 			setRootItem(rootItem);
-			Logs.info("Wczytano bazę danych.");
+			Logs.info("Database loaded.");
 		} catch (IOException | ParseException e) {
 			Logs.error(e);
 		}
@@ -383,10 +383,10 @@ public class TreeManager {
 			try {
 				return new BigDecimal(valueStr);
 			} catch (NumberFormatException e) {
-				throw new NumberFormatException("Nieprawidłowy format liczby:\n" + valueStr);
+				throw new NumberFormatException("Invalid number format:\n" + valueStr);
 			}
 		} else {
-			throw new NumberFormatException("Brak wartości liczbowej:\n" + content);
+			throw new NumberFormatException("No number value:\n" + content);
 		}
 	}
 }

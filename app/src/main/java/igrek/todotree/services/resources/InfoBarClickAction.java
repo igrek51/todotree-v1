@@ -1,4 +1,4 @@
-package igrek.todotree.services.resources.resources;
+package igrek.todotree.services.resources;
 
 public interface InfoBarClickAction {
 	

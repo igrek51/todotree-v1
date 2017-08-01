@@ -33,13 +33,13 @@ public class Logs {
 	public static void fatal(final Activity activity, String e) {
 		log(e, LogLevel.FATAL, "[FATAL ERROR] ");
 		if (activity == null) {
-			error("FATAL ERROR: Brak activity");
+			error("FATAL ERROR: No activity");
 			return;
 		}
 		AlertDialog.Builder dlgAlert = new AlertDialog.Builder(activity);
 		dlgAlert.setMessage(e);
-		dlgAlert.setTitle("Błąd krytyczny");
-		dlgAlert.setPositiveButton("Zamknij aplikację", new DialogInterface.OnClickListener() {
+		dlgAlert.setTitle("Critical error");
+		dlgAlert.setPositiveButton("Close app", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
 				activity.finish();
 			}
