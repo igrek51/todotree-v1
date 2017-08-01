@@ -109,7 +109,7 @@ public class MainController {
 	}
 	
 	private void updateItemsList() {
-		gui.updateItemsList(treeManager.getCurrentItem(), treeManager.getTreeSelectionManager()
+		gui.updateItemsList(treeManager.getCurrentItem(), treeManager.selectionManager()
 				.getSelectedItems());
 		appData.setState(AppState.ITEMS_LIST);
 	}
@@ -148,14 +148,16 @@ public class MainController {
 			position = treeManager.getCurrentItem().size();
 		if (position > treeManager.getCurrentItem().size())
 			position = treeManager.getCurrentItem().size();
-		treeManager.storeScrollPosition(treeManager.getCurrentItem(), gui.getCurrentScrollPos());
+		treeManager.scrollStore()
+				.storeScrollPosition(treeManager.getCurrentItem(), gui.getCurrentScrollPos());
 		treeManager.setNewItemPosition(position);
 		gui.showEditItemPanel(null, treeManager.getCurrentItem());
 		appData.setState(AppState.EDIT_ITEM_CONTENT);
 	}
 	
 	private void editItem(TreeItem item, TreeItem parent) {
-		treeManager.storeScrollPosition(treeManager.getCurrentItem(), gui.getCurrentScrollPos());
+		treeManager.scrollStore()
+				.storeScrollPosition(treeManager.getCurrentItem(), gui.getCurrentScrollPos());
 		treeManager.setEditItem();
 		gui.showEditItemPanel(item, parent);
 		appData.setState(AppState.EDIT_ITEM_CONTENT);
@@ -192,7 +194,7 @@ public class MainController {
 	}
 	
 	private void removeSelectedItems(boolean info) {
-		List<Integer> selectedIds = treeManager.getTreeSelectionManager().getSelectedItems();
+		List<Integer> selectedIds = treeManager.selectionManager().getSelectedItems();
 		//posortowanie malejąco (żeby przy usuwaniu nie nadpisać indeksów)
 		Collections.sort(selectedIds, new Comparator<Integer>() {
 			@Override
@@ -206,7 +208,7 @@ public class MainController {
 		if (info) {
 			userInfo.showInfo("Selected items removed: " + selectedIds.size());
 		}
-		treeManager.getTreeSelectionManager().cancelSelectionMode();
+		treeManager.selectionManager().cancelSelectionMode();
 		updateItemsList();
 	}
 	
@@ -223,7 +225,7 @@ public class MainController {
 	}
 	
 	private void restoreScrollPosition(TreeItem parent) {
-		Integer savedScrollPos = treeManager.restoreScrollPosition(parent);
+		Integer savedScrollPos = treeManager.scrollStore().restoreScrollPosition(parent);
 		if (savedScrollPos != null) {
 			gui.scrollToPosition(savedScrollPos);
 		}
@@ -231,8 +233,8 @@ public class MainController {
 	
 	public void backClicked() {
 		if (appData.getState() == AppState.ITEMS_LIST) {
-			if (treeManager.getTreeSelectionManager().isSelectionMode()) {
-				treeManager.getTreeSelectionManager().cancelSelectionMode();
+			if (treeManager.selectionManager().isSelectionMode()) {
+				treeManager.selectionManager().cancelSelectionMode();
 				updateItemsList();
 			} else {
 				goUp();
@@ -245,23 +247,23 @@ public class MainController {
 	}
 	
 	private void copySelectedItems(boolean info) {
-		if (treeManager.getTreeSelectionManager().isSelectionMode()) {
-			treeManager.getTreeClipboardManager().clearClipboard();
-			for (Integer selectedItemId : treeManager.getTreeSelectionManager()
+		if (treeManager.selectionManager().isSelectionMode()) {
+			treeManager.clipboardManager().clearClipboard();
+			for (Integer selectedItemId : treeManager.selectionManager()
 					.getSelectedItems()) {
 				TreeItem selectedItem = treeManager.getCurrentItem().getChild(selectedItemId);
-				treeManager.getTreeClipboardManager().addToClipboard(selectedItem);
+				treeManager.clipboardManager().addToClipboard(selectedItem);
 			}
 			//jeśli zaznaczony jeden element - skopiowanie do schowka
-			if (treeManager.getTreeClipboardManager().getClipboardSize() == 1) {
-				TreeItem item = treeManager.getTreeClipboardManager().getClipboard().get(0);
+			if (treeManager.clipboardManager().getClipboardSize() == 1) {
+				TreeItem item = treeManager.clipboardManager().getClipboard().get(0);
 				clipboardManager.copyToSystemClipboard(item.getContent());
 				if (info) {
 					userInfo.showInfo("Item copied: " + item.getContent());
 				}
 			} else {
 				if (info) {
-					userInfo.showInfo("Selected items copied: " + treeManager.getTreeClipboardManager()
+					userInfo.showInfo("Selected items copied: " + treeManager.clipboardManager()
 							.getClipboardSize());
 				}
 			}
@@ -269,11 +271,10 @@ public class MainController {
 	}
 	
 	private void cutSelectedItems() {
-		if (treeManager.getTreeSelectionManager()
-				.isSelectionMode() && treeManager.getTreeSelectionManager()
+		if (treeManager.selectionManager().isSelectionMode() && treeManager.selectionManager()
 				.getSelectedItemsCount() > 0) {
 			copySelectedItems(false);
-			userInfo.showInfo("Selected items cut: " + treeManager.getTreeSelectionManager()
+			userInfo.showInfo("Selected items cut: " + treeManager.selectionManager()
 					.getSelectedItemsCount());
 			removeSelectedItems(false);
 		} else {
@@ -282,7 +283,7 @@ public class MainController {
 	}
 	
 	private void pasteItems() {
-		if (treeManager.getTreeClipboardManager().isClipboardEmpty()) {
+		if (treeManager.clipboardManager().isClipboardEmpty()) {
 			String systemClipboard = clipboardManager.getSystemClipboard();
 			if (systemClipboard != null) {
 				//wklejanie 1 elementu z systemowego schowka
@@ -294,13 +295,13 @@ public class MainController {
 				userInfo.showInfo("Clipboard is empty.");
 			}
 		} else {
-			for (TreeItem clipboardItem : treeManager.getTreeClipboardManager().getClipboard()) {
+			for (TreeItem clipboardItem : treeManager.clipboardManager().getClipboard()) {
 				clipboardItem.setParent(treeManager.getCurrentItem());
 				treeManager.addToCurrent(clipboardItem);
 			}
-			userInfo.showInfo("Items pasted: " + treeManager.getTreeClipboardManager()
+			userInfo.showInfo("Items pasted: " + treeManager.clipboardManager()
 					.getClipboardSize());
-			treeManager.getTreeClipboardManager().recopyClipboard();
+			treeManager.clipboardManager().recopyClipboard();
 			updateItemsList();
 			gui.scrollToItem(-1);
 		}
@@ -308,14 +309,14 @@ public class MainController {
 	
 	private void selectAllItems(boolean selectedState) {
 		for (int i = 0; i < treeManager.getCurrentItem().size(); i++) {
-			treeManager.getTreeSelectionManager().setItemSelected(i, selectedState);
+			treeManager.selectionManager().setItemSelected(i, selectedState);
 		}
 	}
 	
 	private void toggleSelectAll() {
-		if (treeManager.getTreeSelectionManager()
+		if (treeManager.selectionManager()
 				.getSelectedItemsCount() == treeManager.getCurrentItem().size()) {
-			treeManager.getTreeSelectionManager().cancelSelectionMode();
+			treeManager.selectionManager().cancelSelectionMode();
 		} else {
 			selectAllItems(true);
 		}
@@ -324,7 +325,7 @@ public class MainController {
 	
 	
 	private void sumSelected() {
-		if (treeManager.getTreeSelectionManager().isSelectionMode()) {
+		if (treeManager.selectionManager().isSelectionMode()) {
 			try {
 				BigDecimal sum = treeManager.sumSelected();
 				
@@ -351,7 +352,7 @@ public class MainController {
 	}
 	
 	public void selectedItemClicked(int position, boolean checked) {
-		treeManager.getTreeSelectionManager().setItemSelected(position, checked);
+		treeManager.selectionManager().setItemSelected(position, checked);
 		updateItemsList();
 	}
 	
@@ -472,7 +473,7 @@ public class MainController {
 		if (lock.isLocked()) {
 			Logs.warn("Database is locked.");
 		} else {
-			if (treeManager.getTreeSelectionManager().isSelectionMode()) {
+			if (treeManager.selectionManager().isSelectionMode()) {
 				removeSelectedItems(true);
 			} else {
 				removeItem(position);
@@ -481,13 +482,13 @@ public class MainController {
 	}
 	
 	public void itemLongClicked(int position) {
-		if (!treeManager.getTreeSelectionManager().isSelectionMode()) {
-			treeManager.getTreeSelectionManager().startSelectionMode();
-			treeManager.getTreeSelectionManager().setItemSelected(position, true);
+		if (!treeManager.selectionManager().isSelectionMode()) {
+			treeManager.selectionManager().startSelectionMode();
+			treeManager.selectionManager().setItemSelected(position, true);
 			updateItemsList();
 			gui.scrollToItem(position);
 		} else {
-			treeManager.getTreeSelectionManager().setItemSelected(position, true);
+			treeManager.selectionManager().setItemSelected(position, true);
 			updateItemsList();
 		}
 	}
@@ -497,14 +498,14 @@ public class MainController {
 			lock.setLocked(false);
 			Logs.debug("Database unlocked.");
 		}
-		treeManager.getTreeSelectionManager().cancelSelectionMode();
+		treeManager.selectionManager().cancelSelectionMode();
 		treeManager.goInto(position, gui.getCurrentScrollPos());
 		updateItemsList();
 		gui.scrollToItem(0);
 	}
 	
 	public void itemEditClicked(TreeItem item) {
-		treeManager.getTreeSelectionManager().cancelSelectionMode();
+		treeManager.selectionManager().cancelSelectionMode();
 		editItem(item, treeManager.getCurrentItem());
 	}
 	
@@ -514,8 +515,8 @@ public class MainController {
 			Logs.warn("Database is locked.");
 			return;
 		}
-		if (treeManager.getTreeSelectionManager().isSelectionMode()) {
-			treeManager.getTreeSelectionManager().toggleItemSelected(position);
+		if (treeManager.selectionManager().isSelectionMode()) {
+			treeManager.selectionManager().toggleItemSelected(position);
 			updateItemsList();
 		} else {
 			if (item.isEmpty()) {
@@ -532,7 +533,7 @@ public class MainController {
 	}
 	
 	public void addItemClickedPos(int position) {
-		treeManager.getTreeSelectionManager().cancelSelectionMode();
+		treeManager.selectionManager().cancelSelectionMode();
 		newItem(position);
 	}
 	

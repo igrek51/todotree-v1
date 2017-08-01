@@ -3,7 +3,6 @@ package igrek.todotree.services.datatree;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.ParseException;
-import java.util.HashMap;
 
 import igrek.todotree.exceptions.NoSuperItemException;
 import igrek.todotree.logger.Logs;
@@ -24,10 +23,9 @@ public class TreeManager {
 	private TreeItem rootItem;
 	private TreeItem currentItem;
 	
-	private Integer newItemPosition = null;
+	private Integer newItemPosition;
 	
-	private HashMap<TreeItem, Integer> storedScrollPositions;
-	
+	private TreeScrollStore scrollStore;
 	private NumericAdder numericAdder = new NumericAdder();
 	private TreeClipboardManager treeClipboardManager = new TreeClipboardManager();
 	private TreeSelectionManager treeSelectionManager = new TreeSelectionManager();
@@ -42,7 +40,7 @@ public class TreeManager {
 	public void reset() {
 		rootItem = new TreeItem(null, "/");
 		currentItem = rootItem;
-		storedScrollPositions = new HashMap<>();
+		scrollStore = new TreeScrollStore();
 	}
 	
 	private TreeItem getRootItem() {
@@ -84,7 +82,7 @@ public class TreeManager {
 	
 	public void goInto(int childIndex, Integer scrollPos) {
 		if (scrollPos != null) {
-			storeScrollPosition(currentItem, scrollPos);
+			scrollStore.storeScrollPosition(currentItem, scrollPos);
 		}
 		TreeItem item = currentItem.getChild(childIndex);
 		goTo(item);
@@ -238,24 +236,16 @@ public class TreeManager {
 	}
 	
 	
-	public TreeSelectionManager getTreeSelectionManager() {
+	public TreeSelectionManager selectionManager() {
 		return treeSelectionManager;
 	}
 	
-	public TreeClipboardManager getTreeClipboardManager() {
+	public TreeClipboardManager clipboardManager() {
 		return treeClipboardManager;
 	}
 	
-	//  Zapamiętywanie pozycji scrolla
-	
-	public void storeScrollPosition(TreeItem item, Integer y) {
-		if (item != null && y != null) {
-			storedScrollPositions.put(item, y);
-		}
-	}
-	
-	public Integer restoreScrollPosition(TreeItem item) {
-		return storedScrollPositions.get(item);
+	public TreeScrollStore scrollStore() {
+		return scrollStore;
 	}
 	
 	public BigDecimal sumSelected() {
