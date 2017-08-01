@@ -16,6 +16,7 @@ import igrek.todotree.services.clipboard.ClipboardManager;
 import igrek.todotree.services.datatree.TreeManager;
 import igrek.todotree.services.datatree.serializer.TreeSerializer;
 import igrek.todotree.services.filesystem.FilesystemService;
+import igrek.todotree.services.history.ChangesHistory;
 import igrek.todotree.services.lock.DatabaseLock;
 import igrek.todotree.services.preferences.Preferences;
 import igrek.todotree.services.resources.UserInfoService;
@@ -113,6 +114,12 @@ public class AppFactoryModule {
 	@Singleton
 	DatabaseLock provideDatabaseLock() {
 		return new DatabaseLock();
+	}
+	
+	@Provides
+	@Singleton
+	ChangesHistory provideChangesHistory() {
+		return new ChangesHistory();
 	}
 	
 }
