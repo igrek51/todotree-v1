@@ -348,7 +348,7 @@ public class MainController {
 	}
 	
 	public void itemMoved(int position, int step) {
-		treeManager.move(treeManager.getCurrentItem(), position, step);
+		treeManager.mover().move(treeManager.getCurrentItem(), position, step);
 	}
 	
 	public void selectedItemClicked(int position, boolean checked) {
