@@ -245,21 +245,22 @@ public class MainController {
 	
 	private void copySelectedItems(boolean info) {
 		if (treeManager.isSelectionMode()) {
-			treeManager.clearClipboard();
+			treeManager.getTreeClipboardManager().clearClipboard();
 			for (Integer selectedItemId : treeManager.getSelectedItems()) {
 				TreeItem selectedItem = treeManager.getCurrentItem().getChild(selectedItemId);
-				treeManager.addToClipboard(selectedItem);
+				treeManager.getTreeClipboardManager().addToClipboard(selectedItem);
 			}
 			//jeśli zaznaczony jeden element - skopiowanie do schowka
-			if (treeManager.getClipboardSize() == 1) {
-				TreeItem item = treeManager.getClipboard().get(0);
+			if (treeManager.getTreeClipboardManager().getClipboardSize() == 1) {
+				TreeItem item = treeManager.getTreeClipboardManager().getClipboard().get(0);
 				clipboardManager.copyToSystemClipboard(item.getContent());
 				if (info) {
 					userInfo.showInfo("Item copied: " + item.getContent());
 				}
 			} else {
 				if (info) {
-					userInfo.showInfo("Selected items copied: " + treeManager.getClipboardSize());
+					userInfo.showInfo("Selected items copied: " + treeManager.getTreeClipboardManager()
+							.getClipboardSize());
 				}
 			}
 		}
@@ -276,7 +277,7 @@ public class MainController {
 	}
 	
 	private void pasteItems() {
-		if (treeManager.isClipboardEmpty()) {
+		if (treeManager.getTreeClipboardManager().isClipboardEmpty()) {
 			String systemClipboard = clipboardManager.getSystemClipboard();
 			if (systemClipboard != null) {
 				//wklejanie 1 elementu z systemowego schowka
@@ -288,12 +289,13 @@ public class MainController {
 				userInfo.showInfo("Clipboard is empty.");
 			}
 		} else {
-			for (TreeItem clipboardItem : treeManager.getClipboard()) {
+			for (TreeItem clipboardItem : treeManager.getTreeClipboardManager().getClipboard()) {
 				clipboardItem.setParent(treeManager.getCurrentItem());
 				treeManager.addToCurrent(clipboardItem);
 			}
-			userInfo.showInfo("Items pasted: " + treeManager.getClipboardSize());
-			treeManager.recopyClipboard();
+			userInfo.showInfo("Items pasted: " + treeManager.getTreeClipboardManager()
+					.getClipboardSize());
+			treeManager.getTreeClipboardManager().recopyClipboard();
 			updateItemsList();
 			gui.scrollToItem(-1);
 		}

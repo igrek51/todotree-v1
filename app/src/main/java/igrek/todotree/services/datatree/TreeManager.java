@@ -30,11 +30,10 @@ public class TreeManager {
 	
 	private List<Integer> selectedPositions = null;
 	
-	private List<TreeItem> clipboard = null;
-	
 	private HashMap<TreeItem, Integer> storedScrollPositions;
 	
 	private NumericAdder numericAdder = new NumericAdder();
+	private TreeClipboardManager treeClipboardManager = new TreeClipboardManager();
 	
 	public TreeManager(FilesystemService filesystem, Preferences preferences, TreeSerializer treeSerializer) {
 		this.filesystem = filesystem;
@@ -296,41 +295,8 @@ public class TreeManager {
 		setItemSelected(position, !isItemSelected(position));
 	}
 	
-	//  SCHOWEK
-	
-	public List<TreeItem> getClipboard() {
-		return clipboard;
-	}
-	
-	public int getClipboardSize() {
-		if (clipboard == null)
-			return 0;
-		return clipboard.size();
-	}
-	
-	public boolean isClipboardEmpty() {
-		return clipboard == null || clipboard.size() == 0;
-	}
-	
-	public void clearClipboard() {
-		clipboard = null;
-	}
-	
-	public void addToClipboard(TreeItem item) {
-		if (clipboard == null) {
-			clipboard = new ArrayList<>();
-		}
-		clipboard.add(new TreeItem(item));
-	}
-	
-	public void recopyClipboard() {
-		if (clipboard != null) {
-			ArrayList<TreeItem> newClipboard = new ArrayList<>();
-			for (TreeItem item : clipboard) {
-				newClipboard.add(new TreeItem(item));
-			}
-			clipboard = newClipboard;
-		}
+	public TreeClipboardManager getTreeClipboardManager() {
+		return treeClipboardManager;
 	}
 	
 	//  Zapamiętywanie pozycji scrolla
