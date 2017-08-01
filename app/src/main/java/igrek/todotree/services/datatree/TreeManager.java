@@ -3,9 +3,7 @@ package igrek.todotree.services.datatree;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import igrek.todotree.exceptions.NoSuperItemException;
 import igrek.todotree.logger.Logs;
@@ -28,12 +26,11 @@ public class TreeManager {
 	
 	private Integer newItemPosition = null;
 	
-	private List<Integer> selectedPositions = null;
-	
 	private HashMap<TreeItem, Integer> storedScrollPositions;
 	
 	private NumericAdder numericAdder = new NumericAdder();
 	private TreeClipboardManager treeClipboardManager = new TreeClipboardManager();
+	private TreeSelectionManager treeSelectionManager = new TreeSelectionManager();
 	
 	public TreeManager(FilesystemService filesystem, Preferences preferences, TreeSerializer treeSerializer) {
 		this.filesystem = filesystem;
@@ -240,59 +237,9 @@ public class TreeManager {
 		return false;
 	}
 	
-	//  ZAZNACZANIE ELEMENTÓW
 	
-	public List<Integer> getSelectedItems() {
-		return selectedPositions;
-	}
-	
-	public int getSelectedItemsCount() {
-		if (selectedPositions == null)
-			return 0;
-		return selectedPositions.size();
-	}
-	
-	public boolean isSelectionMode() {
-		return selectedPositions != null && selectedPositions.size() > 0;
-	}
-	
-	public void startSelectionMode() {
-		selectedPositions = new ArrayList<>();
-	}
-	
-	public void cancelSelectionMode() {
-		selectedPositions = null;
-	}
-	
-	public void setItemSelected(int position, boolean selectedState) {
-		if (!isSelectionMode()) {
-			startSelectionMode();
-		}
-		if (selectedState) {
-			if (!isItemSelected(position)) {
-				selectedPositions.add(position);
-			}
-		} else {
-			if (isItemSelected(position)) {
-				selectedPositions.remove(Integer.valueOf(position));
-				if (selectedPositions.isEmpty()) {
-					selectedPositions = null;
-				}
-			}
-		}
-	}
-	
-	private boolean isItemSelected(int position) {
-		for (Integer pos : selectedPositions) {
-			if (pos == position) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	public void toggleItemSelected(int position) {
-		setItemSelected(position, !isItemSelected(position));
+	public TreeSelectionManager getTreeSelectionManager() {
+		return treeSelectionManager;
 	}
 	
 	public TreeClipboardManager getTreeClipboardManager() {
@@ -312,6 +259,6 @@ public class TreeManager {
 	}
 	
 	public BigDecimal sumSelected() {
-		return numericAdder.sumSelected(selectedPositions, getCurrentItem());
+		return numericAdder.sumSelected(treeSelectionManager.getSelectedItems(), getCurrentItem());
 	}
 }
