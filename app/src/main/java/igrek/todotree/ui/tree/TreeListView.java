@@ -1,4 +1,4 @@
-package igrek.todotree.gui.tree;
+package igrek.todotree.ui.tree;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -22,14 +22,13 @@ import android.widget.ListView;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 
 import igrek.todotree.controller.ItemEditorController;
 import igrek.todotree.controller.TreeController;
 import igrek.todotree.datatree.item.TreeItem;
-import igrek.todotree.gui.contextmenu.ItemActionsMenu;
-import igrek.todotree.gui.errorhandling.UIErrorHandler;
 import igrek.todotree.logger.Logs;
+import igrek.todotree.ui.contextmenu.ItemActionsMenu;
+import igrek.todotree.ui.errorhandling.UIErrorHandler;
 
 public class TreeListView extends ListView implements AbsListView.OnScrollListener, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
 	

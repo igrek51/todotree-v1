@@ -1,4 +1,4 @@
-package igrek.todotree.gui.edititem;
+package igrek.todotree.ui.edititem;
 
 import android.os.Handler;
 import android.text.InputType;
@@ -12,10 +12,10 @@ import android.widget.TextView;
 import igrek.todotree.R;
 import igrek.todotree.controller.ItemEditorController;
 import igrek.todotree.datatree.item.TreeItem;
-import igrek.todotree.gui.GUI;
-import igrek.todotree.gui.errorhandling.SafeClickListener;
-import igrek.todotree.gui.numkeyboard.NumKeyboardListener;
-import igrek.todotree.gui.numkeyboard.NumericKeyboardView;
+import igrek.todotree.ui.GUI;
+import igrek.todotree.ui.errorhandling.SafeClickListener;
+import igrek.todotree.ui.numkeyboard.NumKeyboardListener;
+import igrek.todotree.ui.numkeyboard.NumericKeyboardView;
 
 public class EditItemGUI implements NumKeyboardListener {
 	

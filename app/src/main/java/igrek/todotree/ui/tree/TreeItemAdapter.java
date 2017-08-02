@@ -1,4 +1,4 @@
-package igrek.todotree.gui.tree;
+package igrek.todotree.ui.tree;
 
 import android.content.Context;
 import android.graphics.Typeface;
@@ -25,7 +25,7 @@ import igrek.todotree.controller.ItemSelectionController;
 import igrek.todotree.controller.ItemTrashController;
 import igrek.todotree.controller.TreeController;
 import igrek.todotree.datatree.item.TreeItem;
-import igrek.todotree.gui.errorhandling.SafeClickListener;
+import igrek.todotree.ui.errorhandling.SafeClickListener;
 
 class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 	
@@ -169,6 +169,8 @@ class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 					new ItemTrashController().itemRemoveClicked(position);
 				}
 			});
+			// hidden
+			//removeButton.setVisibility(View.GONE);
 			
 			//przesuwanie
 			final ImageButton moveButton = (ImageButton) itemView.findViewById(R.id.buttonItemMove);
@@ -216,6 +218,8 @@ class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 			} else {
 				addButton.setVisibility(View.GONE);
 			}
+			// hidden
+			addButton.setVisibility(View.GONE);
 			
 			//checkbox do zaznaczania wielu elementów
 			CheckBox cbItemSelected = (CheckBox) itemView.findViewById(R.id.cbItemSelected);

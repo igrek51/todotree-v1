@@ -1,4 +1,4 @@
-package igrek.todotree.gui.edititem;
+package igrek.todotree.ui.edititem;
 
 
 import android.annotation.TargetApi;
@@ -7,7 +7,7 @@ import android.os.Build;
 import android.util.AttributeSet;
 import android.widget.EditText;
 
-import igrek.todotree.gui.numkeyboard.NumKeyboardListener;
+import igrek.todotree.ui.numkeyboard.NumKeyboardListener;
 
 public class ItemEditText extends EditText {
 	

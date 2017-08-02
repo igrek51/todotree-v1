@@ -1,4 +1,4 @@
-package igrek.todotree.gui.numkeyboard;
+package igrek.todotree.ui.numkeyboard;
 
 import android.content.Context;
 import android.inputmethodservice.Keyboard;

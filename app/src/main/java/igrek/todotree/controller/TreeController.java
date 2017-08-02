@@ -12,10 +12,10 @@ import igrek.todotree.datatree.TreeScrollCache;
 import igrek.todotree.datatree.TreeSelectionManager;
 import igrek.todotree.datatree.item.TreeItem;
 import igrek.todotree.exceptions.NoSuperItemException;
-import igrek.todotree.gui.GUI;
 import igrek.todotree.logger.Logs;
 import igrek.todotree.services.history.ChangesHistory;
 import igrek.todotree.services.lock.DatabaseLock;
+import igrek.todotree.ui.GUI;
 
 public class TreeController {
 	

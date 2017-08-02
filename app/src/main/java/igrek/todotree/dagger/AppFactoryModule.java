@@ -16,7 +16,6 @@ import igrek.todotree.datatree.TreeMover;
 import igrek.todotree.datatree.TreeScrollCache;
 import igrek.todotree.datatree.TreeSelectionManager;
 import igrek.todotree.datatree.serializer.TreeSerializer;
-import igrek.todotree.gui.GUI;
 import igrek.todotree.services.backup.BackupManager;
 import igrek.todotree.services.clipboard.SystemClipboardManager;
 import igrek.todotree.services.filesystem.FilesystemService;
@@ -24,6 +23,7 @@ import igrek.todotree.services.history.ChangesHistory;
 import igrek.todotree.services.lock.DatabaseLock;
 import igrek.todotree.services.preferences.Preferences;
 import igrek.todotree.services.resources.UserInfoService;
+import igrek.todotree.ui.GUI;
 
 @Module
 public class AppFactoryModule {

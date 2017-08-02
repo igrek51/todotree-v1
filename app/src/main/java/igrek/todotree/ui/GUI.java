@@ -1,4 +1,4 @@
-package igrek.todotree.gui;
+package igrek.todotree.ui;
 
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
@@ -8,15 +8,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.RelativeLayout;
 
-import java.util.List;
 import java.util.Set;
 
 import igrek.todotree.R;
 import igrek.todotree.controller.MainController;
 import igrek.todotree.datatree.item.TreeItem;
-import igrek.todotree.gui.edititem.EditItemGUI;
-import igrek.todotree.gui.errorhandling.SafeClickListener;
-import igrek.todotree.gui.tree.TreeListView;
+import igrek.todotree.ui.edititem.EditItemGUI;
+import igrek.todotree.ui.errorhandling.SafeClickListener;
+import igrek.todotree.ui.tree.TreeListView;
 
 public class GUI extends BaseGUI {
 	

@@ -1,4 +1,4 @@
-package igrek.todotree.gui.numkeyboard;
+package igrek.todotree.ui.numkeyboard;
 
 public interface NumKeyboardListener {
 	

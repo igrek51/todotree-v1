@@ -1,4 +1,4 @@
-package igrek.todotree.gui.tree;
+package igrek.todotree.ui.tree;
 
 import android.view.MotionEvent;
 import android.view.View;

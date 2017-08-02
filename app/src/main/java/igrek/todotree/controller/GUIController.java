@@ -10,7 +10,7 @@ import igrek.todotree.datatree.TreeManager;
 import igrek.todotree.datatree.TreeScrollCache;
 import igrek.todotree.datatree.TreeSelectionManager;
 import igrek.todotree.datatree.item.TreeItem;
-import igrek.todotree.gui.GUI;
+import igrek.todotree.ui.GUI;
 
 public class GUIController {
 	

@@ -9,9 +9,9 @@ import android.view.View;
 import java.util.HashMap;
 
 import igrek.todotree.R;
-import igrek.todotree.gui.GUI;
-import igrek.todotree.gui.errorhandling.SafeClickListener;
 import igrek.todotree.logger.Logs;
+import igrek.todotree.ui.GUI;
+import igrek.todotree.ui.errorhandling.SafeClickListener;
 
 public class UserInfoService {
 	

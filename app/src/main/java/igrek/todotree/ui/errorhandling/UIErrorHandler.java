@@ -1,4 +1,4 @@
-package igrek.todotree.gui.errorhandling;
+package igrek.todotree.ui.errorhandling;
 
 
 import javax.inject.Inject;

@@ -10,7 +10,7 @@ import igrek.todotree.app.AppState;
 import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.datatree.TreeManager;
 import igrek.todotree.datatree.TreeSelectionManager;
-import igrek.todotree.gui.GUI;
+import igrek.todotree.ui.GUI;
 
 public class MainController {
 	
@@ -50,20 +50,11 @@ public class MainController {
 			case R.id.action_reload:
 				new PersistenceController().optionReload();
 				return true;
-			case R.id.action_copy:
-				new ClipboardController().copySelectedItems(true);
-				return false;
-			case R.id.action_cut:
-				new ClipboardController().cutSelectedItems();
-				return false;
-			case R.id.action_paste:
-				new ClipboardController().pasteItems();
-				return false;
 			case R.id.action_select_all:
 				new ItemSelectionController().toggleSelectAll();
 				return false;
 			case R.id.action_sum_selected:
-				new ItemSelectionController().sumSelected();
+				new ItemSelectionController().sumItems();
 				return false;
 		}
 		return false;

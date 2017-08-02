@@ -1,7 +1,6 @@
 package igrek.todotree.controller;
 
 
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -12,9 +11,9 @@ import igrek.todotree.datatree.TreeClipboardManager;
 import igrek.todotree.datatree.TreeManager;
 import igrek.todotree.datatree.TreeSelectionManager;
 import igrek.todotree.datatree.item.TreeItem;
-import igrek.todotree.gui.GUI;
 import igrek.todotree.services.clipboard.SystemClipboardManager;
 import igrek.todotree.services.resources.UserInfoService;
+import igrek.todotree.ui.GUI;
 
 public class ClipboardController {
 	

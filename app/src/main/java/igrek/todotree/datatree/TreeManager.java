@@ -1,5 +1,7 @@
 package igrek.todotree.datatree;
 
+import java.util.TreeSet;
+
 import igrek.todotree.datatree.item.TreeItem;
 import igrek.todotree.exceptions.NoSuperItemException;
 import igrek.todotree.services.history.ChangesHistory;
@@ -46,6 +48,14 @@ public class TreeManager {
 	
 	public int positionAfterEnd() {
 		return currentItem.size();
+	}
+	
+	public TreeSet<Integer> getAllChildrenIds() {
+		TreeSet<Integer> ids = new TreeSet<>();
+		for (int id = 0; id < currentItem.getChildren().size(); id++) {
+			ids.add(id);
+		}
+		return ids;
 	}
 	
 	public void setNewItemPosition(Integer newItemPosition) {

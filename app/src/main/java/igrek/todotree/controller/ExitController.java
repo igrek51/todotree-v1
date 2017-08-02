@@ -9,8 +9,8 @@ import igrek.todotree.app.App;
 import igrek.todotree.app.AppData;
 import igrek.todotree.app.AppState;
 import igrek.todotree.dagger.DaggerIOC;
-import igrek.todotree.gui.GUI;
 import igrek.todotree.services.preferences.Preferences;
+import igrek.todotree.ui.GUI;
 
 public class ExitController {
 	

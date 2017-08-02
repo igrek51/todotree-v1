@@ -1,4 +1,4 @@
-package igrek.todotree.gui;
+package igrek.todotree.ui;
 
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;

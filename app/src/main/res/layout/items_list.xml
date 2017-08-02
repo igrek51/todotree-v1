@@ -10,7 +10,7 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="igrek.todotree.MainActivity">
 
-    <igrek.todotree.gui.tree.TreeListView
+    <igrek.todotree.ui.tree.TreeListView
         android:id="@+id/treeItemsList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

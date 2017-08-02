@@ -1,4 +1,4 @@
-package igrek.todotree.gui.contextmenu;
+package igrek.todotree.ui.contextmenu;
 
 
 abstract class ItemAction {

@@ -2,6 +2,7 @@ package igrek.todotree.controller;
 
 
 import java.math.BigDecimal;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -10,7 +11,6 @@ import igrek.todotree.datatree.NumericAdder;
 import igrek.todotree.datatree.TreeManager;
 import igrek.todotree.datatree.TreeSelectionManager;
 import igrek.todotree.services.clipboard.SystemClipboardManager;
-import igrek.todotree.services.filesystem.PathBuilder;
 import igrek.todotree.services.resources.UserInfoService;
 
 public class ItemSelectionController {
@@ -47,32 +47,31 @@ public class ItemSelectionController {
 	}
 	
 	
-	public void sumSelected() {
+	public void sumItems() {
+		Set<Integer> itemIds;
 		if (selectionManager.isAnythingSelected()) {
-			try {
-				BigDecimal sum = calculateSum();
-				
-				String clipboardStr = sum.toPlainString();
-				clipboardStr = clipboardStr.replace('.', ',');
-				
-				clipboardManager.copyToSystemClipboard(clipboardStr);
-				userInfo.showInfo("Sum copied to clipboard: " + clipboardStr);
-				
-			} catch (NumberFormatException e) {
-				userInfo.showInfo(e.getMessage());
-			}
+			itemIds = selectionManager.getSelectedItems();
 		} else {
-			userInfo.showInfo("No items selected.");
+			itemIds = treeManager.getAllChildrenIds();
+		}
+		
+		try {
+			BigDecimal sum = new NumericAdder().calculateSum(itemIds, treeManager.getCurrentItem());
+			
+			String clipboardStr = sum.toPlainString();
+			clipboardStr = clipboardStr.replace('.', ',');
+			
+			clipboardManager.copyToSystemClipboard(clipboardStr);
+			userInfo.showInfo("Sum copied to clipboard: " + clipboardStr);
+			
+		} catch (NumberFormatException e) {
+			userInfo.showInfo(e.getMessage());
 		}
 	}
 	
 	public void selectedItemClicked(int position, boolean checked) {
 		selectionManager.setItemSelected(position, checked);
 		new GUIController().updateItemsList();
-	}
-	
-	private BigDecimal calculateSum() {
-		return new NumericAdder().calculateSum(selectionManager.getSelectedItems(), treeManager.getCurrentItem());
 	}
 	
 }

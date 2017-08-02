@@ -1,12 +1,7 @@
 package igrek.todotree.controller;
 
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.SortedSet;
 import java.util.TreeSet;
 
 import javax.inject.Inject;
@@ -15,10 +10,10 @@ import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.datatree.TreeManager;
 import igrek.todotree.datatree.TreeSelectionManager;
 import igrek.todotree.datatree.item.TreeItem;
-import igrek.todotree.gui.GUI;
 import igrek.todotree.services.lock.DatabaseLock;
 import igrek.todotree.services.resources.InfoBarClickAction;
 import igrek.todotree.services.resources.UserInfoService;
+import igrek.todotree.ui.GUI;
 
 public class ItemTrashController {
 	

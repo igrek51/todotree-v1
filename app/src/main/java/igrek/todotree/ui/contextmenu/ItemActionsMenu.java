@@ -1,4 +1,4 @@
-package igrek.todotree.gui.contextmenu;
+package igrek.todotree.ui.contextmenu;
 
 
 import android.app.Activity;
@@ -16,7 +16,7 @@ import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.datatree.TreeClipboardManager;
 import igrek.todotree.datatree.TreeManager;
 import igrek.todotree.datatree.TreeSelectionManager;
-import igrek.todotree.gui.errorhandling.UIErrorHandler;
+import igrek.todotree.ui.errorhandling.UIErrorHandler;
 
 public class ItemActionsMenu {
 	

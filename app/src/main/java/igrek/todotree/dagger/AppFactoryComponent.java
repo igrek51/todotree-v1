@@ -14,8 +14,8 @@ import igrek.todotree.controller.ItemTrashController;
 import igrek.todotree.controller.MainController;
 import igrek.todotree.controller.PersistenceController;
 import igrek.todotree.controller.TreeController;
-import igrek.todotree.gui.contextmenu.ItemActionsMenu;
-import igrek.todotree.gui.errorhandling.UIErrorHandler;
+import igrek.todotree.ui.contextmenu.ItemActionsMenu;
+import igrek.todotree.ui.errorhandling.UIErrorHandler;
 
 @Singleton
 @Component(modules = {AppFactoryModule.class})
