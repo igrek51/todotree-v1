@@ -7,6 +7,7 @@ import igrek.todotree.app.AppData;
 import igrek.todotree.app.AppState;
 import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.datatree.TreeManager;
+import igrek.todotree.datatree.TreeScrollCache;
 import igrek.todotree.datatree.item.TreeItem;
 import igrek.todotree.gui.GUI;
 
@@ -20,6 +21,9 @@ public class GUIController {
 	
 	@Inject
 	AppData appData;
+	
+	@Inject
+	TreeScrollCache scrollCache;
 	
 	public GUIController() {
 		DaggerIOC.getAppComponent().inject(this);
@@ -37,7 +41,7 @@ public class GUIController {
 	}
 	
 	public void restoreScrollPosition(TreeItem parent) {
-		Integer savedScrollPos = treeManager.scrollCache().restoreScrollPosition(parent);
+		Integer savedScrollPos = scrollCache.restoreScrollPosition(parent);
 		if (savedScrollPos != null) {
 			gui.scrollToPosition(savedScrollPos);
 		}

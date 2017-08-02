@@ -25,7 +25,6 @@ public class TreeManager {
 	// TODO move to EDIT item GUI
 	private Integer newItemPosition;
 	
-	private TreeScrollCache scrollCache;
 	private NumericAdder numericAdder = new NumericAdder();
 	private TreeClipboardManager treeClipboardManager = new TreeClipboardManager();
 	private TreeSelectionManager treeSelectionManager = new TreeSelectionManager();
@@ -41,7 +40,6 @@ public class TreeManager {
 	public void reset() {
 		rootItem = new TreeItem(null, "/");
 		currentItem = rootItem;
-		scrollCache = new TreeScrollCache();
 	}
 	
 	private TreeItem getRootItem() {
@@ -91,10 +89,7 @@ public class TreeManager {
 		}
 	}
 	
-	public void goInto(int childIndex, Integer scrollPos) {
-		if (scrollPos != null) {
-			scrollCache.storeScrollPosition(currentItem, scrollPos);
-		}
+	public void goInto(int childIndex) {
 		TreeItem item = currentItem.getChild(childIndex);
 		goTo(item);
 	}
@@ -147,10 +142,6 @@ public class TreeManager {
 	
 	public TreeClipboardManager clipboardManager() {
 		return treeClipboardManager;
-	}
-	
-	public TreeScrollCache scrollCache() {
-		return scrollCache;
 	}
 	
 	public TreeMover mover() {

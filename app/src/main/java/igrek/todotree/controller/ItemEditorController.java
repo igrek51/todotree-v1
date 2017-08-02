@@ -8,6 +8,7 @@ import igrek.todotree.app.AppState;
 import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.datatree.ContentTrimmer;
 import igrek.todotree.datatree.TreeManager;
+import igrek.todotree.datatree.TreeScrollCache;
 import igrek.todotree.datatree.item.TreeItem;
 import igrek.todotree.gui.GUI;
 import igrek.todotree.services.resources.UserInfoService;
@@ -28,6 +29,9 @@ public class ItemEditorController {
 	
 	@Inject
 	AppData appData;
+	
+	@Inject
+	TreeScrollCache scrollCache;
 	
 	public ItemEditorController() {
 		DaggerIOC.getAppComponent().inject(this);
@@ -92,9 +96,7 @@ public class ItemEditorController {
 		// go into
 		Integer editedItemIndex = treeManager.getNewItemPosition();
 		if (editedItemIndex != null) {
-			//wejście wewnątrz
-			treeManager.goInto(editedItemIndex, gui.getCurrentScrollPos());
-			//dodawanie nowego elementu na końcu
+			new TreeController().goInto(editedItemIndex);
 			newItem(-1);
 		}
 	}
@@ -117,16 +119,14 @@ public class ItemEditorController {
 			position = treeManager.getCurrentItem().size();
 		if (position > treeManager.getCurrentItem().size())
 			position = treeManager.getCurrentItem().size();
-		treeManager.scrollCache()
-				.storeScrollPosition(treeManager.getCurrentItem(), gui.getCurrentScrollPos());
+		scrollCache.storeScrollPosition(treeManager.getCurrentItem(), gui.getCurrentScrollPos());
 		treeManager.setNewItemPosition(position);
 		gui.showEditItemPanel(null, treeManager.getCurrentItem());
 		appData.setState(AppState.EDIT_ITEM_CONTENT);
 	}
 	
 	private void editItem(TreeItem item, TreeItem parent) {
-		treeManager.scrollCache()
-				.storeScrollPosition(treeManager.getCurrentItem(), gui.getCurrentScrollPos());
+		scrollCache.storeScrollPosition(treeManager.getCurrentItem(), gui.getCurrentScrollPos());
 		treeManager.setNewItemPosition(null);
 		gui.showEditItemPanel(item, parent);
 		appData.setState(AppState.EDIT_ITEM_CONTENT);

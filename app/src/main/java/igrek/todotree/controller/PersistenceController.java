@@ -5,6 +5,7 @@ import javax.inject.Inject;
 
 import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.datatree.TreeManager;
+import igrek.todotree.datatree.TreeScrollCache;
 import igrek.todotree.services.backup.BackupManager;
 import igrek.todotree.services.resources.UserInfoService;
 
@@ -19,12 +20,16 @@ public class PersistenceController {
 	@Inject
 	BackupManager backupManager;
 	
+	@Inject
+	TreeScrollCache scrollCache;
+	
 	public PersistenceController() {
 		DaggerIOC.getAppComponent().inject(this);
 	}
 	
 	public void optionReload() {
 		treeManager.reset();
+		scrollCache.clear();
 		treeManager.loadRootTree();
 		new GUIController().updateItemsList();
 		userInfo.showInfo("Database loaded.");

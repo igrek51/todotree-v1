@@ -11,6 +11,7 @@ import igrek.todotree.app.App;
 import igrek.todotree.app.AppData;
 import igrek.todotree.datatree.ContentTrimmer;
 import igrek.todotree.datatree.TreeManager;
+import igrek.todotree.datatree.TreeScrollCache;
 import igrek.todotree.datatree.serializer.TreeSerializer;
 import igrek.todotree.gui.GUI;
 import igrek.todotree.services.backup.BackupManager;
@@ -120,6 +121,12 @@ public class AppFactoryModule {
 	@Singleton
 	ContentTrimmer provideContentTrimmer() {
 		return new ContentTrimmer();
+	}
+	
+	@Provides
+	@Singleton
+	TreeScrollCache provideTreeScrollCache() {
+		return new TreeScrollCache();
 	}
 	
 }

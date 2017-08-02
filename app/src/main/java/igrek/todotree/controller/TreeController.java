@@ -5,6 +5,7 @@ import javax.inject.Inject;
 
 import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.datatree.TreeManager;
+import igrek.todotree.datatree.TreeScrollCache;
 import igrek.todotree.datatree.item.TreeItem;
 import igrek.todotree.exceptions.NoSuperItemException;
 import igrek.todotree.gui.GUI;
@@ -21,6 +22,9 @@ public class TreeController {
 	
 	@Inject
 	DatabaseLock lock;
+	
+	@Inject
+	TreeScrollCache scrollCache;
 	
 	public TreeController() {
 		DaggerIOC.getAppComponent().inject(this);
@@ -44,9 +48,17 @@ public class TreeController {
 			Logs.debug("Database unlocked.");
 		}
 		treeManager.selectionManager().cancelSelectionMode();
-		treeManager.goInto(position, gui.getCurrentScrollPos());
+		goInto(position);
 		new GUIController().updateItemsList();
 		gui.scrollToItem(0);
+	}
+	
+	public void goInto(int childIndex) {
+		Integer scrollPos = gui.getCurrentScrollPos();
+		if (scrollPos != null) {
+			scrollCache.storeScrollPosition(treeManager.getCurrentItem(), scrollPos);
+		}
+		treeManager.goInto(childIndex);
 	}
 	
 	

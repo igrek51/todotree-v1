@@ -9,7 +9,7 @@ public class TreeScrollCache {
 	
 	private HashMap<TreeItem, Integer> storedScrollPositions;
 	
-	TreeScrollCache() {
+	public TreeScrollCache() {
 		storedScrollPositions = new HashMap<>();
 	}
 	
@@ -23,4 +23,7 @@ public class TreeScrollCache {
 		return storedScrollPositions.get(item);
 	}
 	
+	public void clear() {
+		storedScrollPositions.clear();
+	}
 }

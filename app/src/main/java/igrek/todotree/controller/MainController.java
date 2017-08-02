@@ -13,7 +13,6 @@ import igrek.todotree.gui.GUI;
 
 //TODO brak zapisu bazy jeśli nie było zmian
 //TODO: funkcja cofania zmian - zapisywanie modyfikacji, dodawania, usuwania elementów, przesuwania
-// TODO split responsibilities to multiple services
 
 public class MainController {
 	
