@@ -58,7 +58,7 @@ public class EditItemGUI implements NumKeyboardListener {
 						numericKeyboard.finishTyping();
 					}
 					hideKeyboards();
-					new MainController().saveEditedItem(item, etEditItem.getText().toString());
+					new MainController().saveItem(item, etEditItem.getText().toString());
 				}
 			});
 			buttonSaveAndAdd.setOnClickListener(new SafeClickListener() {
@@ -86,7 +86,7 @@ public class EditItemGUI implements NumKeyboardListener {
 						numericKeyboard.finishTyping();
 					}
 					hideKeyboards();
-					new MainController().saveNewItem(etEditItem.getText().toString());
+					new MainController().saveItem(null, etEditItem.getText().toString());
 				}
 			});
 			buttonSaveAndAdd.setOnClickListener(new SafeClickListener() {

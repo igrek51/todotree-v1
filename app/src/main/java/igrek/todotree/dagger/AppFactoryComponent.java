@@ -5,9 +5,11 @@ import javax.inject.Singleton;
 
 import dagger.Component;
 import igrek.todotree.app.App;
+import igrek.todotree.controller.ClipboardController;
 import igrek.todotree.controller.ExitController;
 import igrek.todotree.controller.MainController;
 import igrek.todotree.controller.PersistenceController;
+import igrek.todotree.gui.SafeClickListener;
 import igrek.todotree.gui.edititem.EditItemGUI;
 import igrek.todotree.gui.numkeyboard.NumericKeyboardView;
 import igrek.todotree.gui.treelist.TreeListView;
@@ -26,6 +28,8 @@ public interface AppFactoryComponent {
 	
 	void inject(NumericKeyboardView there);
 	
+	void inject(SafeClickListener there);
+	
 	// Controllers
 	
 	void inject(MainController there);
@@ -33,5 +37,7 @@ public interface AppFactoryComponent {
 	void inject(ExitController there);
 	
 	void inject(PersistenceController there);
+	
+	void inject(ClipboardController there);
 	
 }

@@ -9,6 +9,7 @@ import dagger.Module;
 import dagger.Provides;
 import igrek.todotree.app.App;
 import igrek.todotree.app.AppData;
+import igrek.todotree.datatree.ContentTrimmer;
 import igrek.todotree.datatree.TreeManager;
 import igrek.todotree.datatree.serializer.TreeSerializer;
 import igrek.todotree.gui.GUI;
@@ -113,6 +114,12 @@ public class AppFactoryModule {
 	@Singleton
 	ChangesHistory provideChangesHistory() {
 		return new ChangesHistory();
+	}
+	
+	@Provides
+	@Singleton
+	ContentTrimmer provideContentTrimmer() {
+		return new ContentTrimmer();
 	}
 	
 }
