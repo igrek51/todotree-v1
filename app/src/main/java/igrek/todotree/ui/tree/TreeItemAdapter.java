@@ -170,7 +170,7 @@ class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 				}
 			});
 			// hidden
-			//removeButton.setVisibility(View.GONE);
+			removeButton.setVisibility(View.GONE);
 			
 			//przesuwanie
 			final ImageButton moveButton = (ImageButton) itemView.findViewById(R.id.buttonItemMove);

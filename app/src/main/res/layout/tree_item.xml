@@ -24,28 +24,28 @@
         android:id="@+id/cbItemSelected"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="end|center_vertical"
-        android:gravity="center_vertical|center_horizontal"
         android:layout_centerVertical="true"
-        android:padding="0dp"
+        android:layout_gravity="end|center_vertical"
         android:layout_toEndOf="@+id/buttonItemMove"
-        android:layout_toRightOf="@+id/buttonItemMove"/>
+        android:layout_toRightOf="@+id/buttonItemMove"
+        android:gravity="center_vertical|center_horizontal"
+        android:padding="0dp"/>
 
     <TextView
         android:id="@+id/tvItemContent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="7dp"
+        android:layout_centerVertical="true"
+        android:layout_gravity="start|center_vertical"
         android:layout_marginBottom="7dp"
         android:layout_marginLeft="0dp"
         android:layout_marginRight="0dp"
-        android:layout_toEndOf="@+id/cbItemSelected"
-        android:layout_toRightOf="@+id/cbItemSelected"
+        android:layout_marginTop="7dp"
         android:layout_toLeftOf="@+id/tvItemChildSize"
         android:layout_toStartOf="@+id/tvItemChildSize"
+        android:layout_toRightOf="@+id/cbItemSelected"
+        android:layout_toEndOf="@+id/cbItemSelected"
         android:gravity="start|center_vertical"
-        android:layout_gravity="start|center_vertical"
-        android:layout_centerVertical="true"
         android:text="@string/example_item"
         android:textSize="16sp"/>
 
@@ -53,72 +53,75 @@
         android:id="@+id/tvItemChildSize"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="0dp"
+        android:layout_centerVertical="true"
+        android:layout_gravity="center_vertical|end"
         android:layout_marginBottom="0dp"
         android:layout_marginLeft="1dp"
-        android:layout_marginRight="1dp"
-        android:layout_toLeftOf="@+id/buttonItemEdit"
-        android:layout_toStartOf="@+id/buttonItemEdit"
-        android:gravity="start|center_vertical"
-        android:layout_gravity="end|center_vertical"
-        android:layout_centerVertical="true"
+        android:layout_marginRight="3dp"
+        android:layout_marginTop="0dp"
+        android:layout_toLeftOf="@+id/layoutButtons"
+        android:layout_toStartOf="@+id/layoutButtons"
+        android:gravity="center_vertical|end"
         android:text="[12]"
-        android:textSize="16sp"
-        android:textColor="@color/colorItemChildSize"/>
+        android:textColor="@color/colorItemChildSize"
+        android:textSize="16sp"/>
 
-    <ImageButton
-        android:id="@+id/buttonItemEdit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_gravity="end|center_vertical"
-        android:layout_marginRight="5dp"
-        android:layout_toLeftOf="@+id/buttonItemGoInto"
-        android:layout_toStartOf="@+id/buttonItemGoInto"
-        android:background="@android:drawable/ic_menu_edit"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:padding="16dp"/>
-
-    <ImageButton
-        android:id="@+id/buttonItemGoInto"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_gravity="end|center_vertical"
-        android:layout_marginRight="5dp"
-        android:layout_toLeftOf="@+id/buttonItemAddHere"
-        android:layout_toStartOf="@+id/buttonItemAddHere"
-        android:background="@drawable/ic_menu_forward"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:padding="16dp"/>
-
-    <ImageButton
-        android:id="@+id/buttonItemAddHere"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_gravity="end|center_vertical"
-        android:layout_marginRight="5dp"
-        android:layout_toLeftOf="@+id/buttonItemRemove"
-        android:layout_toStartOf="@+id/buttonItemRemove"
-        android:background="@android:drawable/ic_menu_add"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:padding="16dp"/>
-
-    <ImageButton
-        android:id="@+id/buttonItemRemove"
+    <LinearLayout
+        android:id="@+id/layoutButtons"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:layout_gravity="end|center_vertical"
-        android:layout_marginRight="5dp"
-        android:background="@android:drawable/ic_menu_delete"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:padding="16dp"/>
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/buttonItemEdit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_gravity="end|center_vertical"
+            android:layout_marginRight="5dp"
+            android:background="@android:drawable/ic_menu_edit"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:padding="16dp"/>
+
+        <ImageButton
+            android:id="@+id/buttonItemGoInto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_gravity="end|center_vertical"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/ic_menu_forward"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:padding="16dp"/>
+
+        <ImageButton
+            android:id="@+id/buttonItemAddHere"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_gravity="end|center_vertical"
+            android:layout_marginRight="5dp"
+            android:background="@android:drawable/ic_menu_add"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:padding="16dp"/>
+
+        <ImageButton
+            android:id="@+id/buttonItemRemove"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_gravity="end|center_vertical"
+            android:layout_marginRight="5dp"
+            android:background="@android:drawable/ic_menu_delete"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:padding="16dp"/>
+
+    </LinearLayout>
 </RelativeLayout>
