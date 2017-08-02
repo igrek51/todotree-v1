@@ -1,4 +1,4 @@
-package igrek.todotree.ui.errorhandling;
+package igrek.todotree.ui.errorcheck;
 
 
 import android.view.View;

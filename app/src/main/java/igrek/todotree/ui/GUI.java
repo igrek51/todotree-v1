@@ -12,10 +12,10 @@ import java.util.Set;
 
 import igrek.todotree.R;
 import igrek.todotree.controller.MainController;
-import igrek.todotree.datatree.item.TreeItem;
+import igrek.todotree.model.tree.TreeItem;
 import igrek.todotree.ui.edititem.EditItemGUI;
-import igrek.todotree.ui.errorhandling.SafeClickListener;
-import igrek.todotree.ui.tree.TreeListView;
+import igrek.todotree.ui.errorcheck.SafeClickListener;
+import igrek.todotree.ui.treelist.TreeListView;
 
 public class GUI extends BaseGUI {
 	

@@ -1,4 +1,4 @@
-package igrek.todotree.datatree;
+package igrek.todotree.services.calc;
 
 
 import java.math.BigDecimal;
@@ -6,7 +6,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import igrek.todotree.datatree.item.TreeItem;
+import igrek.todotree.model.tree.TreeItem;
 
 public class NumericAdder {
 	

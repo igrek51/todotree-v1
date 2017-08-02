@@ -11,9 +11,9 @@ import android.widget.TextView;
 
 import igrek.todotree.R;
 import igrek.todotree.controller.ItemEditorController;
-import igrek.todotree.datatree.item.TreeItem;
+import igrek.todotree.model.tree.TreeItem;
 import igrek.todotree.ui.GUI;
-import igrek.todotree.ui.errorhandling.SafeClickListener;
+import igrek.todotree.ui.errorcheck.SafeClickListener;
 import igrek.todotree.ui.numkeyboard.NumKeyboardListener;
 import igrek.todotree.ui.numkeyboard.NumericKeyboardView;
 

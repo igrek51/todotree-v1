@@ -9,20 +9,20 @@ import dagger.Module;
 import dagger.Provides;
 import igrek.todotree.app.App;
 import igrek.todotree.app.AppData;
-import igrek.todotree.datatree.ContentTrimmer;
-import igrek.todotree.datatree.TreeClipboardManager;
-import igrek.todotree.datatree.TreeManager;
-import igrek.todotree.datatree.TreeMover;
-import igrek.todotree.datatree.TreeScrollCache;
-import igrek.todotree.datatree.TreeSelectionManager;
-import igrek.todotree.datatree.serializer.TreeSerializer;
 import igrek.todotree.services.backup.BackupManager;
 import igrek.todotree.services.clipboard.SystemClipboardManager;
+import igrek.todotree.services.clipboard.TreeClipboardManager;
 import igrek.todotree.services.filesystem.FilesystemService;
 import igrek.todotree.services.history.ChangesHistory;
 import igrek.todotree.services.lock.DatabaseLock;
 import igrek.todotree.services.preferences.Preferences;
 import igrek.todotree.services.resources.UserInfoService;
+import igrek.todotree.services.tree.ContentTrimmer;
+import igrek.todotree.services.tree.TreeManager;
+import igrek.todotree.services.tree.TreeMover;
+import igrek.todotree.services.tree.TreeScrollCache;
+import igrek.todotree.services.tree.TreeSelectionManager;
+import igrek.todotree.services.tree.serializer.TreeSerializer;
 import igrek.todotree.ui.GUI;
 
 @Module

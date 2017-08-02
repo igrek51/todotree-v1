@@ -6,15 +6,15 @@ import java.util.List;
 import javax.inject.Inject;
 
 import igrek.todotree.dagger.DaggerIOC;
-import igrek.todotree.datatree.TreeManager;
-import igrek.todotree.datatree.TreeMover;
-import igrek.todotree.datatree.TreeScrollCache;
-import igrek.todotree.datatree.TreeSelectionManager;
-import igrek.todotree.datatree.item.TreeItem;
 import igrek.todotree.exceptions.NoSuperItemException;
 import igrek.todotree.logger.Logs;
+import igrek.todotree.model.tree.TreeItem;
 import igrek.todotree.services.history.ChangesHistory;
 import igrek.todotree.services.lock.DatabaseLock;
+import igrek.todotree.services.tree.TreeManager;
+import igrek.todotree.services.tree.TreeMover;
+import igrek.todotree.services.tree.TreeScrollCache;
+import igrek.todotree.services.tree.TreeSelectionManager;
 import igrek.todotree.ui.GUI;
 
 public class TreeController {

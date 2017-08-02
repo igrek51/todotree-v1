@@ -7,11 +7,11 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import igrek.todotree.dagger.DaggerIOC;
-import igrek.todotree.datatree.NumericAdder;
-import igrek.todotree.datatree.TreeManager;
-import igrek.todotree.datatree.TreeSelectionManager;
+import igrek.todotree.services.calc.NumericAdder;
 import igrek.todotree.services.clipboard.SystemClipboardManager;
 import igrek.todotree.services.resources.UserInfoService;
+import igrek.todotree.services.tree.TreeManager;
+import igrek.todotree.services.tree.TreeSelectionManager;
 
 public class ItemSelectionController {
 	

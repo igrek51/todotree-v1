@@ -8,8 +8,8 @@ import igrek.todotree.app.App;
 import igrek.todotree.app.AppData;
 import igrek.todotree.app.AppState;
 import igrek.todotree.dagger.DaggerIOC;
-import igrek.todotree.datatree.TreeManager;
-import igrek.todotree.datatree.TreeSelectionManager;
+import igrek.todotree.services.tree.TreeManager;
+import igrek.todotree.services.tree.TreeSelectionManager;
 import igrek.todotree.ui.GUI;
 
 public class MainController {

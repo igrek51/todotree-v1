@@ -7,12 +7,12 @@ import java.util.TreeSet;
 import javax.inject.Inject;
 
 import igrek.todotree.dagger.DaggerIOC;
-import igrek.todotree.datatree.TreeClipboardManager;
-import igrek.todotree.datatree.TreeManager;
-import igrek.todotree.datatree.TreeSelectionManager;
-import igrek.todotree.datatree.item.TreeItem;
+import igrek.todotree.model.tree.TreeItem;
 import igrek.todotree.services.clipboard.SystemClipboardManager;
+import igrek.todotree.services.clipboard.TreeClipboardManager;
 import igrek.todotree.services.resources.UserInfoService;
+import igrek.todotree.services.tree.TreeManager;
+import igrek.todotree.services.tree.TreeSelectionManager;
 import igrek.todotree.ui.GUI;
 
 public class ClipboardController {

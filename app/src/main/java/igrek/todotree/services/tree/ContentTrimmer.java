@@ -1,4 +1,4 @@
-package igrek.todotree.datatree;
+package igrek.todotree.services.tree;
 
 
 public class ContentTrimmer {

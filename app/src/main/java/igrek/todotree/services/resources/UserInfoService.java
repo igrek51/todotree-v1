@@ -11,7 +11,7 @@ import java.util.HashMap;
 import igrek.todotree.R;
 import igrek.todotree.logger.Logs;
 import igrek.todotree.ui.GUI;
-import igrek.todotree.ui.errorhandling.SafeClickListener;
+import igrek.todotree.ui.errorcheck.SafeClickListener;
 
 public class UserInfoService {
 	

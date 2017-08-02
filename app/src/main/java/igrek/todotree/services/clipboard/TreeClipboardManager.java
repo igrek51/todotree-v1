@@ -1,10 +1,10 @@
-package igrek.todotree.datatree;
+package igrek.todotree.services.clipboard;
 
 
 import java.util.ArrayList;
 import java.util.List;
 
-import igrek.todotree.datatree.item.TreeItem;
+import igrek.todotree.model.tree.TreeItem;
 
 public class TreeClipboardManager {
 	

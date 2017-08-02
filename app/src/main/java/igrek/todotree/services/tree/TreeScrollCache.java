@@ -1,9 +1,9 @@
-package igrek.todotree.datatree;
+package igrek.todotree.services.tree;
 
 
 import java.util.HashMap;
 
-import igrek.todotree.datatree.item.TreeItem;
+import igrek.todotree.model.tree.TreeItem;
 
 public class TreeScrollCache {
 	

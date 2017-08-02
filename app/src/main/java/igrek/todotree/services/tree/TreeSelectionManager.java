@@ -1,4 +1,4 @@
-package igrek.todotree.datatree;
+package igrek.todotree.services.tree;
 
 
 import java.util.TreeSet;

@@ -7,7 +7,7 @@ import dagger.Component;
 import igrek.todotree.controller.ClipboardController;
 import igrek.todotree.controller.ExitController;
 import igrek.todotree.controller.GUIController;
-import igrek.todotree.controller.ItemActionsController;
+import igrek.todotree.controller.ItemActionController;
 import igrek.todotree.controller.ItemEditorController;
 import igrek.todotree.controller.ItemSelectionController;
 import igrek.todotree.controller.ItemTrashController;
@@ -15,7 +15,7 @@ import igrek.todotree.controller.MainController;
 import igrek.todotree.controller.PersistenceController;
 import igrek.todotree.controller.TreeController;
 import igrek.todotree.ui.contextmenu.ItemActionsMenu;
-import igrek.todotree.ui.errorhandling.UIErrorHandler;
+import igrek.todotree.ui.errorcheck.UIErrorHandler;
 
 @Singleton
 @Component(modules = {AppFactoryModule.class})
@@ -47,6 +47,6 @@ public interface AppFactoryComponent {
 	
 	void inject(ItemSelectionController there);
 	
-	void inject(ItemActionsController there);
+	void inject(ItemActionController there);
 	
 }

@@ -1,4 +1,4 @@
-package igrek.todotree.ui.tree;
+package igrek.todotree.ui.treelist;
 
 import android.content.Context;
 import android.graphics.Typeface;
@@ -22,8 +22,8 @@ import java.util.Set;
 import igrek.todotree.R;
 import igrek.todotree.controller.ItemEditorController;
 import igrek.todotree.controller.ItemSelectionController;
-import igrek.todotree.datatree.item.TreeItem;
-import igrek.todotree.ui.errorhandling.SafeClickListener;
+import igrek.todotree.model.tree.TreeItem;
+import igrek.todotree.ui.errorcheck.SafeClickListener;
 
 class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 	

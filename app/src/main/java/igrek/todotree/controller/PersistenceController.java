@@ -7,17 +7,17 @@ import java.text.ParseException;
 import javax.inject.Inject;
 
 import igrek.todotree.dagger.DaggerIOC;
-import igrek.todotree.datatree.TreeManager;
-import igrek.todotree.datatree.TreeScrollCache;
-import igrek.todotree.datatree.item.TreeItem;
-import igrek.todotree.datatree.serializer.TreeSerializer;
 import igrek.todotree.logger.Logs;
+import igrek.todotree.model.tree.TreeItem;
 import igrek.todotree.services.backup.BackupManager;
 import igrek.todotree.services.filesystem.FilesystemService;
 import igrek.todotree.services.filesystem.PathBuilder;
 import igrek.todotree.services.history.ChangesHistory;
 import igrek.todotree.services.preferences.Preferences;
 import igrek.todotree.services.resources.UserInfoService;
+import igrek.todotree.services.tree.TreeManager;
+import igrek.todotree.services.tree.TreeScrollCache;
+import igrek.todotree.services.tree.serializer.TreeSerializer;
 
 public class PersistenceController {
 	
