@@ -6,6 +6,12 @@ import igrek.todotree.controller.MainController;
 import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.logger.Logs;
 
+//TODO paste as link: >, detecting broken links
+//TODO context menu on item long click or nearby button: select, add above, paste above, remove, paste above as links
+//TODO show changes: transaction commit, rollback, revert last change
+//TODO json serializing
+//TODO item types: link with name, checkbox, text with date / hour, text with number, separator, separator with group name
+
 public class App extends BaseApp {
 	
 	public App(AppCompatActivity activity) {
