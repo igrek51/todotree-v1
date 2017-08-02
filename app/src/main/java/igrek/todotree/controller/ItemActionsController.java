@@ -3,8 +3,6 @@ package igrek.todotree.controller;
 
 import android.os.Handler;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -55,7 +53,7 @@ public class ItemActionsController {
 	}
 	
 	public void actionCopy(int position) {
-		Set<Integer> itemPosistions = new TreeSet<>(selectionManager.getSelectedItems());
+		Set<Integer> itemPosistions = new TreeSet<>(selectionManager.getSelectedItemsNotNull());
 		// if nothing selected - include current item
 		if (itemPosistions.isEmpty()) {
 			itemPosistions.add(position);
@@ -72,7 +70,7 @@ public class ItemActionsController {
 	}
 	
 	public void actionCut(int position) {
-		TreeSet<Integer> itemPosistions = new TreeSet<>(selectionManager.getSelectedItems());
+		TreeSet<Integer> itemPosistions = new TreeSet<>(selectionManager.getSelectedItemsNotNull());
 		// if nothing selected - include current item
 		if (itemPosistions.isEmpty()) {
 			itemPosistions.add(position);

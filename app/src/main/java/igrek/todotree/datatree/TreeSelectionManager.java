@@ -1,7 +1,6 @@
 package igrek.todotree.datatree;
 
 
-import java.util.Set;
 import java.util.TreeSet;
 
 public class TreeSelectionManager {
@@ -10,6 +9,10 @@ public class TreeSelectionManager {
 	
 	public TreeSet<Integer> getSelectedItems() {
 		return selectedPositions;
+	}
+	
+	public TreeSet<Integer> getSelectedItemsNotNull() {
+		return selectedPositions != null ? selectedPositions : new TreeSet<Integer>();
 	}
 	
 	public int getSelectedItemsCount() {
