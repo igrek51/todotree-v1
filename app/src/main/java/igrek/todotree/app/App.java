@@ -24,7 +24,7 @@ public class App extends BaseApp {
 	public void init() {
 		super.init();
 		new MainController().initializeApp();
-		Logs.info("Application started.");
+		Logs.info("Started application.");
 	}
 	
 	@Override

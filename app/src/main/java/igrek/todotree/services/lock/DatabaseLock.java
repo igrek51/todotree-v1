@@ -11,7 +11,7 @@ public class DatabaseLock {
 	}
 	
 	public boolean isLocked() {
-		throw new DatabaseLockedException();
+		return locked;
 	}
 	
 	public void setLocked(boolean locked) {

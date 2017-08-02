@@ -12,7 +12,6 @@ import igrek.todotree.datatree.TreeScrollCache;
 import igrek.todotree.datatree.TreeSelectionManager;
 import igrek.todotree.datatree.item.TreeItem;
 import igrek.todotree.gui.GUI;
-import igrek.todotree.logger.Logs;
 import igrek.todotree.services.lock.DatabaseLock;
 import igrek.todotree.services.resources.UserInfoService;
 
@@ -160,7 +159,6 @@ public class ItemEditorController {
 	}
 	
 	public void addItemHereClicked(int position) {
-		lock.assertUnlocked();
 		selectionManager.cancelSelectionMode();
 		new ItemEditorController().newItem(position);
 	}
