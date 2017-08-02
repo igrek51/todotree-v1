@@ -14,6 +14,7 @@ import igrek.todotree.controller.MainController;
 import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.datatree.item.TreeItem;
 import igrek.todotree.gui.GUI;
+import igrek.todotree.gui.SafeClickListener;
 import igrek.todotree.gui.numkeyboard.NumKeyboardListener;
 import igrek.todotree.gui.numkeyboard.NumericKeyboardView;
 
@@ -50,27 +51,27 @@ public class EditItemGUI implements NumKeyboardListener {
 		
 		if (item != null) { //edycja
 			etEditItem.setText(item.getContent());
-			buttonSaveItem.setOnClickListener(new View.OnClickListener() {
+			buttonSaveItem.setOnClickListener(new SafeClickListener() {
 				@Override
-				public void onClick(View v) {
+				public void onClick() {
 					if (numericKeyboard.isVisible()) {
 						numericKeyboard.finishTyping();
 					}
 					hideKeyboards();
-					new MainController().editedItemSaved(item, etEditItem.getText().toString());
+					new MainController().saveEditedItem(item, etEditItem.getText().toString());
 				}
 			});
-			buttonSaveAndAdd.setOnClickListener(new View.OnClickListener() {
+			buttonSaveAndAdd.setOnClickListener(new SafeClickListener() {
 				@Override
-				public void onClick(View v) {
+				public void onClick() {
 					new MainController().saveAndAddItemClicked(item, etEditItem.getText()
 							.toString());
 					hideKeyboards();
 				}
 			});
-			buttonSaveAndGoInto.setOnClickListener(new View.OnClickListener() {
+			buttonSaveAndGoInto.setOnClickListener(new SafeClickListener() {
 				@Override
-				public void onClick(View v) {
+				public void onClick() {
 					new MainController().saveAndGoIntoItemClicked(item, etEditItem.getText()
 							.toString());
 					hideKeyboards();
@@ -78,27 +79,27 @@ public class EditItemGUI implements NumKeyboardListener {
 			});
 		} else { //nowy element
 			etEditItem.setText("");
-			buttonSaveItem.setOnClickListener(new View.OnClickListener() {
+			buttonSaveItem.setOnClickListener(new SafeClickListener() {
 				@Override
-				public void onClick(View v) {
+				public void onClick() {
 					if (numericKeyboard.isVisible()) {
 						numericKeyboard.finishTyping();
 					}
 					hideKeyboards();
-					new MainController().newItemSaved(etEditItem.getText().toString());
+					new MainController().saveNewItem(etEditItem.getText().toString());
 				}
 			});
-			buttonSaveAndAdd.setOnClickListener(new View.OnClickListener() {
+			buttonSaveAndAdd.setOnClickListener(new SafeClickListener() {
 				@Override
-				public void onClick(View v) {
+				public void onClick() {
 					new MainController().saveAndAddItemClicked(null, etEditItem.getText()
 							.toString());
 					hideKeyboards();
 				}
 			});
-			buttonSaveAndGoInto.setOnClickListener(new View.OnClickListener() {
+			buttonSaveAndGoInto.setOnClickListener(new SafeClickListener() {
 				@Override
-				public void onClick(View v) {
+				public void onClick() {
 					new MainController().saveAndGoIntoItemClicked(null, etEditItem.getText()
 							.toString());
 					hideKeyboards();
@@ -106,18 +107,18 @@ public class EditItemGUI implements NumKeyboardListener {
 			});
 		}
 		
-		rotateScreenBtn.setOnClickListener(new View.OnClickListener() {
+		rotateScreenBtn.setOnClickListener(new SafeClickListener() {
 			@Override
-			public void onClick(View v) {
+			public void onClick() {
 				gui.rotateScreen();
 			}
 		});
 		
 		//przycisk anuluj
 		Button buttonEditCancel = (Button) editItemContentLayout.findViewById(R.id.buttonEditCancel);
-		buttonEditCancel.setOnClickListener(new View.OnClickListener() {
+		buttonEditCancel.setOnClickListener(new SafeClickListener() {
 			@Override
-			public void onClick(View v) {
+			public void onClick() {
 				new MainController().cancelEditedItem();
 				hideKeyboards();
 			}
@@ -125,73 +126,73 @@ public class EditItemGUI implements NumKeyboardListener {
 		
 		//przyciski zmiany kursora i zaznaczenia
 		ImageButton quickEditGoBegin = (ImageButton) editItemContentLayout.findViewById(R.id.quickEditGoBegin);
-		quickEditGoBegin.setOnClickListener(new View.OnClickListener() {
+		quickEditGoBegin.setOnClickListener(new SafeClickListener() {
 			@Override
-			public void onClick(View v) {
+			public void onClick() {
 				quickCursorMove(-2);
 			}
 		});
 		ImageButton quickEditGoLeft = (ImageButton) editItemContentLayout.findViewById(R.id.quickEditGoLeft);
-		quickEditGoLeft.setOnClickListener(new View.OnClickListener() {
+		quickEditGoLeft.setOnClickListener(new SafeClickListener() {
 			@Override
-			public void onClick(View v) {
+			public void onClick() {
 				quickCursorMove(-1);
 			}
 		});
 		ImageButton quickEditSelectAll = (ImageButton) editItemContentLayout.findViewById(R.id.quickEditSelectAll);
-		quickEditSelectAll.setOnClickListener(new View.OnClickListener() {
+		quickEditSelectAll.setOnClickListener(new SafeClickListener() {
 			@Override
-			public void onClick(View v) {
+			public void onClick() {
 				quickEditSelectAll();
 			}
 		});
 		ImageButton quickEditGoRight = (ImageButton) editItemContentLayout.findViewById(R.id.quickEditGoRight);
-		quickEditGoRight.setOnClickListener(new View.OnClickListener() {
+		quickEditGoRight.setOnClickListener(new SafeClickListener() {
 			@Override
-			public void onClick(View v) {
+			public void onClick() {
 				quickCursorMove(+1);
 			}
 		});
 		ImageButton quickEditGoEnd = (ImageButton) editItemContentLayout.findViewById(R.id.quickEditGoEnd);
-		quickEditGoEnd.setOnClickListener(new View.OnClickListener() {
+		quickEditGoEnd.setOnClickListener(new SafeClickListener() {
 			@Override
-			public void onClick(View v) {
+			public void onClick() {
 				quickCursorMove(+2);
 			}
 		});
 		
 		//klawiatura dodawania godziny
 		Button buttonEditInsertTime = (Button) editItemContentLayout.findViewById(R.id.buttonEditInsertTime);
-		buttonEditInsertTime.setOnClickListener(new View.OnClickListener() {
+		buttonEditInsertTime.setOnClickListener(new SafeClickListener() {
 			@Override
-			public void onClick(View v) {
+			public void onClick() {
 				toggleTypingHour();
 			}
 		});
 		
 		//klawiatura dodawania daty
 		Button buttonEditInsertDate = (Button) editItemContentLayout.findViewById(R.id.buttonEditInsertDate);
-		buttonEditInsertDate.setOnClickListener(new View.OnClickListener() {
+		buttonEditInsertDate.setOnClickListener(new SafeClickListener() {
 			@Override
-			public void onClick(View v) {
+			public void onClick() {
 				toggleTypingDate();
 			}
 		});
 		
 		//numer
 		Button buttonEditInsertNumber = (Button) editItemContentLayout.findViewById(R.id.buttonEditInsertNumber);
-		buttonEditInsertNumber.setOnClickListener(new View.OnClickListener() {
+		buttonEditInsertNumber.setOnClickListener(new SafeClickListener() {
 			@Override
-			public void onClick(View v) {
+			public void onClick() {
 				toggleTypingNumeric();
 			}
 		});
 		
 		//dodawanie przedziału
 		Button buttonEditInsertRange = (Button) editItemContentLayout.findViewById(R.id.buttonEditInsertRange);
-		buttonEditInsertRange.setOnClickListener(new View.OnClickListener() {
+		buttonEditInsertRange.setOnClickListener(new SafeClickListener() {
 			@Override
-			public void onClick(View v) {
+			public void onClick() {
 				quickInsertRange();
 				numericKeyboard.resetInput();
 			}
@@ -212,9 +213,9 @@ public class EditItemGUI implements NumKeyboardListener {
 		etEditItem.setNumKeyboardListener(this);
 		
 		//niepotrzebne na focus: etEditItem.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-		etEditItem.setOnClickListener(new View.OnClickListener() {
+		etEditItem.setOnClickListener(new SafeClickListener() {
 			@Override
-			public void onClick(View v) {
+			public void onClick() {
 				if (numericKeyboard.isVisible()) {
 					showNumericKeyboard();
 					numericKeyboard.resetInput();

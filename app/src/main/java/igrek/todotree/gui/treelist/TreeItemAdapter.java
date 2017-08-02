@@ -21,6 +21,7 @@ import java.util.List;
 import igrek.todotree.R;
 import igrek.todotree.controller.MainController;
 import igrek.todotree.datatree.item.TreeItem;
+import igrek.todotree.gui.SafeClickListener;
 
 class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 	
@@ -92,9 +93,9 @@ class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 			ImageButton plusButton = (ImageButton) itemPlus.findViewById(R.id.buttonAddNewItem);
 			plusButton.setFocusableInTouchMode(false);
 			plusButton.setFocusable(false);
-			plusButton.setOnClickListener(new View.OnClickListener() {
+			plusButton.setOnClickListener(new SafeClickListener() {
 				@Override
-				public void onClick(View v) {
+				public void onClick() {
 					new MainController().addItemClicked();
 				}
 			});
@@ -127,9 +128,9 @@ class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 			editButton.setFocusableInTouchMode(false);
 			editButton.setFocusable(false);
 			if (selections == null && !item.isEmpty()) {
-				editButton.setOnClickListener(new View.OnClickListener() {
+				editButton.setOnClickListener(new SafeClickListener() {
 					@Override
-					public void onClick(View v) {
+					public void onClick() {
 						new MainController().itemEditClicked(item);
 					}
 				});
@@ -142,9 +143,9 @@ class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 			goIntoButton.setFocusableInTouchMode(false);
 			goIntoButton.setFocusable(false);
 			if (selections == null && item.isEmpty()) {
-				goIntoButton.setOnClickListener(new View.OnClickListener() {
+				goIntoButton.setOnClickListener(new SafeClickListener() {
 					@Override
-					public void onClick(View v) {
+					public void onClick() {
 						new MainController().itemGoIntoClicked(position);
 					}
 				});
@@ -158,9 +159,9 @@ class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 			ImageButton removeButton = (ImageButton) itemView.findViewById(R.id.buttonItemRemove);
 			removeButton.setFocusableInTouchMode(false);
 			removeButton.setFocusable(false);
-			removeButton.setOnClickListener(new View.OnClickListener() {
+			removeButton.setOnClickListener(new SafeClickListener() {
 				@Override
-				public void onClick(View v) {
+				public void onClick() {
 					new MainController().itemRemoveClicked(position);
 				}
 			});
@@ -202,9 +203,9 @@ class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 			addButton.setFocusableInTouchMode(false);
 			addButton.setFocusable(false);
 			if (selections == null) {
-				addButton.setOnClickListener(new View.OnClickListener() {
+				addButton.setOnClickListener(new SafeClickListener() {
 					@Override
-					public void onClick(View v) {
+					public void onClick() {
 						new MainController().addItemClickedPos(position);
 					}
 				});

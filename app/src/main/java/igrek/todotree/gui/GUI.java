@@ -35,10 +35,10 @@ public class GUI extends BaseGUI {
 		activity.setSupportActionBar(toolbar1);
 		actionBar = activity.getSupportActionBar();
 		showBackButton(true);
-		toolbar1.setNavigationOnClickListener(new View.OnClickListener() {
+		toolbar1.setNavigationOnClickListener(new SafeClickListener() {
 			@Override
-			public void onClick(View v) {
-				new MainController().toolbarBackClicked();
+			public void onClick() {
+				new MainController().backClicked();
 			}
 		});
 		

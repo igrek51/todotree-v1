@@ -10,6 +10,7 @@ import java.util.HashMap;
 
 import igrek.todotree.R;
 import igrek.todotree.gui.GUI;
+import igrek.todotree.gui.SafeClickListener;
 import igrek.todotree.logger.Logs;
 
 public class UserInfoService {
@@ -62,9 +63,9 @@ public class UserInfoService {
 			}
 			
 			final InfoBarClickAction finalAction = action;
-			snackbar.setAction(actionName, new View.OnClickListener() {
+			snackbar.setAction(actionName, new SafeClickListener() {
 				@Override
-				public void onClick(View v) {
+				public void onClick() {
 					finalAction.onClick();
 				}
 			});
