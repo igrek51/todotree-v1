@@ -1,15 +1,11 @@
 package igrek.todotree.datatree;
 
-import java.io.IOException;
 import java.math.BigDecimal;
-import java.text.ParseException;
 
 import igrek.todotree.datatree.item.TreeItem;
 import igrek.todotree.datatree.serializer.TreeSerializer;
 import igrek.todotree.exceptions.NoSuperItemException;
-import igrek.todotree.logger.Logs;
 import igrek.todotree.services.filesystem.FilesystemService;
-import igrek.todotree.services.filesystem.PathBuilder;
 import igrek.todotree.services.preferences.Preferences;
 
 //TODO RESPONSIBILITY separation
@@ -42,11 +38,11 @@ public class TreeManager {
 		currentItem = rootItem;
 	}
 	
-	private TreeItem getRootItem() {
+	public TreeItem getRootItem() {
 		return rootItem;
 	}
 	
-	private void setRootItem(TreeItem rootItem) {
+	public void setRootItem(TreeItem rootItem) {
 		this.rootItem = rootItem;
 		this.currentItem = rootItem;
 	}
@@ -77,7 +73,7 @@ public class TreeManager {
 		currentItem.add(position, item);
 	}
 	
-	//  NAWIGACJA
+	//  Navigation
 	
 	public void goUp() throws NoSuperItemException {
 		if (currentItem == rootItem) {
@@ -102,39 +98,6 @@ public class TreeManager {
 		currentItem.add(newItem);
 	}
 	
-	//  ZAPIS / ODCZYT Z PLIKU
-	
-	public void loadRootTree() {
-		
-		filesystem.mkdirIfNotExist(filesystem.pathSD().toString());
-		PathBuilder dbFilePath = filesystem.pathSD().append(preferences.dbFilePath);
-		Logs.info("Loading database from file: " + dbFilePath.toString());
-		if (!filesystem.exists(dbFilePath.toString())) {
-			Logs.warn("Database file does not exist. Default empty database created.");
-			return;
-		}
-		try {
-			String fileContent = filesystem.openFileString(dbFilePath.toString());
-			TreeItem rootItem = treeSerializer.loadTree(fileContent);
-			setRootItem(rootItem);
-			Logs.info("Database loaded.");
-		} catch (IOException | ParseException e) {
-			Logs.error(e);
-		}
-	}
-	
-	public void saveRootTree() {
-		//TODO: wyjście bez zapisywania bazy jeśli nie było zmian
-		
-		PathBuilder dbFilePath = filesystem.pathSD().append(preferences.dbFilePath);
-		//        Logs.info("Zapisywanie bazy danych do pliku: " + dbFilePath.toString());
-		try {
-			String output = treeSerializer.saveTree(getRootItem());
-			filesystem.saveFile(dbFilePath.toString(), output);
-		} catch (IOException e) {
-			Logs.error(e);
-		}
-	}
 	
 	public TreeSelectionManager selectionManager() {
 		return treeSelectionManager;

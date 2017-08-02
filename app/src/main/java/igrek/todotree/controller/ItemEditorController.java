@@ -43,10 +43,14 @@ public class ItemEditorController {
 			userInfo.showInfo("Empty item has been removed.");
 			return false;
 		} else {
-			treeManager.addToCurrent(treeManager.getNewItemPosition(), content);
+			treeManager.addToCurrent(getNewItemPosition(), content);
 			userInfo.showInfo("New item has been saved.");
 			return true;
 		}
+	}
+	
+	private Integer getNewItemPosition() {
+		return treeManager.getNewItemPosition();
 	}
 	
 	private boolean tryToSaveExistingItem(TreeItem editedItem, String content) {
@@ -72,9 +76,8 @@ public class ItemEditorController {
 	
 	private void returnFromItemEditing() {
 		new GUIController().showItemsList();
-		if (treeManager.getNewItemPosition() != null) { //editing existing item
-			if (treeManager.getNewItemPosition() == treeManager.getCurrentItem()
-					.size() - 1) { // last item
+		if (getNewItemPosition() != null) { //editing existing item
+			if (getNewItemPosition() == treeManager.getCurrentItem().size() - 1) { // last item
 				gui.scrollToBottom();
 			} else {
 				new GUIController().restoreScrollPosition(treeManager.getCurrentItem());
@@ -94,7 +97,7 @@ public class ItemEditorController {
 			return;
 		}
 		// go into
-		Integer editedItemIndex = treeManager.getNewItemPosition();
+		Integer editedItemIndex = getNewItemPosition();
 		if (editedItemIndex != null) {
 			new TreeController().goInto(editedItemIndex);
 			newItem(-1);
@@ -102,7 +105,7 @@ public class ItemEditorController {
 	}
 	
 	public void saveAndAddItemClicked(TreeItem editedItem, String content) {
-		int newItemIndex = editedItem == null ? treeManager.getNewItemPosition() : editedItem.getIndexInParent();
+		int newItemIndex = editedItem == null ? getNewItemPosition() : editedItem.getIndexInParent();
 		if (!tryToSaveItem(editedItem, content)) {
 			returnFromItemEditing();
 			return;
