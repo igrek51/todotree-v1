@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import igrek.todotree.R;
 import igrek.todotree.controller.ItemEditorController;
-import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.datatree.item.TreeItem;
 import igrek.todotree.gui.GUI;
 import igrek.todotree.gui.SafeClickListener;
@@ -28,8 +27,6 @@ public class EditItemGUI implements NumKeyboardListener {
 	
 	public EditItemGUI(GUI gui, final TreeItem item, TreeItem parent) {
 		this.gui = gui;
-		
-		DaggerIOC.getAppComponent().inject(this);
 		
 		init(item, parent);
 	}

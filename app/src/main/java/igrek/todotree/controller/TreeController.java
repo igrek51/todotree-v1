@@ -1,6 +1,8 @@
 package igrek.todotree.controller;
 
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import igrek.todotree.dagger.DaggerIOC;
@@ -100,7 +102,8 @@ public class TreeController {
 		}
 	}
 	
-	public void itemMoved(int position, int step) {
+	public List<TreeItem> itemMoved(int position, int step) {
 		treeMover.move(treeManager.getCurrentItem(), position, step);
+		return treeManager.getCurrentItem().getChildren();
 	}
 }

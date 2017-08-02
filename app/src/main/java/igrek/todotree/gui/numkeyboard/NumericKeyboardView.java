@@ -7,17 +7,10 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.EditText;
 
-import javax.inject.Inject;
-
 import igrek.todotree.R;
-import igrek.todotree.dagger.DaggerIOC;
-import igrek.todotree.gui.GUI;
-import igrek.todotree.gui.edititem.EditItemGUI;
+import igrek.todotree.controller.GUIController;
 
 public class NumericKeyboardView extends KeyboardView implements KeyboardView.OnKeyboardActionListener {
-	
-	@Inject
-	GUI gui;
 	
 	private Context context;
 	private EditText editText;
@@ -27,10 +20,6 @@ public class NumericKeyboardView extends KeyboardView implements KeyboardView.On
 	private StringBuffer input = new StringBuffer();
 	
 	private int mode; //1 - godzina, 2 - data, 3 - liczba (waluta)
-	
-	{
-		DaggerIOC.getAppComponent().inject(this);
-	}
 	
 	public NumericKeyboardView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -166,10 +155,7 @@ public class NumericKeyboardView extends KeyboardView implements KeyboardView.On
 	}
 	
 	private void typedHyphen() {
-		EditItemGUI editItem = gui.getEditItemGUI();
-		if (editItem != null) {
-			editItem.quickInsertRange();
-		}
+		new GUIController().numKeyboardHyphenTyped();
 	}
 	
 	private void typedBackspace() {

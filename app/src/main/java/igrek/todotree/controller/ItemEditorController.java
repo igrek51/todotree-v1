@@ -95,6 +95,16 @@ public class ItemEditorController {
 		returnFromItemEditing();
 	}
 	
+	public void saveAndAddItemClicked(TreeItem editedItem, String content) {
+		int newItemIndex = editedItem == null ? getNewItemPosition() : editedItem.getIndexInParent();
+		if (!tryToSaveItem(editedItem, content)) {
+			returnFromItemEditing();
+			return;
+		}
+		// add new after
+		newItem(newItemIndex + 1);
+	}
+	
 	public void saveAndGoIntoItemClicked(TreeItem editedItem, String content) {
 		if (!tryToSaveItem(editedItem, content)) {
 			returnFromItemEditing();
@@ -108,20 +118,10 @@ public class ItemEditorController {
 		}
 	}
 	
-	public void saveAndAddItemClicked(TreeItem editedItem, String content) {
-		int newItemIndex = editedItem == null ? getNewItemPosition() : editedItem.getIndexInParent();
-		if (!tryToSaveItem(editedItem, content)) {
-			returnFromItemEditing();
-			return;
-		}
-		// add new after
-		newItem(newItemIndex + 1);
-	}
-	
 	/**
 	 * @param position posistion of new element (0 - begginning, negative value - in the end of list)
 	 */
-	public void newItem(int position) {
+	private void newItem(int position) {
 		if (position < 0)
 			position = treeManager.getCurrentItem().size();
 		if (position > treeManager.getCurrentItem().size())

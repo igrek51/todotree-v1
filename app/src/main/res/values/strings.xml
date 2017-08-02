@@ -17,8 +17,8 @@
     <string name="action_cut">Cut</string>
     <string name="action_paste">Paste</string>
     <string name="action_select_all">Select all</string>
-    <string name="button_save_and_add">and add</string>
-    <string name="button_save_and_go_into">and go into</string>
+    <string name="button_save_and_add">+ add</string>
+    <string name="button_save_and_go_into">+ go into</string>
     <string name="buttonEditInsertTime">HH:mm</string>
     <string name="buttonEditInsertDate">dd.MM.yy</string>
     <string name="buttonEditInsertRange">-</string>

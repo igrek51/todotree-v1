@@ -22,19 +22,12 @@ import android.widget.ListView;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import igrek.todotree.controller.ItemEditorController;
 import igrek.todotree.controller.TreeController;
-import igrek.todotree.dagger.DaggerIOC;
-import igrek.todotree.datatree.TreeManager;
 import igrek.todotree.datatree.item.TreeItem;
 import igrek.todotree.logger.Logs;
 
 public class TreeListView extends ListView implements AbsListView.OnScrollListener, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
-	
-	@Inject
-	TreeManager treeManager;
 	
 	private List<TreeItem> items;
 	private TreeItemAdapter adapter;
@@ -86,10 +79,6 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
 	
 	private final float GESTURE_MIN_DX = 0.27f;
 	private final float GESTURE_MAX_DY = 0.8f;
-	
-	{
-		DaggerIOC.getAppComponent().inject(this);
-	}
 	
 	public TreeListView(Context context) {
 		super(context);
@@ -354,8 +343,7 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
 		if (step != 0) {
 			int targetPosition = draggedItemPos + step;
 			
-			new TreeController().itemMoved(draggedItemPos, step);
-			items = treeManager.getCurrentItem().getChildren();
+			items = new TreeController().itemMoved(draggedItemPos, step);
 			
 			//update mapy wysokości
 			if (step > 0) {
@@ -548,8 +536,7 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
 			//przeniesienie na koniec
 			itemDraggingStopped();
 			
-			new TreeController().itemMoved(position, items.size() - 1);
-			items = treeManager.getCurrentItem().getChildren();
+			items = new TreeController().itemMoved(position, items.size() - 1);
 			
 			adapter.setDataSource(items);
 			scrollToItem(items.size() - 1);
@@ -559,8 +546,7 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
 			//przeniesienie na początek
 			itemDraggingStopped();
 			
-			new TreeController().itemMoved(position, -(items.size() - 1));
-			items = treeManager.getCurrentItem().getChildren();
+			items = new TreeController().itemMoved(position, -(items.size() - 1));
 			
 			adapter.setDataSource(items);
 			scrollToItem(0);

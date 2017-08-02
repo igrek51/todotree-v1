@@ -37,7 +37,7 @@ public class ClipboardController {
 	}
 	
 	public void copySelectedItems(boolean info) {
-		if (selectionManager.isSelectionMode()) {
+		if (selectionManager.isSelectionMode() && selectionManager.getSelectedItemsCount() > 0) {
 			treeClipboardManager.clearClipboard();
 			for (Integer selectedItemId : selectionManager.getSelectedItems()) {
 				TreeItem selectedItem = treeManager.getCurrentItem().getChild(selectedItemId);
@@ -55,6 +55,8 @@ public class ClipboardController {
 					userInfo.showInfo("Selected items copied: " + treeClipboardManager.getClipboardSize());
 				}
 			}
+		} else {
+			userInfo.showInfo("No selected items");
 		}
 	}
 	

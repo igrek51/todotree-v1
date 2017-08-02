@@ -65,10 +65,6 @@ public class GUI extends BaseGUI {
 		updateItemsList(currentItem, null);
 	}
 	
-	public EditItemGUI getEditItemGUI() {
-		return editItemGUI;
-	}
-	
 	public void showEditItemPanel(final TreeItem item, TreeItem parent) {
 		showBackButton(true);
 		editItemGUI = new EditItemGUI(this, item, parent);
@@ -140,6 +136,12 @@ public class GUI extends BaseGUI {
 		int orientation = activity.getResources().getConfiguration().orientation;
 		if (orientation != Configuration.ORIENTATION_PORTRAIT) {
 			activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+		}
+	}
+	
+	public void quickInsertRange() {
+		if (editItemGUI != null) {
+			editItemGUI.quickInsertRange();
 		}
 	}
 }

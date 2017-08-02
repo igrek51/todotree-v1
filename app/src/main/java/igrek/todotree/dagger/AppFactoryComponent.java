@@ -14,21 +14,12 @@ import igrek.todotree.controller.MainController;
 import igrek.todotree.controller.PersistenceController;
 import igrek.todotree.controller.TreeController;
 import igrek.todotree.gui.SafeClickListener;
-import igrek.todotree.gui.edititem.EditItemGUI;
-import igrek.todotree.gui.numkeyboard.NumericKeyboardView;
-import igrek.todotree.gui.tree.TreeListView;
 
 @Singleton
 @Component(modules = {AppFactoryModule.class})
 public interface AppFactoryComponent {
 	
 	void inject(IDaggerInjectionTest there);
-	
-	void inject(TreeListView there);
-	
-	void inject(EditItemGUI there);
-	
-	void inject(NumericKeyboardView there);
 	
 	void inject(SafeClickListener there);
 	

@@ -54,4 +54,8 @@ public class GUIController {
 		gui.lazyInit();
 		gui.showItemsList(treeManager.getCurrentItem());
 	}
+	
+	public void numKeyboardHyphenTyped() {
+		gui.quickInsertRange();
+	}
 }
