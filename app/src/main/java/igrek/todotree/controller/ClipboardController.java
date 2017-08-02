@@ -58,7 +58,7 @@ public class ClipboardController {
 			copySelectedItems(false);
 			userInfo.showInfo("Selected items cut: " + treeManager.selectionManager()
 					.getSelectedItemsCount());
-			new MainController().removeSelectedItems(false);
+			new ItemTrashController().removeSelectedItems(false);
 		} else {
 			userInfo.showInfo("No selected items");
 		}
@@ -71,7 +71,7 @@ public class ClipboardController {
 				//wklejanie 1 elementu z systemowego schowka
 				treeManager.getCurrentItem().add(systemClipboard);
 				userInfo.showInfo("Item pasted: " + systemClipboard);
-				new MainController().updateItemsList();
+				new GUIController().updateItemsList();
 				gui.scrollToItem(-1);
 			} else {
 				userInfo.showInfo("Clipboard is empty.");
@@ -83,7 +83,7 @@ public class ClipboardController {
 			}
 			userInfo.showInfo("Items pasted: " + treeManager.clipboardManager().getClipboardSize());
 			treeManager.clipboardManager().recopyClipboard();
-			new MainController().updateItemsList();
+			new GUIController().updateItemsList();
 			gui.scrollToItem(-1);
 		}
 	}

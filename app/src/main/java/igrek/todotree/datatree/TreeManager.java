@@ -72,6 +72,13 @@ public class TreeManager {
 		currentItem.add(position, content);
 	}
 	
+	public void addToCurrent(Integer position, TreeItem item) {
+		if (position == null) {
+			position = currentItem.size();
+		}
+		currentItem.add(position, item);
+	}
+	
 	//  NAWIGACJA
 	
 	public void goUp() throws NoSuperItemException {

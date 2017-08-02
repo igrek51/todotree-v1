@@ -12,7 +12,7 @@ import igrek.todotree.datatree.item.TreeItem;
 import igrek.todotree.gui.GUI;
 import igrek.todotree.services.resources.UserInfoService;
 
-public class ItemEditController {
+public class ItemEditorController {
 	
 	@Inject
 	TreeManager treeManager;
@@ -29,7 +29,7 @@ public class ItemEditController {
 	@Inject
 	AppData appData;
 	
-	public ItemEditController() {
+	public ItemEditorController() {
 		DaggerIOC.getAppComponent().inject(this);
 	}
 	
@@ -67,13 +67,13 @@ public class ItemEditController {
 	}
 	
 	private void returnFromItemEditing() {
-		new MainController().showItemsList();
+		new GUIController().showItemsList();
 		if (treeManager.getNewItemPosition() != null) { //editing existing item
 			if (treeManager.getNewItemPosition() == treeManager.getCurrentItem()
 					.size() - 1) { // last item
 				gui.scrollToBottom();
 			} else {
-				new MainController().restoreScrollPosition(treeManager.getCurrentItem());
+				new GUIController().restoreScrollPosition(treeManager.getCurrentItem());
 			}
 		}
 		treeManager.setNewItemPosition(null);
@@ -147,4 +147,12 @@ public class ItemEditController {
 		discardEditingItem();
 	}
 	
+	public void addItemHereClicked(int position) {
+		treeManager.selectionManager().cancelSelectionMode();
+		new ItemEditorController().newItem(position);
+	}
+	
+	public void addItemClicked() {
+		addItemHereClicked(-1);
+	}
 }

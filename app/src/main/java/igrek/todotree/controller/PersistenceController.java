@@ -26,7 +26,7 @@ public class PersistenceController {
 	public void optionReload() {
 		treeManager.reset();
 		treeManager.loadRootTree();
-		new MainController().updateItemsList();
+		new GUIController().updateItemsList();
 		userInfo.showInfo("Database loaded.");
 	}
 	

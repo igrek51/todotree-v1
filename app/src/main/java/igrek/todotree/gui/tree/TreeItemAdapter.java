@@ -1,4 +1,4 @@
-package igrek.todotree.gui.treelist;
+package igrek.todotree.gui.tree;
 
 import android.content.Context;
 import android.graphics.Typeface;
@@ -19,8 +19,10 @@ import java.util.HashMap;
 import java.util.List;
 
 import igrek.todotree.R;
-import igrek.todotree.controller.ItemEditController;
-import igrek.todotree.controller.MainController;
+import igrek.todotree.controller.ItemEditorController;
+import igrek.todotree.controller.ItemSelectionController;
+import igrek.todotree.controller.ItemTrashController;
+import igrek.todotree.controller.TreeController;
 import igrek.todotree.datatree.item.TreeItem;
 import igrek.todotree.gui.SafeClickListener;
 
@@ -97,7 +99,7 @@ class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 			plusButton.setOnClickListener(new SafeClickListener() {
 				@Override
 				public void onClick() {
-					new MainController().addItemClicked();
+					new ItemEditorController().addItemClicked();
 				}
 			});
 			
@@ -132,7 +134,7 @@ class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 				editButton.setOnClickListener(new SafeClickListener() {
 					@Override
 					public void onClick() {
-						new ItemEditController().itemEditClicked(item);
+						new ItemEditorController().itemEditClicked(item);
 					}
 				});
 			} else {
@@ -147,7 +149,7 @@ class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 				goIntoButton.setOnClickListener(new SafeClickListener() {
 					@Override
 					public void onClick() {
-						new MainController().itemGoIntoClicked(position);
+						new TreeController().itemGoIntoClicked(position);
 					}
 				});
 			} else {
@@ -163,7 +165,7 @@ class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 			removeButton.setOnClickListener(new SafeClickListener() {
 				@Override
 				public void onClick() {
-					new MainController().itemRemoveClicked(position);
+					new ItemTrashController().itemRemoveClicked(position);
 				}
 			});
 			
@@ -207,7 +209,7 @@ class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 				addButton.setOnClickListener(new SafeClickListener() {
 					@Override
 					public void onClick() {
-						new MainController().addItemHereClicked(position);
+						new ItemEditorController().addItemHereClicked(position);
 					}
 				});
 			} else {
@@ -231,7 +233,7 @@ class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 				cbItemSelected.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 					@Override
 					public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-						new MainController().selectedItemClicked(position, isChecked);
+						new ItemSelectionController().selectedItemClicked(position, isChecked);
 					}
 				});
 			}
