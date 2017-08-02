@@ -39,31 +39,37 @@ public class MainController {
 	}
 	
 	public boolean optionsSelect(int id) {
-		if (id == R.id.action_minimize) {
-			app.minimize();
-			return true;
-		} else if (id == R.id.action_exit_without_saving) {
-			new ExitController().exitApp();
-			return true;
-		} else if (id == R.id.action_save_exit) {
-			new ExitController().optionSaveAndExit();
-			return true;
-		} else if (id == R.id.action_save) {
-			new PersistenceController().optionSave();
-			return true;
-		} else if (id == R.id.action_reload) {
-			new PersistenceController().optionReload();
-			return true;
-		} else if (id == R.id.action_copy) {
-			new ClipboardController().copySelectedItems(true);
-		} else if (id == R.id.action_cut) {
-			new ClipboardController().cutSelectedItems();
-		} else if (id == R.id.action_paste) {
-			new ClipboardController().pasteItems();
-		} else if (id == R.id.action_select_all) {
-			new ItemSelectionController().toggleSelectAll();
-		} else if (id == R.id.action_sum_selected) {
-			new ItemSelectionController().sumSelected();
+		switch (id) {
+			case R.id.action_minimize:
+				app.minimize();
+				return true;
+			case R.id.action_exit_without_saving:
+				new ExitController().exitApp();
+				return true;
+			case R.id.action_save_exit:
+				new ExitController().optionSaveAndExit();
+				return true;
+			case R.id.action_save:
+				new PersistenceController().optionSave();
+				return true;
+			case R.id.action_reload:
+				new PersistenceController().optionReload();
+				return true;
+			case R.id.action_copy:
+				new ClipboardController().copySelectedItems(true);
+				return false;
+			case R.id.action_cut:
+				new ClipboardController().cutSelectedItems();
+				return false;
+			case R.id.action_paste:
+				new ClipboardController().pasteItems();
+				return false;
+			case R.id.action_select_all:
+				new ItemSelectionController().toggleSelectAll();
+				return false;
+			case R.id.action_sum_selected:
+				new ItemSelectionController().sumSelected();
+				return false;
 		}
 		return false;
 	}
