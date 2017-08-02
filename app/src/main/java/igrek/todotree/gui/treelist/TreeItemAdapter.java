@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import igrek.todotree.R;
+import igrek.todotree.controller.ItemEditController;
 import igrek.todotree.controller.MainController;
 import igrek.todotree.datatree.item.TreeItem;
 import igrek.todotree.gui.SafeClickListener;
@@ -131,7 +132,7 @@ class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 				editButton.setOnClickListener(new SafeClickListener() {
 					@Override
 					public void onClick() {
-						new MainController().itemEditClicked(item);
+						new ItemEditController().itemEditClicked(item);
 					}
 				});
 			} else {
@@ -206,7 +207,7 @@ class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 				addButton.setOnClickListener(new SafeClickListener() {
 					@Override
 					public void onClick() {
-						new MainController().addItemClickedPos(position);
+						new MainController().addItemHereClicked(position);
 					}
 				});
 			} else {

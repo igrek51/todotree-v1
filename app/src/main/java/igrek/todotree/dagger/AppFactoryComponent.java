@@ -7,6 +7,7 @@ import dagger.Component;
 import igrek.todotree.app.App;
 import igrek.todotree.controller.ClipboardController;
 import igrek.todotree.controller.ExitController;
+import igrek.todotree.controller.ItemEditController;
 import igrek.todotree.controller.MainController;
 import igrek.todotree.controller.PersistenceController;
 import igrek.todotree.gui.SafeClickListener;
@@ -39,5 +40,7 @@ public interface AppFactoryComponent {
 	void inject(PersistenceController there);
 	
 	void inject(ClipboardController there);
+	
+	void inject(ItemEditController there);
 	
 }

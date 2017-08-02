@@ -5,11 +5,11 @@ import java.util.HashMap;
 
 import igrek.todotree.datatree.item.TreeItem;
 
-public class TreeScrollStore {
+public class TreeScrollCache {
 	
 	private HashMap<TreeItem, Integer> storedScrollPositions;
 	
-	TreeScrollStore() {
+	TreeScrollCache() {
 		storedScrollPositions = new HashMap<>();
 	}
 	

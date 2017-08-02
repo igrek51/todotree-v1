@@ -96,33 +96,7 @@ public class MainController {
 	}
 	
 	
-	/**
-	 * @param position pozycja nowego elementu (0 - początek, ujemna wartość - na końcu listy)
-	 */
-	private void newItem(int position) {
-		if (position < 0)
-			position = treeManager.getCurrentItem().size();
-		if (position > treeManager.getCurrentItem().size())
-			position = treeManager.getCurrentItem().size();
-		treeManager.scrollStore()
-				.storeScrollPosition(treeManager.getCurrentItem(), gui.getCurrentScrollPos());
-		treeManager.setNewItemPosition(position);
-		gui.showEditItemPanel(null, treeManager.getCurrentItem());
-		appData.setState(AppState.EDIT_ITEM_CONTENT);
-	}
 	
-	private void editItem(TreeItem item, TreeItem parent) {
-		treeManager.scrollStore()
-				.storeScrollPosition(treeManager.getCurrentItem(), gui.getCurrentScrollPos());
-		treeManager.setNewItemPosition(null);
-		gui.showEditItemPanel(item, parent);
-		appData.setState(AppState.EDIT_ITEM_CONTENT);
-	}
-	
-	private void discardEditingItem() {
-		returnFromItemEditing();
-		userInfo.showInfo("Editing item cancelled.");
-	}
 	
 	private void removeItem(final int position) {
 		
@@ -176,8 +150,8 @@ public class MainController {
 		}
 	}
 	
-	private void restoreScrollPosition(TreeItem parent) {
-		Integer savedScrollPos = treeManager.scrollStore().restoreScrollPosition(parent);
+	public void restoreScrollPosition(TreeItem parent) {
+		Integer savedScrollPos = treeManager.scrollCache().restoreScrollPosition(parent);
 		if (savedScrollPos != null) {
 			gui.scrollToPosition(savedScrollPos);
 		}
@@ -194,7 +168,7 @@ public class MainController {
 		} else if (appData.isState(AppState.EDIT_ITEM_CONTENT)) {
 			if (gui.editItemBackClicked())
 				return;
-			cancelEditedItem();
+			new ItemEditController().cancelEditedItem();
 		}
 	}
 	
@@ -243,84 +217,7 @@ public class MainController {
 	}
 	
 	
-	private boolean tryToSaveNewItem(String content) {
-		content = contentTrimmer.trimContent(content);
-		if (content.isEmpty()) {
-			userInfo.showInfo("Empty item has been removed.");
-			return false;
-		} else {
-			treeManager.addToCurrent(treeManager.getNewItemPosition(), content);
-			userInfo.showInfo("New item has been saved.");
-			return true;
-		}
-	}
-	
-	private boolean tryToSaveExistingItem(TreeItem editedItem, String content) {
-		content = contentTrimmer.trimContent(content);
-		if (content.isEmpty()) {
-			treeManager.getCurrentItem().remove(editedItem);
-			userInfo.showInfo("Empty item has been removed.");
-			return false;
-		} else {
-			editedItem.setContent(content);
-			userInfo.showInfo("Item has been saved.");
-			return true;
-		}
-	}
-	
-	private boolean tryToSaveItem(TreeItem editedItem, String content) {
-		if (editedItem == null) { // new item
-			return tryToSaveNewItem(content);
-		} else { // existing item
-			return tryToSaveExistingItem(editedItem, content);
-		}
-	}
-	
-	private void returnFromItemEditing() {
-		showItemsList();
-		if (treeManager.getNewItemPosition() != null) { //editing existing item
-			if (treeManager.getNewItemPosition() == treeManager.getCurrentItem()
-					.size() - 1) { // last item
-				gui.scrollToBottom();
-			} else {
-				restoreScrollPosition(treeManager.getCurrentItem());
-			}
-		}
-		treeManager.setNewItemPosition(null);
-	}
-	
-	public void saveItem(TreeItem editedItem, String content) {
-		tryToSaveItem(editedItem, content);
-		returnFromItemEditing();
-	}
-	
-	public void saveAndGoIntoItemClicked(TreeItem editedItem, String content) {
-		if (!tryToSaveItem(editedItem, content)) {
-			returnFromItemEditing();
-			return;
-		}
-		// go into
-		Integer editedItemIndex = treeManager.getNewItemPosition();
-		if (editedItemIndex != null) {
-			//wejście wewnątrz
-			treeManager.goInto(editedItemIndex, gui.getCurrentScrollPos());
-			//dodawanie nowego elementu na końcu
-			newItem(-1);
-		}
-	}
-	
-	public void saveAndAddItemClicked(TreeItem editedItem, String content) {
-		int newItemIndex = editedItem == null ? treeManager.getNewItemPosition() : editedItem.getIndexInParent();
-		if (!tryToSaveItem(editedItem, content)) {
-			returnFromItemEditing();
-			return;
-		}
-		// add new after
-		newItem(newItemIndex + 1);
-	}
-	
-	
-	private void showItemsList() {
+	public void showItemsList() {
 		appData.setState(AppState.ITEMS_LIST);
 		gui.showItemsList(treeManager.getCurrentItem());
 	}
@@ -361,11 +258,6 @@ public class MainController {
 		gui.scrollToItem(0);
 	}
 	
-	public void itemEditClicked(TreeItem item) {
-		treeManager.selectionManager().cancelSelectionMode();
-		editItem(item, treeManager.getCurrentItem());
-	}
-	
 	public void itemClicked(int position, TreeItem item) {
 		// blokada wejścia wgłąb na pierwszym poziomie poprzez kliknięcie
 		if (lock.isLocked()) {
@@ -377,25 +269,20 @@ public class MainController {
 			updateItemsList();
 		} else {
 			if (item.isEmpty()) {
-				itemEditClicked(item);
+				new ItemEditController().itemEditClicked(item);
 			} else {
 				itemGoIntoClicked(position);
 			}
 		}
 	}
 	
-	public void cancelEditedItem() {
-		gui.hideSoftKeyboard();
-		discardEditingItem();
-	}
-	
-	public void addItemClickedPos(int position) {
+	public void addItemHereClicked(int position) {
 		treeManager.selectionManager().cancelSelectionMode();
-		newItem(position);
+		new ItemEditController().newItem(position);
 	}
 	
 	public void addItemClicked() {
-		addItemClickedPos(-1);
+		addItemHereClicked(-1);
 	}
 	
 }
