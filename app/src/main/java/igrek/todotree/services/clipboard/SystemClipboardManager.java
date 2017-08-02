@@ -6,11 +6,11 @@ import android.content.ClipData;
 
 import static android.content.ClipDescription.MIMETYPE_TEXT_PLAIN;
 
-public class ClipboardManager {
+public class SystemClipboardManager {
 	
 	private Activity activity;
 	
-	public ClipboardManager(Activity activity) {
+	public SystemClipboardManager(Activity activity) {
 		this.activity = activity;
 	}
 	

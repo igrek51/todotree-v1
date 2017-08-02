@@ -5,7 +5,9 @@ import javax.inject.Inject;
 
 import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.datatree.TreeManager;
+import igrek.todotree.datatree.TreeMover;
 import igrek.todotree.datatree.TreeScrollCache;
+import igrek.todotree.datatree.TreeSelectionManager;
 import igrek.todotree.datatree.item.TreeItem;
 import igrek.todotree.exceptions.NoSuperItemException;
 import igrek.todotree.gui.GUI;
@@ -25,6 +27,12 @@ public class TreeController {
 	
 	@Inject
 	TreeScrollCache scrollCache;
+	
+	@Inject
+	TreeSelectionManager selectionManager;
+	
+	@Inject
+	TreeMover treeMover;
 	
 	public TreeController() {
 		DaggerIOC.getAppComponent().inject(this);
@@ -47,7 +55,7 @@ public class TreeController {
 			lock.setLocked(false);
 			Logs.debug("Database unlocked.");
 		}
-		treeManager.selectionManager().cancelSelectionMode();
+		selectionManager.cancelSelectionMode();
 		goInto(position);
 		new GUIController().updateItemsList();
 		gui.scrollToItem(0);
@@ -63,13 +71,13 @@ public class TreeController {
 	
 	
 	public void itemLongClicked(int position) {
-		if (!treeManager.selectionManager().isSelectionMode()) {
-			treeManager.selectionManager().startSelectionMode();
-			treeManager.selectionManager().setItemSelected(position, true);
+		if (!selectionManager.isSelectionMode()) {
+			selectionManager.startSelectionMode();
+			selectionManager.setItemSelected(position, true);
 			new GUIController().updateItemsList();
 			gui.scrollToItem(position);
 		} else {
-			treeManager.selectionManager().setItemSelected(position, true);
+			selectionManager.setItemSelected(position, true);
 			new GUIController().updateItemsList();
 		}
 	}
@@ -80,8 +88,8 @@ public class TreeController {
 			Logs.warn("Database is locked.");
 			return;
 		}
-		if (treeManager.selectionManager().isSelectionMode()) {
-			treeManager.selectionManager().toggleItemSelected(position);
+		if (selectionManager.isSelectionMode()) {
+			selectionManager.toggleItemSelected(position);
 			new GUIController().updateItemsList();
 		} else {
 			if (item.isEmpty()) {
@@ -93,6 +101,6 @@ public class TreeController {
 	}
 	
 	public void itemMoved(int position, int step) {
-		treeManager.mover().move(treeManager.getCurrentItem(), position, step);
+		treeMover.move(treeManager.getCurrentItem(), position, step);
 	}
 }

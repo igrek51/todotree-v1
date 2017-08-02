@@ -9,6 +9,7 @@ import igrek.todotree.app.AppData;
 import igrek.todotree.app.AppState;
 import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.datatree.TreeManager;
+import igrek.todotree.datatree.TreeSelectionManager;
 import igrek.todotree.gui.GUI;
 
 //TODO brak zapisu bazy jeśli nie było zmian
@@ -27,6 +28,9 @@ public class MainController {
 	
 	@Inject
 	AppData appData;
+	
+	@Inject
+	TreeSelectionManager selectionManager;
 	
 	public MainController() {
 		DaggerIOC.getAppComponent().inject(this);
@@ -64,8 +68,8 @@ public class MainController {
 	
 	public void backClicked() {
 		if (appData.isState(AppState.ITEMS_LIST)) {
-			if (treeManager.selectionManager().isSelectionMode()) {
-				treeManager.selectionManager().cancelSelectionMode();
+			if (selectionManager.isSelectionMode()) {
+				selectionManager.cancelSelectionMode();
 				new GUIController().updateItemsList();
 			} else {
 				new TreeController().goUp();

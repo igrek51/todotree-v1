@@ -9,6 +9,7 @@ import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.datatree.ContentTrimmer;
 import igrek.todotree.datatree.TreeManager;
 import igrek.todotree.datatree.TreeScrollCache;
+import igrek.todotree.datatree.TreeSelectionManager;
 import igrek.todotree.datatree.item.TreeItem;
 import igrek.todotree.gui.GUI;
 import igrek.todotree.services.resources.UserInfoService;
@@ -32,6 +33,9 @@ public class ItemEditorController {
 	
 	@Inject
 	TreeScrollCache scrollCache;
+	
+	@Inject
+	TreeSelectionManager selectionManager;
 	
 	public ItemEditorController() {
 		DaggerIOC.getAppComponent().inject(this);
@@ -141,7 +145,7 @@ public class ItemEditorController {
 	}
 	
 	public void itemEditClicked(TreeItem item) {
-		treeManager.selectionManager().cancelSelectionMode();
+		selectionManager.cancelSelectionMode();
 		editItem(item, treeManager.getCurrentItem());
 	}
 	
@@ -151,7 +155,7 @@ public class ItemEditorController {
 	}
 	
 	public void addItemHereClicked(int position) {
-		treeManager.selectionManager().cancelSelectionMode();
+		selectionManager.cancelSelectionMode();
 		new ItemEditorController().newItem(position);
 	}
 	

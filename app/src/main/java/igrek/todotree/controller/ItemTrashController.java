@@ -9,6 +9,7 @@ import javax.inject.Inject;
 
 import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.datatree.TreeManager;
+import igrek.todotree.datatree.TreeSelectionManager;
 import igrek.todotree.datatree.item.TreeItem;
 import igrek.todotree.gui.GUI;
 import igrek.todotree.logger.Logs;
@@ -30,6 +31,9 @@ public class ItemTrashController {
 	@Inject
 	DatabaseLock lock;
 	
+	@Inject
+	TreeSelectionManager selectionManager;
+	
 	public ItemTrashController() {
 		DaggerIOC.getAppComponent().inject(this);
 	}
@@ -38,7 +42,7 @@ public class ItemTrashController {
 		if (lock.isLocked()) {
 			Logs.warn("Database is locked.");
 		} else {
-			if (treeManager.selectionManager().isSelectionMode()) {
+			if (selectionManager.isSelectionMode()) {
 				removeSelectedItems(true);
 			} else {
 				removeItem(position);
@@ -68,7 +72,7 @@ public class ItemTrashController {
 	}
 	
 	public void removeSelectedItems(boolean info) {
-		List<Integer> selectedIds = treeManager.selectionManager().getSelectedItems();
+		List<Integer> selectedIds = selectionManager.getSelectedItems();
 		//posortowanie malejąco (żeby przy usuwaniu nie nadpisać indeksów)
 		Collections.sort(selectedIds, new Comparator<Integer>() {
 			@Override
@@ -82,7 +86,7 @@ public class ItemTrashController {
 		if (info) {
 			userInfo.showInfo("Selected items removed: " + selectedIds.size());
 		}
-		treeManager.selectionManager().cancelSelectionMode();
+		selectionManager.cancelSelectionMode();
 		new GUIController().updateItemsList();
 	}
 }

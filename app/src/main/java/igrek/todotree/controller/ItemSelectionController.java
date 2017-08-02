@@ -6,8 +6,10 @@ import java.math.BigDecimal;
 import javax.inject.Inject;
 
 import igrek.todotree.dagger.DaggerIOC;
+import igrek.todotree.datatree.NumericAdder;
 import igrek.todotree.datatree.TreeManager;
-import igrek.todotree.services.clipboard.ClipboardManager;
+import igrek.todotree.datatree.TreeSelectionManager;
+import igrek.todotree.services.clipboard.SystemClipboardManager;
 import igrek.todotree.services.resources.UserInfoService;
 
 public class ItemSelectionController {
@@ -19,7 +21,10 @@ public class ItemSelectionController {
 	UserInfoService userInfo;
 	
 	@Inject
-	ClipboardManager clipboardManager;
+	SystemClipboardManager clipboardManager;
+	
+	@Inject
+	TreeSelectionManager selectionManager;
 	
 	public ItemSelectionController() {
 		DaggerIOC.getAppComponent().inject(this);
@@ -27,14 +32,14 @@ public class ItemSelectionController {
 	
 	private void selectAllItems(boolean selectedState) {
 		for (int i = 0; i < treeManager.getCurrentItem().size(); i++) {
-			treeManager.selectionManager().setItemSelected(i, selectedState);
+			selectionManager.setItemSelected(i, selectedState);
 		}
 	}
 	
 	public void toggleSelectAll() {
-		if (treeManager.selectionManager().getSelectedItemsCount() == treeManager.getCurrentItem()
+		if (selectionManager.getSelectedItemsCount() == treeManager.getCurrentItem()
 				.size()) {
-			treeManager.selectionManager().cancelSelectionMode();
+			selectionManager.cancelSelectionMode();
 		} else {
 			selectAllItems(true);
 		}
@@ -43,9 +48,9 @@ public class ItemSelectionController {
 	
 	
 	public void sumSelected() {
-		if (treeManager.selectionManager().isSelectionMode()) {
+		if (selectionManager.isSelectionMode()) {
 			try {
-				BigDecimal sum = treeManager.sumSelected();
+				BigDecimal sum = calculateSum();
 				
 				String clipboardStr = sum.toPlainString();
 				clipboardStr = clipboardStr.replace('.', ',');
@@ -60,8 +65,12 @@ public class ItemSelectionController {
 	}
 	
 	public void selectedItemClicked(int position, boolean checked) {
-		treeManager.selectionManager().setItemSelected(position, checked);
+		selectionManager.setItemSelected(position, checked);
 		new GUIController().updateItemsList();
+	}
+	
+	private BigDecimal calculateSum() {
+		return new NumericAdder().calculateSum(selectionManager.getSelectedItems(), treeManager.getCurrentItem());
 	}
 	
 }

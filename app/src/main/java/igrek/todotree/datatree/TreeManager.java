@@ -1,35 +1,17 @@
 package igrek.todotree.datatree;
 
-import java.math.BigDecimal;
-
 import igrek.todotree.datatree.item.TreeItem;
-import igrek.todotree.datatree.serializer.TreeSerializer;
 import igrek.todotree.exceptions.NoSuperItemException;
-import igrek.todotree.services.filesystem.FilesystemService;
-import igrek.todotree.services.preferences.Preferences;
 
 //TODO RESPONSIBILITY separation
 public class TreeManager {
 	
-	private FilesystemService filesystem;
-	private Preferences preferences;
-	private TreeSerializer treeSerializer;
-	
 	private TreeItem rootItem;
 	private TreeItem currentItem;
 	
-	// TODO move to EDIT item GUI
 	private Integer newItemPosition;
 	
-	private NumericAdder numericAdder = new NumericAdder();
-	private TreeClipboardManager treeClipboardManager = new TreeClipboardManager();
-	private TreeSelectionManager treeSelectionManager = new TreeSelectionManager();
-	private TreeMover treeMover = new TreeMover();
-	
-	public TreeManager(FilesystemService filesystem, Preferences preferences, TreeSerializer treeSerializer) {
-		this.filesystem = filesystem;
-		this.preferences = preferences;
-		this.treeSerializer = treeSerializer;
+	public TreeManager() {
 		reset();
 	}
 	
@@ -98,20 +80,4 @@ public class TreeManager {
 		currentItem.add(newItem);
 	}
 	
-	
-	public TreeSelectionManager selectionManager() {
-		return treeSelectionManager;
-	}
-	
-	public TreeClipboardManager clipboardManager() {
-		return treeClipboardManager;
-	}
-	
-	public TreeMover mover() {
-		return treeMover;
-	}
-	
-	public BigDecimal sumSelected() {
-		return numericAdder.sumSelected(treeSelectionManager.getSelectedItems(), getCurrentItem());
-	}
 }

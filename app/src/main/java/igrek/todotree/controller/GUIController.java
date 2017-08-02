@@ -8,6 +8,7 @@ import igrek.todotree.app.AppState;
 import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.datatree.TreeManager;
 import igrek.todotree.datatree.TreeScrollCache;
+import igrek.todotree.datatree.TreeSelectionManager;
 import igrek.todotree.datatree.item.TreeItem;
 import igrek.todotree.gui.GUI;
 
@@ -25,13 +26,16 @@ public class GUIController {
 	@Inject
 	TreeScrollCache scrollCache;
 	
+	@Inject
+	TreeSelectionManager selectionManager;
+	
 	public GUIController() {
 		DaggerIOC.getAppComponent().inject(this);
 	}
 	
 	public void updateItemsList() {
 		appData.setState(AppState.ITEMS_LIST);
-		gui.updateItemsList(treeManager.getCurrentItem(), treeManager.selectionManager()
+		gui.updateItemsList(treeManager.getCurrentItem(), selectionManager
 				.getSelectedItems());
 	}
 	

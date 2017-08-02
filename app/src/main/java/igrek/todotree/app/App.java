@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import javax.inject.Inject;
 
 import igrek.todotree.controller.MainController;
+import igrek.todotree.controller.PersistenceController;
 import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.datatree.TreeManager;
 import igrek.todotree.gui.GUI;
@@ -28,9 +29,10 @@ public class App extends BaseApp {
 	@Override
 	public void init() {
 		super.init();
-		// TODO move to controller
-		treeManager.loadRootTree();
 		
+		new PersistenceController().loadRootTree();
+		
+		// TODO move to controller
 		gui.lazyInit();
 		gui.showItemsList(treeManager.getCurrentItem());
 		

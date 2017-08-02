@@ -8,9 +8,9 @@ import java.util.regex.Pattern;
 
 import igrek.todotree.datatree.item.TreeItem;
 
-class NumericAdder {
+public class NumericAdder {
 	
-	BigDecimal sumSelected(List<Integer> selectedPositions, TreeItem currentItem) throws NumberFormatException {
+	public BigDecimal calculateSum(List<Integer> selectedPositions, TreeItem currentItem) throws NumberFormatException {
 		BigDecimal sum = new BigDecimal(0);
 		for (Integer selectedPos : selectedPositions) {
 			TreeItem selectedItem = currentItem.getChild(selectedPos);

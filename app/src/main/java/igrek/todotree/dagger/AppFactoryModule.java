@@ -10,12 +10,15 @@ import dagger.Provides;
 import igrek.todotree.app.App;
 import igrek.todotree.app.AppData;
 import igrek.todotree.datatree.ContentTrimmer;
+import igrek.todotree.datatree.TreeClipboardManager;
 import igrek.todotree.datatree.TreeManager;
+import igrek.todotree.datatree.TreeMover;
 import igrek.todotree.datatree.TreeScrollCache;
+import igrek.todotree.datatree.TreeSelectionManager;
 import igrek.todotree.datatree.serializer.TreeSerializer;
 import igrek.todotree.gui.GUI;
 import igrek.todotree.services.backup.BackupManager;
-import igrek.todotree.services.clipboard.ClipboardManager;
+import igrek.todotree.services.clipboard.SystemClipboardManager;
 import igrek.todotree.services.filesystem.FilesystemService;
 import igrek.todotree.services.history.ChangesHistory;
 import igrek.todotree.services.lock.DatabaseLock;
@@ -59,8 +62,8 @@ public class AppFactoryModule {
 	
 	@Provides
 	@Singleton
-	TreeManager provideTreeManager(FilesystemService filesystem, Preferences preferences, TreeSerializer treeSerializer) {
-		return new TreeManager(filesystem, preferences, treeSerializer);
+	TreeManager provideTreeManager() {
+		return new TreeManager();
 	}
 	
 	@Provides
@@ -95,8 +98,8 @@ public class AppFactoryModule {
 	
 	@Provides
 	@Singleton
-	ClipboardManager provideClipboardManager(Activity activity) {
-		return new ClipboardManager(activity);
+	SystemClipboardManager provideSystemClipboardManager(Activity activity) {
+		return new SystemClipboardManager(activity);
 	}
 	
 	@Provides
@@ -127,6 +130,24 @@ public class AppFactoryModule {
 	@Singleton
 	TreeScrollCache provideTreeScrollCache() {
 		return new TreeScrollCache();
+	}
+	
+	@Provides
+	@Singleton
+	TreeClipboardManager provideTreeClipboardManager() {
+		return new TreeClipboardManager();
+	}
+	
+	@Provides
+	@Singleton
+	TreeSelectionManager provideTreeSelectionManager() {
+		return new TreeSelectionManager();
+	}
+	
+	@Provides
+	@Singleton
+	TreeMover provideTreeMover() {
+		return new TreeMover();
 	}
 	
 }
