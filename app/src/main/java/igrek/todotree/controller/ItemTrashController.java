@@ -67,7 +67,10 @@ public class ItemTrashController {
 	}
 	
 	public void removeSelectedItems(boolean info) {
-		List<Integer> selectedIds = selectionManager.getSelectedItems();
+		removeItems(selectionManager.getSelectedItems(), info);
+	}
+	
+	public void removeItems(List<Integer> selectedIds, boolean info) {
 		//posortowanie malejąco (żeby przy usuwaniu nie nadpisać indeksów)
 		Collections.sort(selectedIds, new Comparator<Integer>() {
 			@Override
@@ -79,7 +82,7 @@ public class ItemTrashController {
 			treeManager.removeFromCurrent(id);
 		}
 		if (info) {
-			userInfo.showInfo("Selected items removed: " + selectedIds.size());
+			userInfo.showInfo("Items removed: " + selectedIds.size());
 		}
 		selectionManager.cancelSelectionMode();
 		new GUIController().updateItemsList();

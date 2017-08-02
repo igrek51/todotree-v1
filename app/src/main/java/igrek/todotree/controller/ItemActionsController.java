@@ -3,6 +3,9 @@ package igrek.todotree.controller;
 
 import android.os.Handler;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
 
 import igrek.todotree.dagger.DaggerIOC;
@@ -49,8 +52,12 @@ public class ItemActionsController {
 	}
 	
 	public void actionCopy(int position) {
-		// TODO if not selected - select this
-		new ClipboardController().copySelectedItems(true);
+		List<Integer> itemPosistions = new ArrayList<>(selectionManager.getSelectedItems());
+		// if nothing selected - include current item
+		if (itemPosistions.isEmpty()) {
+			itemPosistions.add(position);
+		}
+		new ClipboardController().copyItems(itemPosistions, true);
 	}
 	
 	public void actionPasteAbove(int position) {
@@ -62,8 +69,12 @@ public class ItemActionsController {
 	}
 	
 	public void actionCut(int position) {
-		// TODO if not selected - select this
-		new ClipboardController().cutSelectedItems();
+		List<Integer> itemPosistions = new ArrayList<>(selectionManager.getSelectedItems());
+		// if nothing selected - include current item
+		if (itemPosistions.isEmpty()) {
+			itemPosistions.add(position);
+		}
+		new ClipboardController().cutItems(itemPosistions);
 	}
 	
 	public void actionRemove(int position) {

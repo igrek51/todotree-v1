@@ -1,6 +1,8 @@
 package igrek.todotree.controller;
 
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import igrek.todotree.dagger.DaggerIOC;
@@ -38,12 +40,20 @@ public class ClipboardController {
 	
 	public void copySelectedItems(boolean info) {
 		if (selectionManager.isAnythingSelected()) {
+			copyItems(selectionManager.getSelectedItems(), info);
+		} else {
+			userInfo.showInfo("No selected items");
+		}
+	}
+	
+	public void copyItems(List<Integer> itemPosistions, boolean info) {
+		if (!itemPosistions.isEmpty()) {
 			treeClipboardManager.clearClipboard();
-			for (Integer selectedItemId : selectionManager.getSelectedItems()) {
+			for (Integer selectedItemId : itemPosistions) {
 				TreeItem selectedItem = treeManager.getCurrentItem().getChild(selectedItemId);
 				treeClipboardManager.addToClipboard(selectedItem);
 			}
-			//jeśli zaznaczony jeden element - skopiowanie do schowka
+			//if one item selected - copying also to system clipboard
 			if (treeClipboardManager.getClipboardSize() == 1) {
 				TreeItem item = treeClipboardManager.getClipboard().get(0);
 				systemClipboardManager.copyToSystemClipboard(item.getContent());
@@ -52,22 +62,29 @@ public class ClipboardController {
 				}
 			} else {
 				if (info) {
-					userInfo.showInfo("Selected items copied: " + treeClipboardManager.getClipboardSize());
+					userInfo.showInfo("Items copied: " + treeClipboardManager.getClipboardSize());
 				}
 			}
+		} else {
+			if (info) {
+				userInfo.showInfo("No items to copy.");
+			}
+		}
+	}
+	
+	public void cutSelectedItems() {
+		if (selectionManager.isAnythingSelected()) {
+			cutItems(selectionManager.getSelectedItems());
 		} else {
 			userInfo.showInfo("No selected items");
 		}
 	}
 	
-	
-	public void cutSelectedItems() {
-		if (selectionManager.isAnythingSelected()) {
-			copySelectedItems(false);
-			userInfo.showInfo("Selected items cut: " + selectionManager.getSelectedItemsCount());
-			new ItemTrashController().removeSelectedItems(false);
-		} else {
-			userInfo.showInfo("No selected items");
+	public void cutItems(List<Integer> itemPosistions) {
+		if (!itemPosistions.isEmpty()) {
+			copyItems(itemPosistions, false);
+			userInfo.showInfo("Items cut: " + itemPosistions.size());
+			new ItemTrashController().removeItems(itemPosistions, false);
 		}
 	}
 	
