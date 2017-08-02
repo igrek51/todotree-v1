@@ -12,9 +12,6 @@ import igrek.todotree.datatree.TreeManager;
 import igrek.todotree.datatree.TreeSelectionManager;
 import igrek.todotree.gui.GUI;
 
-//TODO brak zapisu bazy jeśli nie było zmian
-//TODO: funkcja cofania zmian - zapisywanie modyfikacji, dodawania, usuwania elementów, przesuwania
-
 public class MainController {
 	
 	@Inject

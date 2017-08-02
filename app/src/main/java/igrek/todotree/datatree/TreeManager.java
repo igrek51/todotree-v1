@@ -3,7 +3,6 @@ package igrek.todotree.datatree;
 import igrek.todotree.datatree.item.TreeItem;
 import igrek.todotree.exceptions.NoSuperItemException;
 
-//TODO RESPONSIBILITY separation
 public class TreeManager {
 	
 	private TreeItem rootItem;
@@ -55,6 +54,10 @@ public class TreeManager {
 		currentItem.add(position, item);
 	}
 	
+	public void addToCurrent(TreeItem newItem) {
+		currentItem.add(newItem);
+	}
+	
 	//  Navigation
 	
 	public void goUp() throws NoSuperItemException {
@@ -74,10 +77,6 @@ public class TreeManager {
 	
 	private void goTo(TreeItem child) {
 		currentItem = child;
-	}
-	
-	public void addToCurrent(TreeItem newItem) {
-		currentItem.add(newItem);
 	}
 	
 }
