@@ -37,8 +37,7 @@ public class ItemSelectionController {
 	}
 	
 	public void toggleSelectAll() {
-		if (selectionManager.getSelectedItemsCount() == treeManager.getCurrentItem()
-				.size()) {
+		if (selectionManager.getSelectedItemsCount() == treeManager.getCurrentItem().size()) {
 			selectionManager.cancelSelectionMode();
 		} else {
 			selectAllItems(true);

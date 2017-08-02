@@ -17,7 +17,7 @@ public class AppData {
 		this.state = state;
 	}
 	
-	public boolean isState(AppState state){
+	public boolean isState(AppState state) {
 		return this.state == state;
 	}
 }

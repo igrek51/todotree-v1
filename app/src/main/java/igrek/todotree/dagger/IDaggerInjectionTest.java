@@ -1,4 +1,5 @@
 package igrek.todotree.dagger;
 
 
-public interface IDaggerInjectionTest {}
+public interface IDaggerInjectionTest {
+}

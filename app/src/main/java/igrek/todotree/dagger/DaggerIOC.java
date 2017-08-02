@@ -9,7 +9,8 @@ public class DaggerIOC {
 	
 	private static AppFactoryComponent appComponent;
 	
-	private DaggerIOC() {}
+	private DaggerIOC() {
+	}
 	
 	public static AppFactoryComponent getAppComponent() {
 		return appComponent;

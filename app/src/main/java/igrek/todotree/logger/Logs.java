@@ -7,7 +7,8 @@ import android.util.Log;
 
 public class Logs {
 	
-	private Logs() {}
+	private Logs() {
+	}
 	
 	private static final LogLevel CONSOLE_LEVEL = LogLevel.TRACE;
 	

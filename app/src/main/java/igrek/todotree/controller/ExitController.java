@@ -28,7 +28,7 @@ public class ExitController {
 	@Inject
 	App app;
 	
-	ExitController(){
+	ExitController() {
 		DaggerIOC.getAppComponent().inject(this);
 	}
 	

@@ -52,8 +52,7 @@ public class ClipboardController {
 				}
 			} else {
 				if (info) {
-					userInfo.showInfo("Selected items copied: " + treeClipboardManager
-							.getClipboardSize());
+					userInfo.showInfo("Selected items copied: " + treeClipboardManager.getClipboardSize());
 				}
 			}
 		}
@@ -61,11 +60,9 @@ public class ClipboardController {
 	
 	
 	public void cutSelectedItems() {
-		if (selectionManager.isSelectionMode() && selectionManager
-				.getSelectedItemsCount() > 0) {
+		if (selectionManager.isSelectionMode() && selectionManager.getSelectedItemsCount() > 0) {
 			copySelectedItems(false);
-			userInfo.showInfo("Selected items cut: " + selectionManager
-					.getSelectedItemsCount());
+			userInfo.showInfo("Selected items cut: " + selectionManager.getSelectedItemsCount());
 			new ItemTrashController().removeSelectedItems(false);
 		} else {
 			userInfo.showInfo("No selected items");

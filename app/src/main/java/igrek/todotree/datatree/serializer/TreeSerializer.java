@@ -4,8 +4,8 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-import igrek.todotree.exceptions.NoMatchingBracketException;
 import igrek.todotree.datatree.item.TreeItem;
+import igrek.todotree.exceptions.NoMatchingBracketException;
 
 public class TreeSerializer {
 	
