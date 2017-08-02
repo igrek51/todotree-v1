@@ -22,8 +22,6 @@ import java.util.Set;
 import igrek.todotree.R;
 import igrek.todotree.controller.ItemEditorController;
 import igrek.todotree.controller.ItemSelectionController;
-import igrek.todotree.controller.ItemTrashController;
-import igrek.todotree.controller.TreeController;
 import igrek.todotree.datatree.item.TreeItem;
 import igrek.todotree.ui.errorhandling.SafeClickListener;
 
@@ -142,36 +140,6 @@ class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 				editButton.setVisibility(View.GONE);
 			}
 			
-			//wejście w element
-			ImageButton goIntoButton = (ImageButton) itemView.findViewById(R.id.buttonItemGoInto);
-			goIntoButton.setFocusableInTouchMode(false);
-			goIntoButton.setFocusable(false);
-			if (selections == null && item.isEmpty()) {
-				goIntoButton.setOnClickListener(new SafeClickListener() {
-					@Override
-					public void onClick() {
-						new TreeController().itemGoIntoClicked(position);
-					}
-				});
-			} else {
-				goIntoButton.setVisibility(View.GONE);
-			}
-			// ukryte wejście wgłąb elementu - blokada
-			goIntoButton.setVisibility(View.GONE);
-			
-			//usuwanie elementu
-			ImageButton removeButton = (ImageButton) itemView.findViewById(R.id.buttonItemRemove);
-			removeButton.setFocusableInTouchMode(false);
-			removeButton.setFocusable(false);
-			removeButton.setOnClickListener(new SafeClickListener() {
-				@Override
-				public void onClick() {
-					new ItemTrashController().itemRemoveClicked(position);
-				}
-			});
-			// hidden
-			removeButton.setVisibility(View.GONE);
-			
 			//przesuwanie
 			final ImageButton moveButton = (ImageButton) itemView.findViewById(R.id.buttonItemMove);
 			moveButton.setFocusableInTouchMode(false);
@@ -203,23 +171,6 @@ class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 				moveButton.setVisibility(View.INVISIBLE);
 				moveButton.setLayoutParams(new RelativeLayout.LayoutParams(0, 0));
 			}
-			
-			//dodawanie nowego elementu
-			ImageButton addButton = (ImageButton) itemView.findViewById(R.id.buttonItemAddHere);
-			addButton.setFocusableInTouchMode(false);
-			addButton.setFocusable(false);
-			if (selections == null) {
-				addButton.setOnClickListener(new SafeClickListener() {
-					@Override
-					public void onClick() {
-						new ItemEditorController().addItemHereClicked(position);
-					}
-				});
-			} else {
-				addButton.setVisibility(View.GONE);
-			}
-			// hidden
-			addButton.setVisibility(View.GONE);
 			
 			//checkbox do zaznaczania wielu elementów
 			CheckBox cbItemSelected = (CheckBox) itemView.findViewById(R.id.cbItemSelected);

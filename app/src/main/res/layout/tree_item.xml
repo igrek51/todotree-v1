@@ -41,10 +41,10 @@
         android:layout_marginLeft="0dp"
         android:layout_marginRight="0dp"
         android:layout_marginTop="7dp"
-        android:layout_toLeftOf="@+id/tvItemChildSize"
-        android:layout_toStartOf="@+id/tvItemChildSize"
-        android:layout_toRightOf="@+id/cbItemSelected"
         android:layout_toEndOf="@+id/cbItemSelected"
+        android:layout_toLeftOf="@+id/tvItemChildSize"
+        android:layout_toRightOf="@+id/cbItemSelected"
+        android:layout_toStartOf="@+id/tvItemChildSize"
         android:gravity="start|center_vertical"
         android:text="@string/example_item"
         android:textSize="16sp"/>
@@ -83,42 +83,6 @@
             android:layout_gravity="end|center_vertical"
             android:layout_marginRight="5dp"
             android:background="@android:drawable/ic_menu_edit"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:padding="16dp"/>
-
-        <ImageButton
-            android:id="@+id/buttonItemGoInto"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_gravity="end|center_vertical"
-            android:layout_marginRight="5dp"
-            android:background="@drawable/ic_menu_forward"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:padding="16dp"/>
-
-        <ImageButton
-            android:id="@+id/buttonItemAddHere"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_gravity="end|center_vertical"
-            android:layout_marginRight="5dp"
-            android:background="@android:drawable/ic_menu_add"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:padding="16dp"/>
-
-        <ImageButton
-            android:id="@+id/buttonItemRemove"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_gravity="end|center_vertical"
-            android:layout_marginRight="5dp"
-            android:background="@android:drawable/ic_menu_delete"
             android:focusable="false"
             android:focusableInTouchMode="false"
             android:padding="16dp"/>
