@@ -229,7 +229,13 @@ public class EditItemGUI implements NumKeyboardListener {
 		etEditItem.requestFocus();
 		quickCursorMove(+2);
 		
-		showAlphanumKeyboard();
+		// delayed execution due to not showing keyboard after action select
+		new Handler().post(new Runnable() {
+			@Override
+			public void run() {
+				showAlphanumKeyboard();
+			}
+		});
 	}
 	
 	

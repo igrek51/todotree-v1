@@ -98,6 +98,18 @@ public class ItemActionsMenu {
 			}
 		});
 		
+		actions.add(new ItemAction("Cut") {
+			@Override
+			public void execute() {
+				new ItemActionsController().actionCut(position);
+			}
+			
+			@Override
+			public boolean isVisible() {
+				return treeManager.isPositionAtItem(position);
+			}
+		});
+		
 		actions.add(new ItemAction("Copy") {
 			@Override
 			public void execute() {
@@ -106,7 +118,7 @@ public class ItemActionsMenu {
 			
 			@Override
 			public boolean isVisible() {
-				return selectionManager.isAnythingSelected();
+				return treeManager.isPositionAtItem(position);
 			}
 		});
 		
@@ -126,18 +138,6 @@ public class ItemActionsMenu {
 			@Override
 			public boolean isVisible() {
 				return !treeClipboardManager.isClipboardEmpty();
-			}
-		});
-		
-		actions.add(new ItemAction("Cut") {
-			@Override
-			public void execute() {
-				new ItemActionsController().actionCut(position);
-			}
-			
-			@Override
-			public boolean isVisible() {
-				return selectionManager.isAnythingSelected();
 			}
 		});
 		

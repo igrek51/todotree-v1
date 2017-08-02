@@ -45,7 +45,7 @@ public class ItemActionsController {
 	}
 	
 	public void actionAddAbove(final int position) {
-		//FIXME show keyboard on edit view
+		//delayed execution due to not showing keyboard
 		new Handler().post(new Runnable() {
 			@Override
 			public void run() {
@@ -88,9 +88,14 @@ public class ItemActionsController {
 		new ItemSelectionController().toggleSelectAll();
 	}
 	
-	public void actionEdit(int position) {
-		//FIXME show keyboard on edit view
-		TreeItem item = treeManager.getCurrentItem().getChild(position);
-		new ItemEditorController().itemEditClicked(item);
+	public void actionEdit(final int position) {
+		//delayed execution due to not showing keyboard
+		new Handler().post(new Runnable() {
+			@Override
+			public void run() {
+				TreeItem item = treeManager.getCurrentItem().getChild(position);
+				new ItemEditorController().itemEditClicked(item);
+			}
+		});
 	}
 }
