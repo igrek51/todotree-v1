@@ -99,5 +99,6 @@ public class PersistenceController {
 		} catch (IOException e) {
 			Logs.error(e);
 		}
+		Logs.debug("Database saved successfully.");
 	}
 }

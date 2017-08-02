@@ -2,8 +2,6 @@ package igrek.todotree.controller;
 
 
 import android.os.Handler;
-import android.view.View;
-import android.view.ViewTreeObserver;
 
 import javax.inject.Inject;
 
@@ -34,18 +32,12 @@ public class ExitController {
 	
 	void saveAndExitRequested() {
 		// show exit screen and wait for rendered
-		View exitScreen = gui.showExitScreen();
+		gui.showExitScreen();
 		
-		final ViewTreeObserver vto = exitScreen.getViewTreeObserver();
-		vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+		new Handler().post(new Runnable() {
 			@Override
-			public void onGlobalLayout() {
-				new Handler().post(new Runnable() {
-					@Override
-					public void run() {
-						saveAndExit();
-					}
-				});
+			public void run() {
+				saveAndExit();
 			}
 		});
 	}
