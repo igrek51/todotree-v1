@@ -17,7 +17,7 @@ import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.gui.GUI;
 import igrek.todotree.gui.numkeyboard.NumKeyboardListener;
 import igrek.todotree.gui.numkeyboard.NumericKeyboardView;
-import igrek.todotree.services.datatree.TreeItem;
+import igrek.todotree.datatree.item.TreeItem;
 
 public class EditItemGUI implements NumKeyboardListener {
 	

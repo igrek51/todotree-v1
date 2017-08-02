@@ -12,10 +12,9 @@ import java.util.List;
 
 import igrek.todotree.R;
 import igrek.todotree.controller.MainController;
-import igrek.todotree.dagger.DaggerIOC;
+import igrek.todotree.datatree.item.TreeItem;
 import igrek.todotree.gui.edititem.EditItemGUI;
 import igrek.todotree.gui.treelist.TreeListView;
-import igrek.todotree.services.datatree.TreeItem;
 
 public class GUI extends BaseGUI {
 	
@@ -23,15 +22,11 @@ public class GUI extends BaseGUI {
 	private TreeListView itemsListView;
 	private EditItemGUI editItemGUI;
 	
-	MainController actionController;
-	
 	public GUI(AppCompatActivity activity) {
 		super(activity);
 	}
 	
 	public void lazyInit() {
-		
-		actionController = DaggerIOC.getAppComponent().getActionController();
 		
 		activity.setContentView(R.layout.activity_main);
 		
@@ -43,7 +38,7 @@ public class GUI extends BaseGUI {
 		toolbar1.setNavigationOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				actionController.toolbarBackClicked();
+				new MainController().toolbarBackClicked();
 			}
 		});
 		

@@ -9,12 +9,11 @@ import dagger.Module;
 import dagger.Provides;
 import igrek.todotree.app.App;
 import igrek.todotree.app.AppData;
-import igrek.todotree.controller.MainController;
+import igrek.todotree.datatree.TreeManager;
+import igrek.todotree.datatree.serializer.TreeSerializer;
 import igrek.todotree.gui.GUI;
 import igrek.todotree.services.backup.BackupManager;
 import igrek.todotree.services.clipboard.ClipboardManager;
-import igrek.todotree.services.datatree.TreeManager;
-import igrek.todotree.services.datatree.serializer.TreeSerializer;
 import igrek.todotree.services.filesystem.FilesystemService;
 import igrek.todotree.services.history.ChangesHistory;
 import igrek.todotree.services.lock.DatabaseLock;
@@ -84,12 +83,6 @@ public class AppFactoryModule {
 	@Singleton
 	TreeSerializer provideTreeSerializer() {
 		return new TreeSerializer();
-	}
-	
-	@Provides
-	@Singleton
-	MainController provideLogicActionController(TreeManager treeManager, BackupManager backupManager, GUI gui, UserInfoService userInfo, ClipboardManager clipboardManager, Preferences preferences, App app, AppData appData, DatabaseLock lock) {
-		return new MainController(treeManager, backupManager, gui, userInfo, clipboardManager, preferences, app, appData, lock);
 	}
 	
 	@Provides

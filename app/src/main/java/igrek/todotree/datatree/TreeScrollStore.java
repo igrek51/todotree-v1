@@ -1,7 +1,9 @@
-package igrek.todotree.services.datatree;
+package igrek.todotree.datatree;
 
 
 import java.util.HashMap;
+
+import igrek.todotree.datatree.item.TreeItem;
 
 public class TreeScrollStore {
 	

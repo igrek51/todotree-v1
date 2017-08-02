@@ -1,4 +1,4 @@
-package igrek.todotree.services.datatree;
+package igrek.todotree.datatree;
 
 
 import java.util.ArrayList;

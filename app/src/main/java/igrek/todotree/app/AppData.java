@@ -16,4 +16,8 @@ public class AppData {
 	public void setState(AppState state) {
 		this.state = state;
 	}
+	
+	public boolean isState(AppState state){
+		return this.state == state;
+	}
 }

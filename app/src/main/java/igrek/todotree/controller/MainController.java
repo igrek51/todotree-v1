@@ -1,57 +1,57 @@
 package igrek.todotree.controller;
 
 
-import android.os.Handler;
-import android.view.View;
-import android.view.ViewTreeObserver;
-
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import igrek.todotree.R;
 import igrek.todotree.app.App;
 import igrek.todotree.app.AppData;
 import igrek.todotree.app.AppState;
+import igrek.todotree.dagger.DaggerIOC;
+import igrek.todotree.datatree.TreeManager;
+import igrek.todotree.datatree.item.TreeItem;
 import igrek.todotree.exceptions.NoSuperItemException;
 import igrek.todotree.gui.GUI;
 import igrek.todotree.logger.Logs;
-import igrek.todotree.services.backup.BackupManager;
 import igrek.todotree.services.clipboard.ClipboardManager;
-import igrek.todotree.services.datatree.TreeItem;
-import igrek.todotree.services.datatree.TreeManager;
 import igrek.todotree.services.lock.DatabaseLock;
-import igrek.todotree.services.preferences.Preferences;
 import igrek.todotree.services.resources.InfoBarClickAction;
 import igrek.todotree.services.resources.UserInfoService;
 
 //TODO brak zapisu bazy jeśli nie było zmian
 //TODO: funkcja cofania zmian - zapisywanie modyfikacji, dodawania, usuwania elementów, przesuwania
+// TODO split responsibilities to multiple services
 
 public class MainController {
 	
-	private TreeManager treeManager;
-	private BackupManager backupManager;
-	private GUI gui;
-	private UserInfoService userInfo;
-	private ClipboardManager clipboardManager;
-	private Preferences preferences;
-	private App app;
-	private AppData appData;
-	private DatabaseLock lock;
+	@Inject
+	TreeManager treeManager;
 	
-	public MainController(TreeManager treeManager, BackupManager backupManager, GUI gui, UserInfoService userInfo, ClipboardManager clipboardManager, Preferences preferences, App app, AppData appData, DatabaseLock lock) {
-		// TODO split responsibilities to multiple services
-		this.treeManager = treeManager;
-		this.backupManager = backupManager;
-		this.gui = gui;
-		this.userInfo = userInfo;
-		this.clipboardManager = clipboardManager;
-		this.preferences = preferences;
-		this.app = app;
-		this.appData = appData;
-		this.lock = lock;
+	@Inject
+	GUI gui;
+	
+	@Inject
+	UserInfoService userInfo;
+	
+	@Inject
+	ClipboardManager clipboardManager;
+	
+	@Inject
+	App app;
+	
+	@Inject
+	AppData appData;
+	
+	@Inject
+	DatabaseLock lock;
+	
+	public MainController() {
+		DaggerIOC.getAppComponent().inject(this);
 	}
 	
 	public boolean optionsSelect(int id) {
@@ -59,16 +59,16 @@ public class MainController {
 			app.minimize();
 			return true;
 		} else if (id == R.id.action_exit_without_saving) {
-			exitApp(false);
+			new ExitController().exitApp();
 			return true;
 		} else if (id == R.id.action_save_exit) {
-			optionSaveAndExit();
+			new ExitController().optionSaveAndExit();
 			return true;
 		} else if (id == R.id.action_save) {
-			optionSave();
+			new PersistenceController().optionSave();
 			return true;
 		} else if (id == R.id.action_reload) {
-			optionReload();
+			new PersistenceController().optionReload();
 			return true;
 		} else if (id == R.id.action_copy) {
 			copySelectedItems(true);
@@ -84,59 +84,11 @@ public class MainController {
 		return false;
 	}
 	
-	private void optionReload() {
-		treeManager.reset();
-		treeManager.loadRootTree();
-		updateItemsList();
-		userInfo.showInfo("Database loaded.");
-	}
 	
-	private void optionSave() {
-		saveDatabase();
-		userInfo.showInfo("Database saved.");
-	}
-	
-	private void optionSaveAndExit() {
-		if (appData.getState() == AppState.EDIT_ITEM_CONTENT) {
-			gui.requestSaveEditedItem();
-		}
-		exitApp(true);
-	}
-	
-	private void saveDatabase() {
-		treeManager.saveRootTree();
-		backupManager.saveBackupFile();
-	}
-	
-	private void updateItemsList() {
+	public void updateItemsList() {
 		gui.updateItemsList(treeManager.getCurrentItem(), treeManager.selectionManager()
 				.getSelectedItems());
 		appData.setState(AppState.ITEMS_LIST);
-	}
-	
-	private void exitApp(final boolean withSaving) {
-		// show exit screen and wait for rendered
-		View exitScreen = gui.showExitScreen();
-		
-		final ViewTreeObserver vto = exitScreen.getViewTreeObserver();
-		vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-			@Override
-			public void onGlobalLayout() {
-				new Handler().post(new Runnable() {
-					@Override
-					public void run() {
-						saveAndExit(withSaving);
-					}
-				});
-			}
-		});
-	}
-	
-	private void saveAndExit(boolean withSaving) {
-		if (withSaving) {
-			saveDatabase();
-		}
-		exitAppRequested();
 	}
 	
 	
@@ -220,7 +172,7 @@ public class MainController {
 			updateItemsList();
 			restoreScrollPosition(parent);
 		} catch (NoSuperItemException e) {
-			exitApp(true);
+			new ExitController().saveAndExitRequested();
 		}
 	}
 	
@@ -232,14 +184,14 @@ public class MainController {
 	}
 	
 	public void backClicked() {
-		if (appData.getState() == AppState.ITEMS_LIST) {
+		if (appData.isState(AppState.ITEMS_LIST)) {
 			if (treeManager.selectionManager().isSelectionMode()) {
 				treeManager.selectionManager().cancelSelectionMode();
 				updateItemsList();
 			} else {
 				goUp();
 			}
-		} else if (appData.getState() == AppState.EDIT_ITEM_CONTENT) {
+		} else if (appData.isState(AppState.EDIT_ITEM_CONTENT)) {
 			if (gui.editItemBackClicked())
 				return;
 			discardEditingItem();
@@ -249,8 +201,7 @@ public class MainController {
 	private void copySelectedItems(boolean info) {
 		if (treeManager.selectionManager().isSelectionMode()) {
 			treeManager.clipboardManager().clearClipboard();
-			for (Integer selectedItemId : treeManager.selectionManager()
-					.getSelectedItems()) {
+			for (Integer selectedItemId : treeManager.selectionManager().getSelectedItems()) {
 				TreeItem selectedItem = treeManager.getCurrentItem().getChild(selectedItemId);
 				treeManager.clipboardManager().addToClipboard(selectedItem);
 			}
@@ -299,8 +250,7 @@ public class MainController {
 				clipboardItem.setParent(treeManager.getCurrentItem());
 				treeManager.addToCurrent(clipboardItem);
 			}
-			userInfo.showInfo("Items pasted: " + treeManager.clipboardManager()
-					.getClipboardSize());
+			userInfo.showInfo("Items pasted: " + treeManager.clipboardManager().getClipboardSize());
 			treeManager.clipboardManager().recopyClipboard();
 			updateItemsList();
 			gui.scrollToItem(-1);
@@ -314,8 +264,8 @@ public class MainController {
 	}
 	
 	private void toggleSelectAll() {
-		if (treeManager.selectionManager()
-				.getSelectedItemsCount() == treeManager.getCurrentItem().size()) {
+		if (treeManager.selectionManager().getSelectedItemsCount() == treeManager.getCurrentItem()
+				.size()) {
 			treeManager.selectionManager().cancelSelectionMode();
 		} else {
 			selectAllItems(true);
@@ -339,12 +289,6 @@ public class MainController {
 				userInfo.showInfo(e.getMessage());
 			}
 		}
-	}
-	
-	
-	private void exitAppRequested() {
-		preferences.saveAll();
-		app.quit();
 	}
 	
 	public void itemMoved(int position, int step) {

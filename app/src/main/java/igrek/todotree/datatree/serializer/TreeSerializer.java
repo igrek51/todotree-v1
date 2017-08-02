@@ -1,11 +1,11 @@
-package igrek.todotree.services.datatree.serializer;
+package igrek.todotree.datatree.serializer;
 
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
 import igrek.todotree.exceptions.NoMatchingBracketException;
-import igrek.todotree.services.datatree.TreeItem;
+import igrek.todotree.datatree.item.TreeItem;
 
 public class TreeSerializer {
 	

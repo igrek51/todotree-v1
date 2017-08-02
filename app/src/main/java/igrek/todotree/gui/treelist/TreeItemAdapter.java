@@ -20,7 +20,7 @@ import java.util.List;
 
 import igrek.todotree.R;
 import igrek.todotree.controller.MainController;
-import igrek.todotree.services.datatree.TreeItem;
+import igrek.todotree.datatree.item.TreeItem;
 
 class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 	

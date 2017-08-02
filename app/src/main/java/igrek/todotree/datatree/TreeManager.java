@@ -1,12 +1,13 @@
-package igrek.todotree.services.datatree;
+package igrek.todotree.datatree;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 
+import igrek.todotree.datatree.item.TreeItem;
 import igrek.todotree.exceptions.NoSuperItemException;
 import igrek.todotree.logger.Logs;
-import igrek.todotree.services.datatree.serializer.TreeSerializer;
+import igrek.todotree.datatree.serializer.TreeSerializer;
 import igrek.todotree.services.filesystem.FilesystemService;
 import igrek.todotree.services.filesystem.PathBuilder;
 import igrek.todotree.services.preferences.Preferences;

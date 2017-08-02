@@ -8,7 +8,7 @@ import igrek.todotree.controller.MainController;
 import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.gui.GUI;
 import igrek.todotree.logger.Logs;
-import igrek.todotree.services.datatree.TreeManager;
+import igrek.todotree.datatree.TreeManager;
 
 public class App extends BaseApp {
 	
