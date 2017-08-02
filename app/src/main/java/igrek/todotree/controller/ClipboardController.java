@@ -76,7 +76,7 @@ public class ClipboardController {
 			String systemClipboard = systemClipboardManager.getSystemClipboard();
 			if (systemClipboard != null) {
 				//wklejanie 1 elementu z systemowego schowka
-				treeManager.getCurrentItem().add(systemClipboard);
+				treeManager.addToCurrent(systemClipboard);
 				userInfo.showInfo("Item pasted: " + systemClipboard);
 				new GUIController().updateItemsList();
 				gui.scrollToItem(-1);

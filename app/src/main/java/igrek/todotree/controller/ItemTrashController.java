@@ -47,10 +47,9 @@ public class ItemTrashController {
 	}
 	
 	private void removeItem(final int position) {
-		
 		final TreeItem removing = treeManager.getCurrentItem().getChild(position);
 		
-		treeManager.getCurrentItem().remove(position);
+		treeManager.removeFromCurrent(position);
 		new GUIController().updateItemsList();
 		userInfo.showInfoCancellable("Item removed: " + removing.getContent(), new InfoBarClickAction() {
 			@Override
@@ -77,7 +76,7 @@ public class ItemTrashController {
 			}
 		});
 		for (Integer id : selectedIds) {
-			treeManager.getCurrentItem().remove(id);
+			treeManager.removeFromCurrent(id);
 		}
 		if (info) {
 			userInfo.showInfo("Selected items removed: " + selectedIds.size());

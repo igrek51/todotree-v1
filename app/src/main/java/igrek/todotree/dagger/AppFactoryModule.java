@@ -62,8 +62,8 @@ public class AppFactoryModule {
 	
 	@Provides
 	@Singleton
-	TreeManager provideTreeManager() {
-		return new TreeManager();
+	TreeManager provideTreeManager(ChangesHistory changesHistory) {
+		return new TreeManager(changesHistory);
 	}
 	
 	@Provides

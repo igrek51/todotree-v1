@@ -2,6 +2,7 @@ package igrek.todotree.datatree;
 
 import igrek.todotree.datatree.item.TreeItem;
 import igrek.todotree.exceptions.NoSuperItemException;
+import igrek.todotree.services.history.ChangesHistory;
 
 public class TreeManager {
 	
@@ -10,7 +11,10 @@ public class TreeManager {
 	
 	private Integer newItemPosition;
 	
-	public TreeManager() {
+	private ChangesHistory changesHistory;
+	
+	public TreeManager(ChangesHistory changesHistory) {
+		this.changesHistory = changesHistory;
 		reset();
 	}
 	
@@ -44,6 +48,7 @@ public class TreeManager {
 		if (position == null) {
 			position = currentItem.size();
 		}
+		changesHistory.registerChange();
 		currentItem.add(position, content);
 	}
 	
@@ -51,11 +56,28 @@ public class TreeManager {
 		if (position == null) {
 			position = currentItem.size();
 		}
+		changesHistory.registerChange();
 		currentItem.add(position, item);
 	}
 	
 	public void addToCurrent(TreeItem newItem) {
+		changesHistory.registerChange();
 		currentItem.add(newItem);
+	}
+	
+	public void addToCurrent(String content) {
+		changesHistory.registerChange();
+		currentItem.add(content);
+	}
+	
+	public void removeFromCurrent(int position) {
+		changesHistory.registerChange();
+		currentItem.remove(position);
+	}
+	
+	public void removeFromCurrent(TreeItem item) {
+		changesHistory.registerChange();
+		currentItem.remove(item);
 	}
 	
 	//  Navigation

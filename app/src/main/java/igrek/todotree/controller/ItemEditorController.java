@@ -12,6 +12,7 @@ import igrek.todotree.datatree.TreeScrollCache;
 import igrek.todotree.datatree.TreeSelectionManager;
 import igrek.todotree.datatree.item.TreeItem;
 import igrek.todotree.gui.GUI;
+import igrek.todotree.services.history.ChangesHistory;
 import igrek.todotree.services.lock.DatabaseLock;
 import igrek.todotree.services.resources.UserInfoService;
 
@@ -41,8 +42,15 @@ public class ItemEditorController {
 	@Inject
 	DatabaseLock lock;
 	
+	@Inject
+	ChangesHistory changesHistory;
+	
 	public ItemEditorController() {
 		DaggerIOC.getAppComponent().inject(this);
+	}
+	
+	private Integer getNewItemPosition() {
+		return treeManager.getNewItemPosition();
 	}
 	
 	private boolean tryToSaveNewItem(String content) {
@@ -57,18 +65,15 @@ public class ItemEditorController {
 		}
 	}
 	
-	private Integer getNewItemPosition() {
-		return treeManager.getNewItemPosition();
-	}
-	
 	private boolean tryToSaveExistingItem(TreeItem editedItem, String content) {
 		content = contentTrimmer.trimContent(content);
 		if (content.isEmpty()) {
-			treeManager.getCurrentItem().remove(editedItem);
+			treeManager.removeFromCurrent(editedItem);
 			userInfo.showInfo("Empty item has been removed.");
 			return false;
 		} else {
 			editedItem.setContent(content);
+			changesHistory.registerChange();
 			userInfo.showInfo("Item has been saved.");
 			return true;
 		}
@@ -160,7 +165,7 @@ public class ItemEditorController {
 	
 	public void addItemHereClicked(int position) {
 		selectionManager.cancelSelectionMode();
-		new ItemEditorController().newItem(position);
+		newItem(position);
 	}
 	
 	public void addItemClicked() {

@@ -11,6 +11,8 @@ public class ChangesHistory {
 	
 	private LinkedList<AbstractItemChange> changes = new LinkedList<>();
 	
+	private boolean anyChange = false;
+	
 	public ChangesHistory() {
 	}
 	
@@ -22,17 +24,23 @@ public class ChangesHistory {
 		changes.add(change);
 	}
 	
-	public boolean hasChanges() {
-		return !changes.isEmpty();
-	}
-	
 	public void clear() {
 		changes.clear();
+		anyChange = false;
 	}
 	
 	public void revertLast() {
 		if (!changes.isEmpty()) {
 			changes.pollLast().revert();
 		}
+	}
+	
+	public void registerChange() {
+		anyChange = true;
+	}
+	
+	public boolean hasChanges() {
+		//TODO return !changes.isEmpty();
+		return anyChange;
 	}
 }

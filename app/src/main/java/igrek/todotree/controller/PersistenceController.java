@@ -15,6 +15,7 @@ import igrek.todotree.logger.Logs;
 import igrek.todotree.services.backup.BackupManager;
 import igrek.todotree.services.filesystem.FilesystemService;
 import igrek.todotree.services.filesystem.PathBuilder;
+import igrek.todotree.services.history.ChangesHistory;
 import igrek.todotree.services.preferences.Preferences;
 import igrek.todotree.services.resources.UserInfoService;
 
@@ -41,11 +42,14 @@ public class PersistenceController {
 	@Inject
 	TreeSerializer treeSerializer;
 	
+	@Inject
+	ChangesHistory changesHistory;
+	
 	public PersistenceController() {
 		DaggerIOC.getAppComponent().inject(this);
 	}
 	
-	public void optionReload() {
+	void optionReload() {
 		treeManager.reset();
 		scrollCache.clear();
 		loadRootTree();
@@ -53,18 +57,23 @@ public class PersistenceController {
 		userInfo.showInfo("Database loaded.");
 	}
 	
-	public void optionSave() {
+	void optionSave() {
 		saveDatabase();
 		userInfo.showInfo("Database saved.");
 	}
 	
-	public void saveDatabase() {
+	void saveDatabase() {
+		if (!changesHistory.hasChanges()) {
+			Logs.info("No changes have been made - skipping saving");
+			return;
+		}
+		
 		saveRootTree();
 		backupManager.saveBackupFile();
 	}
 	
-	public void loadRootTree() {
-		
+	void loadRootTree() {
+		changesHistory.clear();
 		filesystem.mkdirIfNotExist(filesystem.pathSD().toString());
 		PathBuilder dbFilePath = filesystem.pathSD().append(preferences.dbFilePath);
 		Logs.info("Loading database from file: " + dbFilePath.toString());
@@ -82,11 +91,8 @@ public class PersistenceController {
 		}
 	}
 	
-	public void saveRootTree() {
-		//TODO: wyjście bez zapisywania bazy jeśli nie było zmian
-		
+	private void saveRootTree() {
 		PathBuilder dbFilePath = filesystem.pathSD().append(preferences.dbFilePath);
-		//        Logs.info("Zapisywanie bazy danych do pliku: " + dbFilePath.toString());
 		try {
 			String output = treeSerializer.saveTree(treeManager.getRootItem());
 			filesystem.saveFile(dbFilePath.toString(), output);

@@ -14,6 +14,7 @@ import igrek.todotree.datatree.item.TreeItem;
 import igrek.todotree.exceptions.NoSuperItemException;
 import igrek.todotree.gui.GUI;
 import igrek.todotree.logger.Logs;
+import igrek.todotree.services.history.ChangesHistory;
 import igrek.todotree.services.lock.DatabaseLock;
 
 public class TreeController {
@@ -35,6 +36,9 @@ public class TreeController {
 	
 	@Inject
 	TreeMover treeMover;
+	
+	@Inject
+	ChangesHistory changesHistory;
 	
 	public TreeController() {
 		DaggerIOC.getAppComponent().inject(this);
@@ -100,6 +104,7 @@ public class TreeController {
 	
 	public List<TreeItem> itemMoved(int position, int step) {
 		treeMover.move(treeManager.getCurrentItem(), position, step);
+		changesHistory.registerChange();
 		return treeManager.getCurrentItem().getChildren();
 	}
 }
