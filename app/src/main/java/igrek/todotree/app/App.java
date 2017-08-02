@@ -6,9 +6,9 @@ import javax.inject.Inject;
 
 import igrek.todotree.controller.MainController;
 import igrek.todotree.dagger.DaggerIOC;
+import igrek.todotree.datatree.TreeManager;
 import igrek.todotree.gui.GUI;
 import igrek.todotree.logger.Logs;
-import igrek.todotree.datatree.TreeManager;
 
 public class App extends BaseApp {
 	
@@ -17,9 +17,6 @@ public class App extends BaseApp {
 	
 	@Inject
 	GUI gui;
-	
-	@Inject
-	MainController actionController;
 	
 	public App(AppCompatActivity activity) {
 		super(activity);
@@ -31,7 +28,7 @@ public class App extends BaseApp {
 	@Override
 	public void init() {
 		super.init();
-		
+		// TODO move to controller
 		treeManager.loadRootTree();
 		
 		gui.lazyInit();
@@ -42,12 +39,12 @@ public class App extends BaseApp {
 	
 	@Override
 	public boolean optionsSelect(int id) {
-		return actionController.optionsSelect(id);
+		return new MainController().optionsSelect(id);
 	}
 	
 	@Override
 	public boolean onKeyBack() {
-		actionController.backClicked();
+		new MainController().backClicked();
 		return true;
 	}
 	

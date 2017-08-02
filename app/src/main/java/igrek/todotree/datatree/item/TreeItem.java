@@ -19,7 +19,7 @@ public class TreeItem {
 	 * konstruktor kopiujący (razem z zawartością), element nadrzędny nie ma rodzica!
 	 * @param source źródłowy element
 	 */
-	TreeItem(TreeItem source) {
+	public TreeItem(TreeItem source) {
 		this.content = source.content;
 		this.children = new ArrayList<>();
 		for (TreeItem sourceChild : source.children) {

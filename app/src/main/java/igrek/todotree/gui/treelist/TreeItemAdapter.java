@@ -28,18 +28,16 @@ class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 	private List<TreeItem> dataSource;
 	private List<Integer> selections = null;
 	private TreeListView listView;
-	private MainController actionController;
 	
 	private HashMap<Integer, View> storedViews;
 	
-	TreeItemAdapter(Context context, List<TreeItem> dataSource, TreeListView listView, MainController actionController) {
+	TreeItemAdapter(Context context, List<TreeItem> dataSource, TreeListView listView) {
 		super(context, 0, new ArrayList<TreeItem>());
 		this.context = context;
 		if (dataSource == null)
 			dataSource = new ArrayList<>();
 		this.dataSource = dataSource;
 		this.listView = listView;
-		this.actionController = actionController;
 		storedViews = new HashMap<>();
 	}
 	
@@ -97,7 +95,7 @@ class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 			plusButton.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					actionController.addItemClicked();
+					new MainController().addItemClicked();
 				}
 			});
 			
@@ -132,7 +130,7 @@ class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 				editButton.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						actionController.itemEditClicked(item);
+						new MainController().itemEditClicked(item);
 					}
 				});
 			} else {
@@ -147,7 +145,7 @@ class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 				goIntoButton.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						actionController.itemGoIntoClicked(position);
+						new MainController().itemGoIntoClicked(position);
 					}
 				});
 			} else {
@@ -163,7 +161,7 @@ class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 			removeButton.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					actionController.itemRemoveClicked(position);
+					new MainController().itemRemoveClicked(position);
 				}
 			});
 			
@@ -207,7 +205,7 @@ class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 				addButton.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						actionController.addItemClickedPos(position);
+						new MainController().addItemClickedPos(position);
 					}
 				});
 			} else {
@@ -231,7 +229,7 @@ class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 				cbItemSelected.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 					@Override
 					public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-						actionController.selectedItemClicked(position, isChecked);
+						new MainController().selectedItemClicked(position, isChecked);
 					}
 				});
 			}
