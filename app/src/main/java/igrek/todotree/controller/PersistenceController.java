@@ -72,7 +72,7 @@ public class PersistenceController {
 		backupManager.saveBackupFile();
 	}
 	
-	void loadRootTree() {
+	public void loadRootTree() {
 		changesHistory.clear();
 		filesystem.mkdirIfNotExist(filesystem.pathSD().toString());
 		PathBuilder dbFilePath = filesystem.pathSD().append(preferences.dbFilePath);

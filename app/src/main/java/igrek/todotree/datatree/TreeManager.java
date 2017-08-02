@@ -36,6 +36,10 @@ public class TreeManager {
 		return currentItem;
 	}
 	
+	public boolean isPositionBeyond(int position) {
+		return position >= currentItem.size();
+	}
+	
 	public void setNewItemPosition(Integer newItemPosition) {
 		this.newItemPosition = newItemPosition;
 	}

@@ -1,6 +1,7 @@
 package igrek.todotree;
 
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
@@ -33,7 +34,9 @@ public class MainActivity extends AppCompatActivity {
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
-		app.onResizeEvent(newConfig);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+			app.onResizeEvent(newConfig);
+		}
 	}
 	
 	@Override
@@ -80,7 +83,6 @@ public class MainActivity extends AppCompatActivity {
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
 		return super.onKeyDown(keyCode, event);
 	}
-	
 }
 
 

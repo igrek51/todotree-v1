@@ -2,7 +2,9 @@ package igrek.todotree.app;
 
 import android.support.v7.app.AppCompatActivity;
 
+import igrek.todotree.controller.GUIController;
 import igrek.todotree.controller.MainController;
+import igrek.todotree.controller.PersistenceController;
 import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.logger.Logs;
 
@@ -23,7 +25,8 @@ public class App extends BaseApp {
 	@Override
 	public void init() {
 		super.init();
-		new MainController().initializeApp();
+		new PersistenceController().loadRootTree();
+		new GUIController().guiInit();
 		Logs.info("Started application.");
 	}
 	

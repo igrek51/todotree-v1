@@ -33,11 +33,6 @@ public class MainController {
 		DaggerIOC.getAppComponent().inject(this);
 	}
 	
-	public void initializeApp() {
-		new PersistenceController().loadRootTree();
-		new GUIController().guiInit();
-	}
-	
 	public boolean optionsSelect(int id) {
 		switch (id) {
 			case R.id.action_minimize:

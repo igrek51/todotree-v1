@@ -25,6 +25,7 @@ import java.util.List;
 import igrek.todotree.controller.ItemEditorController;
 import igrek.todotree.controller.TreeController;
 import igrek.todotree.datatree.item.TreeItem;
+import igrek.todotree.gui.contextmenu.ItemActionsMenu;
 import igrek.todotree.gui.errorhandling.UIErrorHandler;
 import igrek.todotree.logger.Logs;
 
@@ -192,22 +193,11 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
 	
 	@Override
 	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-		try {
-			itemDraggingStopped();
-			if (position == items.size()) {
-				//nowy element na końcu
-				new ItemEditorController().addItemClicked();
-			} else {
-				//tryb zaznaczania elementów
-				new TreeController().itemLongClicked(position);
-				gestureStartPos = null;
-			}
-		} catch (Throwable t) {
-			UIErrorHandler.showError(t);
-		}
+		itemDraggingStopped();
+		gestureStartPos = null;
+		new ItemActionsMenu(view, position).show();
 		return true;
 	}
-	
 	
 	private void updateHoverBitmap() {
 		if (draggedItemViewTop != null && draggedItemPos != null) {
