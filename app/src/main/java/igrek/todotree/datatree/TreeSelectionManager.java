@@ -18,7 +18,7 @@ public class TreeSelectionManager {
 		return selectedPositions.size();
 	}
 	
-	public boolean isSelectionMode() {
+	public boolean isAnythingSelected() {
 		return selectedPositions != null && selectedPositions.size() > 0;
 	}
 	
@@ -31,7 +31,7 @@ public class TreeSelectionManager {
 	}
 	
 	public void setItemSelected(int position, boolean selectedState) {
-		if (!isSelectionMode()) {
+		if (!isAnythingSelected()) {
 			startSelectionMode();
 		}
 		if (selectedState) {

@@ -47,7 +47,7 @@ public class ItemSelectionController {
 	
 	
 	public void sumSelected() {
-		if (selectionManager.isSelectionMode()) {
+		if (selectionManager.isAnythingSelected()) {
 			try {
 				BigDecimal sum = calculateSum();
 				

@@ -40,6 +40,14 @@ public class TreeManager {
 		return position >= currentItem.size();
 	}
 	
+	public boolean isPositionAtItem(int position) {
+		return position >= 0 && position < currentItem.size();
+	}
+	
+	public int positionAfterEnd() {
+		return currentItem.size();
+	}
+	
 	public void setNewItemPosition(Integer newItemPosition) {
 		this.newItemPosition = newItemPosition;
 	}
@@ -64,9 +72,9 @@ public class TreeManager {
 		currentItem.add(position, item);
 	}
 	
-	public void addToCurrent(TreeItem newItem) {
+	public void addToCurrent(TreeItem item) {
 		changesHistory.registerChange();
-		currentItem.add(newItem);
+		currentItem.add(item);
 	}
 	
 	public void addToCurrent(String content) {

@@ -39,7 +39,7 @@ public class ItemTrashController {
 	
 	public void itemRemoveClicked(int position) {// removing locked before going into first element
 		lock.assertUnlocked();
-		if (selectionManager.isSelectionMode()) {
+		if (selectionManager.isAnythingSelected()) {
 			removeSelectedItems(true);
 		} else {
 			removeItem(position);

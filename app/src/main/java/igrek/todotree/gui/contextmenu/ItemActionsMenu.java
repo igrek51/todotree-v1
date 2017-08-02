@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.view.View;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +13,9 @@ import javax.inject.Inject;
 
 import igrek.todotree.controller.ItemActionsController;
 import igrek.todotree.dagger.DaggerIOC;
+import igrek.todotree.datatree.TreeClipboardManager;
+import igrek.todotree.datatree.TreeManager;
+import igrek.todotree.datatree.TreeSelectionManager;
 import igrek.todotree.gui.errorhandling.UIErrorHandler;
 
 public class ItemActionsMenu {
@@ -24,6 +26,15 @@ public class ItemActionsMenu {
 	@Inject
 	Activity activity;
 	
+	@Inject
+	TreeSelectionManager selectionManager;
+	
+	@Inject
+	TreeManager treeManager;
+	
+	@Inject
+	TreeClipboardManager treeClipboardManager;
+	
 	public ItemActionsMenu(View view, int position) {
 		this.view = view;
 		this.position = position;
@@ -32,7 +43,7 @@ public class ItemActionsMenu {
 	
 	public void show() {
 		
-		final List<ItemAction> actions = buildActionsList();
+		final List<ItemAction> actions = filterVisibleOnly(buildActionsList());
 		CharSequence[] actionNames = convertToNamesArray(actions);
 		
 		AlertDialog.Builder builder = new AlertDialog.Builder(activity);
@@ -61,65 +72,107 @@ public class ItemActionsMenu {
 			public void execute() {
 				new ItemActionsController().actionSelect(position);
 			}
+			
+			@Override
+			public boolean isVisible() {
+				return treeManager.isPositionAtItem(position);
+			}
+		});
+		
+		actions.add(new ItemAction("Edit") {
+			@Override
+			public void execute() {
+				new ItemActionsController().actionEdit(position);
+			}
+			
+			@Override
+			public boolean isVisible() {
+				return treeManager.isPositionAtItem(position);
+			}
 		});
 		
 		actions.add(new ItemAction("Add above") {
 			@Override
 			public void execute() {
-				Toast.makeText(activity.getApplicationContext(), "paste above", Toast.LENGTH_SHORT)
-						.show();
+				new ItemActionsController().actionAddAbove(position);
 			}
 		});
 		
 		actions.add(new ItemAction("Copy") {
 			@Override
 			public void execute() {
-				Toast.makeText(activity.getApplicationContext(), "paste above", Toast.LENGTH_SHORT)
-						.show();
+				new ItemActionsController().actionCopy(position);
+			}
+			
+			@Override
+			public boolean isVisible() {
+				return selectionManager.isAnythingSelected();
 			}
 		});
 		
 		actions.add(new ItemAction("Paste above") {
 			@Override
 			public void execute() {
-				Toast.makeText(activity.getApplicationContext(), "paste above", Toast.LENGTH_SHORT)
-						.show();
+				new ItemActionsController().actionPasteAbove(position);
 			}
 		});
 		
 		actions.add(new ItemAction("Paste as link") {
 			@Override
 			public void execute() {
-				Toast.makeText(activity.getApplicationContext(), "paste above", Toast.LENGTH_SHORT)
-						.show();
+				new ItemActionsController().actionPasteAboveAsLink(position);
+			}
+			
+			@Override
+			public boolean isVisible() {
+				return !treeClipboardManager.isClipboardEmpty();
 			}
 		});
 		
 		actions.add(new ItemAction("Cut") {
 			@Override
 			public void execute() {
-				Toast.makeText(activity.getApplicationContext(), "paste above", Toast.LENGTH_SHORT)
-						.show();
+				new ItemActionsController().actionCut(position);
+			}
+			
+			@Override
+			public boolean isVisible() {
+				return selectionManager.isAnythingSelected();
 			}
 		});
 		
 		actions.add(new ItemAction("Remove") {
 			@Override
 			public void execute() {
-				Toast.makeText(activity.getApplicationContext(), "paste above", Toast.LENGTH_SHORT)
-						.show();
+				new ItemActionsController().actionRemove(position);
+			}
+			
+			@Override
+			public boolean isVisible() {
+				return treeManager.isPositionAtItem(position);
 			}
 		});
 		
 		actions.add(new ItemAction("Select all") {
 			@Override
 			public void execute() {
-				Toast.makeText(activity.getApplicationContext(), "paste above", Toast.LENGTH_SHORT)
-						.show();
+				new ItemActionsController().actionSelectAll(position);
 			}
 		});
 		
 		return actions;
+	}
+	
+	private List<ItemAction> filterVisibleOnly(List<ItemAction> actions) {
+		List<ItemAction> visibleActions = new ArrayList<>();
+		
+		for (ItemAction action : actions) {
+			if (action.isVisible()) {
+				visibleActions.add(action);
+			}
+		}
+		
+		return visibleActions;
 	}
 	
 	private CharSequence[] convertToNamesArray(List<ItemAction> actions) {

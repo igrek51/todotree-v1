@@ -71,7 +71,7 @@ public class MainController {
 	
 	public void backClicked() {
 		if (appData.isState(AppState.ITEMS_LIST)) {
-			if (selectionManager.isSelectionMode()) {
+			if (selectionManager.isAnythingSelected()) {
 				selectionManager.cancelSelectionMode();
 				new GUIController().updateItemsList();
 			} else {

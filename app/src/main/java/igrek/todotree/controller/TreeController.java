@@ -77,7 +77,7 @@ public class TreeController {
 	
 	
 	public void itemLongClicked(int position) {
-		if (!selectionManager.isSelectionMode()) {
+		if (!selectionManager.isAnythingSelected()) {
 			selectionManager.startSelectionMode();
 			selectionManager.setItemSelected(position, true);
 			new GUIController().updateItemsList();
@@ -90,7 +90,7 @@ public class TreeController {
 	
 	public void itemClicked(int position, TreeItem item) {
 		lock.assertUnlocked();
-		if (selectionManager.isSelectionMode()) {
+		if (selectionManager.isAnythingSelected()) {
 			selectionManager.toggleItemSelected(position);
 			new GUIController().updateItemsList();
 		} else {

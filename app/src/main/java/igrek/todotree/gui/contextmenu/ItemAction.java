@@ -14,4 +14,8 @@ abstract class ItemAction {
 	}
 	
 	public abstract void execute();
+	
+	public boolean isVisible() {
+		return true;
+	}
 }
