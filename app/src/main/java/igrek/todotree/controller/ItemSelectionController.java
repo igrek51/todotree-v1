@@ -10,6 +10,7 @@ import igrek.todotree.datatree.NumericAdder;
 import igrek.todotree.datatree.TreeManager;
 import igrek.todotree.datatree.TreeSelectionManager;
 import igrek.todotree.services.clipboard.SystemClipboardManager;
+import igrek.todotree.services.filesystem.PathBuilder;
 import igrek.todotree.services.resources.UserInfoService;
 
 public class ItemSelectionController {
@@ -60,6 +61,8 @@ public class ItemSelectionController {
 			} catch (NumberFormatException e) {
 				userInfo.showInfo(e.getMessage());
 			}
+		} else {
+			userInfo.showInfo("No items selected.");
 		}
 	}
 	
