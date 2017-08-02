@@ -14,6 +14,7 @@ import igrek.todotree.R;
 import igrek.todotree.controller.MainController;
 import igrek.todotree.datatree.item.TreeItem;
 import igrek.todotree.gui.edititem.EditItemGUI;
+import igrek.todotree.gui.errorhandling.SafeClickListener;
 import igrek.todotree.gui.tree.TreeListView;
 
 public class GUI extends BaseGUI {

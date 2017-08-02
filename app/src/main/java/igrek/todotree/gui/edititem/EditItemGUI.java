@@ -13,7 +13,7 @@ import igrek.todotree.R;
 import igrek.todotree.controller.ItemEditorController;
 import igrek.todotree.datatree.item.TreeItem;
 import igrek.todotree.gui.GUI;
-import igrek.todotree.gui.SafeClickListener;
+import igrek.todotree.gui.errorhandling.SafeClickListener;
 import igrek.todotree.gui.numkeyboard.NumKeyboardListener;
 import igrek.todotree.gui.numkeyboard.NumericKeyboardView;
 

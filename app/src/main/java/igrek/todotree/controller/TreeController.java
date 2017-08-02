@@ -85,11 +85,7 @@ public class TreeController {
 	}
 	
 	public void itemClicked(int position, TreeItem item) {
-		// blokada wejścia wgłąb na pierwszym poziomie poprzez kliknięcie
-		if (lock.isLocked()) {
-			Logs.warn("Database is locked.");
-			return;
-		}
+		lock.assertUnlocked();
 		if (selectionManager.isSelectionMode()) {
 			selectionManager.toggleItemSelected(position);
 			new GUIController().updateItemsList();

@@ -24,7 +24,7 @@ import igrek.todotree.controller.ItemSelectionController;
 import igrek.todotree.controller.ItemTrashController;
 import igrek.todotree.controller.TreeController;
 import igrek.todotree.datatree.item.TreeItem;
-import igrek.todotree.gui.SafeClickListener;
+import igrek.todotree.gui.errorhandling.SafeClickListener;
 
 class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 	

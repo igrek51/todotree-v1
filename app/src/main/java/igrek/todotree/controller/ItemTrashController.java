@@ -12,7 +12,6 @@ import igrek.todotree.datatree.TreeManager;
 import igrek.todotree.datatree.TreeSelectionManager;
 import igrek.todotree.datatree.item.TreeItem;
 import igrek.todotree.gui.GUI;
-import igrek.todotree.logger.Logs;
 import igrek.todotree.services.lock.DatabaseLock;
 import igrek.todotree.services.resources.InfoBarClickAction;
 import igrek.todotree.services.resources.UserInfoService;
@@ -39,14 +38,11 @@ public class ItemTrashController {
 	}
 	
 	public void itemRemoveClicked(int position) {// removing locked before going into first element
-		if (lock.isLocked()) {
-			Logs.warn("Database is locked.");
+		lock.assertUnlocked();
+		if (selectionManager.isSelectionMode()) {
+			removeSelectedItems(true);
 		} else {
-			if (selectionManager.isSelectionMode()) {
-				removeSelectedItems(true);
-			} else {
-				removeItem(position);
-			}
+			removeItem(position);
 		}
 	}
 	

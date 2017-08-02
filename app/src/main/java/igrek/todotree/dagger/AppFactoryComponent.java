@@ -13,7 +13,7 @@ import igrek.todotree.controller.ItemTrashController;
 import igrek.todotree.controller.MainController;
 import igrek.todotree.controller.PersistenceController;
 import igrek.todotree.controller.TreeController;
-import igrek.todotree.gui.SafeClickListener;
+import igrek.todotree.gui.errorhandling.UIErrorHandler;
 
 @Singleton
 @Component(modules = {AppFactoryModule.class})
@@ -21,7 +21,7 @@ public interface AppFactoryComponent {
 	
 	void inject(IDaggerInjectionTest there);
 	
-	void inject(SafeClickListener there);
+	void inject(UIErrorHandler there);
 	
 	// Controllers
 	

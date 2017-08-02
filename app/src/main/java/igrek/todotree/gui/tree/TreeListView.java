@@ -25,6 +25,7 @@ import java.util.List;
 import igrek.todotree.controller.ItemEditorController;
 import igrek.todotree.controller.TreeController;
 import igrek.todotree.datatree.item.TreeItem;
+import igrek.todotree.gui.errorhandling.UIErrorHandler;
 import igrek.todotree.logger.Logs;
 
 public class TreeListView extends ListView implements AbsListView.OnScrollListener, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
@@ -175,26 +176,34 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
 	
 	@Override
 	public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
-		if (position == items.size()) {
-			//nowy element
-			new ItemEditorController().addItemClicked();
-		} else {
-			//istniejący element
-			TreeItem item = adapter.getItem(position);
-			new TreeController().itemClicked(position, item);
+		try {
+			if (position == items.size()) {
+				//nowy element
+				new ItemEditorController().addItemClicked();
+			} else {
+				//istniejący element
+				TreeItem item = adapter.getItem(position);
+				new TreeController().itemClicked(position, item);
+			}
+		} catch (Throwable t) {
+			UIErrorHandler.showError(t);
 		}
 	}
 	
 	@Override
 	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-		itemDraggingStopped();
-		if (position == items.size()) {
-			//nowy element na końcu
-			new ItemEditorController().addItemClicked();
-		} else {
-			//tryb zaznaczania elementów
-			new TreeController().itemLongClicked(position);
-			gestureStartPos = null;
+		try {
+			itemDraggingStopped();
+			if (position == items.size()) {
+				//nowy element na końcu
+				new ItemEditorController().addItemClicked();
+			} else {
+				//tryb zaznaczania elementów
+				new TreeController().itemLongClicked(position);
+				gestureStartPos = null;
+			}
+		} catch (Throwable t) {
+			UIErrorHandler.showError(t);
 		}
 		return true;
 	}
