@@ -50,4 +50,9 @@ public class GUIController {
 			gui.scrollToPosition(savedScrollPos);
 		}
 	}
+	
+	public void guiInit() {
+		gui.lazyInit();
+		gui.showItemsList(treeManager.getCurrentItem());
+	}
 }

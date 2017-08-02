@@ -4,7 +4,6 @@ package igrek.todotree.dagger;
 import javax.inject.Singleton;
 
 import dagger.Component;
-import igrek.todotree.app.App;
 import igrek.todotree.controller.ClipboardController;
 import igrek.todotree.controller.ExitController;
 import igrek.todotree.controller.GUIController;
@@ -24,8 +23,6 @@ import igrek.todotree.gui.tree.TreeListView;
 public interface AppFactoryComponent {
 	
 	void inject(IDaggerInjectionTest there);
-	
-	void inject(App there);
 	
 	void inject(TreeListView there);
 	

@@ -2,40 +2,22 @@ package igrek.todotree.app;
 
 import android.support.v7.app.AppCompatActivity;
 
-import javax.inject.Inject;
-
 import igrek.todotree.controller.MainController;
-import igrek.todotree.controller.PersistenceController;
 import igrek.todotree.dagger.DaggerIOC;
-import igrek.todotree.datatree.TreeManager;
-import igrek.todotree.gui.GUI;
 import igrek.todotree.logger.Logs;
 
 public class App extends BaseApp {
-	
-	@Inject
-	TreeManager treeManager;
-	
-	@Inject
-	GUI gui;
 	
 	public App(AppCompatActivity activity) {
 		super(activity);
 		// Dagger init
 		DaggerIOC.init(this, activity);
-		DaggerIOC.getAppComponent().inject(this);
 	}
 	
 	@Override
 	public void init() {
 		super.init();
-		
-		new PersistenceController().loadRootTree();
-		
-		// TODO move to controller
-		gui.lazyInit();
-		gui.showItemsList(treeManager.getCurrentItem());
-		
+		new MainController().initializeApp();
 		Logs.info("Application started.");
 	}
 	
