@@ -21,6 +21,8 @@ import android.widget.ListView;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import igrek.todotree.controller.ItemEditorController;
 import igrek.todotree.controller.TreeController;
@@ -163,7 +165,7 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
 		}
 	}
 	
-	public void setItemsAndSelected(List<TreeItem> items, List<Integer> selectedPositions) {
+	public void setItemsAndSelected(List<TreeItem> items, Set<Integer> selectedPositions) {
 		adapter.setSelections(selectedPositions);
 		setItems(items);
 	}

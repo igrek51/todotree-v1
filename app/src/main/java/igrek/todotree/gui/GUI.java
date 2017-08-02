@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.RelativeLayout;
 
 import java.util.List;
+import java.util.Set;
 
 import igrek.todotree.R;
 import igrek.todotree.controller.MainController;
@@ -75,7 +76,7 @@ public class GUI extends BaseGUI {
 		return setMainContentLayout(R.layout.exit_screen);
 	}
 	
-	public void updateItemsList(TreeItem currentItem, List<Integer> selectedPositions) {
+	public void updateItemsList(TreeItem currentItem, Set<Integer> selectedPositions) {
 		//tytuł gałęzi
 		StringBuilder sb = new StringBuilder(currentItem.getContent());
 		if (!currentItem.isEmpty()) {

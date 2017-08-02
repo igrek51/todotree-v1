@@ -3,7 +3,11 @@ package igrek.todotree.controller;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.inject.Inject;
 
@@ -70,16 +74,11 @@ public class ItemTrashController {
 		removeItems(selectionManager.getSelectedItems(), info);
 	}
 	
-	public void removeItems(List<Integer> selectedIds, boolean info) {
-		//posortowanie malejąco (żeby przy usuwaniu nie nadpisać indeksów)
-		Collections.sort(selectedIds, new Comparator<Integer>() {
-			@Override
-			public int compare(Integer lhs, Integer rhs) {
-				return rhs.compareTo(lhs);
-			}
-		});
-		for (Integer id : selectedIds) {
-			treeManager.removeFromCurrent(id);
+	public void removeItems(TreeSet<Integer> selectedIds, boolean info) {
+		//descending order in order to not overwriting indices when removing
+		Iterator<Integer> iterator = selectedIds.descendingIterator();
+		while (iterator.hasNext()) {
+			treeManager.removeFromCurrent(iterator.next());
 		}
 		if (info) {
 			userInfo.showInfo("Items removed: " + selectedIds.size());

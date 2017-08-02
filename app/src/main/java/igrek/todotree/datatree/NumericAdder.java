@@ -2,7 +2,7 @@ package igrek.todotree.datatree;
 
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -10,7 +10,7 @@ import igrek.todotree.datatree.item.TreeItem;
 
 public class NumericAdder {
 	
-	public BigDecimal calculateSum(List<Integer> selectedPositions, TreeItem currentItem) throws NumberFormatException {
+	public BigDecimal calculateSum(Set<Integer> selectedPositions, TreeItem currentItem) throws NumberFormatException {
 		BigDecimal sum = new BigDecimal(0);
 		for (Integer selectedPos : selectedPositions) {
 			TreeItem selectedItem = currentItem.getChild(selectedPos);

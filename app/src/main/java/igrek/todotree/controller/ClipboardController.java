@@ -2,6 +2,8 @@ package igrek.todotree.controller;
 
 
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.inject.Inject;
 
@@ -46,7 +48,7 @@ public class ClipboardController {
 		}
 	}
 	
-	public void copyItems(List<Integer> itemPosistions, boolean info) {
+	public void copyItems(Set<Integer> itemPosistions, boolean info) {
 		if (!itemPosistions.isEmpty()) {
 			treeClipboardManager.clearClipboard();
 			for (Integer selectedItemId : itemPosistions) {
@@ -80,7 +82,7 @@ public class ClipboardController {
 		}
 	}
 	
-	public void cutItems(List<Integer> itemPosistions) {
+	public void cutItems(TreeSet<Integer> itemPosistions) {
 		if (!itemPosistions.isEmpty()) {
 			copyItems(itemPosistions, false);
 			userInfo.showInfo("Items cut: " + itemPosistions.size());
@@ -100,7 +102,7 @@ public class ClipboardController {
 				treeManager.addToCurrent(position, systemClipboard);
 				userInfo.showInfo("Item pasted: " + systemClipboard);
 				new GUIController().updateItemsList();
-				gui.scrollToItem(-1);
+				gui.scrollToItem(position);
 			} else {
 				userInfo.showInfo("Clipboard is empty.");
 			}
@@ -113,7 +115,7 @@ public class ClipboardController {
 			userInfo.showInfo("Items pasted: " + treeClipboardManager.getClipboardSize());
 			treeClipboardManager.recopyClipboard();
 			new GUIController().updateItemsList();
-			gui.scrollToItem(-1);
+			gui.scrollToItem(position);
 		}
 	}
 }

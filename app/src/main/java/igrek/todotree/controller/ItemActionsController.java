@@ -5,6 +5,8 @@ import android.os.Handler;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.inject.Inject;
 
@@ -43,6 +45,7 @@ public class ItemActionsController {
 	}
 	
 	public void actionAddAbove(final int position) {
+		//FIXME show keyboard on edit view
 		new Handler().post(new Runnable() {
 			@Override
 			public void run() {
@@ -52,7 +55,7 @@ public class ItemActionsController {
 	}
 	
 	public void actionCopy(int position) {
-		List<Integer> itemPosistions = new ArrayList<>(selectionManager.getSelectedItems());
+		Set<Integer> itemPosistions = new TreeSet<>(selectionManager.getSelectedItems());
 		// if nothing selected - include current item
 		if (itemPosistions.isEmpty()) {
 			itemPosistions.add(position);
@@ -69,7 +72,7 @@ public class ItemActionsController {
 	}
 	
 	public void actionCut(int position) {
-		List<Integer> itemPosistions = new ArrayList<>(selectionManager.getSelectedItems());
+		TreeSet<Integer> itemPosistions = new TreeSet<>(selectionManager.getSelectedItems());
 		// if nothing selected - include current item
 		if (itemPosistions.isEmpty()) {
 			itemPosistions.add(position);
@@ -86,6 +89,7 @@ public class ItemActionsController {
 	}
 	
 	public void actionEdit(int position) {
+		//FIXME show keyboard on edit view
 		TreeItem item = treeManager.getCurrentItem().getChild(position);
 		new ItemEditorController().itemEditClicked(item);
 	}

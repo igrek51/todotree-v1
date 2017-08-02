@@ -1,14 +1,14 @@
 package igrek.todotree.datatree;
 
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class TreeSelectionManager {
 	
-	private List<Integer> selectedPositions = null;
+	private TreeSet<Integer> selectedPositions = null;
 	
-	public List<Integer> getSelectedItems() {
+	public TreeSet<Integer> getSelectedItems() {
 		return selectedPositions;
 	}
 	
@@ -23,7 +23,7 @@ public class TreeSelectionManager {
 	}
 	
 	public void startSelectionMode() {
-		selectedPositions = new ArrayList<>();
+		selectedPositions = new TreeSet<>();
 	}
 	
 	public void cancelSelectionMode() {

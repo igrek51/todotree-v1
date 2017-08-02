@@ -17,6 +17,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import igrek.todotree.R;
 import igrek.todotree.controller.ItemEditorController;
@@ -30,7 +31,7 @@ class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 	
 	private Context context;
 	private List<TreeItem> dataSource;
-	private List<Integer> selections = null;
+	private Set<Integer> selections = null;
 	private TreeListView listView;
 	
 	private HashMap<Integer, View> storedViews;
@@ -55,7 +56,7 @@ class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 		return dataSource.get(position);
 	}
 	
-	void setSelections(List<Integer> selections) {
+	void setSelections(Set<Integer> selections) {
 		this.selections = selections;
 	}
 	
