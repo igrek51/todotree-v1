@@ -8,7 +8,7 @@ import javax.inject.Inject;
 import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.exceptions.NoSuperItemException;
 import igrek.todotree.logger.Logs;
-import igrek.todotree.model.treeitem.TreeItem;
+import igrek.todotree.model.treeitem.AbstractTreeItem;
 import igrek.todotree.services.history.ChangesHistory;
 import igrek.todotree.services.lock.DatabaseLock;
 import igrek.todotree.services.tree.TreeManager;
@@ -46,8 +46,8 @@ public class TreeController {
 	
 	public void goUp() {
 		try {
-			TreeItem current = treeManager.getCurrentItem();
-			TreeItem parent = current.getParent();
+			AbstractTreeItem current = treeManager.getCurrentItem();
+			AbstractTreeItem parent = current.getParent();
 			treeManager.goUp();
 			new GUIController().updateItemsList();
 			new GUIController().restoreScrollPosition(parent);
@@ -88,7 +88,7 @@ public class TreeController {
 		}
 	}
 	
-	public void itemClicked(int position, TreeItem item) {
+	public void itemClicked(int position, AbstractTreeItem item) {
 		lock.assertUnlocked();
 		if (selectionManager.isAnythingSelected()) {
 			selectionManager.toggleItemSelected(position);
@@ -102,9 +102,20 @@ public class TreeController {
 		}
 	}
 	
-	public List<TreeItem> itemMoved(int position, int step) {
+	public List<AbstractTreeItem> itemMoved(int position, int step) {
 		treeMover.move(treeManager.getCurrentItem(), position, step);
 		changesHistory.registerChange();
 		return treeManager.getCurrentItem().getChildren();
+	}
+	
+	public AbstractTreeItem findItemByPath(String[] paths) {
+		AbstractTreeItem current = treeManager.getRootItem();
+		for (String path : paths) {
+			AbstractTreeItem found = current.findChildByName(path);
+			if (found == null)
+				return null;
+			current = found;
+		}
+		return current;
 	}
 }

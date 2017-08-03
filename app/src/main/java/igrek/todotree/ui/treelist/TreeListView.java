@@ -26,13 +26,13 @@ import java.util.Set;
 import igrek.todotree.controller.ItemEditorController;
 import igrek.todotree.controller.TreeController;
 import igrek.todotree.logger.Logs;
-import igrek.todotree.model.treeitem.TreeItem;
+import igrek.todotree.model.treeitem.AbstractTreeItem;
 import igrek.todotree.ui.contextmenu.ItemActionsMenu;
 import igrek.todotree.ui.errorcheck.UIErrorHandler;
 
 public class TreeListView extends ListView implements AbsListView.OnScrollListener, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
 	
-	private List<TreeItem> items;
+	private List<AbstractTreeItem> items;
 	private TreeItemAdapter adapter;
 	
 	/** początkowa pozycja kursora przy rozpoczęciu przeciągania (ulega zmianie przy zamianie elementów) */
@@ -164,12 +164,12 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
 		}
 	}
 	
-	public void setItemsAndSelected(List<TreeItem> items, Set<Integer> selectedPositions) {
+	public void setItemsAndSelected(List<AbstractTreeItem> items, Set<Integer> selectedPositions) {
 		adapter.setSelections(selectedPositions);
 		setItems(items);
 	}
 	
-	public void setItems(List<TreeItem> items) {
+	public void setItems(List<AbstractTreeItem> items) {
 		this.items = items;
 		adapter.setDataSource(items);
 		invalidate();
@@ -184,7 +184,7 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
 				new ItemEditorController().addItemClicked();
 			} else {
 				//istniejący element
-				TreeItem item = adapter.getItem(position);
+				AbstractTreeItem item = adapter.getItem(position);
 				new TreeController().itemClicked(position, item);
 			}
 		} catch (Throwable t) {
@@ -520,17 +520,17 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
 		return getRealScrollPosition();
 	}
 	
-	public void onItemMoveButtonPressed(int position, TreeItem item, View itemView, float touchX, float touchY) {
+	public void onItemMoveButtonPressed(int position, AbstractTreeItem item, View itemView, float touchX, float touchY) {
 		startTouchY = itemView.getTop() + touchY;
 		lastTouchY = startTouchY;
 		itemDraggingStarted(position, itemView);
 	}
 	
-	public void onItemMoveButtonReleased(int position, TreeItem item, View itemView, float touchX, float touchY) {
+	public void onItemMoveButtonReleased(int position, AbstractTreeItem item, View itemView, float touchX, float touchY) {
 		itemDraggingStopped();
 	}
 	
-	public boolean onItemMoveLongPressed(int position, TreeItem item) {
+	public boolean onItemMoveLongPressed(int position, AbstractTreeItem item) {
 		if (position == 0) {
 			//przeniesienie na koniec
 			itemDraggingStopped();

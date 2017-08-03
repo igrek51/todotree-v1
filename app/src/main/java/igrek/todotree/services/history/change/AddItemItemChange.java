@@ -1,25 +1,25 @@
 package igrek.todotree.services.history.change;
 
 
-import igrek.todotree.model.treeitem.TreeItem;
+import igrek.todotree.model.treeitem.AbstractTreeItem;
 
 public class AddItemItemChange extends AbstractItemChange {
 	
-	private TreeItem newItem;
-	private TreeItem parent;
+	private AbstractTreeItem newItem;
+	private AbstractTreeItem parent;
 	private int insertPosition;
 	
-	public AddItemItemChange(TreeItem newItem, TreeItem parent, int insertPosition) {
+	public AddItemItemChange(AbstractTreeItem newItem, AbstractTreeItem parent, int insertPosition) {
 		this.newItem = newItem;
 		this.parent = parent;
 		this.insertPosition = insertPosition;
 	}
 	
-	public TreeItem getNewItem() {
+	public AbstractTreeItem getNewItem() {
 		return newItem;
 	}
 	
-	public TreeItem getParent() {
+	public AbstractTreeItem getParent() {
 		return parent;
 	}
 	

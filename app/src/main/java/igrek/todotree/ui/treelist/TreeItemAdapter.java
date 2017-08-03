@@ -22,20 +22,20 @@ import java.util.Set;
 import igrek.todotree.R;
 import igrek.todotree.controller.ItemEditorController;
 import igrek.todotree.controller.ItemSelectionController;
-import igrek.todotree.model.treeitem.TreeItem;
+import igrek.todotree.model.treeitem.AbstractTreeItem;
 import igrek.todotree.ui.errorcheck.SafeClickListener;
 
-class TreeItemAdapter extends ArrayAdapter<TreeItem> {
+class TreeItemAdapter extends ArrayAdapter<AbstractTreeItem> {
 	
 	private Context context;
-	private List<TreeItem> dataSource;
+	private List<AbstractTreeItem> dataSource;
 	private Set<Integer> selections = null;
 	private TreeListView listView;
 	
 	private HashMap<Integer, View> storedViews;
 	
-	TreeItemAdapter(Context context, List<TreeItem> dataSource, TreeListView listView) {
-		super(context, 0, new ArrayList<TreeItem>());
+	TreeItemAdapter(Context context, List<AbstractTreeItem> dataSource, TreeListView listView) {
+		super(context, 0, new ArrayList<AbstractTreeItem>());
 		this.context = context;
 		if (dataSource == null)
 			dataSource = new ArrayList<>();
@@ -44,13 +44,13 @@ class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 		storedViews = new HashMap<>();
 	}
 	
-	void setDataSource(List<TreeItem> dataSource) {
+	void setDataSource(List<AbstractTreeItem> dataSource) {
 		this.dataSource = dataSource;
 		storedViews = new HashMap<>();
 		notifyDataSetChanged();
 	}
 	
-	public TreeItem getItem(int position) {
+	public AbstractTreeItem getItem(int position) {
 		return dataSource.get(position);
 	}
 	
@@ -105,7 +105,7 @@ class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 			return itemPlus;
 		} else {
 			final View itemView = inflater.inflate(R.layout.tree_item, parent, false);
-			final TreeItem item = dataSource.get(position);
+			final AbstractTreeItem item = dataSource.get(position);
 			
 			//zawartość tekstowa elementu
 			TextView textView = (TextView) itemView.findViewById(R.id.tvItemContent);
@@ -114,7 +114,7 @@ class TreeItemAdapter extends ArrayAdapter<TreeItem> {
 			} else {
 				textView.setTypeface(null, Typeface.NORMAL);
 			}
-			textView.setText(item.getContent());
+			textView.setText(item.getDisplayName());
 			
 			// ilość potomków
 			TextView tvItemChildSize = (TextView) itemView.findViewById(R.id.tvItemChildSize);

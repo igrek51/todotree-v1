@@ -12,7 +12,8 @@ import java.util.Set;
 
 import igrek.todotree.R;
 import igrek.todotree.controller.MainController;
-import igrek.todotree.model.treeitem.TreeItem;
+import igrek.todotree.model.treeitem.AbstractTreeItem;
+import igrek.todotree.model.treeitem.TextTreeItem;
 import igrek.todotree.ui.edititem.EditItemGUI;
 import igrek.todotree.ui.errorcheck.SafeClickListener;
 import igrek.todotree.ui.treelist.TreeListView;
@@ -54,7 +55,7 @@ public class GUI extends BaseGUI {
 		}
 	}
 	
-	public void showItemsList(final TreeItem currentItem) {
+	public void showItemsList(final AbstractTreeItem currentItem) {
 		setOrientationPortrait();
 		
 		View itemsListLayout = setMainContentLayout(R.layout.items_list);
@@ -66,18 +67,20 @@ public class GUI extends BaseGUI {
 		updateItemsList(currentItem, null);
 	}
 	
-	public void showEditItemPanel(final TreeItem item, TreeItem parent) {
+	public void showEditItemPanel(final AbstractTreeItem item, AbstractTreeItem parent) {
 		showBackButton(true);
-		editItemGUI = new EditItemGUI(this, item, parent);
+		if (item instanceof TextTreeItem) {
+			editItemGUI = new EditItemGUI(this, (TextTreeItem) item, parent);
+		}
 	}
 	
 	public View showExitScreen() {
 		return setMainContentLayout(R.layout.exit_screen);
 	}
 	
-	public void updateItemsList(TreeItem currentItem, Set<Integer> selectedPositions) {
+	public void updateItemsList(AbstractTreeItem currentItem, Set<Integer> selectedPositions) {
 		//tytuł gałęzi
-		StringBuilder sb = new StringBuilder(currentItem.getContent());
+		StringBuilder sb = new StringBuilder(currentItem.getDisplayName());
 		if (!currentItem.isEmpty()) {
 			sb.append(" [");
 			sb.append(currentItem.size());

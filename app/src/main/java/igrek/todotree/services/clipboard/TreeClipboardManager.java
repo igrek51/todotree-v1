@@ -4,13 +4,13 @@ package igrek.todotree.services.clipboard;
 import java.util.ArrayList;
 import java.util.List;
 
-import igrek.todotree.model.treeitem.TreeItem;
+import igrek.todotree.model.treeitem.AbstractTreeItem;
 
 public class TreeClipboardManager {
 	
-	private List<TreeItem> clipboard = null;
+	private List<AbstractTreeItem> clipboard = null;
 	
-	public List<TreeItem> getClipboard() {
+	public List<AbstractTreeItem> getClipboard() {
 		return clipboard;
 	}
 	
@@ -28,18 +28,18 @@ public class TreeClipboardManager {
 		clipboard = null;
 	}
 	
-	public void addToClipboard(TreeItem item) {
+	public void addToClipboard(AbstractTreeItem item) {
 		if (clipboard == null) {
 			clipboard = new ArrayList<>();
 		}
-		clipboard.add(new TreeItem(item));
+		clipboard.add(item.clone());
 	}
 	
 	public void recopyClipboard() {
 		if (clipboard != null) {
-			ArrayList<TreeItem> newClipboard = new ArrayList<>();
-			for (TreeItem item : clipboard) {
-				newClipboard.add(new TreeItem(item));
+			ArrayList<AbstractTreeItem> newClipboard = new ArrayList<>();
+			for (AbstractTreeItem item : clipboard) {
+				newClipboard.add(item.clone());
 			}
 			clipboard = newClipboard;
 		}

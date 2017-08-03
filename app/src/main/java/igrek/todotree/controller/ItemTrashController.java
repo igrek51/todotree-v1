@@ -7,7 +7,7 @@ import java.util.TreeSet;
 import javax.inject.Inject;
 
 import igrek.todotree.dagger.DaggerIOC;
-import igrek.todotree.model.treeitem.TreeItem;
+import igrek.todotree.model.treeitem.AbstractTreeItem;
 import igrek.todotree.services.lock.DatabaseLock;
 import igrek.todotree.services.resources.InfoBarClickAction;
 import igrek.todotree.services.resources.UserInfoService;
@@ -46,11 +46,11 @@ public class ItemTrashController {
 	}
 	
 	private void removeItem(final int position) {
-		final TreeItem removing = treeManager.getCurrentItem().getChild(position);
+		final AbstractTreeItem removing = treeManager.getCurrentItem().getChild(position);
 		
 		treeManager.removeFromCurrent(position);
 		new GUIController().updateItemsList();
-		userInfo.showInfoCancellable("Item removed: " + removing.getContent(), new InfoBarClickAction() {
+		userInfo.showInfoCancellable("Item removed: " + removing.getDisplayName(), new InfoBarClickAction() {
 			@Override
 			public void onClick() {
 				restoreRemovedItem(removing, position);
@@ -58,7 +58,7 @@ public class ItemTrashController {
 		});
 	}
 	
-	private void restoreRemovedItem(TreeItem restored, int position) {
+	private void restoreRemovedItem(AbstractTreeItem restored, int position) {
 		treeManager.addToCurrent(position, restored);
 		new GUIController().showItemsList();
 		gui.scrollToItem(position);

@@ -7,7 +7,8 @@ import java.util.TreeSet;
 import javax.inject.Inject;
 
 import igrek.todotree.dagger.DaggerIOC;
-import igrek.todotree.model.treeitem.TreeItem;
+import igrek.todotree.model.treeitem.AbstractTreeItem;
+import igrek.todotree.model.treeitem.TextTreeItem;
 import igrek.todotree.services.clipboard.SystemClipboardManager;
 import igrek.todotree.services.clipboard.TreeClipboardManager;
 import igrek.todotree.services.resources.UserInfoService;
@@ -51,15 +52,16 @@ public class ClipboardController {
 		if (!itemPosistions.isEmpty()) {
 			treeClipboardManager.clearClipboard();
 			for (Integer selectedItemId : itemPosistions) {
-				TreeItem selectedItem = treeManager.getCurrentItem().getChild(selectedItemId);
+				AbstractTreeItem selectedItem = treeManager.getCurrentItem()
+						.getChild(selectedItemId);
 				treeClipboardManager.addToClipboard(selectedItem);
 			}
 			//if one item selected - copying also to system clipboard
 			if (treeClipboardManager.getClipboardSize() == 1) {
-				TreeItem item = treeClipboardManager.getClipboard().get(0);
-				systemClipboardManager.copyToSystemClipboard(item.getContent());
+				AbstractTreeItem item = treeClipboardManager.getClipboard().get(0);
+				systemClipboardManager.copyToSystemClipboard(item.getDisplayName());
 				if (info) {
-					userInfo.showInfo("Item copied: " + item.getContent());
+					userInfo.showInfo("Item copied: " + item.getDisplayName());
 				}
 			} else {
 				if (info) {
@@ -98,7 +100,7 @@ public class ClipboardController {
 			String systemClipboard = systemClipboardManager.getSystemClipboard();
 			if (systemClipboard != null) {
 				//wklejanie 1 elementu z systemowego schowka
-				treeManager.addToCurrent(position, systemClipboard);
+				treeManager.addToCurrent(position, new TextTreeItem(systemClipboard));
 				userInfo.showInfo("Item pasted: " + systemClipboard);
 				new GUIController().updateItemsList();
 				gui.scrollToItem(position);
@@ -106,7 +108,7 @@ public class ClipboardController {
 				userInfo.showInfo("Clipboard is empty.");
 			}
 		} else {
-			for (TreeItem clipboardItem : treeClipboardManager.getClipboard()) {
+			for (AbstractTreeItem clipboardItem : treeClipboardManager.getClipboard()) {
 				clipboardItem.setParent(treeManager.getCurrentItem());
 				treeManager.addToCurrent(position, clipboardItem);
 				position++; // next item pasted below

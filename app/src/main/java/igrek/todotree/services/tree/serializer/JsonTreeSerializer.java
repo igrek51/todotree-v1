@@ -196,9 +196,7 @@ public class JsonTreeSerializer {
 			case "link": {
 				String name = getAttributeValue(attributes, "name");
 				String targetPath = getAttributeValue(attributes, "target");
-				LinkTreeItem newItem = new LinkTreeItem(null, null, name);
-				newItem.setTargetPath(targetPath);
-				return newItem;
+				return new LinkTreeItem(null, targetPath, name);
 			}
 			case "checkbox": {
 				String name = getAttributeValue(attributes, "name");

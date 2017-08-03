@@ -76,6 +76,14 @@ public abstract class AbstractTreeItem {
 		return children.get(children.size() - 1);
 	}
 	
+	public AbstractTreeItem findChildByName(String name) {
+		for (AbstractTreeItem child : children) {
+			if (child.getDisplayName().equals(name))
+				return child;
+		}
+		return null;
+	}
+	
 	public int size() {
 		return children.size();
 	}

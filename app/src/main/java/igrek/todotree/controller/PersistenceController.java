@@ -2,13 +2,13 @@ package igrek.todotree.controller;
 
 
 import java.io.IOException;
-import java.text.ParseException;
 
 import javax.inject.Inject;
 
 import igrek.todotree.dagger.DaggerIOC;
+import igrek.todotree.exceptions.DeserializationFailedException;
 import igrek.todotree.logger.Logs;
-import igrek.todotree.model.treeitem.TreeItem;
+import igrek.todotree.model.treeitem.AbstractTreeItem;
 import igrek.todotree.services.backup.BackupManager;
 import igrek.todotree.services.filesystem.FilesystemService;
 import igrek.todotree.services.filesystem.PathBuilder;
@@ -17,7 +17,7 @@ import igrek.todotree.services.preferences.Preferences;
 import igrek.todotree.services.resources.UserInfoService;
 import igrek.todotree.services.tree.TreeManager;
 import igrek.todotree.services.tree.TreeScrollCache;
-import igrek.todotree.services.tree.serializer.SimpleTreeSerializer;
+import igrek.todotree.services.tree.serializer.JsonTreeSerializer;
 
 public class PersistenceController {
 	
@@ -40,7 +40,7 @@ public class PersistenceController {
 	Preferences preferences;
 	
 	@Inject
-	SimpleTreeSerializer treeSerializer;
+	JsonTreeSerializer treeSerializer;
 	
 	@Inject
 	ChangesHistory changesHistory;
@@ -83,10 +83,10 @@ public class PersistenceController {
 		}
 		try {
 			String fileContent = filesystem.openFileString(dbFilePath.toString());
-			TreeItem rootItem = treeSerializer.loadTree(fileContent);
+			AbstractTreeItem rootItem = treeSerializer.deserializeTree(fileContent);
 			treeManager.setRootItem(rootItem);
 			Logs.info("Database loaded.");
-		} catch (IOException | ParseException e) {
+		} catch (IOException | DeserializationFailedException e) {
 			Logs.error(e);
 		}
 	}
@@ -94,7 +94,7 @@ public class PersistenceController {
 	private void saveRootTree() {
 		PathBuilder dbFilePath = filesystem.pathSD().append(preferences.dbFilePath);
 		try {
-			String output = treeSerializer.saveTree(treeManager.getRootItem());
+			String output = treeSerializer.serializeTree(treeManager.getRootItem());
 			filesystem.saveFile(dbFilePath.toString(), output);
 		} catch (IOException e) {
 			Logs.error(e);

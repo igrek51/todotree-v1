@@ -1,11 +1,11 @@
 package igrek.todotree.services.tree;
 
 
-import igrek.todotree.model.treeitem.TreeItem;
+import igrek.todotree.model.treeitem.AbstractTreeItem;
 
 public class TreeMover {
 	
-	private void replace(TreeItem parent, int pos1, int pos2) {
+	private void replace(AbstractTreeItem parent, int pos1, int pos2) {
 		if (pos1 == pos2)
 			return;
 		if (pos1 < 0 || pos2 < 0)
@@ -13,8 +13,8 @@ public class TreeMover {
 		if (pos1 >= parent.size() || pos2 >= parent.size()) {
 			throw new IllegalArgumentException("position >= size");
 		}
-		TreeItem item1 = parent.getChild(pos1);
-		TreeItem item2 = parent.getChild(pos2);
+		AbstractTreeItem item1 = parent.getChild(pos1);
+		AbstractTreeItem item2 = parent.getChild(pos2);
 		//wstawienie na pos1
 		parent.remove(pos1);
 		parent.add(pos1, item2);
@@ -28,7 +28,7 @@ public class TreeMover {
 	 * @param parent   przodek przesuwanego elementu
 	 * @param position pozycja elementu przed przesuwaniem
 	 */
-	private void moveUp(TreeItem parent, int position) {
+	private void moveUp(AbstractTreeItem parent, int position) {
 		if (position <= 0)
 			return;
 		replace(parent, position, position - 1);
@@ -39,7 +39,7 @@ public class TreeMover {
 	 * @param parent   przodek przesuwanego elementu
 	 * @param position pozycja elementu przed przesuwaniem
 	 */
-	private void moveDown(TreeItem parent, int position) {
+	private void moveDown(AbstractTreeItem parent, int position) {
 		if (position >= parent.size() - 1)
 			return;
 		replace(parent, position, position + 1);
@@ -52,7 +52,7 @@ public class TreeMover {
 	 * @param step     liczba pozycji do przesunięcia (dodatnia - w dół, ujemna - w górę)
 	 * @return nowa pozycja elementu
 	 */
-	public int move(TreeItem parent, int position, int step) {
+	public int move(AbstractTreeItem parent, int position, int step) {
 		int targetPosition = position + step;
 		if (targetPosition < 0)
 			targetPosition = 0;

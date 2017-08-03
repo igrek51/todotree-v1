@@ -6,7 +6,7 @@ import javax.inject.Inject;
 import igrek.todotree.app.AppData;
 import igrek.todotree.app.AppState;
 import igrek.todotree.dagger.DaggerIOC;
-import igrek.todotree.model.treeitem.TreeItem;
+import igrek.todotree.model.treeitem.AbstractTreeItem;
 import igrek.todotree.services.tree.TreeManager;
 import igrek.todotree.services.tree.TreeScrollCache;
 import igrek.todotree.services.tree.TreeSelectionManager;
@@ -43,7 +43,7 @@ public class GUIController {
 		gui.showItemsList(treeManager.getCurrentItem());
 	}
 	
-	public void restoreScrollPosition(TreeItem parent) {
+	public void restoreScrollPosition(AbstractTreeItem parent) {
 		Integer savedScrollPos = scrollCache.restoreScrollPosition(parent);
 		if (savedScrollPos != null) {
 			gui.scrollToPosition(savedScrollPos);

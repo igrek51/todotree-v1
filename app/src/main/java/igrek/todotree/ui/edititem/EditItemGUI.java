@@ -11,7 +11,8 @@ import android.widget.TextView;
 
 import igrek.todotree.R;
 import igrek.todotree.controller.ItemEditorController;
-import igrek.todotree.model.treeitem.TreeItem;
+import igrek.todotree.model.treeitem.AbstractTreeItem;
+import igrek.todotree.model.treeitem.TextTreeItem;
 import igrek.todotree.ui.GUI;
 import igrek.todotree.ui.errorcheck.SafeClickListener;
 import igrek.todotree.ui.numkeyboard.NumKeyboardListener;
@@ -25,13 +26,13 @@ public class EditItemGUI implements NumKeyboardListener {
 	private Button buttonSaveItem;
 	private NumericKeyboardView numericKeyboard;
 	
-	public EditItemGUI(GUI gui, final TreeItem item, TreeItem parent) {
+	public EditItemGUI(GUI gui, final TextTreeItem item, AbstractTreeItem parent) {
 		this.gui = gui;
 		
 		init(item, parent);
 	}
 	
-	private void init(final TreeItem item, TreeItem parent) {
+	private void init(final TextTreeItem item, AbstractTreeItem parent) {
 		View editItemContentLayout = gui.setMainContentLayout(R.layout.edit_item_content);
 		
 		etEditItem = (ItemEditText) editItemContentLayout.findViewById(R.id.etEditItemContent);
@@ -44,10 +45,10 @@ public class EditItemGUI implements NumKeyboardListener {
 		//przycisk obrotu ekranu
 		final ImageButton rotateScreenBtn = (ImageButton) editItemContentLayout.findViewById(R.id.rotateScreenBtn);
 		
-		gui.setTitle(parent.getContent());
+		gui.setTitle(parent.getDisplayName());
 		
 		if (item != null) { //edycja
-			etEditItem.setText(item.getContent());
+			etEditItem.setText(item.getDisplayName());
 			buttonSaveItem.setOnClickListener(new SafeClickListener() {
 				@Override
 				public void onClick() {

@@ -10,6 +10,10 @@ public class TextTreeItem extends AbstractTreeItem {
 		this.name = name;
 	}
 	
+	public TextTreeItem(String name) {
+		this(null, name);
+	}
+	
 	@Override
 	public TextTreeItem clone() {
 		return new TextTreeItem(null, name).copyChildren(this);

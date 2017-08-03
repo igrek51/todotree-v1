@@ -9,7 +9,7 @@ import java.util.TreeSet;
 import javax.inject.Inject;
 
 import igrek.todotree.dagger.DaggerIOC;
-import igrek.todotree.model.treeitem.TreeItem;
+import igrek.todotree.model.treeitem.AbstractTreeItem;
 import igrek.todotree.services.resources.UserInfoService;
 import igrek.todotree.services.tree.TreeManager;
 import igrek.todotree.services.tree.TreeSelectionManager;
@@ -91,7 +91,7 @@ public class ItemActionController {
 		new Handler().post(new Runnable() {
 			@Override
 			public void run() {
-				TreeItem item = treeManager.getCurrentItem().getChild(position);
+				AbstractTreeItem item = treeManager.getCurrentItem().getChild(position);
 				new ItemEditorController().itemEditClicked(item);
 			}
 		});

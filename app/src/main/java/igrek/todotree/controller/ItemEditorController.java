@@ -6,7 +6,8 @@ import javax.inject.Inject;
 import igrek.todotree.app.AppData;
 import igrek.todotree.app.AppState;
 import igrek.todotree.dagger.DaggerIOC;
-import igrek.todotree.model.treeitem.TreeItem;
+import igrek.todotree.model.treeitem.AbstractTreeItem;
+import igrek.todotree.model.treeitem.TextTreeItem;
 import igrek.todotree.services.history.ChangesHistory;
 import igrek.todotree.services.lock.DatabaseLock;
 import igrek.todotree.services.resources.UserInfoService;
@@ -59,27 +60,27 @@ public class ItemEditorController {
 			userInfo.showInfo("Empty item has been removed.");
 			return false;
 		} else {
-			treeManager.addToCurrent(getNewItemPosition(), content);
+			treeManager.addToCurrent(getNewItemPosition(), new TextTreeItem(content));
 			userInfo.showInfo("New item has been saved.");
 			return true;
 		}
 	}
 	
-	private boolean tryToSaveExistingItem(TreeItem editedItem, String content) {
+	private boolean tryToSaveExistingItem(TextTreeItem editedItem, String content) {
 		content = contentTrimmer.trimContent(content);
 		if (content.isEmpty()) {
 			treeManager.removeFromCurrent(editedItem);
 			userInfo.showInfo("Empty item has been removed.");
 			return false;
 		} else {
-			editedItem.setContent(content);
+			editedItem.setName(content);
 			changesHistory.registerChange();
 			userInfo.showInfo("Item has been saved.");
 			return true;
 		}
 	}
 	
-	private boolean tryToSaveItem(TreeItem editedItem, String content) {
+	private boolean tryToSaveItem(TextTreeItem editedItem, String content) {
 		if (editedItem == null) { // new item
 			return tryToSaveNewItem(content);
 		} else { // existing item
@@ -99,12 +100,12 @@ public class ItemEditorController {
 		treeManager.setNewItemPosition(null);
 	}
 	
-	public void saveItem(TreeItem editedItem, String content) {
+	public void saveItem(TextTreeItem editedItem, String content) {
 		tryToSaveItem(editedItem, content);
 		returnFromItemEditing();
 	}
 	
-	public void saveAndAddItemClicked(TreeItem editedItem, String content) {
+	public void saveAndAddItemClicked(TextTreeItem editedItem, String content) {
 		int newItemIndex = editedItem == null ? getNewItemPosition() : editedItem.getIndexInParent();
 		if (!tryToSaveItem(editedItem, content)) {
 			returnFromItemEditing();
@@ -114,7 +115,7 @@ public class ItemEditorController {
 		newItem(newItemIndex + 1);
 	}
 	
-	public void saveAndGoIntoItemClicked(TreeItem editedItem, String content) {
+	public void saveAndGoIntoItemClicked(TextTreeItem editedItem, String content) {
 		if (!tryToSaveItem(editedItem, content)) {
 			returnFromItemEditing();
 			return;
@@ -141,7 +142,7 @@ public class ItemEditorController {
 		appData.setState(AppState.EDIT_ITEM_CONTENT);
 	}
 	
-	private void editItem(TreeItem item, TreeItem parent) {
+	private void editItem(AbstractTreeItem item, AbstractTreeItem parent) {
 		scrollCache.storeScrollPosition(treeManager.getCurrentItem(), gui.getCurrentScrollPos());
 		treeManager.setNewItemPosition(null);
 		gui.showEditItemPanel(item, parent);
@@ -153,7 +154,7 @@ public class ItemEditorController {
 		userInfo.showInfo("Editing item cancelled.");
 	}
 	
-	public void itemEditClicked(TreeItem item) {
+	public void itemEditClicked(AbstractTreeItem item) {
 		selectionManager.cancelSelectionMode();
 		editItem(item, treeManager.getCurrentItem());
 	}

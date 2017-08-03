@@ -3,13 +3,14 @@ package igrek.todotree.services.tree;
 import java.util.TreeSet;
 
 import igrek.todotree.exceptions.NoSuperItemException;
-import igrek.todotree.model.treeitem.TreeItem;
+import igrek.todotree.model.treeitem.AbstractTreeItem;
+import igrek.todotree.model.treeitem.RootTreeItem;
 import igrek.todotree.services.history.ChangesHistory;
 
 public class TreeManager {
 	
-	private TreeItem rootItem;
-	private TreeItem currentItem;
+	private AbstractTreeItem rootItem;
+	private AbstractTreeItem currentItem;
 	
 	private Integer newItemPosition;
 	
@@ -21,20 +22,20 @@ public class TreeManager {
 	}
 	
 	public void reset() {
-		rootItem = new TreeItem(null, "/");
+		rootItem = new RootTreeItem();
 		currentItem = rootItem;
 	}
 	
-	public TreeItem getRootItem() {
+	public AbstractTreeItem getRootItem() {
 		return rootItem;
 	}
 	
-	public void setRootItem(TreeItem rootItem) {
+	public void setRootItem(AbstractTreeItem rootItem) {
 		this.rootItem = rootItem;
 		this.currentItem = rootItem;
 	}
 	
-	public TreeItem getCurrentItem() {
+	public AbstractTreeItem getCurrentItem() {
 		return currentItem;
 	}
 	
@@ -66,30 +67,18 @@ public class TreeManager {
 		return newItemPosition;
 	}
 	
-	public void addToCurrent(Integer position, String content) {
+	public void addToCurrent(Integer position, AbstractTreeItem item) {
 		if (position == null) {
 			position = currentItem.size();
 		}
-		changesHistory.registerChange();
-		currentItem.add(position, content);
-	}
-	
-	public void addToCurrent(Integer position, TreeItem item) {
-		if (position == null) {
-			position = currentItem.size();
-		}
+		item.setParent(currentItem);
 		changesHistory.registerChange();
 		currentItem.add(position, item);
 	}
 	
-	public void addToCurrent(TreeItem item) {
+	public void addToCurrent(AbstractTreeItem item) {
 		changesHistory.registerChange();
 		currentItem.add(item);
-	}
-	
-	public void addToCurrent(String content) {
-		changesHistory.registerChange();
-		currentItem.add(content);
 	}
 	
 	public void removeFromCurrent(int position) {
@@ -97,7 +86,7 @@ public class TreeManager {
 		currentItem.remove(position);
 	}
 	
-	public void removeFromCurrent(TreeItem item) {
+	public void removeFromCurrent(AbstractTreeItem item) {
 		changesHistory.registerChange();
 		currentItem.remove(item);
 	}
@@ -115,11 +104,11 @@ public class TreeManager {
 	}
 	
 	public void goInto(int childIndex) {
-		TreeItem item = currentItem.getChild(childIndex);
+		AbstractTreeItem item = currentItem.getChild(childIndex);
 		goTo(item);
 	}
 	
-	private void goTo(TreeItem child) {
+	private void goTo(AbstractTreeItem child) {
 		currentItem = child;
 	}
 	

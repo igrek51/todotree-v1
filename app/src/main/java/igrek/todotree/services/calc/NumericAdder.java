@@ -6,15 +6,15 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import igrek.todotree.model.treeitem.TreeItem;
+import igrek.todotree.model.treeitem.AbstractTreeItem;
 
 public class NumericAdder {
 	
-	public BigDecimal calculateSum(Set<Integer> selectedPositions, TreeItem currentItem) throws NumberFormatException {
+	public BigDecimal calculateSum(Set<Integer> selectedPositions, AbstractTreeItem currentItem) throws NumberFormatException {
 		BigDecimal sum = new BigDecimal(0);
 		for (Integer selectedPos : selectedPositions) {
-			TreeItem selectedItem = currentItem.getChild(selectedPos);
-			BigDecimal itemValue = getItemNumericValue(selectedItem.getContent());
+			AbstractTreeItem selectedItem = currentItem.getChild(selectedPos);
+			BigDecimal itemValue = getItemNumericValue(selectedItem.getDisplayName());
 			if (itemValue != null) {
 				sum = sum.add(itemValue);
 			}
