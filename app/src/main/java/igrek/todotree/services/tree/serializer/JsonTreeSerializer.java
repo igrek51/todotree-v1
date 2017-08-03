@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 
 import igrek.todotree.exceptions.DeserializationFailedException;
 import igrek.todotree.model.treeitem.AbstractTreeItem;
+import igrek.todotree.model.treeitem.CheckboxTreeItem;
 import igrek.todotree.model.treeitem.LinkTreeItem;
 import igrek.todotree.model.treeitem.RootTreeItem;
 import igrek.todotree.model.treeitem.SeparatorTreeItem;
@@ -64,6 +65,8 @@ public class JsonTreeSerializer {
 			serializeAttribute(output, "name", ((TextTreeItem) item).getDisplayName());
 		} else if (item instanceof LinkTreeItem) {
 			serializeAttribute(output, "target", ((LinkTreeItem) item).getTargetPath());
+		} else if (item instanceof CheckboxTreeItem) {
+			serializeAttribute(output, "checked", ((CheckboxTreeItem) item).isChecked() ? "true" : "false");
 		}
 	}
 	
@@ -196,6 +199,11 @@ public class JsonTreeSerializer {
 				LinkTreeItem newItem = new LinkTreeItem(null, null, name);
 				newItem.setTargetPath(targetPath);
 				return newItem;
+			}
+			case "checkbox": {
+				String name = getAttributeValue(attributes, "name");
+				String checkedStr = getAttributeValue(attributes, "checked");
+				return new CheckboxTreeItem(null, name, checkedStr.equals("true"));
 			}
 			default:
 				throw new DeserializationFailedException("Unknown item type: " + type);
