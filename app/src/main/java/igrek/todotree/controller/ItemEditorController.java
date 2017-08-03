@@ -128,10 +128,11 @@ public class ItemEditorController {
 		}
 		// go into
 		Integer editedItemIndex = getNewItemPosition();
-		if (editedItemIndex != null) {
-			new TreeController().goInto(editedItemIndex);
-			newItem(-1);
+		if (editedItemIndex == null) {
+			editedItemIndex = editedItem.getIndexInParent();
 		}
+		new TreeController().goInto(editedItemIndex);
+		newItem(-1);
 	}
 	
 	/**

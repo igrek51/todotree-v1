@@ -10,7 +10,7 @@ import igrek.todotree.model.treeitem.TextTreeItem;
 
 public class SimpleTreeSerializer {
 	
-	public AbstractTreeItem loadTree(String data) throws ParseException {
+	public static AbstractTreeItem loadTree(String data) throws ParseException {
 		RootTreeItem rootItem = new RootTreeItem();
 		if (!data.isEmpty()) {
 			//wyłuskanie wierszy
@@ -28,7 +28,7 @@ public class SimpleTreeSerializer {
 		return rootItem;
 	}
 	
-	private void loadTreeItems(AbstractTreeItem parent, List<String> lines) throws ParseException {
+	private static void loadTreeItems(AbstractTreeItem parent, List<String> lines) throws ParseException {
 		for (int i = 0; i < lines.size(); i++) {
 			String line = lines.get(i);
 			switch (line) {
@@ -60,7 +60,7 @@ public class SimpleTreeSerializer {
 		}
 	}
 	
-	private int findClosingBracket(List<String> lines, int startIndex) {
+	private static int findClosingBracket(List<String> lines, int startIndex) {
 		int bracketDepth = 1;
 		for (int j = startIndex + 1; j < lines.size(); j++) {
 			String line = lines.get(j);

@@ -83,6 +83,7 @@ public class PersistenceController {
 		}
 		try {
 			String fileContent = filesystem.openFileString(dbFilePath.toString());
+			// AbstractTreeItem rootItem = SimpleTreeSerializer.loadTree(fileContent); // porting db to JSON
 			AbstractTreeItem rootItem = treeSerializer.deserializeTree(fileContent);
 			treeManager.setRootItem(rootItem);
 			Logs.info("Database loaded.");
@@ -95,7 +96,7 @@ public class PersistenceController {
 		PathBuilder dbFilePath = filesystem.pathSD().append(preferences.dbFilePath);
 		try {
 			String output = treeSerializer.serializeTree(treeManager.getRootItem());
-			Logs.debug("Serialized data: " + output);
+			//Logs.debug("Serialized data: " + output);
 			filesystem.saveFile(dbFilePath.toString(), output);
 		} catch (IOException e) {
 			Logs.error(e);
