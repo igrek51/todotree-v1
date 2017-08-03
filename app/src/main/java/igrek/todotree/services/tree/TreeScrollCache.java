@@ -3,7 +3,7 @@ package igrek.todotree.services.tree;
 
 import java.util.HashMap;
 
-import igrek.todotree.model.tree.TreeItem;
+import igrek.todotree.model.treeitem.TreeItem;
 
 public class TreeScrollCache {
 	

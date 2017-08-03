@@ -6,7 +6,7 @@ import javax.inject.Inject;
 import igrek.todotree.app.AppData;
 import igrek.todotree.app.AppState;
 import igrek.todotree.dagger.DaggerIOC;
-import igrek.todotree.model.tree.TreeItem;
+import igrek.todotree.model.treeitem.TreeItem;
 import igrek.todotree.services.history.ChangesHistory;
 import igrek.todotree.services.lock.DatabaseLock;
 import igrek.todotree.services.resources.UserInfoService;

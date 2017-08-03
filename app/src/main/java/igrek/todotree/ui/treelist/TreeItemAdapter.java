@@ -22,7 +22,7 @@ import java.util.Set;
 import igrek.todotree.R;
 import igrek.todotree.controller.ItemEditorController;
 import igrek.todotree.controller.ItemSelectionController;
-import igrek.todotree.model.tree.TreeItem;
+import igrek.todotree.model.treeitem.TreeItem;
 import igrek.todotree.ui.errorcheck.SafeClickListener;
 
 class TreeItemAdapter extends ArrayAdapter<TreeItem> {

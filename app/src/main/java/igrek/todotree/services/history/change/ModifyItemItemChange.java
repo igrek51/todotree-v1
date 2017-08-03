@@ -1,7 +1,7 @@
 package igrek.todotree.services.history.change;
 
 
-import igrek.todotree.model.tree.TreeItem;
+import igrek.todotree.model.treeitem.TreeItem;
 
 public class ModifyItemItemChange extends AbstractItemChange {
 	

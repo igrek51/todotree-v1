@@ -26,7 +26,7 @@ import java.util.Set;
 import igrek.todotree.controller.ItemEditorController;
 import igrek.todotree.controller.TreeController;
 import igrek.todotree.logger.Logs;
-import igrek.todotree.model.tree.TreeItem;
+import igrek.todotree.model.treeitem.TreeItem;
 import igrek.todotree.ui.contextmenu.ItemActionsMenu;
 import igrek.todotree.ui.errorcheck.UIErrorHandler;
 
@@ -196,7 +196,7 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
 	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 		itemDraggingStopped();
 		gestureStartPos = null;
-		new ItemActionsMenu(view, position).show();
+		new ItemActionsMenu(position).show();
 		return true;
 	}
 	
@@ -259,7 +259,6 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
 	}
 	
 	private void calculateViewHeights() {
-		//TODO: przyspieszyć pomiar wysokości elementów (ładowanie widoków)
 		int measureSpecW = MeasureSpec.makeMeasureSpec(this.getWidth(), MeasureSpec.EXACTLY);
 		int measureSpecH = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED);
 		itemHeights = new HashMap<>();

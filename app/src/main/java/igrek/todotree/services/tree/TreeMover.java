@@ -1,7 +1,7 @@
 package igrek.todotree.services.tree;
 
 
-import igrek.todotree.model.tree.TreeItem;
+import igrek.todotree.model.treeitem.TreeItem;
 
 public class TreeMover {
 	

@@ -1,4 +1,4 @@
-package igrek.todotree.model.tree;
+package igrek.todotree.model.treeitem;
 
 import java.util.ArrayList;
 import java.util.List;

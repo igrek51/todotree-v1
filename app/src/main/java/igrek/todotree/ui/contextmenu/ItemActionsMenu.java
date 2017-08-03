@@ -4,7 +4,6 @@ package igrek.todotree.ui.contextmenu;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +19,6 @@ import igrek.todotree.ui.errorcheck.UIErrorHandler;
 
 public class ItemActionsMenu {
 	
-	private View view;
 	private int position;
 	
 	@Inject
@@ -35,8 +33,7 @@ public class ItemActionsMenu {
 	@Inject
 	TreeClipboardManager treeClipboardManager;
 	
-	public ItemActionsMenu(View view, int position) {
-		this.view = view;
+	public ItemActionsMenu(int position) {
 		this.position = position;
 		DaggerIOC.getAppComponent().inject(this);
 	}
@@ -64,8 +61,6 @@ public class ItemActionsMenu {
 	
 	private List<ItemAction> buildActionsList() {
 		List<ItemAction> actions = new ArrayList<>();
-		
-		// TODO dynamic action names and execution based on app state (selection, empty clipboard)
 		
 		actions.add(new ItemAction("Select") {
 			@Override

@@ -3,7 +3,7 @@ package igrek.todotree.services.tree;
 import java.util.TreeSet;
 
 import igrek.todotree.exceptions.NoSuperItemException;
-import igrek.todotree.model.tree.TreeItem;
+import igrek.todotree.model.treeitem.TreeItem;
 import igrek.todotree.services.history.ChangesHistory;
 
 public class TreeManager {

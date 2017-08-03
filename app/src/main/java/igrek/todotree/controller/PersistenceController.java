@@ -8,7 +8,7 @@ import javax.inject.Inject;
 
 import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.logger.Logs;
-import igrek.todotree.model.tree.TreeItem;
+import igrek.todotree.model.treeitem.TreeItem;
 import igrek.todotree.services.backup.BackupManager;
 import igrek.todotree.services.filesystem.FilesystemService;
 import igrek.todotree.services.filesystem.PathBuilder;
