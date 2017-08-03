@@ -7,12 +7,7 @@ import java.util.List;
 import igrek.todotree.exceptions.NoMatchingBracketException;
 import igrek.todotree.model.treeitem.TreeItem;
 
-public class TreeSerializer {
-	
-	public TreeSerializer() {
-	}
-	
-	//  WCZYTYWANIE Z PLIKU
+public class SimpleTreeSerializer {
 	
 	public TreeItem loadTree(String data) throws ParseException {
 		TreeItem rootItem = new TreeItem(null, "/");
@@ -34,7 +29,7 @@ public class TreeSerializer {
 	
 	
 	/**
-	 * ładuje zawartość elementów z tekstowych wierszy i dodaje do wybranego elementu
+	 * loads items ładuje zawartość elementów z tekstowych wierszy i dodaje do wybranego elementu
 	 * @param parent element, do którego dodane odczytane potomki
 	 * @param lines  lista wierszy, z których zostaną dodane elementy
 	 * @throws ParseException in case of invalid format
@@ -92,9 +87,6 @@ public class TreeSerializer {
 		}
 		throw new NoMatchingBracketException();
 	}
-	
-	
-	//  ZAPIS DO PLIKU
 	
 	private void saveTreeItems(TreeItem parent, int level, StringBuilder output) {
 		StringBuilder indentBuilder = new StringBuilder();

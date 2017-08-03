@@ -31,7 +31,7 @@ public abstract class AbstractTreeItem {
 	
 	public abstract AbstractTreeItem clone();
 	
-	public abstract String getName();
+	public abstract String getDisplayName();
 	
 	public abstract String getTypeName();
 	
@@ -105,7 +105,7 @@ public abstract class AbstractTreeItem {
 		StringBuilder sb = new StringBuilder();
 		sb.append(getTypeName());
 		sb.append(": ");
-		sb.append(getName());
+		sb.append(getDisplayName());
 		if (!children.isEmpty()) {
 			sb.append(" [");
 			sb.append(children.size());

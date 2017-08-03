@@ -16,13 +16,13 @@ public class TextTreeItem extends AbstractTreeItem {
 	}
 	
 	@Override
-	public String getName() {
+	public String getDisplayName() {
 		return name;
 	}
 	
 	@Override
 	public String getTypeName() {
-		return "textItem";
+		return "text";
 	}
 	
 	public void setName(String name) {

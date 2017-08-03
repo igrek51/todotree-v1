@@ -55,6 +55,7 @@ dependencies {
     // DAGGER 2
     compile "com.google.dagger:dagger:2.10"
     annotationProcessor "com.google.dagger:dagger-compiler:2.10"
+    testCompile 'org.testng:testng:6.9.6'
 }
 
 //task clean(type: Delete) {

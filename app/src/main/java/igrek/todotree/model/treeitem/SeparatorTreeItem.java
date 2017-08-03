@@ -13,7 +13,7 @@ public class SeparatorTreeItem extends AbstractTreeItem {
 	}
 	
 	@Override
-	public String getName() {
+	public String getDisplayName() {
 		return "----------";
 	}
 	

@@ -22,7 +22,7 @@ import igrek.todotree.services.tree.TreeManager;
 import igrek.todotree.services.tree.TreeMover;
 import igrek.todotree.services.tree.TreeScrollCache;
 import igrek.todotree.services.tree.TreeSelectionManager;
-import igrek.todotree.services.tree.serializer.TreeSerializer;
+import igrek.todotree.services.tree.serializer.SimpleTreeSerializer;
 import igrek.todotree.ui.GUI;
 
 @Module
@@ -86,8 +86,8 @@ public class AppFactoryModule {
 	
 	@Provides
 	@Singleton
-	TreeSerializer provideTreeSerializer() {
-		return new TreeSerializer();
+	SimpleTreeSerializer provideTreeSerializer() {
+		return new SimpleTreeSerializer();
 	}
 	
 	@Provides

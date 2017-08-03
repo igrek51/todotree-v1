@@ -18,9 +18,9 @@ public class LinkTreeItem extends AbstractTreeItem {
 	}
 	
 	@Override
-	public String getName() {
+	public String getDisplayName() {
 		if (name == null)
-			return "> " + target.getName();
+			return "> " + target.getDisplayName();
 		return "> " + name;
 	}
 	
@@ -31,6 +31,11 @@ public class LinkTreeItem extends AbstractTreeItem {
 	
 	public AbstractTreeItem getTarget() {
 		return target;
+	}
+	
+	public String getTargetPath() {
+		//TODO
+		return "/" + getDisplayName();
 	}
 	
 	public void setName(String name) {

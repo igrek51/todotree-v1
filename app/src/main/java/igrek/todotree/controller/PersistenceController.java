@@ -17,7 +17,7 @@ import igrek.todotree.services.preferences.Preferences;
 import igrek.todotree.services.resources.UserInfoService;
 import igrek.todotree.services.tree.TreeManager;
 import igrek.todotree.services.tree.TreeScrollCache;
-import igrek.todotree.services.tree.serializer.TreeSerializer;
+import igrek.todotree.services.tree.serializer.SimpleTreeSerializer;
 
 public class PersistenceController {
 	
@@ -40,7 +40,7 @@ public class PersistenceController {
 	Preferences preferences;
 	
 	@Inject
-	TreeSerializer treeSerializer;
+	SimpleTreeSerializer treeSerializer;
 	
 	@Inject
 	ChangesHistory changesHistory;
