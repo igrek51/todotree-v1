@@ -7,6 +7,10 @@ import org.junit.Test;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import igrek.todotree.model.treeitem.AbstractTreeItem;
+import igrek.todotree.model.treeitem.RootTreeItem;
+import igrek.todotree.model.treeitem.TextTreeItem;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -32,6 +36,8 @@ public class JsonTreeSerializerTest {
 		assertFalse(serializer.isHeaderMatchingSingleItem("{ \"type\": \"text\", \"name\": \"Dupa\", \"items\": ["));
 		
 		assertTrue(serializer.isHeaderMatchingMultiItem("{ \"type\": \"text\", \"name\": \"Dupa\", \"items\": ["));
+		assertTrue(serializer.isHeaderMatchingMultiItem("{ \"type\": \"d\", \"items\": ["));
+		assertTrue(serializer.isHeaderMatchingMultiItem("{ \"type\": \"/\", \"items\": ["));
 		assertFalse(serializer.isHeaderMatchingMultiItem("{ \"type\": \"text\", \"name\": \"dupa\" },"));
 		
 		assertEquals("[type = text, name = dupa]", serializer.extractAttributes("{ \"type\": \"text\", \"name\": \"dupa\" },")
@@ -44,6 +50,19 @@ public class JsonTreeSerializerTest {
 				.toString());
 		assertEquals("[]", serializer.extractAttributes("{ type: \"invalid\" },").toString());
 		
+	}
+	
+	@Test
+	public void testSimpleSerialization() {
+		
+		assertEquals("{ \"type\": \"/\" },\n", serializer.serializeTree(new RootTreeItem()));
+		
+		AbstractTreeItem root = new RootTreeItem();
+		root.add(new TextTreeItem("dupa"));
+		assertEquals("{ \"type\": \"/\", \"items\": [\n" + "\t{ \"type\": \"text\", \"name\": \"dupa\" },\n" + "]},\n", serializer
+				.serializeTree(root));
+		
+		//System.out.println(serializer.serializeTree(root));
 	}
 	
 	private void testRegex(Pattern pattern, String line) {

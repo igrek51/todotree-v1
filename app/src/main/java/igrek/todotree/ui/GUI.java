@@ -13,7 +13,6 @@ import java.util.Set;
 import igrek.todotree.R;
 import igrek.todotree.controller.MainController;
 import igrek.todotree.model.treeitem.AbstractTreeItem;
-import igrek.todotree.model.treeitem.TextTreeItem;
 import igrek.todotree.ui.edititem.EditItemGUI;
 import igrek.todotree.ui.errorcheck.SafeClickListener;
 import igrek.todotree.ui.treelist.TreeListView;
@@ -69,9 +68,8 @@ public class GUI extends BaseGUI {
 	
 	public void showEditItemPanel(final AbstractTreeItem item, AbstractTreeItem parent) {
 		showBackButton(true);
-		if (item instanceof TextTreeItem) {
-			editItemGUI = new EditItemGUI(this, (TextTreeItem) item, parent);
-		}
+		// TODO direct to dedicated view
+		editItemGUI = new EditItemGUI(this, item, parent);
 	}
 	
 	public View showExitScreen() {

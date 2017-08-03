@@ -6,6 +6,7 @@ import javax.inject.Inject;
 import igrek.todotree.app.AppData;
 import igrek.todotree.app.AppState;
 import igrek.todotree.dagger.DaggerIOC;
+import igrek.todotree.logger.Logs;
 import igrek.todotree.model.treeitem.AbstractTreeItem;
 import igrek.todotree.model.treeitem.TextTreeItem;
 import igrek.todotree.services.history.ChangesHistory;
@@ -80,11 +81,16 @@ public class ItemEditorController {
 		}
 	}
 	
-	private boolean tryToSaveItem(TextTreeItem editedItem, String content) {
+	private boolean tryToSaveItem(AbstractTreeItem editedItem, String content) {
 		if (editedItem == null) { // new item
 			return tryToSaveNewItem(content);
 		} else { // existing item
-			return tryToSaveExistingItem(editedItem, content);
+			if (editedItem instanceof TextTreeItem) {
+				return tryToSaveExistingItem((TextTreeItem) editedItem, content);
+			} else {
+				Logs.warn("trying to save item of type: " + editedItem.getTypeName());
+				return false;
+			}
 		}
 	}
 	
@@ -100,12 +106,12 @@ public class ItemEditorController {
 		treeManager.setNewItemPosition(null);
 	}
 	
-	public void saveItem(TextTreeItem editedItem, String content) {
+	public void saveItem(AbstractTreeItem editedItem, String content) {
 		tryToSaveItem(editedItem, content);
 		returnFromItemEditing();
 	}
 	
-	public void saveAndAddItemClicked(TextTreeItem editedItem, String content) {
+	public void saveAndAddItemClicked(AbstractTreeItem editedItem, String content) {
 		int newItemIndex = editedItem == null ? getNewItemPosition() : editedItem.getIndexInParent();
 		if (!tryToSaveItem(editedItem, content)) {
 			returnFromItemEditing();
@@ -115,7 +121,7 @@ public class ItemEditorController {
 		newItem(newItemIndex + 1);
 	}
 	
-	public void saveAndGoIntoItemClicked(TextTreeItem editedItem, String content) {
+	public void saveAndGoIntoItemClicked(AbstractTreeItem editedItem, String content) {
 		if (!tryToSaveItem(editedItem, content)) {
 			returnFromItemEditing();
 			return;

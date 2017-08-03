@@ -12,7 +12,6 @@ import android.widget.TextView;
 import igrek.todotree.R;
 import igrek.todotree.controller.ItemEditorController;
 import igrek.todotree.model.treeitem.AbstractTreeItem;
-import igrek.todotree.model.treeitem.TextTreeItem;
 import igrek.todotree.ui.GUI;
 import igrek.todotree.ui.errorcheck.SafeClickListener;
 import igrek.todotree.ui.numkeyboard.NumKeyboardListener;
@@ -26,13 +25,13 @@ public class EditItemGUI implements NumKeyboardListener {
 	private Button buttonSaveItem;
 	private NumericKeyboardView numericKeyboard;
 	
-	public EditItemGUI(GUI gui, final TextTreeItem item, AbstractTreeItem parent) {
+	public EditItemGUI(GUI gui, final AbstractTreeItem item, AbstractTreeItem parent) {
 		this.gui = gui;
 		
 		init(item, parent);
 	}
 	
-	private void init(final TextTreeItem item, AbstractTreeItem parent) {
+	private void init(final AbstractTreeItem item, AbstractTreeItem parent) {
 		View editItemContentLayout = gui.setMainContentLayout(R.layout.edit_item_content);
 		
 		etEditItem = (ItemEditText) editItemContentLayout.findViewById(R.id.etEditItemContent);

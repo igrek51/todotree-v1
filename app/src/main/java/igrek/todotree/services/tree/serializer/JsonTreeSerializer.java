@@ -22,8 +22,8 @@ public class JsonTreeSerializer {
 	final String CLOSING_BRACKET = "]},";
 	
 	public JsonTreeSerializer() {
-		singleItemPattern = Pattern.compile("^\\{ \"type\": \"(\\w+)\"(, \"(\\w+)\": \"((?:[^\"\\\\]|\\\\.)*)\")* \\},$");
-		multiItemPattern = Pattern.compile("^\\{ \"type\": \"(\\w+)\"(, \"(\\w+)\": \"((?:[^\"\\\\]|\\\\.)*)\")*, \"items\": \\[$");
+		singleItemPattern = Pattern.compile("^\\{ \"type\": \"([\\w/]+)\"(, \"(\\w+)\": \"((?:[^\"\\\\]|\\\\.)*)\")* \\},$");
+		multiItemPattern = Pattern.compile("^\\{ \"type\": \"([\\w/]+)\"(, \"(\\w+)\": \"((?:[^\"\\\\]|\\\\.)*)\")*, \"items\": \\[$");
 		nameValuePattern = Pattern.compile("\"(\\w+)\": \"((?:[^\"\\\\]|\\\\.)*)\"");
 	}
 	

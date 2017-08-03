@@ -93,10 +93,12 @@ public abstract class AbstractTreeItem {
 	}
 	
 	public <T extends AbstractTreeItem> void add(T newItem) {
+		newItem.setParent(this);
 		children.add(newItem);
 	}
 	
 	public <T extends AbstractTreeItem> void add(int location, T newItem) {
+		newItem.setParent(this);
 		children.add(location, newItem);
 	}
 	

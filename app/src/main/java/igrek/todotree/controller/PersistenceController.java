@@ -95,6 +95,7 @@ public class PersistenceController {
 		PathBuilder dbFilePath = filesystem.pathSD().append(preferences.dbFilePath);
 		try {
 			String output = treeSerializer.serializeTree(treeManager.getRootItem());
+			Logs.debug("Serialized data: " + output);
 			filesystem.saveFile(dbFilePath.toString(), output);
 		} catch (IOException e) {
 			Logs.error(e);
