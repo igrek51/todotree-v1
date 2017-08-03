@@ -23,12 +23,16 @@ public class JsonTreeSerializerTest {
 	@Test
 	public void testDeserializationRegex() {
 		
-		assertTrue(serializer.isMatchingSingleItem("{ \"type\": \"text\", \"name\": \"dupa\" },"));
-		assertTrue(serializer.isMatchingSingleItem("{ \"type\": \"text\", \"name\": \"name \\\"with\\\" escaped quote\" },"));
-		assertFalse(serializer.isMatchingSingleItem("{ \"type\": \"text\", \"name\": \"name \"with\" unescaped quote\" },"));
-		assertTrue(serializer.isMatchingSingleItem("{ \"type\": \"separator\" },"));
-		assertTrue(serializer.isMatchingSingleItem("{ \"type\": \"link\", \"name\": \"dupa\", \"target\": \"dupa2\" },"));
-		assertFalse(serializer.isMatchingSingleItem("{ \"type\": \"link\", \"name\": \"dupa\", \"target\": \"dupa2\" },dupa"));
+		assertTrue(serializer.isHeaderMatchingSingleItem("{ \"type\": \"text\", \"name\": \"dupa\" },"));
+		assertTrue(serializer.isHeaderMatchingSingleItem("{ \"type\": \"text\", \"name\": \"name \\\"with\\\" escaped quote\" },"));
+		assertFalse(serializer.isHeaderMatchingSingleItem("{ \"type\": \"text\", \"name\": \"name \"with\" unescaped quote\" },"));
+		assertTrue(serializer.isHeaderMatchingSingleItem("{ \"type\": \"separator\" },"));
+		assertTrue(serializer.isHeaderMatchingSingleItem("{ \"type\": \"link\", \"name\": \"dupa\", \"target\": \"dupa2\" },"));
+		assertFalse(serializer.isHeaderMatchingSingleItem("{ \"type\": \"link\", \"name\": \"dupa\", \"target\": \"dupa2\" },dupa"));
+		assertFalse(serializer.isHeaderMatchingSingleItem("{ \"type\": \"text\", \"name\": \"Dupa\", \"items\": ["));
+		
+		assertTrue(serializer.isHeaderMatchingMultiItem("{ \"type\": \"text\", \"name\": \"Dupa\", \"items\": ["));
+		assertFalse(serializer.isHeaderMatchingMultiItem("{ \"type\": \"text\", \"name\": \"dupa\" },"));
 		
 		assertEquals("[type = text, name = dupa]", serializer.extractAttributes("{ \"type\": \"text\", \"name\": \"dupa\" },")
 				.toString());

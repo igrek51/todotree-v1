@@ -38,6 +38,10 @@ public class LinkTreeItem extends AbstractTreeItem {
 		return "/" + getDisplayName();
 	}
 	
+	public void setTargetPath(String targetPath) {
+		//TODO
+	}
+	
 	public void setName(String name) {
 		this.name = name;
 	}
