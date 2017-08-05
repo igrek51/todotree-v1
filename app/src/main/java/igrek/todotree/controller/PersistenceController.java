@@ -88,7 +88,9 @@ public class PersistenceController {
 			treeManager.setRootItem(rootItem);
 			Logs.info("Database loaded.");
 		} catch (IOException | DeserializationFailedException e) {
+			changesHistory.registerChange();
 			Logs.error(e);
+			userInfo.showInfo("Failed to load database.");
 		}
 	}
 	

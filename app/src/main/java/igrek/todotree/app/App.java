@@ -8,6 +8,7 @@ import igrek.todotree.controller.PersistenceController;
 import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.logger.Logs;
 
+//TODO option restore selected backup
 //TODO item types: link with name, checkbox, text with date / hour, text with number, separator, separator with group name
 //TODO json serializing
 //TODO paste as link: >, detecting broken links
@@ -24,8 +25,9 @@ public class App extends BaseApp {
 	@Override
 	public void init() {
 		super.init();
-		new PersistenceController().loadRootTree();
 		new GUIController().guiInit();
+		new PersistenceController().loadRootTree();
+		new GUIController().showItemsList();
 		Logs.info("Started application.");
 	}
 	

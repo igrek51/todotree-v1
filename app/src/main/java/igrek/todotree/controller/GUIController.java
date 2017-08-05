@@ -52,7 +52,6 @@ public class GUIController {
 	
 	public void guiInit() {
 		gui.lazyInit();
-		gui.showItemsList(treeManager.getCurrentItem());
 	}
 	
 	public void numKeyboardHyphenTyped() {
