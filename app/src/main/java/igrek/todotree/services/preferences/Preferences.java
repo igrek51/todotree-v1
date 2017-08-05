@@ -12,7 +12,7 @@ import igrek.todotree.logger.Logs;
 
 public class Preferences extends BasePreferences {
 	
-	public String dbFilePath = "Android/data/igrek.todotree2/todo.dat";
+	public String dbFilePath = "Android/data/igrek.todotree/todo.dat";
 	
 	public Preferences(Activity activity) {
 		super(activity);

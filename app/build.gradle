@@ -29,7 +29,7 @@ android {
         defaultConfig {
             versionCode vCode
             versionName vName
-            applicationId "igrek.todotree2"
+            applicationId "igrek.todotree"
             minSdkVersion 13
             targetSdkVersion 23
         }

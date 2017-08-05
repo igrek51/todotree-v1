@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ToDo Tree 2</string>
+    <string name="app_name">ToDo Tree</string>
 
     <string name="action_minimize">Minimize</string>
     <string name="action_exit_without_saving">Exit without saving</string>
