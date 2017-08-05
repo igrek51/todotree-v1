@@ -21,8 +21,7 @@ import igrek.todotree.services.preferences.Preferences;
 
 public class BackupManager {
 	
-	//TODO modify date format
-	private SimpleDateFormat dateFormat = new SimpleDateFormat("dd_MM_yyyy-HH_mm_ss", Locale.ENGLISH);
+	private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd-HH_mm_ss", Locale.ENGLISH);
 	
 	private static final String BACKUP_FILE_PREFIX = "backup_";
 	

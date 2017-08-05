@@ -86,6 +86,18 @@ public class ItemActionsMenu {
 			}
 		});
 		
+		actions.add(new ItemAction("Remove") {
+			@Override
+			public void execute() {
+				new ItemActionController().actionRemove(position);
+			}
+			
+			@Override
+			public boolean isVisible() {
+				return treeManager.isPositionAtItem(position);
+			}
+		});
+		
 		actions.add(new ItemAction("Add above") {
 			@Override
 			public void execute() {
@@ -133,18 +145,6 @@ public class ItemActionsMenu {
 			@Override
 			public boolean isVisible() {
 				return !treeClipboardManager.isClipboardEmpty();
-			}
-		});
-		
-		actions.add(new ItemAction("Remove") {
-			@Override
-			public void execute() {
-				new ItemActionController().actionRemove(position);
-			}
-			
-			@Override
-			public boolean isVisible() {
-				return treeManager.isPositionAtItem(position);
 			}
 		});
 		
