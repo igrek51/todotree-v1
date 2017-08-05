@@ -7,6 +7,7 @@ import org.junit.Test;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import igrek.todotree.exceptions.DeserializationFailedException;
 import igrek.todotree.model.treeitem.AbstractTreeItem;
 import igrek.todotree.model.treeitem.RootTreeItem;
 import igrek.todotree.model.treeitem.TextTreeItem;
@@ -61,6 +62,25 @@ public class JsonTreeSerializerTest {
 		root.add(new TextTreeItem("dupa"));
 		assertEquals("{ \"type\": \"/\", \"items\": [\n" + "\t{ \"type\": \"text\", \"name\": \"dupa\" },\n" + "]},\n", serializer
 				.serializeTree(root));
+		
+		//System.out.println(serializer.serializeTree(root));
+	}
+	
+	@Test
+	public void testBidirectSerialization() throws DeserializationFailedException {
+		
+		assertEquals("{ \"type\": \"/\" },\n", serializer.serializeTree(new RootTreeItem()));
+		
+		AbstractTreeItem root = new RootTreeItem();
+		root.add(new TextTreeItem("escaping \"quote\" back\\slash"));
+		String serialized = serializer.serializeTree(root);
+		assertEquals("{ \"type\": \"/\", \"items\": [\n" + "\t{ \"type\": \"text\", \"name\": \"escaping \\\"quote\\\" back\\\\slash\" },\n" + "]},\n", serialized);
+		AbstractTreeItem deserialized = serializer.deserializeTree(serialized);
+		assertEquals(1, deserialized.size());
+		AbstractTreeItem item = deserialized.getChild(0);
+		assertTrue(item.isEmpty());
+		assertTrue(item instanceof TextTreeItem);
+		assertEquals("escaping \"quote\" back\\slash", item.getDisplayName());
 		
 		//System.out.println(serializer.serializeTree(root));
 	}

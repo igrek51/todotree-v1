@@ -79,8 +79,8 @@ public class JsonTreeSerializer {
 	}
 	
 	private String escape(String s) {
-		s = s.replace("\"", "\\\""); // escape "
 		s = s.replace("\\", "\\\\"); // escape \
+		s = s.replace("\"", "\\\""); // escape "
 		return s;
 	}
 	
