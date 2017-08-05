@@ -78,7 +78,7 @@ public class PersistenceController {
 		PathBuilder dbFilePath = filesystem.pathSD().append(preferences.dbFilePath);
 		Logs.info("Loading database from file: " + dbFilePath.toString());
 		if (!filesystem.exists(dbFilePath.toString())) {
-			Logs.warn("Database file does not exist. Default empty database created.");
+			userInfo.showInfo("Database file does not exist. Default empty database loaded.");
 			return;
 		}
 		try {
