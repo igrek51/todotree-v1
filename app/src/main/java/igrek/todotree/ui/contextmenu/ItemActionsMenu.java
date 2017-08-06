@@ -62,6 +62,18 @@ public class ItemActionsMenu {
 	private List<ItemAction> buildActionsList() {
 		List<ItemAction> actions = new ArrayList<>();
 		
+		actions.add(new ItemAction("Remove") {
+			@Override
+			public void execute() {
+				new ItemActionController().actionRemove(position);
+			}
+			
+			@Override
+			public boolean isVisible() {
+				return treeManager.isPositionAtItem(position);
+			}
+		});
+		
 		actions.add(new ItemAction("Select") {
 			@Override
 			public void execute() {
@@ -78,18 +90,6 @@ public class ItemActionsMenu {
 			@Override
 			public void execute() {
 				new ItemActionController().actionEdit(position);
-			}
-			
-			@Override
-			public boolean isVisible() {
-				return treeManager.isPositionAtItem(position);
-			}
-		});
-		
-		actions.add(new ItemAction("Remove") {
-			@Override
-			public void execute() {
-				new ItemActionController().actionRemove(position);
 			}
 			
 			@Override
