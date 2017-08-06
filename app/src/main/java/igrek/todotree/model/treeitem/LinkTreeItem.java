@@ -38,7 +38,7 @@ public class LinkTreeItem extends AbstractTreeItem {
 	}
 	
 	public AbstractTreeItem getTarget() {
-		//TODO forbid using character "/" in item names
+		//TODO forbid using character "/" in item names or something
 		String[] paths = targetPath.split("//");
 		return new TreeController().findItemByPath(paths);
 	}
