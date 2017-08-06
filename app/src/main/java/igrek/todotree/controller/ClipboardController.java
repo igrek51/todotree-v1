@@ -13,6 +13,7 @@ import igrek.todotree.services.clipboard.SystemClipboardManager;
 import igrek.todotree.services.clipboard.TreeClipboardManager;
 import igrek.todotree.services.resources.UserInfoService;
 import igrek.todotree.services.tree.TreeManager;
+import igrek.todotree.services.tree.TreeScrollCache;
 import igrek.todotree.services.tree.TreeSelectionManager;
 import igrek.todotree.ui.GUI;
 
@@ -36,16 +37,11 @@ public class ClipboardController {
 	@Inject
 	TreeSelectionManager selectionManager;
 	
+	@Inject
+	TreeScrollCache scrollCache;
+	
 	ClipboardController() {
 		DaggerIOC.getAppComponent().inject(this);
-	}
-	
-	public void copySelectedItems(boolean info) {
-		if (selectionManager.isAnythingSelected()) {
-			copyItems(selectionManager.getSelectedItems(), info);
-		} else {
-			userInfo.showInfo("No selected items");
-		}
 	}
 	
 	public void copyItems(Set<Integer> itemPosistions, boolean info) {
@@ -60,26 +56,15 @@ public class ClipboardController {
 			if (treeClipboardManager.getClipboardSize() == 1) {
 				AbstractTreeItem item = treeClipboardManager.getClipboard().get(0);
 				systemClipboardManager.copyToSystemClipboard(item.getDisplayName());
-				if (info) {
+				if (info)
 					userInfo.showInfo("Item copied: " + item.getDisplayName());
-				}
 			} else {
-				if (info) {
+				if (info)
 					userInfo.showInfo("Items copied: " + treeClipboardManager.getClipboardSize());
-				}
 			}
 		} else {
-			if (info) {
+			if (info)
 				userInfo.showInfo("No items to copy.");
-			}
-		}
-	}
-	
-	public void cutSelectedItems() {
-		if (selectionManager.isAnythingSelected()) {
-			cutItems(selectionManager.getSelectedItems());
-		} else {
-			userInfo.showInfo("No selected items");
 		}
 	}
 	
@@ -91,11 +76,8 @@ public class ClipboardController {
 		}
 	}
 	
-	public void pasteItems() {
-		pasteItems(treeManager.positionAfterEnd());
-	}
-	
 	public void pasteItems(int position) {
+		scrollCache.storeScrollPosition(treeManager.getCurrentItem(), gui.getCurrentScrollPos());
 		if (treeClipboardManager.isClipboardEmpty()) {
 			String systemClipboard = systemClipboardManager.getSystemClipboard();
 			if (systemClipboard != null) {
@@ -103,7 +85,7 @@ public class ClipboardController {
 				treeManager.addToCurrent(position, new TextTreeItem(systemClipboard));
 				userInfo.showInfo("Item pasted: " + systemClipboard);
 				new GUIController().updateItemsList();
-				gui.scrollToItem(position);
+				gui.scrollToItem(scrollCache.restoreScrollPosition(treeManager.getCurrentItem()), position - 1);
 			} else {
 				userInfo.showInfo("Clipboard is empty.");
 			}
@@ -116,7 +98,32 @@ public class ClipboardController {
 			userInfo.showInfo("Items pasted: " + treeClipboardManager.getClipboardSize());
 			treeClipboardManager.recopyClipboard();
 			new GUIController().updateItemsList();
-			gui.scrollToItem(position);
+			gui.scrollToItem(scrollCache.restoreScrollPosition(treeManager.getCurrentItem()), position - 1);
 		}
 	}
+	
+	public void pasteItemsAsLink(int position) {
+		scrollCache.storeScrollPosition(treeManager.getCurrentItem(), gui.getCurrentScrollPos());
+		if (treeClipboardManager.isClipboardEmpty()) {
+			userInfo.showInfo("Clipboard is empty.");
+		} else {
+			for (AbstractTreeItem clipboardItem : treeClipboardManager.getClipboard()) {
+				treeManager.addToCurrent(position, buildLinkItem(clipboardItem));
+				position++; // next item pasted below
+			}
+			userInfo.showInfo("Items pasted as links: " + treeClipboardManager.getClipboardSize());
+			new GUIController().updateItemsList();
+			gui.scrollToItem(scrollCache.restoreScrollPosition(treeManager.getCurrentItem()), position - 1);
+		}
+	}
+	
+	private AbstractTreeItem buildLinkItem(AbstractTreeItem clipboardItem) {
+		String name = clipboardItem.getDisplayName();
+		if (!name.startsWith("> ")) {
+			name = "> " + name;
+		}
+		AbstractTreeItem newItem = new TextTreeItem(treeManager.getCurrentItem(), name);
+		return newItem;
+	}
+	
 }

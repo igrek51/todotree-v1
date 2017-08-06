@@ -61,12 +61,22 @@ public class ItemActionController {
 		new ClipboardController().copyItems(itemPosistions, true);
 	}
 	
-	public void actionPasteAbove(int position) {
-		new ClipboardController().pasteItems(position);
+	public void actionPasteAbove(final int position) {
+		new Handler().post(new Runnable() {
+			@Override
+			public void run() {
+				new ClipboardController().pasteItems(position);
+			}
+		});
 	}
 	
-	public void actionPasteAboveAsLink(int position) {
-		// TODO
+	public void actionPasteAboveAsLink(final int position) {
+		new Handler().post(new Runnable() {
+			@Override
+			public void run() {
+				new ClipboardController().pasteItemsAsLink(position);
+			}
+		});
 	}
 	
 	public void actionCut(int position) {

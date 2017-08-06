@@ -487,14 +487,14 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
 	}
 	
 	/**
-	 * @param position pozycja elementu do przescrollowania (-1 - ostatni element)
+	 * @param itemIndex pozycja elementu do przescrollowania (-1 - ostatni element)
 	 */
-	public void scrollToItem(int position) {
-		if (position == -1)
-			position = items.size() - 1;
-		if (position < 0)
-			position = 0;
-		setSelection(position);
+	public void scrollToItem(int itemIndex) {
+		if (itemIndex == -1)
+			itemIndex = items.size() - 1;
+		if (itemIndex < 0)
+			itemIndex = 0;
+		setSelection(itemIndex);
 		invalidate();
 	}
 	

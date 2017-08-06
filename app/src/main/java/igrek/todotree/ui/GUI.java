@@ -93,8 +93,14 @@ public class GUI extends BaseGUI {
 		itemsListView.setItemsAndSelected(currentItem.getChildren(), selectedPositions);
 	}
 	
-	public void scrollToItem(int position) {
-		itemsListView.scrollToItem(position);
+	public void scrollToItem(int itemIndex) {
+		itemsListView.scrollToItem(itemIndex);
+	}
+	
+	public void scrollToItem(Integer y, int itemIndex) {
+		if (y != null)
+			itemsListView.scrollToPosition(y);
+		itemsListView.scrollToItem(itemIndex);
 	}
 	
 	public void scrollToPosition(int y) {
