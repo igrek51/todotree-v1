@@ -194,7 +194,7 @@ public class JsonTreeSerializer {
 				return new SeparatorTreeItem(null);
 			}
 			case "link": {
-				String name = getAttributeValue(attributes, "name");
+				String name = getOptionalAttributeValue(attributes, "name");
 				String targetPath = getAttributeValue(attributes, "target");
 				return new LinkTreeItem(null, targetPath, name);
 			}
@@ -209,11 +209,18 @@ public class JsonTreeSerializer {
 	}
 	
 	private String getAttributeValue(List<ItemAttribute> attributes, String name) throws DeserializationFailedException {
+		String value = getOptionalAttributeValue(attributes, name);
+		if (value == null)
+			throw new DeserializationFailedException("Attribute not found: " + name);
+		return value;
+	}
+	
+	private String getOptionalAttributeValue(List<ItemAttribute> attributes, String name) throws DeserializationFailedException {
 		for (ItemAttribute attribute : attributes) {
 			if (attribute.getName().equals(name))
 				return attribute.getValue();
 		}
-		throw new DeserializationFailedException("Attribute not found: " + name);
+		return null;
 	}
 	
 	private List<List<IndentedLine>> splitChildParts(List<IndentedLine> lines, int headerIndentation) throws DeserializationFailedException {
