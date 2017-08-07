@@ -9,6 +9,7 @@ import igrek.todotree.model.treeitem.AbstractTreeItem;
 public class TreeClipboardManager {
 	
 	private List<AbstractTreeItem> clipboard = null;
+	private AbstractTreeItem copiedFrom = null;
 	
 	public List<AbstractTreeItem> getClipboard() {
 		return clipboard;
@@ -43,5 +44,13 @@ public class TreeClipboardManager {
 			}
 			clipboard = newClipboard;
 		}
+	}
+	
+	public AbstractTreeItem getCopiedFrom() {
+		return copiedFrom;
+	}
+	
+	public void setCopiedFrom(AbstractTreeItem copiedFrom) {
+		this.copiedFrom = copiedFrom;
 	}
 }

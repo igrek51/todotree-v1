@@ -71,6 +71,10 @@ public class Logs {
 		log(message, LogLevel.TRACE, "[trace] ");
 	}
 	
+	public static void test(String message) {
+		System.out.println(message);
+	}
+	
 	
 	private static void log(String message, LogLevel level, String logPrefix) {
 		

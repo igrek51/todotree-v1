@@ -21,4 +21,10 @@ public class DaggerIOC {
 				.appFactoryModule(new AppFactoryModule(app, activity))
 				.build();
 	}
+	
+	public static void initTest() {
+		appComponent = DaggerTestFactoryComponent.builder()
+				.testFactoryModule(new TestFactoryModule())
+				.build();
+	}
 }

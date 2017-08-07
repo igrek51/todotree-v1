@@ -48,9 +48,10 @@ public class ClipboardController {
 	public void copyItems(Set<Integer> itemPosistions, boolean info) {
 		if (!itemPosistions.isEmpty()) {
 			treeClipboardManager.clearClipboard();
+			AbstractTreeItem currentItem = treeManager.getCurrentItem();
+			treeClipboardManager.setCopiedFrom(currentItem);
 			for (Integer selectedItemId : itemPosistions) {
-				AbstractTreeItem selectedItem = treeManager.getCurrentItem()
-						.getChild(selectedItemId);
+				AbstractTreeItem selectedItem = currentItem.getChild(selectedItemId);
 				treeClipboardManager.addToClipboard(selectedItem);
 			}
 			//if one item selected - copying also to system clipboard
@@ -119,8 +120,9 @@ public class ClipboardController {
 	}
 	
 	private AbstractTreeItem buildLinkItem(AbstractTreeItem clipboardItem) {
-		AbstractTreeItem newItem = new LinkTreeItem(treeManager.getCurrentItem(), clipboardItem, null);
-		return newItem;
+		LinkTreeItem link = new LinkTreeItem(treeManager.getCurrentItem(), null, null);
+		link.setTarget(treeClipboardManager.getCopiedFrom(), clipboardItem.getDisplayName());
+		return link;
 	}
 	
 }

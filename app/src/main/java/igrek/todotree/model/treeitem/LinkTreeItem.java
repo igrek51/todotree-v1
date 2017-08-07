@@ -19,12 +19,6 @@ public class LinkTreeItem extends AbstractTreeItem {
 		this.name = name;
 	}
 	
-	public LinkTreeItem(AbstractTreeItem parent, AbstractTreeItem target, String name) {
-		super(parent);
-		this.name = name;
-		setTarget(target);
-	}
-	
 	@Override
 	public LinkTreeItem clone() {
 		return new LinkTreeItem(null, targetPath, name).copyChildren(this);
@@ -71,6 +65,18 @@ public class LinkTreeItem extends AbstractTreeItem {
 	
 	public void setTarget(AbstractTreeItem target) {
 		Joiner joiner = Joiner.on("\t");
+		List<String> names = getNamesPaths(target);
+		targetPath = joiner.join(names);
+	}
+	
+	public void setTarget(AbstractTreeItem targetParent, String targetName) {
+		Joiner joiner = Joiner.on("\t");
+		List<String> names = getNamesPaths(targetParent);
+		names.add(targetName);
+		targetPath = joiner.join(names);
+	}
+	
+	private List<String> getNamesPaths(AbstractTreeItem target) {
 		List<String> names = new ArrayList<>();
 		AbstractTreeItem current = target;
 		do {
@@ -80,8 +86,9 @@ public class LinkTreeItem extends AbstractTreeItem {
 			names.add(current.getDisplayName());
 			current = current.getParent();
 		} while (current != null);
-		targetPath = joiner.join(names);
+		return names;
 	}
+	
 	
 	public boolean isBroken() {
 		return getTarget() == null;
