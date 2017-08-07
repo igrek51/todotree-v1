@@ -35,7 +35,7 @@ public class LinkTreeItem extends AbstractTreeItem {
 		if (name == null) {
 			AbstractTreeItem target = getTarget();
 			if (target == null) {
-				return "> " + targetPath.replace("\t", "/");
+				return "> " + getDisplayTargetPath();
 			} else {
 				return "> " + target.getDisplayName();
 			}
@@ -58,6 +58,10 @@ public class LinkTreeItem extends AbstractTreeItem {
 	
 	public void setTargetPath(String targetPath) {
 		this.targetPath = targetPath;
+	}
+	
+	public String getDisplayTargetPath() {
+		return targetPath.replace("\t", "/");
 	}
 	
 	public AbstractTreeItem getTarget() {

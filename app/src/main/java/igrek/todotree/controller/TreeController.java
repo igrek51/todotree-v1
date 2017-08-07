@@ -121,7 +121,7 @@ public class TreeController {
 				LinkTreeItem link = (LinkTreeItem) item;
 				AbstractTreeItem target = link.getTarget();
 				if (target == null) {
-					infoService.showInfo("Link is broken");
+					infoService.showInfo("Link is broken: " + link.getDisplayTargetPath());
 				} else {
 					navigateTo(target);
 				}
