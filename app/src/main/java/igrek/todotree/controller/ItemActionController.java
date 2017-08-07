@@ -10,6 +10,7 @@ import javax.inject.Inject;
 
 import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.model.treeitem.AbstractTreeItem;
+import igrek.todotree.model.treeitem.LinkTreeItem;
 import igrek.todotree.services.resources.UserInfoService;
 import igrek.todotree.services.tree.TreeManager;
 import igrek.todotree.services.tree.TreeSelectionManager;

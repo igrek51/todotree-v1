@@ -8,6 +8,7 @@ import javax.inject.Inject;
 
 import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.model.treeitem.AbstractTreeItem;
+import igrek.todotree.model.treeitem.LinkTreeItem;
 import igrek.todotree.model.treeitem.TextTreeItem;
 import igrek.todotree.services.clipboard.SystemClipboardManager;
 import igrek.todotree.services.clipboard.TreeClipboardManager;
@@ -118,11 +119,7 @@ public class ClipboardController {
 	}
 	
 	private AbstractTreeItem buildLinkItem(AbstractTreeItem clipboardItem) {
-		String name = clipboardItem.getDisplayName();
-		if (!name.startsWith("> ")) {
-			name = "> " + name;
-		}
-		AbstractTreeItem newItem = new TextTreeItem(treeManager.getCurrentItem(), name);
+		AbstractTreeItem newItem = new LinkTreeItem(treeManager.getCurrentItem(), clipboardItem, null);
 		return newItem;
 	}
 	
