@@ -9,8 +9,11 @@ import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.exceptions.NoSuperItemException;
 import igrek.todotree.logger.Logs;
 import igrek.todotree.model.treeitem.AbstractTreeItem;
+import igrek.todotree.model.treeitem.LinkTreeItem;
+import igrek.todotree.model.treeitem.TextTreeItem;
 import igrek.todotree.services.history.ChangesHistory;
 import igrek.todotree.services.lock.DatabaseLock;
+import igrek.todotree.services.resources.UserInfoService;
 import igrek.todotree.services.tree.TreeManager;
 import igrek.todotree.services.tree.TreeMover;
 import igrek.todotree.services.tree.TreeScrollCache;
@@ -40,6 +43,9 @@ public class TreeController {
 	@Inject
 	ChangesHistory changesHistory;
 	
+	@Inject
+	UserInfoService infoService;
+	
 	public TreeController() {
 		DaggerIOC.getAppComponent().inject(this);
 	}
@@ -68,13 +74,23 @@ public class TreeController {
 	}
 	
 	public void goInto(int childIndex) {
+		storeCurrentScroll();
+		treeManager.goInto(childIndex);
+	}
+	
+	public void navigateTo(AbstractTreeItem item) {
+		storeCurrentScroll();
+		treeManager.goTo(item);
+		new GUIController().updateItemsList();
+		gui.scrollToItem(0);
+	}
+	
+	private void storeCurrentScroll() {
 		Integer scrollPos = gui.getCurrentScrollPos();
 		if (scrollPos != null) {
 			scrollCache.storeScrollPosition(treeManager.getCurrentItem(), scrollPos);
 		}
-		treeManager.goInto(childIndex);
 	}
-	
 	
 	public void itemLongClicked(int position) {
 		if (!selectionManager.isAnythingSelected()) {
@@ -94,10 +110,21 @@ public class TreeController {
 			selectionManager.toggleItemSelected(position);
 			new GUIController().updateItemsList();
 		} else {
-			if (item.isEmpty()) {
-				new ItemEditorController().itemEditClicked(item);
-			} else {
-				itemGoIntoClicked(position);
+			if (item instanceof TextTreeItem) {
+				if (item.isEmpty()) {
+					new ItemEditorController().itemEditClicked(item);
+				} else {
+					itemGoIntoClicked(position);
+				}
+			} else if (item instanceof LinkTreeItem) {
+				// go into target
+				LinkTreeItem link = (LinkTreeItem) item;
+				AbstractTreeItem target = link.getTarget();
+				if (target == null) {
+					infoService.showInfo("Link is broken");
+				} else {
+					navigateTo(target);
+				}
 			}
 		}
 	}

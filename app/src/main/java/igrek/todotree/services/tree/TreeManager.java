@@ -108,7 +108,7 @@ public class TreeManager {
 		goTo(item);
 	}
 	
-	private void goTo(AbstractTreeItem child) {
+	public void goTo(AbstractTreeItem child) {
 		currentItem = child;
 	}
 	
