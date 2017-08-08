@@ -6,6 +6,7 @@ import android.app.Activity;
 import javax.inject.Inject;
 
 import igrek.todotree.services.clipboard.TreeClipboardManager;
+import igrek.todotree.services.resources.UserInfoService;
 import igrek.todotree.services.tree.TreeManager;
 import igrek.todotree.services.tree.TreeScrollCache;
 import igrek.todotree.services.tree.serializer.JsonTreeSerializer;
@@ -29,5 +30,8 @@ public abstract class BaseDaggerTest {
 	
 	@Inject
 	protected JsonTreeSerializer serializer;
+	
+	@Inject
+	protected UserInfoService infoService;
 	
 }

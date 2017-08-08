@@ -6,7 +6,7 @@ import android.app.Activity;
 import igrek.todotree.app.App;
 import igrek.todotree.dagger.test.DaggerTestComponent;
 import igrek.todotree.dagger.test.TestComponent;
-import igrek.todotree.dagger.test.TestModule;
+import igrek.todotree.dagger.test.TestModuleFactory;
 
 public class DaggerIOC {
 	
@@ -26,7 +26,8 @@ public class DaggerIOC {
 	}
 	
 	public static void initTest(App app, Activity activity) {
-		appComponent = DaggerTestComponent.builder().testModule(new TestModule(app, activity))
+		appComponent = DaggerTestComponent.builder()
+				.appFactoryModule(TestModuleFactory.getTestModule(app, activity))
 				.build();
 	}
 	
