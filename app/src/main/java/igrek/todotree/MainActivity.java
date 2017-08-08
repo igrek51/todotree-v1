@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
 			app = new App(this);
 			app.init();
 		} catch (Exception ex) {
-			Logs.fatal(this, ex);
+			new Logs().fatal(this, ex);
 		}
 	}
 	

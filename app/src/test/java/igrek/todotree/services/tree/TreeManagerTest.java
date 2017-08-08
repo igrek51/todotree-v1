@@ -62,32 +62,15 @@ public class TreeManagerTest extends BaseDaggerTest {
 		
 	}
 	
-	private void copyItems(Set<Integer> itemPosistions, boolean info) {
-		if (!itemPosistions.isEmpty()) {
-			treeClipboardManager.clearClipboard();
-			AbstractTreeItem currentItem = treeManager.getCurrentItem();
-			treeClipboardManager.setCopiedFrom(currentItem);
-			for (Integer selectedItemId : itemPosistions) {
-				AbstractTreeItem selectedItem = currentItem.getChild(selectedItemId);
-				treeClipboardManager.addToClipboard(selectedItem);
-			}
-			if (info)
-				Logs.test("Items copied: " + treeClipboardManager.getClipboardSize());
-		} else {
-			if (info)
-				Logs.test("No items to copy.");
-		}
-	}
-	
 	private void pasteItemsAsLink(int position) {
 		if (treeClipboardManager.isClipboardEmpty()) {
-			Logs.test("Clipboard is empty.");
+			logger.info("Clipboard is empty.");
 		} else {
 			for (AbstractTreeItem clipboardItem : treeClipboardManager.getClipboard()) {
 				treeManager.addToCurrent(position, buildLinkItem(clipboardItem));
 				position++; // next item pasted below
 			}
-			Logs.test("Items pasted as links: " + treeClipboardManager.getClipboardSize());
+			logger.info("Items pasted as links: " + treeClipboardManager.getClipboardSize());
 		}
 	}
 	

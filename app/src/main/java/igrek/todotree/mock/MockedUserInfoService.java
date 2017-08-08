@@ -10,17 +10,17 @@ import igrek.todotree.ui.GUI;
 
 public class MockedUserInfoService extends UserInfoService {
 	
-	public MockedUserInfoService(Activity activity, GUI gui) {
-		super(activity, gui);
+	public MockedUserInfoService(Activity activity, GUI gui, Logs logger) {
+		super(activity, gui, logger);
 	}
 	
 	@Override
 	public void showInfo(String info) {
-		Logs.info("info: " + info);
+		logger.info("info: " + info);
 	}
 	
 	@Override
 	public void showInfoCancellable(String info, InfoBarClickAction cancelCallback) {
-		Logs.info("cancellable info: " + info);
+		logger.info("cancellable info: " + info);
 	}
 }

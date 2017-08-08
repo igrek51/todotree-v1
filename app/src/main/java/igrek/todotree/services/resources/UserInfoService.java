@@ -22,9 +22,12 @@ public class UserInfoService {
 	
 	private HashMap<View, Snackbar> infobars = new HashMap<>();
 	
-	public UserInfoService(Activity activity, GUI gui) {
+	protected Logs logger;
+	
+	public UserInfoService(Activity activity, GUI gui, Logs logger) {
 		this.activity = activity;
 		this.gui = gui;
+		this.logger = logger;
 	}
 	
 	private String resString(int resourceId) {
@@ -76,7 +79,7 @@ public class UserInfoService {
 		
 		snackbar.show();
 		infobars.put(view, snackbar);
-		Logs.info(info);
+		logger.info(info);
 	}
 	
 	

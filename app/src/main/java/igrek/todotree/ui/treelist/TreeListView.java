@@ -34,6 +34,7 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
 	
 	private List<AbstractTreeItem> items;
 	private TreeItemAdapter adapter;
+	private Logs logger = new Logs();
 	
 	/** początkowa pozycja kursora przy rozpoczęciu przeciągania (ulega zmianie przy zamianie elementów) */
 	private float startTouchY;
@@ -249,7 +250,7 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
 	private int getItemHeight(int position) {
 		Integer h = itemHeights.get(position);
 		if (h == null) {
-			Logs.warn("Item View = null");
+			logger.warn("Item View = null");
 		}
 		return h != null ? h : 0;
 	}
@@ -298,11 +299,11 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
 		float dyTotal = lastTouchY - startTouchY + (scrollOffset - scrollStart);
 		
 		if (draggedItemViewTop == null) {
-			Logs.error("draggedItemViewTop = null");
+			logger.error("draggedItemViewTop = null");
 			return;
 		}
 		if (draggedItemPos == null) {
-			Logs.error("draggedItemPos = null");
+			logger.error("draggedItemPos = null");
 			return;
 		}
 		

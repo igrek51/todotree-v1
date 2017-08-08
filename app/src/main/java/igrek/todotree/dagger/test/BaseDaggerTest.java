@@ -5,6 +5,7 @@ import android.app.Activity;
 
 import javax.inject.Inject;
 
+import igrek.todotree.logger.Logs;
 import igrek.todotree.services.clipboard.TreeClipboardManager;
 import igrek.todotree.services.resources.UserInfoService;
 import igrek.todotree.services.tree.TreeManager;
@@ -33,5 +34,8 @@ public abstract class BaseDaggerTest {
 	
 	@Inject
 	protected UserInfoService infoService;
+	
+	@Inject
+	protected Logs logger;
 	
 }

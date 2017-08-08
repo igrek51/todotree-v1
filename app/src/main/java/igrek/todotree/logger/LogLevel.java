@@ -1,6 +1,6 @@
 package igrek.todotree.logger;
 
-enum LogLevel {
+public enum LogLevel {
 	
 	OFF(0), //only for settings
 	

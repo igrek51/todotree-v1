@@ -47,6 +47,9 @@ public class ItemEditorController {
 	@Inject
 	ChangesHistory changesHistory;
 	
+	@Inject
+	Logs logger;
+	
 	public ItemEditorController() {
 		DaggerIOC.getAppComponent().inject(this);
 	}
@@ -88,7 +91,7 @@ public class ItemEditorController {
 			if (editedItem instanceof TextTreeItem) {
 				return tryToSaveExistingItem((TextTreeItem) editedItem, content);
 			} else {
-				Logs.warn("trying to save item of type: " + editedItem.getTypeName());
+				logger.warn("trying to save item of type: " + editedItem.getTypeName());
 				return false;
 			}
 		}

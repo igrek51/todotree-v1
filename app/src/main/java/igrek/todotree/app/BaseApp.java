@@ -21,19 +21,21 @@ public abstract class BaseApp {
 	
 	private boolean running = true;
 	
+	protected Logs logger = new Logs();
+	
 	BaseApp(AppCompatActivity activity) {
 		this.activity = activity;
 	}
 	
 	public void init() {
-		Logs.info("Initializing application...");
+		logger.info("Initializing application...");
 		
 		// catch all uncaught exceptions
 		defaultUEH = Thread.getDefaultUncaughtExceptionHandler();
 		Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
 			@Override
 			public void uncaughtException(Thread thread, Throwable th) {
-				Logs.errorUncaught(th);
+				logger.errorUncaught(th);
 				//pass further to OS
 				defaultUEH.uncaughtException(thread, th);
 			}
@@ -62,10 +64,10 @@ public abstract class BaseApp {
 	
 	public void quit() {
 		if (!running) { //another attempt to close
-			Logs.warn("Closing app - ignoring another attempt");
+			logger.warn("Closing app - ignoring another attempt");
 			return;
 		}
-		Logs.info("Closing app...");
+		logger.info("Closing app...");
 		running = false;
 		activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		activity.finish();
@@ -77,11 +79,11 @@ public abstract class BaseApp {
 		int screenHeightDp = newConfig.screenHeightDp;
 		int orientation = newConfig.orientation;
 		int densityDpi = newConfig.densityDpi;
-		Logs.debug("Screen size changed: " + screenWidthDp + "dp x " + screenHeightDp + "dp (DPI = " + densityDpi + ")");
+		logger.debug("Screen size changed: " + screenWidthDp + "dp x " + screenHeightDp + "dp (DPI = " + densityDpi + ")");
 		if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-			Logs.debug("Screen orientation changed: landscape");
+			logger.debug("Screen orientation changed: landscape");
 		} else if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-			Logs.debug("Screen orientation changed: portrait");
+			logger.debug("Screen orientation changed: portrait");
 		}
 	}
 	

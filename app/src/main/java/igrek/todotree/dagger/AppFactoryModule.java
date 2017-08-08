@@ -9,6 +9,7 @@ import dagger.Module;
 import dagger.Provides;
 import igrek.todotree.app.App;
 import igrek.todotree.app.AppData;
+import igrek.todotree.logger.Logs;
 import igrek.todotree.services.backup.BackupManager;
 import igrek.todotree.services.clipboard.SystemClipboardManager;
 import igrek.todotree.services.clipboard.TreeClipboardManager;
@@ -68,20 +69,20 @@ public class AppFactoryModule {
 	
 	@Provides
 	@Singleton
-	protected Preferences providePreferences(Activity activity) {
-		return new Preferences(activity);
+	protected Preferences providePreferences(Activity activity, Logs logger) {
+		return new Preferences(activity, logger);
 	}
 	
 	@Provides
 	@Singleton
-	protected BackupManager provideBackupManager(Preferences preferences, FilesystemService filesystem) {
-		return new BackupManager(preferences, filesystem);
+	protected BackupManager provideBackupManager(Preferences preferences, FilesystemService filesystem, Logs logger) {
+		return new BackupManager(preferences, filesystem, logger);
 	}
 	
 	@Provides
 	@Singleton
-	protected UserInfoService provideUserInfoService(Activity activity, GUI gui) {
-		return new UserInfoService(activity, gui);
+	protected UserInfoService provideUserInfoService(Activity activity, GUI gui, Logs logger) {
+		return new UserInfoService(activity, gui, logger);
 	}
 	
 	@Provides
@@ -148,6 +149,12 @@ public class AppFactoryModule {
 	@Singleton
 	protected TreeMover provideTreeMover() {
 		return new TreeMover();
+	}
+	
+	@Provides
+	@Singleton
+	protected Logs provideLogger() {
+		return new Logs();
 	}
 	
 }

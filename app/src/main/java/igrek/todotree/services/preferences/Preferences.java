@@ -14,24 +14,27 @@ public class Preferences extends BasePreferences {
 	
 	public String dbFilePath = "Android/data/igrek.todotree/todo.json";
 	
-	public Preferences(Activity activity) {
+	private Logs logger;
+	
+	public Preferences(Activity activity, Logs logger) {
 		super(activity);
+		this.logger = logger;
 		loadAll();
 	}
 	
 	public void saveAll() {
 		if (dbFilePath != null) {
 			setString("dbFilePath", dbFilePath);
-			Logs.debug("Shared preferences saved.");
+			logger.debug("Shared preferences saved.");
 		}
 	}
 	
 	private void loadAll() {
 		if (exists("dbFilePath")) {
 			dbFilePath = getString("dbFilePath");
-			Logs.debug("Database path loaded: " + dbFilePath);
+			logger.debug("Database path loaded: " + dbFilePath);
 		} else {
-			Logs.debug("Default database path loaded: " + dbFilePath);
+			logger.debug("Default database path loaded: " + dbFilePath);
 		}
 	}
 }

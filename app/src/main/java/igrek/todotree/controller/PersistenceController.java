@@ -45,6 +45,9 @@ public class PersistenceController {
 	@Inject
 	ChangesHistory changesHistory;
 	
+	@Inject
+	Logs logger;
+	
 	public PersistenceController() {
 		DaggerIOC.getAppComponent().inject(this);
 	}
@@ -64,7 +67,7 @@ public class PersistenceController {
 	
 	void saveDatabase() {
 		if (!changesHistory.hasChanges()) {
-			Logs.info("No changes have been made - skipping saving");
+			logger.info("No changes have been made - skipping saving");
 			return;
 		}
 		
@@ -76,7 +79,7 @@ public class PersistenceController {
 		changesHistory.clear();
 		filesystem.mkdirIfNotExist(filesystem.pathSD().toString());
 		PathBuilder dbFilePath = filesystem.pathSD().append(preferences.dbFilePath);
-		Logs.info("Loading database from file: " + dbFilePath.toString());
+		logger.info("Loading database from file: " + dbFilePath.toString());
 		if (!filesystem.exists(dbFilePath.toString())) {
 			userInfo.showInfo("Database file does not exist. Default empty database loaded.");
 			return;
@@ -86,10 +89,10 @@ public class PersistenceController {
 			// AbstractTreeItem rootItem = SimpleTreeSerializer.loadTree(fileContent); // porting db to JSON
 			AbstractTreeItem rootItem = treeSerializer.deserializeTree(fileContent);
 			treeManager.setRootItem(rootItem);
-			Logs.info("Database loaded.");
+			logger.info("Database loaded.");
 		} catch (IOException | DeserializationFailedException e) {
 			changesHistory.registerChange();
-			Logs.error(e);
+			logger.error(e);
 			userInfo.showInfo("Failed to load database.");
 		}
 	}
@@ -101,8 +104,8 @@ public class PersistenceController {
 			//Logs.debug("Serialized data: " + output);
 			filesystem.saveFile(dbFilePath.toString(), output);
 		} catch (IOException e) {
-			Logs.error(e);
+			logger.error(e);
 		}
-		Logs.debug("Database saved successfully.");
+		logger.debug("Database saved successfully.");
 	}
 }

@@ -13,15 +13,18 @@ public class UIErrorHandler {
 	@Inject
 	UserInfoService userInfoService;
 	
+	@Inject
+	Logs logger;
+	
 	private void _handleError(Throwable t) {
 		DaggerIOC.getAppComponent().inject(this);
 		// database locked
 		if (t instanceof DatabaseLockedException) {
-			Logs.warn(t.getMessage());
+			logger.warn(t.getMessage());
 			userInfoService.showInfo(t.getMessage());
 			return;
 		}
-		Logs.error(t);
+		logger.error(t);
 		userInfoService.showInfo("Error occurred: " + t.getMessage());
 	}
 	

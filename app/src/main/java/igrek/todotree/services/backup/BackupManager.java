@@ -14,6 +14,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import javax.inject.Inject;
+
 import igrek.todotree.logger.Logs;
 import igrek.todotree.services.filesystem.FilesystemService;
 import igrek.todotree.services.filesystem.PathBuilder;
@@ -32,10 +34,12 @@ public class BackupManager {
 	
 	private FilesystemService filesystem;
 	private Preferences preferences;
+	private Logs logger;
 	
-	public BackupManager(Preferences preferences, FilesystemService filesystem) {
+	public BackupManager(Preferences preferences, FilesystemService filesystem, Logs logger) {
 		this.preferences = preferences;
 		this.filesystem = filesystem;
+		this.logger = logger;
 	}
 	
 	public void saveBackupFile() {
@@ -57,9 +61,9 @@ public class BackupManager {
 		PathBuilder backupPath = dbDirPath.append(BACKUP_FILE_PREFIX + dateFormat.format(new Date()));
 		try {
 			filesystem.copy(new File(dbFilePath.toString()), new File(backupPath.toString()));
-			Logs.info("Backup created: " + backupPath.toString());
+			logger.info("Backup created: " + backupPath.toString());
 		} catch (IOException e) {
-			Logs.error(e);
+			logger.error(e);
 		}
 	}
 	
@@ -77,7 +81,7 @@ public class BackupManager {
 				try {
 					date = dateFormat.parse(dateStr);
 				} catch (ParseException e) {
-					Logs.warn("Invalid date format in file name: " + child);
+					logger.warn("Invalid date format in file name: " + child);
 				}
 				backups.add(new Pair<>(child, date));
 			}
@@ -122,7 +126,7 @@ public class BackupManager {
 		for (Pair<String, Date> pair : backups) {
 			PathBuilder toRemovePath = dbDirPath.append(pair.first);
 			filesystem.delete(toRemovePath);
-			Logs.info("Old backup has been removed: " + toRemovePath.toString());
+			logger.info("Old backup has been removed: " + toRemovePath.toString());
 		}
 		
 	}

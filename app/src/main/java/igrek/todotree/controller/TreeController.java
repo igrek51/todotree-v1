@@ -46,6 +46,9 @@ public class TreeController {
 	@Inject
 	UserInfoService infoService;
 	
+	@Inject
+	Logs logger;
+	
 	public TreeController() {
 		DaggerIOC.getAppComponent().inject(this);
 	}
@@ -65,7 +68,7 @@ public class TreeController {
 	public void itemGoIntoClicked(int position) {
 		if (lock.isLocked()) {
 			lock.setLocked(false);
-			Logs.debug("Database unlocked.");
+			logger.debug("Database unlocked.");
 		}
 		selectionManager.cancelSelectionMode();
 		goInto(position);

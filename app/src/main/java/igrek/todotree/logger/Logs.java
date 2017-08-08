@@ -7,31 +7,31 @@ import android.util.Log;
 
 public class Logs {
 	
-	private Logs() {
+	public Logs() {
 	}
 	
-	private static final LogLevel CONSOLE_LEVEL = LogLevel.TRACE;
+	protected static final LogLevel CONSOLE_LEVEL = LogLevel.TRACE;
 	
 	private static final String LOG_TAG = "ylog";
-	private static final boolean SHOW_EXCEPTIONS_TRACE = true;
-	private static final LogLevel SHOW_TRACE_DETAILS_LEVEL = LogLevel.TRACE;
+	protected static final boolean SHOW_EXCEPTIONS_TRACE = true;
+	protected static final LogLevel SHOW_TRACE_DETAILS_LEVEL = LogLevel.TRACE;
 	
-	public static void error(String message) {
+	public void error(String message) {
 		log(message, LogLevel.ERROR, "[ERROR] ");
 	}
 	
-	public static void error(Throwable ex) {
+	public void error(Throwable ex) {
 		log(ex.getMessage(), LogLevel.ERROR, "[EXCEPTION - " + ex.getClass().getName() + "] ");
 		printExceptionStackTrace(ex);
 	}
 	
-	public static void errorUncaught(Throwable ex) {
+	public void errorUncaught(Throwable ex) {
 		log(ex.getMessage(), LogLevel.FATAL, "[UNCAUGHT EXCEPTION - " + ex.getClass()
 				.getName() + "] ");
 		printExceptionStackTrace(ex);
 	}
 	
-	public static void fatal(final Activity activity, String e) {
+	public void fatal(final Activity activity, String e) {
 		log(e, LogLevel.FATAL, "[FATAL ERROR] ");
 		if (activity == null) {
 			error("FATAL ERROR: No activity");
@@ -49,34 +49,30 @@ public class Logs {
 		dlgAlert.create().show();
 	}
 	
-	public static void fatal(final Activity activity, Throwable ex) {
+	public void fatal(final Activity activity, Throwable ex) {
 		String e = ex.getClass().getName() + " - " + ex.getMessage();
 		printExceptionStackTrace(ex);
 		fatal(activity, e);
 	}
 	
-	public static void warn(String message) {
+	public void warn(String message) {
 		log(message, LogLevel.WARN, "[warn] ");
 	}
 	
-	public static void info(String message) {
+	public void info(String message) {
 		log(message, LogLevel.INFO, "");
 	}
 	
-	public static void debug(String message) {
+	public void debug(String message) {
 		log(message, LogLevel.DEBUG, "[debug] ");
 	}
 	
-	public static void trace(String message) {
+	public void trace(String message) {
 		log(message, LogLevel.TRACE, "[trace] ");
 	}
 	
-	public static void test(String message) {
-		System.out.println(message);
-	}
 	
-	
-	private static void log(String message, LogLevel level, String logPrefix) {
+	protected void log(String message, LogLevel level, String logPrefix) {
 		
 		if (level.lowerOrEqual(CONSOLE_LEVEL)) {
 			
@@ -103,7 +99,7 @@ public class Logs {
 		}
 	}
 	
-	public static void printStackTrace() {
+	public void printStackTrace() {
 		int i = 0;
 		for (StackTraceElement ste : Thread.currentThread().getStackTrace()) {
 			i++;
@@ -117,13 +113,13 @@ public class Logs {
 		}
 	}
 	
-	private static void printExceptionStackTrace(Throwable ex) {
+	protected void printExceptionStackTrace(Throwable ex) {
 		if (SHOW_EXCEPTIONS_TRACE) {
 			Log.e(LOG_TAG, Log.getStackTraceString(ex));
 		}
 	}
 	
-	public static void trace() {
+	public void trace() {
 		log("Quick Trace: " + System.currentTimeMillis(), LogLevel.DEBUG, "[trace] ");
 	}
 }
