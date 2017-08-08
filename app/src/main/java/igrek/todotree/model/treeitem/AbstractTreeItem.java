@@ -113,14 +113,15 @@ public abstract class AbstractTreeItem {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
+		sb.append("item: { type: ");
 		sb.append(getTypeName());
-		sb.append(": ");
+		sb.append(", name: ");
 		sb.append(getDisplayName());
 		if (!children.isEmpty()) {
-			sb.append(" [");
+			sb.append(", itemsSize: ");
 			sb.append(children.size());
-			sb.append("]");
 		}
+		sb.append(" }");
 		return sb.toString();
 	}
 	
