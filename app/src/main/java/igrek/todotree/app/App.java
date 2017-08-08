@@ -8,7 +8,6 @@ import igrek.todotree.controller.PersistenceController;
 import igrek.todotree.dagger.DaggerIOC;
 
 //TODO paste as link: >, detecting broken links
-//TODO option restore selected backup
 //TODO item types: link with name, checkbox, text with date / hour, text with number, separator, separator with group name
 //TODO show changes: transaction commit, rollback, revert last change
 
@@ -36,8 +35,7 @@ public class App extends BaseApp {
 	
 	@Override
 	public boolean onKeyBack() {
-		new MainController().backClicked();
-		return true;
+		return new MainController().backClicked();
 	}
 	
 }

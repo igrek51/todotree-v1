@@ -44,7 +44,7 @@ public class BackupManager {
 		if (BACKUP_LAST_VERSIONS == 0)
 			return;
 		
-		PathBuilder dbFilePath = filesystem.pathSD().append(preferences.dbFilePath);
+		PathBuilder dbFilePath = getDBFilePath();
 		PathBuilder dbDirPath = dbFilePath.parent();
 		
 		saveNewBackup(dbDirPath, dbFilePath);
@@ -64,9 +64,8 @@ public class BackupManager {
 	
 	private void removeOldBackups(PathBuilder dbDirPath) {
 		
-		List<String> children = filesystem.listDir(dbDirPath);
 		// backup files list to remove
-		List<Backup> backups = getBackups(children);
+		List<Backup> backups = getBackups();
 		
 		Collections.sort(backups);
 		
@@ -103,7 +102,12 @@ public class BackupManager {
 	}
 	
 	@NonNull
-	private List<Backup> getBackups(List<String> children) {
+	public List<Backup> getBackups() {
+		
+		PathBuilder dbDirPath = getDBFilePath().parent();
+		
+		List<String> children = filesystem.listDir(dbDirPath);
+		
 		List<Backup> backups = new ArrayList<>();
 		// recognize bbackup files and read date from name
 		for (String filename : children) {
@@ -120,6 +124,10 @@ public class BackupManager {
 			}
 		}
 		return backups;
+	}
+	
+	private PathBuilder getDBFilePath() {
+		return filesystem.pathSD().append(preferences.dbFilePath);
 	}
 	
 	private boolean isSameDay(Calendar cal1, Date date2) {

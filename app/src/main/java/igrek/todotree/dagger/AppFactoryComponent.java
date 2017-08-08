@@ -14,6 +14,7 @@ import igrek.todotree.controller.ItemTrashController;
 import igrek.todotree.controller.MainController;
 import igrek.todotree.controller.PersistenceController;
 import igrek.todotree.controller.TreeController;
+import igrek.todotree.ui.contextmenu.BackupListMenu;
 import igrek.todotree.ui.contextmenu.ItemActionsMenu;
 import igrek.todotree.ui.errorcheck.UIErrorHandler;
 
@@ -24,6 +25,8 @@ public interface AppFactoryComponent {
 	void inject(UIErrorHandler there);
 	
 	void inject(ItemActionsMenu there);
+	
+	void inject(BackupListMenu there);
 	
 	// Controllers
 	

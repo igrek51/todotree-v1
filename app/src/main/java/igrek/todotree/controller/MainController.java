@@ -50,6 +50,9 @@ public class MainController {
 			case R.id.action_reload:
 				new PersistenceController().optionReload();
 				return true;
+			case R.id.action_restore_backup:
+				new PersistenceController().optionRestoreBackup();
+				return true;
 			case R.id.action_select_all:
 				new ItemSelectionController().toggleSelectAll();
 				return false;
@@ -60,7 +63,7 @@ public class MainController {
 		return false;
 	}
 	
-	public void backClicked() {
+	public boolean backClicked() {
 		if (appData.isState(AppState.ITEMS_LIST)) {
 			if (selectionManager.isAnythingSelected()) {
 				selectionManager.cancelSelectionMode();
@@ -70,9 +73,10 @@ public class MainController {
 			}
 		} else if (appData.isState(AppState.EDIT_ITEM_CONTENT)) {
 			if (gui.editItemBackClicked())
-				return;
+				return true;
 			new ItemEditorController().cancelEditedItem();
 		}
+		return true;
 	}
 	
 }

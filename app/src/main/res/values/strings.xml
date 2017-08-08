@@ -25,5 +25,6 @@
     <string name="buttonEditInsertNumber">12,34</string>
     <string name="action_goto_root">Go to root</string>
     <string name="action_sum_selected">Sum selected</string>
+    <string name="action_restore_backup">Restore backup</string>
     <string name="exitScreenMessage">Closing...</string>
 </resources>

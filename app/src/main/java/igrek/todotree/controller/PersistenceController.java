@@ -9,6 +9,7 @@ import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.exceptions.DeserializationFailedException;
 import igrek.todotree.logger.Logs;
 import igrek.todotree.model.treeitem.AbstractTreeItem;
+import igrek.todotree.services.backup.Backup;
 import igrek.todotree.services.backup.BackupManager;
 import igrek.todotree.services.filesystem.FilesystemService;
 import igrek.todotree.services.filesystem.PathBuilder;
@@ -18,6 +19,8 @@ import igrek.todotree.services.resources.UserInfoService;
 import igrek.todotree.services.tree.TreeManager;
 import igrek.todotree.services.tree.TreeScrollCache;
 import igrek.todotree.services.tree.serializer.JsonTreeSerializer;
+import igrek.todotree.ui.contextmenu.BackupListMenu;
+import igrek.todotree.ui.contextmenu.ItemActionsMenu;
 
 public class PersistenceController {
 	
@@ -76,16 +79,26 @@ public class PersistenceController {
 	}
 	
 	public void loadRootTree() {
-		changesHistory.clear();
 		filesystem.mkdirIfNotExist(filesystem.pathSD().toString());
 		PathBuilder dbFilePath = filesystem.pathSD().append(preferences.dbFilePath);
-		logger.info("Loading database from file: " + dbFilePath.toString());
-		if (!filesystem.exists(dbFilePath.toString())) {
+		loadDbFromFile(dbFilePath.toString());
+	}
+	
+	public void loadRootTreeFromBackup(Backup backup) {
+		PathBuilder dbFilePath = filesystem.pathSD().append(preferences.dbFilePath);
+		String path = dbFilePath.parent().append(backup.getFilename()).toString();
+		loadDbFromFile(path);
+	}
+	
+	private void loadDbFromFile(String dbFilePath) {
+		changesHistory.clear();
+		logger.info("Loading database from file: " + dbFilePath);
+		if (!filesystem.exists(dbFilePath)) {
 			userInfo.showInfo("Database file does not exist. Default empty database loaded.");
 			return;
 		}
 		try {
-			String fileContent = filesystem.openFileString(dbFilePath.toString());
+			String fileContent = filesystem.openFileString(dbFilePath);
 			// AbstractTreeItem rootItem = SimpleTreeSerializer.loadTree(fileContent); // porting db to JSON
 			AbstractTreeItem rootItem = treeSerializer.deserializeTree(fileContent);
 			treeManager.setRootItem(rootItem);
@@ -107,5 +120,9 @@ public class PersistenceController {
 			logger.error(e);
 		}
 		logger.debug("Database saved successfully.");
+	}
+	
+	public void optionRestoreBackup() {
+		new BackupListMenu().show();
 	}
 }
