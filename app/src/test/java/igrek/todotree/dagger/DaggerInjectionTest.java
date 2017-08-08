@@ -1,24 +1,28 @@
 package igrek.todotree.dagger;
 
 
-import android.app.Activity;
+import org.junit.Before;
+import org.junit.Test;
 
-import javax.inject.Inject;
+import igrek.todotree.MainActivity;
+import igrek.todotree.dagger.test.BaseDaggerTest;
 
-import igrek.todotree.logger.Logs;
+import static org.mockito.Mockito.mock;
 
-public class DaggerInjectionTest implements IDaggerInjectionTest {
+public class DaggerInjectionTest extends BaseDaggerTest {
 	
-	@Inject
-	Activity activity;
-	
-	public DaggerInjectionTest() {
-		
-		DaggerIOC.getAppComponent().inject(this);
-		
+	@Before
+	public void setUp() throws Exception {
+		MainActivity activity = mock(MainActivity.class);
+		// Dagger init test
+		DaggerIOC.initTest(null, activity);
+		DaggerIOC.getTestComponent().inject(this);
 	}
 	
-	public void test() {
-		Logs.info("injected activity: " + activity.toString());
+	@Test
+	public void testInjections() {
+		System.out.println("injected activity: " + activity.toString());
+		System.out.println("injected jsonTreeSerializer: " + jsonTreeSerializer.toString());
 	}
+	
 }

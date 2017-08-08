@@ -28,8 +28,8 @@ import igrek.todotree.ui.GUI;
 @Module
 public class AppFactoryModule {
 	
-	private App app;
-	private Activity activity;
+	protected App app;
+	protected Activity activity;
 	
 	public AppFactoryModule(App app, Activity activity) {
 		this.app = app;
@@ -38,115 +38,115 @@ public class AppFactoryModule {
 	
 	@Provides
 	@Singleton
-	App provideApp() {
+	protected App provideApp() {
 		return app;
 	}
 	
 	@Provides
 	@Singleton
-	Activity provideActivity() {
+	protected Activity provideActivity() {
 		return activity;
 	}
 	
 	@Provides
 	@Singleton
-	AppCompatActivity provideAppCompatActivity() {
+	protected AppCompatActivity provideAppCompatActivity() {
 		return (AppCompatActivity) activity;
 	}
 	
 	@Provides
 	@Singleton
-	FilesystemService provideFilesystemService(Activity activity) {
+	protected FilesystemService provideFilesystemService(Activity activity) {
 		return new FilesystemService(activity);
 	}
 	
 	@Provides
 	@Singleton
-	TreeManager provideTreeManager(ChangesHistory changesHistory) {
+	protected TreeManager provideTreeManager(ChangesHistory changesHistory) {
 		return new TreeManager(changesHistory);
 	}
 	
 	@Provides
 	@Singleton
-	Preferences providePreferences(Activity activity) {
+	protected Preferences providePreferences(Activity activity) {
 		return new Preferences(activity);
 	}
 	
 	@Provides
 	@Singleton
-	BackupManager provideBackupManager(Preferences preferences, FilesystemService filesystem) {
+	protected BackupManager provideBackupManager(Preferences preferences, FilesystemService filesystem) {
 		return new BackupManager(preferences, filesystem);
 	}
 	
 	@Provides
 	@Singleton
-	UserInfoService provideUserInfoService(Activity activity, GUI gui) {
+	protected UserInfoService provideUserInfoService(Activity activity, GUI gui) {
 		return new UserInfoService(activity, gui);
 	}
 	
 	@Provides
 	@Singleton
-	JsonTreeSerializer provideTreeSerializer() {
+	protected JsonTreeSerializer provideTreeSerializer() {
 		return new JsonTreeSerializer();
 	}
 	
 	@Provides
 	@Singleton
-	GUI provideGUI(AppCompatActivity activity) {
+	protected GUI provideGUI(AppCompatActivity activity) {
 		return new GUI(activity);
 	}
 	
 	@Provides
 	@Singleton
-	SystemClipboardManager provideSystemClipboardManager(Activity activity) {
+	protected SystemClipboardManager provideSystemClipboardManager(Activity activity) {
 		return new SystemClipboardManager(activity);
 	}
 	
 	@Provides
 	@Singleton
-	AppData provideAppData() {
+	protected AppData provideAppData() {
 		return new AppData();
 	}
 	
 	@Provides
 	@Singleton
-	DatabaseLock provideDatabaseLock() {
+	protected DatabaseLock provideDatabaseLock() {
 		return new DatabaseLock();
 	}
 	
 	@Provides
 	@Singleton
-	ChangesHistory provideChangesHistory() {
+	protected ChangesHistory provideChangesHistory() {
 		return new ChangesHistory();
 	}
 	
 	@Provides
 	@Singleton
-	ContentTrimmer provideContentTrimmer() {
+	protected ContentTrimmer provideContentTrimmer() {
 		return new ContentTrimmer();
 	}
 	
 	@Provides
 	@Singleton
-	TreeScrollCache provideTreeScrollCache() {
+	protected TreeScrollCache provideTreeScrollCache() {
 		return new TreeScrollCache();
 	}
 	
 	@Provides
 	@Singleton
-	TreeClipboardManager provideTreeClipboardManager() {
+	protected TreeClipboardManager provideTreeClipboardManager() {
 		return new TreeClipboardManager();
 	}
 	
 	@Provides
 	@Singleton
-	TreeSelectionManager provideTreeSelectionManager() {
+	protected TreeSelectionManager provideTreeSelectionManager() {
 		return new TreeSelectionManager();
 	}
 	
 	@Provides
 	@Singleton
-	TreeMover provideTreeMover() {
+	protected TreeMover provideTreeMover() {
 		return new TreeMover();
 	}
 	

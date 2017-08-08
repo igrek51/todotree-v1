@@ -41,7 +41,7 @@ public class ClipboardController {
 	@Inject
 	TreeScrollCache scrollCache;
 	
-	ClipboardController() {
+	public ClipboardController() {
 		DaggerIOC.getAppComponent().inject(this);
 	}
 	

@@ -21,8 +21,6 @@ import igrek.todotree.ui.errorcheck.UIErrorHandler;
 @Component(modules = {AppFactoryModule.class})
 public interface AppFactoryComponent {
 	
-	void inject(IDaggerInjectionTest there);
-	
 	void inject(UIErrorHandler there);
 	
 	void inject(ItemActionsMenu there);

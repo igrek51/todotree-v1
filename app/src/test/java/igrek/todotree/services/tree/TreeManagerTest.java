@@ -1,4 +1,4 @@
-package igrek.todotree;
+package igrek.todotree.services.tree;
 
 
 import org.junit.Before;
@@ -7,34 +7,26 @@ import org.junit.Test;
 import java.util.Set;
 import java.util.TreeSet;
 
+import igrek.todotree.MainActivity;
+import igrek.todotree.controller.ClipboardController;
 import igrek.todotree.dagger.DaggerIOC;
+import igrek.todotree.dagger.test.BaseDaggerTest;
 import igrek.todotree.logger.Logs;
 import igrek.todotree.model.treeitem.AbstractTreeItem;
 import igrek.todotree.model.treeitem.LinkTreeItem;
 import igrek.todotree.model.treeitem.RootTreeItem;
 import igrek.todotree.model.treeitem.TextTreeItem;
-import igrek.todotree.services.clipboard.TreeClipboardManager;
-import igrek.todotree.services.history.ChangesHistory;
-import igrek.todotree.services.tree.TreeManager;
-import igrek.todotree.services.tree.TreeScrollCache;
-import igrek.todotree.services.tree.serializer.JsonTreeSerializer;
 
-public class TreeManagerTest {
-	
-	TreeManager treeManager;
-	TreeClipboardManager treeClipboardManager;
-	TreeScrollCache scrollCache;
-	JsonTreeSerializer serializer;
+import static org.mockito.Mockito.mock;
+
+public class TreeManagerTest extends BaseDaggerTest {
 	
 	@Before
 	public void setUp() throws Exception {
+		MainActivity activity = mock(MainActivity.class);
 		// Dagger init test
-		DaggerIOC.initTest();
-		
-		treeManager = new TreeManager(new ChangesHistory());
-		treeClipboardManager = new TreeClipboardManager();
-		scrollCache = new TreeScrollCache();
-		serializer = new JsonTreeSerializer();
+		DaggerIOC.initTest(null, activity);
+		DaggerIOC.getTestComponent().inject(this);
 	}
 	
 	@Test
@@ -57,7 +49,7 @@ public class TreeManagerTest {
 		treeManager.goTo(itemRa);
 		Set<Integer> itemPosistions = new TreeSet<>();
 		itemPosistions.add(0);
-		copyItems(itemPosistions, true);
+		new ClipboardController().copyItems(itemPosistions, true);
 		
 		// paste as link
 		treeManager.goTo(itemRb);

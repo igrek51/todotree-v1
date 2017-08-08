@@ -57,6 +57,8 @@ dependencies {
     annotationProcessor "com.google.dagger:dagger-compiler:2.10"
     testCompile 'org.testng:testng:6.9.6'
     compile 'com.google.guava:guava:16.0.1'
+
+    testCompile "org.mockito:mockito-core:1.9.5"
 }
 
 //task clean(type: Delete) {
