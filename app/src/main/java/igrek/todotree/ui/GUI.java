@@ -68,7 +68,7 @@ public class GUI extends BaseGUI {
 	
 	public void showEditItemPanel(final AbstractTreeItem item, AbstractTreeItem parent) {
 		showBackButton(true);
-		// TODO redirect to dedicated view
+		// TODO redirect to dedicated views
 		editItemGUI = new EditItemGUI(this, item, parent);
 	}
 	

@@ -11,7 +11,6 @@ import igrek.todotree.MainActivity;
 import igrek.todotree.controller.ClipboardController;
 import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.dagger.test.BaseDaggerTest;
-import igrek.todotree.logger.Logs;
 import igrek.todotree.model.treeitem.AbstractTreeItem;
 import igrek.todotree.model.treeitem.LinkTreeItem;
 import igrek.todotree.model.treeitem.RootTreeItem;
@@ -53,47 +52,13 @@ public class TreeManagerTest extends BaseDaggerTest {
 		
 		// paste as link
 		treeManager.goTo(itemRb);
-		pasteItemsAsLink(0);
+		new ClipboardController().pasteItemsAsLink(0);
 		LinkTreeItem link = (LinkTreeItem) treeManager.getCurrentItem().getChild(0);
 		System.out.println("After pasting link:\n" + serializer.serializeTree(itemR));
 		
-		System.out.println("Link target: " + getTarget(link.getTargetPath()));
-		System.out.println("Link display name" + link.getDisplayName());
+		System.out.println("Link target: " + link.getTarget());
+		System.out.println("Link display name: " + link.getDisplayName());
 		
-	}
-	
-	private void pasteItemsAsLink(int position) {
-		if (treeClipboardManager.isClipboardEmpty()) {
-			logger.info("Clipboard is empty.");
-		} else {
-			for (AbstractTreeItem clipboardItem : treeClipboardManager.getClipboard()) {
-				treeManager.addToCurrent(position, buildLinkItem(clipboardItem));
-				position++; // next item pasted below
-			}
-			logger.info("Items pasted as links: " + treeClipboardManager.getClipboardSize());
-		}
-	}
-	
-	private AbstractTreeItem buildLinkItem(AbstractTreeItem clipboardItem) {
-		LinkTreeItem link = new LinkTreeItem(treeManager.getCurrentItem(), null, null);
-		link.setTarget(treeClipboardManager.getCopiedFrom(), clipboardItem.getDisplayName());
-		return link;
-	}
-	
-	private AbstractTreeItem getTarget(String targetPath) {
-		String[] paths = targetPath.split("\\t");
-		return findItemByPath(paths);
-	}
-	
-	private AbstractTreeItem findItemByPath(String[] paths) {
-		AbstractTreeItem current = treeManager.getRootItem();
-		for (String path : paths) {
-			AbstractTreeItem found = current.findChildByName(path);
-			if (found == null)
-				return null;
-			current = found;
-		}
-		return current;
 	}
 	
 }
