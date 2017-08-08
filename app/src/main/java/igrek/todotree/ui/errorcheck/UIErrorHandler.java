@@ -28,7 +28,7 @@ public class UIErrorHandler {
 		userInfoService.showInfo("Error occurred: " + t.getMessage());
 	}
 	
-	public static void showError(Throwable t){
+	public static void showError(Throwable t) {
 		new UIErrorHandler()._handleError(t);
 	}
 	

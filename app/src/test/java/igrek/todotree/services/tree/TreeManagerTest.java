@@ -3,15 +3,16 @@ package igrek.todotree.services.tree;
 
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.*;
 
 import java.util.Set;
 import java.util.TreeSet;
 
 import igrek.todotree.MainActivity;
 import igrek.todotree.controller.ClipboardController;
+import igrek.todotree.controller.TreeController;
 import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.dagger.test.BaseDaggerTest;
-import igrek.todotree.model.treeitem.AbstractTreeItem;
 import igrek.todotree.model.treeitem.LinkTreeItem;
 import igrek.todotree.model.treeitem.RootTreeItem;
 import igrek.todotree.model.treeitem.TextTreeItem;
@@ -56,8 +57,19 @@ public class TreeManagerTest extends BaseDaggerTest {
 		LinkTreeItem link = (LinkTreeItem) treeManager.getCurrentItem().getChild(0);
 		System.out.println("After pasting link:\n" + serializer.serializeTree(itemR));
 		
+		System.out.println("Link: " + link);
 		System.out.println("Link target: " + link.getTarget());
+		assertEquals(itemRa1, link.getTarget());
+		System.out.println("Link target path: " + link.getTargetPath());
+		System.out.println("Link display target path: " + link.getDisplayTargetPath());
 		System.out.println("Link display name: " + link.getDisplayName());
+		
+		assertEquals(itemRb, treeManager.getCurrentItem());
+		// click pasted link
+		dbLock.setLocked(false);
+		new TreeController().itemClicked(0, link);
+		assertEquals(itemRa1, treeManager.getCurrentItem());
+		System.out.println("current Item: " + treeManager.getCurrentItem());
 		
 	}
 	

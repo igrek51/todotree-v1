@@ -7,6 +7,7 @@ import javax.inject.Inject;
 
 import igrek.todotree.logger.Logs;
 import igrek.todotree.services.clipboard.TreeClipboardManager;
+import igrek.todotree.services.lock.DatabaseLock;
 import igrek.todotree.services.resources.UserInfoService;
 import igrek.todotree.services.tree.TreeManager;
 import igrek.todotree.services.tree.TreeScrollCache;
@@ -37,5 +38,8 @@ public abstract class BaseDaggerTest {
 	
 	@Inject
 	protected Logs logger;
+	
+	@Inject
+	protected DatabaseLock dbLock;
 	
 }

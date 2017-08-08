@@ -55,7 +55,7 @@ public class LinkTreeItem extends AbstractTreeItem {
 	}
 	
 	public String getDisplayTargetPath() {
-		return targetPath.replace("\t", "/");
+		return "/" + targetPath.replace("\t", "/");
 	}
 	
 	public AbstractTreeItem getTarget() {

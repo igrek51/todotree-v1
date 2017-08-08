@@ -6,7 +6,6 @@ import igrek.todotree.controller.GUIController;
 import igrek.todotree.controller.MainController;
 import igrek.todotree.controller.PersistenceController;
 import igrek.todotree.dagger.DaggerIOC;
-import igrek.todotree.logger.Logs;
 
 //TODO paste as link: >, detecting broken links
 //TODO option restore selected backup

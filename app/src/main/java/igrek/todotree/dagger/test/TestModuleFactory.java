@@ -18,7 +18,7 @@ import igrek.todotree.ui.GUI;
 public class TestModuleFactory {
 	
 	public static AppFactoryModule getTestModule(App app, Activity activity) {
-		return new AppFactoryModule(app, activity){
+		return new AppFactoryModule(app, activity) {
 			
 			@Override
 			protected UserInfoService provideUserInfoService(Activity activity, GUI gui, Logs logger) {

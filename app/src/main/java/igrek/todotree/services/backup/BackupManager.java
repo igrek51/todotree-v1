@@ -14,8 +14,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import javax.inject.Inject;
-
 import igrek.todotree.logger.Logs;
 import igrek.todotree.services.filesystem.FilesystemService;
 import igrek.todotree.services.filesystem.PathBuilder;

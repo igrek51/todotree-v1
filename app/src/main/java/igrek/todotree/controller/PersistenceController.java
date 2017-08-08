@@ -93,7 +93,7 @@ public class PersistenceController {
 		} catch (IOException | DeserializationFailedException e) {
 			changesHistory.registerChange();
 			logger.error(e);
-			userInfo.showInfo("Failed to load database.");
+			userInfo.showInfo("Failed to load database: " + e.getMessage());
 		}
 	}
 	
