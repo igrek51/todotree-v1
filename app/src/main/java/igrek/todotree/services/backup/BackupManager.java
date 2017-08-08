@@ -1,6 +1,6 @@
 package igrek.todotree.services.backup;
 
-import android.util.Pair;
+import android.support.annotation.NonNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,7 +9,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -25,9 +24,9 @@ public class BackupManager {
 	
 	private static final String BACKUP_FILE_PREFIX = "backup_";
 	
-	/** backupy z ostatnio zapisanych baz */
+	/** max count of last versions backups */
 	private static final int BACKUP_LAST_VERSIONS = 10;
-	/** backupy z ostatnich dni */
+	/** daily backups count */
 	private static final int BACKUP_LAST_DAYS = 14;
 	
 	private FilesystemService filesystem;
@@ -48,10 +47,8 @@ public class BackupManager {
 		PathBuilder dbFilePath = filesystem.pathSD().append(preferences.dbFilePath);
 		PathBuilder dbDirPath = dbFilePath.parent();
 		
-		//zapisanie nowego backupa
 		saveNewBackup(dbDirPath, dbFilePath);
 		
-		//usunięcie starych backupów
 		removeOldBackups(dbDirPath);
 	}
 	
@@ -68,68 +65,64 @@ public class BackupManager {
 	private void removeOldBackups(PathBuilder dbDirPath) {
 		
 		List<String> children = filesystem.listDir(dbDirPath);
+		// backup files list to remove
+		List<Backup> backups = getBackups(children);
 		
-		List<Pair<String, Date>> backups = new ArrayList<>();
-		//rozpoznanie plików backup i odczytanie ich dat
-		for (String child : children) {
-			if (child.startsWith(BACKUP_FILE_PREFIX)) {
-				String dateStr = PathBuilder.removeExtension(child)
-						.substring(BACKUP_FILE_PREFIX.length());
-				Date date = null;
-				try {
-					date = dateFormat.parse(dateStr);
-				} catch (ParseException e) {
-					logger.warn("Invalid date format in file name: " + child);
-				}
-				backups.add(new Pair<>(child, date));
-			}
-		}
+		Collections.sort(backups);
 		
-		//posortowanie po datach malejąco (od najnowszych)
-		Collections.sort(backups, new Comparator<Pair<String, Date>>() {
-			@Override
-			public int compare(Pair<String, Date> a, Pair<String, Date> b) {
-				if (a.second == null)
-					return +1;
-				if (b.second == null)
-					return -1;
-				return -a.second.compareTo(b.second);
-			}
-		});
-		
-		//pozostawienie kilku najnowszych backupów
+		// retain few newest backups
 		for (int i = 0; i < BACKUP_LAST_VERSIONS && !backups.isEmpty(); i++) {
 			backups.remove(0);
 		}
 		
-		//pozostawienie backupów z różnych dni i ograniczonej liczbie dni wstecz
+		// retain backups from different days
 		if (BACKUP_LAST_DAYS > 0) {
 			for (int i = 1; i <= BACKUP_LAST_DAYS; i++) {
-				// dzień, z którego należy nie usuwać najwyżej jednego backupa
+				// calculate days before
 				Calendar calendar1 = Calendar.getInstance();
 				calendar1.setTime(new Date());
 				calendar1.add(Calendar.DAY_OF_MONTH, -i);
-				//poszukiwanie backupa z tego dnia
+				// find newest backup from that day
 				for (int j = 0; j < backups.size(); j++) {
-					Pair<String, Date> backup = backups.get(j);
-					if (sameDay(calendar1, backup.second)) {
-						backups.remove(j); //zachowaj ten backup
+					Backup backup = backups.get(j);
+					if (isSameDay(calendar1, backup.getDate())) {
+						backups.remove(j); // and retain this backup
 						break;
 					}
 				}
 			}
 		}
 		
-		//usunięcie pozostałych plików
-		for (Pair<String, Date> pair : backups) {
-			PathBuilder toRemovePath = dbDirPath.append(pair.first);
+		// remove other backups
+		for (Backup backup : backups) {
+			PathBuilder toRemovePath = dbDirPath.append(backup.getFilename());
 			filesystem.delete(toRemovePath);
 			logger.info("Old backup has been removed: " + toRemovePath.toString());
 		}
 		
 	}
 	
-	private boolean sameDay(Calendar cal1, Date date2) {
+	@NonNull
+	private List<Backup> getBackups(List<String> children) {
+		List<Backup> backups = new ArrayList<>();
+		// recognize bbackup files and read date from name
+		for (String filename : children) {
+			if (filename.startsWith(BACKUP_FILE_PREFIX)) {
+				String dateStr = PathBuilder.removeExtension(filename)
+						.substring(BACKUP_FILE_PREFIX.length());
+				Date date = null;
+				try {
+					date = dateFormat.parse(dateStr);
+				} catch (ParseException e) {
+					logger.warn("Invalid date format in file name: " + filename);
+				}
+				backups.add(new Backup(filename, date));
+			}
+		}
+		return backups;
+	}
+	
+	private boolean isSameDay(Calendar cal1, Date date2) {
 		Calendar cal2 = Calendar.getInstance();
 		cal2.setTime(date2);
 		return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) && cal1.get(Calendar.DAY_OF_YEAR) == cal2
