@@ -567,7 +567,8 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
 					if (Math.abs(dy) <= itemH * GESTURE_MAX_DY) { //zachowanie braku przesunięcia w pionie
 						//wejście wgłąb elementu smyraniem w prawo
 						//Logs.debug("gesture: go into intercepted, dx: " + (dx / getWidth()) + " , dy: " + (Math.abs(dy) / itemH));
-						new TreeController().itemGoIntoClicked(gestureStartPos);
+						AbstractTreeItem item = adapter.getItem(gestureStartPos);
+						new TreeController().itemGoIntoClicked(gestureStartPos, item);
 						gestureStartPos = null; //reset
 						return true;
 					}

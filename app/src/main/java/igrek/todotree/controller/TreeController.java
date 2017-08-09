@@ -65,15 +65,19 @@ public class TreeController {
 		}
 	}
 	
-	public void itemGoIntoClicked(int position) {
+	public void itemGoIntoClicked(int position, AbstractTreeItem item) {
 		if (lock.isLocked()) {
 			lock.setLocked(false);
 			logger.debug("Database unlocked.");
 		}
-		selectionManager.cancelSelectionMode();
-		goInto(position);
-		new GUIController().updateItemsList();
-		gui.scrollToItem(0);
+		if (item instanceof LinkTreeItem) {
+			goToLinkTarget((LinkTreeItem) item);
+		} else {
+			selectionManager.cancelSelectionMode();
+			goInto(position);
+			new GUIController().updateItemsList();
+			gui.scrollToItem(0);
+		}
 	}
 	
 	public void goInto(int childIndex) {
@@ -117,18 +121,22 @@ public class TreeController {
 				if (item.isEmpty()) {
 					new ItemEditorController().itemEditClicked(item);
 				} else {
-					itemGoIntoClicked(position);
+					itemGoIntoClicked(position, item);
 				}
 			} else if (item instanceof LinkTreeItem) {
-				// go into target
-				LinkTreeItem link = (LinkTreeItem) item;
-				AbstractTreeItem target = link.getTarget();
-				if (target == null) {
-					infoService.showInfo("Link is broken: " + link.getDisplayTargetPath());
-				} else {
-					navigateTo(target);
-				}
+				goToLinkTarget((LinkTreeItem) item);
 			}
+		}
+	}
+	
+	private void goToLinkTarget(LinkTreeItem item) {
+		// go into target
+		LinkTreeItem link = item;
+		AbstractTreeItem target = link.getTarget();
+		if (target == null) {
+			infoService.showInfo("Link is broken: " + link.getDisplayTargetPath());
+		} else {
+			navigateTo(target);
 		}
 	}
 	
