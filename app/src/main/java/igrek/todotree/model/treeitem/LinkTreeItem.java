@@ -65,30 +65,16 @@ public class LinkTreeItem extends AbstractTreeItem {
 	
 	public void setTarget(AbstractTreeItem target) {
 		Joiner joiner = Joiner.on("\t");
-		List<String> names = getNamesPaths(target);
+		List<String> names = target.getNamesPaths();
 		targetPath = joiner.join(names);
 	}
 	
 	public void setTarget(AbstractTreeItem targetParent, String targetName) {
 		Joiner joiner = Joiner.on("\t");
-		List<String> names = getNamesPaths(targetParent);
+		List<String> names = targetParent.getNamesPaths();
 		names.add(targetName);
 		targetPath = joiner.join(names);
 	}
-	
-	private List<String> getNamesPaths(AbstractTreeItem target) {
-		List<String> names = new ArrayList<>();
-		AbstractTreeItem current = target;
-		do {
-			//except root item
-			if (current instanceof RootTreeItem)
-				break;
-			names.add(current.getDisplayName());
-			current = current.getParent();
-		} while (current != null);
-		return names;
-	}
-	
 	
 	public boolean isBroken() {
 		return getTarget() == null;

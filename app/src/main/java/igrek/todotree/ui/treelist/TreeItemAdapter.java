@@ -3,6 +3,8 @@ package igrek.todotree.ui.treelist;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
+import android.text.SpannableString;
+import android.text.style.UnderlineSpan;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -23,6 +25,8 @@ import igrek.todotree.R;
 import igrek.todotree.controller.ItemEditorController;
 import igrek.todotree.controller.ItemSelectionController;
 import igrek.todotree.model.treeitem.AbstractTreeItem;
+import igrek.todotree.model.treeitem.LinkTreeItem;
+import igrek.todotree.model.treeitem.TextTreeItem;
 import igrek.todotree.ui.errorcheck.SafeClickListener;
 
 class TreeItemAdapter extends ArrayAdapter<AbstractTreeItem> {
@@ -115,6 +119,11 @@ class TreeItemAdapter extends ArrayAdapter<AbstractTreeItem> {
 				textView.setTypeface(null, Typeface.NORMAL);
 			}
 			textView.setText(item.getDisplayName());
+			if (item instanceof LinkTreeItem){
+				SpannableString content = new SpannableString(item.getDisplayName());
+				content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
+				textView.setText(content);
+			}
 			
 			// ilość potomków
 			TextView tvItemChildSize = (TextView) itemView.findViewById(R.id.tvItemChildSize);

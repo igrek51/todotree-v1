@@ -2,6 +2,7 @@ package igrek.todotree.model.treeitem;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public abstract class AbstractTreeItem {
@@ -78,7 +79,7 @@ public abstract class AbstractTreeItem {
 	
 	public AbstractTreeItem findChildByName(String name) {
 		for (AbstractTreeItem child : children) {
-			if (child.getDisplayName().equals(name))
+			if (child instanceof TextTreeItem && child.getDisplayName().equals(name))
 				return child;
 		}
 		return null;
@@ -108,6 +109,20 @@ public abstract class AbstractTreeItem {
 	
 	public boolean remove(AbstractTreeItem item) {
 		return children.remove(item);
+	}
+	
+	public List<String> getNamesPaths() {
+		List<String> names = new ArrayList<>();
+		AbstractTreeItem current = this;
+		do {
+			//except root item
+			if (current instanceof RootTreeItem)
+				break;
+			names.add(current.getDisplayName());
+			current = current.getParent();
+		} while (current != null);
+		Collections.reverse(names);
+		return names;
 	}
 	
 	@Override
