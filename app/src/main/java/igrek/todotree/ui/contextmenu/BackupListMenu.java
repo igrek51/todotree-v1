@@ -12,10 +12,14 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
+import igrek.todotree.controller.GUIController;
 import igrek.todotree.controller.PersistenceController;
 import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.services.backup.Backup;
 import igrek.todotree.services.backup.BackupManager;
+import igrek.todotree.services.resources.UserInfoService;
+import igrek.todotree.services.tree.TreeManager;
+import igrek.todotree.services.tree.TreeScrollCache;
 import igrek.todotree.ui.errorcheck.UIErrorHandler;
 
 public class BackupListMenu {
@@ -25,6 +29,15 @@ public class BackupListMenu {
 	
 	@Inject
 	BackupManager backupManager;
+	
+	@Inject
+	UserInfoService userInfo;
+	
+	@Inject
+	TreeScrollCache scrollCache;
+	
+	@Inject
+	TreeManager treeManager;
 	
 	private SimpleDateFormat displayDateFormat = new SimpleDateFormat("yyyy-MM-dd, HH:mm:ss", Locale.ENGLISH);
 	
@@ -62,7 +75,11 @@ public class BackupListMenu {
 			actions.add(new RestoreBackupAction(displayDateFormat.format(backup.getDate())) {
 				@Override
 				public void execute() {
+					treeManager.reset();
+					scrollCache.clear();
 					new PersistenceController().loadRootTreeFromBackup(backup);
+					new GUIController().updateItemsList();
+					userInfo.showInfo("Database backup loaded: " + backup.getFilename());
 				}
 			});
 		}

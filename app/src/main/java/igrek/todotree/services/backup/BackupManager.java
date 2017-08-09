@@ -67,8 +67,6 @@ public class BackupManager {
 		// backup files list to remove
 		List<Backup> backups = getBackups();
 		
-		Collections.sort(backups);
-		
 		// retain few newest backups
 		for (int i = 0; i < BACKUP_LAST_VERSIONS && !backups.isEmpty(); i++) {
 			backups.remove(0);
@@ -123,6 +121,9 @@ public class BackupManager {
 				backups.add(new Backup(filename, date));
 			}
 		}
+		
+		Collections.sort(backups);
+		
 		return backups;
 	}
 	
