@@ -3,7 +3,6 @@ package igrek.todotree.model.treeitem;
 
 import com.google.common.base.Joiner;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import igrek.todotree.controller.TreeController;
@@ -29,12 +28,12 @@ public class LinkTreeItem extends AbstractTreeItem {
 		if (name == null) {
 			AbstractTreeItem target = getTarget();
 			if (target == null) {
-				return "> " + getDisplayTargetPath();
+				return getDisplayTargetPath();
 			} else {
-				return "> " + target.getDisplayName();
+				return target.getDisplayName();
 			}
 		}
-		return "> " + name;
+		return name;
 	}
 	
 	@Override
@@ -48,10 +47,6 @@ public class LinkTreeItem extends AbstractTreeItem {
 	
 	public String getTargetPath() {
 		return targetPath;
-	}
-	
-	public void setTargetPath(String targetPath) {
-		this.targetPath = targetPath;
 	}
 	
 	public String getDisplayTargetPath() {
