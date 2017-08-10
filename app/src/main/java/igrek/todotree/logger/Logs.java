@@ -73,12 +73,11 @@ public class Logs {
 	
 	
 	protected void log(String message, LogLevel level, String logPrefix) {
-		
-		if (level.lowerOrEqual(CONSOLE_LEVEL)) {
+		if (level.moreOrEqualImportantThan(CONSOLE_LEVEL)) {
 			
 			String consoleMessage;
-			if (level.higherOrEqual(SHOW_TRACE_DETAILS_LEVEL)) {
-				final int stackTraceIndex = 4;
+			if (level.lessOrEqualImportantThan(SHOW_TRACE_DETAILS_LEVEL)) {
+				final int stackTraceIndex = 4; // may change due to some internal methods
 				
 				StackTraceElement ste = Thread.currentThread().getStackTrace()[stackTraceIndex];
 				
@@ -91,10 +90,10 @@ public class Logs {
 				consoleMessage = logPrefix + message;
 			}
 			
-			if (level.lowerOrEqual(LogLevel.ERROR)) {
-				Log.e(LOG_TAG, consoleMessage);
+			if (level.moreOrEqualImportantThan(LogLevel.ERROR)) {
+				printError(consoleMessage);
 			} else {
-				Log.i(LOG_TAG, consoleMessage);
+				printInfo(consoleMessage);
 			}
 		}
 	}
@@ -103,20 +102,28 @@ public class Logs {
 		int i = 0;
 		for (StackTraceElement ste : Thread.currentThread().getStackTrace()) {
 			i++;
-			if (i <= 3)
+			if (i <= 3) // may change due to some internal methods
 				continue;
 			String methodName = ste.getMethodName();
 			String fileName = ste.getFileName();
 			int lineNumber = ste.getLineNumber();
 			String consoleMessage = "[trace] STACK TRACE " + (i - 3) + ": " + methodName + "(" + fileName + ":" + lineNumber + ")";
-			Log.i(LOG_TAG, consoleMessage);
+			printInfo(consoleMessage);
 		}
 	}
 	
 	protected void printExceptionStackTrace(Throwable ex) {
 		if (SHOW_EXCEPTIONS_TRACE) {
-			Log.e(LOG_TAG, Log.getStackTraceString(ex));
+			printError(Log.getStackTraceString(ex));
 		}
+	}
+	
+	protected void printInfo(String msg) {
+		Log.i(LOG_TAG, msg);
+	}
+	
+	protected void printError(String msg) {
+		Log.e(LOG_TAG, msg);
 	}
 	
 	public void trace() {

@@ -25,11 +25,11 @@ public enum LogLevel {
 		this.levelNumber = levelNumber;
 	}
 	
-	public boolean lowerOrEqual(LogLevel level2) {
+	public boolean moreOrEqualImportantThan(LogLevel level2) {
 		return levelNumber <= level2.levelNumber;
 	}
 	
-	public boolean higherOrEqual(LogLevel level2) {
+	public boolean lessOrEqualImportantThan(LogLevel level2) {
 		return levelNumber >= level2.levelNumber;
 	}
 	
