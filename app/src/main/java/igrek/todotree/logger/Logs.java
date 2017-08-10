@@ -14,7 +14,7 @@ public class Logs {
 	
 	private static final String LOG_TAG = "ylog";
 	protected static final boolean SHOW_EXCEPTIONS_TRACE = true;
-	protected static final LogLevel SHOW_TRACE_DETAILS_LEVEL = LogLevel.TRACE;
+	protected static final LogLevel SHOW_TRACE_DETAILS_LEVEL = LogLevel.DEBUG;
 	
 	public void error(String message) {
 		log(message, LogLevel.ERROR, "[ERROR] ");
