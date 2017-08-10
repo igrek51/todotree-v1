@@ -111,8 +111,8 @@ public class AppFactoryModule {
 	
 	@Provides
 	@Singleton
-	protected DatabaseLock provideDatabaseLock() {
-		return new DatabaseLock();
+	protected DatabaseLock provideDatabaseLock(Preferences preferences) {
+		return new DatabaseLock(preferences);
 	}
 	
 	@Provides

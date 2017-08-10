@@ -15,12 +15,12 @@ import igrek.todotree.services.filesystem.FilesystemService;
 import igrek.todotree.services.filesystem.PathBuilder;
 import igrek.todotree.services.history.ChangesHistory;
 import igrek.todotree.services.preferences.Preferences;
+import igrek.todotree.services.preferences.PropertyDefinition;
 import igrek.todotree.services.resources.UserInfoService;
 import igrek.todotree.services.tree.TreeManager;
 import igrek.todotree.services.tree.TreeScrollCache;
 import igrek.todotree.services.tree.serializer.JsonTreeSerializer;
 import igrek.todotree.ui.contextmenu.BackupListMenu;
-import igrek.todotree.ui.contextmenu.ItemActionsMenu;
 
 public class PersistenceController {
 	
@@ -80,12 +80,14 @@ public class PersistenceController {
 	
 	public void loadRootTree() {
 		filesystem.mkdirIfNotExist(filesystem.pathSD().toString());
-		PathBuilder dbFilePath = filesystem.pathSD().append(preferences.dbFilePath);
+		PathBuilder dbFilePath = filesystem.pathSD()
+				.append(preferences.getValue(PropertyDefinition.dbFilePath, String.class));
 		loadDbFromFile(dbFilePath.toString());
 	}
 	
 	public void loadRootTreeFromBackup(Backup backup) {
-		PathBuilder dbFilePath = filesystem.pathSD().append(preferences.dbFilePath);
+		PathBuilder dbFilePath = filesystem.pathSD()
+				.append(preferences.getValue(PropertyDefinition.dbFilePath, String.class));
 		String path = dbFilePath.parent().append(backup.getFilename()).toString();
 		loadDbFromFile(path);
 	}
@@ -111,7 +113,8 @@ public class PersistenceController {
 	}
 	
 	private void saveRootTree() {
-		PathBuilder dbFilePath = filesystem.pathSD().append(preferences.dbFilePath);
+		PathBuilder dbFilePath = filesystem.pathSD()
+				.append(preferences.getValue(PropertyDefinition.dbFilePath, String.class));
 		try {
 			String output = treeSerializer.serializeTree(treeManager.getRootItem());
 			//Logs.debug("Serialized data: " + output);
