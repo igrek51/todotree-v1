@@ -9,10 +9,7 @@ public class DatabaseLock {
 	
 	private boolean locked = true;
 	
-	private Preferences preferences;
-	
 	public DatabaseLock(Preferences preferences) {
-		this.preferences = preferences;
 		locked = preferences.getValue(PropertyDefinition.lockDB, Boolean.class);
 	}
 	

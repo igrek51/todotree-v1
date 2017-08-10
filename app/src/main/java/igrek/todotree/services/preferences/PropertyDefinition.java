@@ -5,7 +5,7 @@ public enum PropertyDefinition {
 	
 	dbFilePath("Android/data/igrek.todotree/todo.json"),
 	
-	lockDB(true);
+	lockDB(false);
 	
 	
 	private Object defaultValue;

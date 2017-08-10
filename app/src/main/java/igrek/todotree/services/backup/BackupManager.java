@@ -17,6 +17,7 @@ import igrek.todotree.logger.Logs;
 import igrek.todotree.services.filesystem.FilesystemService;
 import igrek.todotree.services.filesystem.PathBuilder;
 import igrek.todotree.services.preferences.Preferences;
+import igrek.todotree.services.preferences.PropertyDefinition;
 
 public class BackupManager {
 	
@@ -128,7 +129,7 @@ public class BackupManager {
 	}
 	
 	private PathBuilder getDBFilePath() {
-		return filesystem.pathSD().append(preferences.dbFilePath);
+		return filesystem.pathSD().append(preferences.getValue(PropertyDefinition.dbFilePath, String.class));
 	}
 	
 	private boolean isSameDay(Calendar cal1, Date date2) {
