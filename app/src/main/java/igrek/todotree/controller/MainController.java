@@ -56,6 +56,12 @@ public class MainController {
 			case R.id.action_select_all:
 				new ItemSelectionController().toggleSelectAll();
 				return false;
+			case R.id.action_cut:
+				new ClipboardController().cutSelectedItems();
+				return false;
+			case R.id.action_copy:
+				new ClipboardController().copySelectedItems();
+				return false;
 			case R.id.action_sum_selected:
 				new ItemSelectionController().sumItems();
 				return false;

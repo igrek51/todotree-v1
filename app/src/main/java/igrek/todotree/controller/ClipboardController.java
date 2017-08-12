@@ -70,11 +70,27 @@ public class ClipboardController {
 		}
 	}
 	
+	public void copySelectedItems() {
+		if (selectionManager.isAnythingSelected()) {
+			copyItems(selectionManager.getSelectedItems(), true);
+		} else {
+			userInfo.showInfo("No selected items");
+		}
+	}
+	
 	public void cutItems(TreeSet<Integer> itemPosistions) {
 		if (!itemPosistions.isEmpty()) {
 			copyItems(itemPosistions, false);
 			userInfo.showInfo("Items cut: " + itemPosistions.size());
 			new ItemTrashController().removeItems(itemPosistions, false);
+		}
+	}
+	
+	public void cutSelectedItems() {
+		if (selectionManager.isAnythingSelected()) {
+			cutItems(selectionManager.getSelectedItems());
+		} else {
+			userInfo.showInfo("No selected items");
 		}
 	}
 	
