@@ -10,7 +10,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import igrek.todotree.controller.ItemActionController;
+import igrek.todotree.actions.ItemActionController;
 import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.services.clipboard.TreeClipboardManager;
 import igrek.todotree.services.tree.TreeManager;

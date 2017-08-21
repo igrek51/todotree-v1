@@ -1,4 +1,4 @@
-package igrek.todotree.controller;
+package igrek.todotree.actions;
 
 
 import java.util.Set;
@@ -103,7 +103,7 @@ public class ClipboardController {
 				treeManager.addToCurrent(position, new TextTreeItem(systemClipboard));
 				userInfo.showInfo("Item pasted: " + systemClipboard);
 				new GUIController().updateItemsList();
-				gui.scrollToItem(scrollCache.restoreScrollPosition(treeManager.getCurrentItem()), position - 1);
+				gui.scrollToPosition(scrollCache.restoreScrollPosition(treeManager.getCurrentItem()));
 			} else {
 				userInfo.showInfo("Clipboard is empty.");
 			}
@@ -116,7 +116,7 @@ public class ClipboardController {
 			userInfo.showInfo("Items pasted: " + treeClipboardManager.getClipboardSize());
 			treeClipboardManager.recopyClipboard();
 			new GUIController().updateItemsList();
-			gui.scrollToItem(scrollCache.restoreScrollPosition(treeManager.getCurrentItem()), position - 1);
+			gui.scrollToPosition(scrollCache.restoreScrollPosition(treeManager.getCurrentItem()));
 		}
 	}
 	
@@ -131,7 +131,7 @@ public class ClipboardController {
 			}
 			userInfo.showInfo("Items pasted as links: " + treeClipboardManager.getClipboardSize());
 			new GUIController().updateItemsList();
-			gui.scrollToItem(scrollCache.restoreScrollPosition(treeManager.getCurrentItem()), position - 1);
+			gui.scrollToPosition(scrollCache.restoreScrollPosition(treeManager.getCurrentItem()));
 		}
 	}
 	

@@ -5,7 +5,7 @@ import com.google.common.base.Joiner;
 
 import java.util.List;
 
-import igrek.todotree.controller.TreeController;
+import igrek.todotree.actions.TreeController;
 
 public class LinkTreeItem extends AbstractTreeItem {
 	

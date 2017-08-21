@@ -2,9 +2,9 @@ package igrek.todotree.app;
 
 import android.support.v7.app.AppCompatActivity;
 
-import igrek.todotree.controller.GUIController;
-import igrek.todotree.controller.MainController;
-import igrek.todotree.controller.PersistenceController;
+import igrek.todotree.actions.GUIController;
+import igrek.todotree.actions.MainController;
+import igrek.todotree.actions.PersistenceController;
 import igrek.todotree.dagger.DaggerIOC;
 
 //TODO paste as link: >, detecting broken links

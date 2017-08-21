@@ -11,7 +11,7 @@ import android.widget.RelativeLayout;
 import java.util.Set;
 
 import igrek.todotree.R;
-import igrek.todotree.controller.MainController;
+import igrek.todotree.actions.MainController;
 import igrek.todotree.model.treeitem.AbstractTreeItem;
 import igrek.todotree.ui.edititem.EditItemGUI;
 import igrek.todotree.ui.errorcheck.SafeClickListener;

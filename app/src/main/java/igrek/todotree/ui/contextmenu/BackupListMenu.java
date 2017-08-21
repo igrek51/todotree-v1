@@ -12,8 +12,8 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
-import igrek.todotree.controller.GUIController;
-import igrek.todotree.controller.PersistenceController;
+import igrek.todotree.actions.GUIController;
+import igrek.todotree.actions.PersistenceController;
 import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.services.backup.Backup;
 import igrek.todotree.services.backup.BackupManager;

@@ -1,4 +1,4 @@
-package igrek.todotree.controller;
+package igrek.todotree.actions;
 
 
 import java.io.IOException;
@@ -90,6 +90,7 @@ public class PersistenceController {
 				.append(preferences.getValue(PropertyDefinition.dbFilePath, String.class));
 		String path = dbFilePath.parent().append(backup.getFilename()).toString();
 		loadDbFromFile(path);
+		changesHistory.registerChange();
 	}
 	
 	private void loadDbFromFile(String dbFilePath) {

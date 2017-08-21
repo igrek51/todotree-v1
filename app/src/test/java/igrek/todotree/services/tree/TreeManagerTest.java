@@ -3,20 +3,20 @@ package igrek.todotree.services.tree;
 
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 import java.util.Set;
 import java.util.TreeSet;
 
 import igrek.todotree.MainActivity;
-import igrek.todotree.controller.ClipboardController;
-import igrek.todotree.controller.TreeController;
+import igrek.todotree.actions.ClipboardController;
+import igrek.todotree.actions.TreeController;
 import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.dagger.test.BaseDaggerTest;
 import igrek.todotree.model.treeitem.LinkTreeItem;
 import igrek.todotree.model.treeitem.RootTreeItem;
 import igrek.todotree.model.treeitem.TextTreeItem;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
 public class TreeManagerTest extends BaseDaggerTest {

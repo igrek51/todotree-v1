@@ -23,8 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-import igrek.todotree.controller.ItemEditorController;
-import igrek.todotree.controller.TreeController;
+import igrek.todotree.actions.ItemEditorController;
+import igrek.todotree.actions.TreeController;
 import igrek.todotree.logger.Logs;
 import igrek.todotree.model.treeitem.AbstractTreeItem;
 import igrek.todotree.ui.contextmenu.ItemActionsMenu;

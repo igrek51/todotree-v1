@@ -10,7 +10,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import igrek.todotree.R;
-import igrek.todotree.controller.ItemEditorController;
+import igrek.todotree.actions.ItemEditorController;
 import igrek.todotree.model.treeitem.AbstractTreeItem;
 import igrek.todotree.ui.GUI;
 import igrek.todotree.ui.errorcheck.SafeClickListener;
