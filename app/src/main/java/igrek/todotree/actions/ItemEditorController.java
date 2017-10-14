@@ -99,12 +99,10 @@ public class ItemEditorController {
 	
 	private void returnFromItemEditing() {
 		new GUIController().showItemsList();
-		if (getNewItemPosition() != null) { //editing existing item
-			if (getNewItemPosition() == treeManager.getCurrentItem().size() - 1) { // last item
-				gui.scrollToBottom();
-			} else {
-				new GUIController().restoreScrollPosition(treeManager.getCurrentItem());
-			}
+		if (getNewItemPosition() != null) { //editing new item
+			gui.scrollToBottom();
+		} else {
+			new GUIController().restoreScrollPosition(treeManager.getCurrentItem());
 		}
 		treeManager.setNewItemPosition(null);
 	}
