@@ -59,7 +59,6 @@ public class ItemActionController {
 			itemPosistions.add(position);
 		}
 		new ClipboardController().copyItems(itemPosistions, true);
-		// TODO when copy remember path to current item (or current item) to create valid links
 	}
 	
 	public void actionPasteAbove(final int position) {

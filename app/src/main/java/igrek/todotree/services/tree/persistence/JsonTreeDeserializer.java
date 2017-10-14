@@ -15,11 +15,11 @@ import igrek.todotree.model.treeitem.TextTreeItem;
 
 class JsonTreeDeserializer {
 	
-	Pattern singleItemPattern;
-	Pattern multiItemPattern;
-	Pattern nameValuePattern;
+	private Pattern singleItemPattern;
+	private Pattern multiItemPattern;
+	private Pattern nameValuePattern;
 	
-	final String CLOSING_BRACKET = "]},";
+	private final String BLOCK_CLOSING_BRACKET = "]},";
 	
 	JsonTreeDeserializer() {
 		singleItemPattern = Pattern.compile("^\\{ \"type\": \"([\\w/]+)\"(, \"(\\w+)\": \"((?:[^\"\\\\]|\\\\.)*)\")* \\},$");
@@ -71,7 +71,7 @@ class JsonTreeDeserializer {
 				throw new DeserializationFailedException("Insufficient children lines");
 			
 			// last line of part must be closing bracket
-			if (!lines.get(lines.size() - 1).getIndentedLine().equals(CLOSING_BRACKET))
+			if (!lines.get(lines.size() - 1).getIndentedLine().equals(BLOCK_CLOSING_BRACKET))
 				throw new DeserializationFailedException("No matching closing bracket found");
 			
 			// split all child lines to parts
@@ -191,7 +191,7 @@ class JsonTreeDeserializer {
 		for (int j = startIndex + 1; j < lines.size(); j++) {
 			IndentedLine line = lines.get(j);
 			if (line.getIndentation() == headerIndentation && line.getIndentedLine()
-					.equals(CLOSING_BRACKET)) {
+					.equals(BLOCK_CLOSING_BRACKET)) {
 				return j;
 			}
 		}

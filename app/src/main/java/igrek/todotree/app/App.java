@@ -7,7 +7,6 @@ import igrek.todotree.actions.MainController;
 import igrek.todotree.actions.PersistenceController;
 import igrek.todotree.dagger.DaggerIOC;
 
-//TODO paste as link: >, detecting broken links
 //TODO item types: link with name, checkbox, text with date / hour, text with number, separator, separator with group name
 //TODO show changes: transaction commit, rollback, revert last change
 

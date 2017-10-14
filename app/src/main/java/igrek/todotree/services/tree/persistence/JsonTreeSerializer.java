@@ -44,7 +44,11 @@ class JsonTreeSerializer {
 		if (item instanceof TextTreeItem) {
 			serializeAttribute(output, "name", ((TextTreeItem) item).getDisplayName());
 		} else if (item instanceof LinkTreeItem) {
-			serializeAttribute(output, "target", ((LinkTreeItem) item).getTargetPath());
+			LinkTreeItem linkItem = (LinkTreeItem) item;
+			serializeAttribute(output, "target", linkItem.getTargetPath());
+			if (linkItem.hasCustomName()) {
+				serializeAttribute(output, "name", linkItem.getCustomName());
+			}
 		} else if (item instanceof CheckboxTreeItem) {
 			serializeAttribute(output, "checked", ((CheckboxTreeItem) item).isChecked() ? "true" : "false");
 		}

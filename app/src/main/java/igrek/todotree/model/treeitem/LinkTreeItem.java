@@ -10,30 +10,30 @@ import igrek.todotree.actions.TreeController;
 public class LinkTreeItem extends AbstractTreeItem {
 	
 	private String targetPath;
-	private String name;
+	private String customName;
 	
-	public LinkTreeItem(AbstractTreeItem parent, String targetPath, String name) {
+	public LinkTreeItem(AbstractTreeItem parent, String targetPath, String customName) {
 		super(parent);
 		this.targetPath = targetPath;
-		this.name = name;
+		this.customName = customName;
 	}
 	
 	@Override
 	public LinkTreeItem clone() {
-		return new LinkTreeItem(null, targetPath, name).copyChildren(this);
+		return new LinkTreeItem(null, targetPath, customName).copyChildren(this);
 	}
 	
 	@Override
 	public String getDisplayName() {
-		if (name == null) {
-			AbstractTreeItem target = getTarget();
-			if (target == null) {
-				return getDisplayTargetPath();
-			} else {
-				return target.getDisplayName();
-			}
+		if (hasCustomName())
+			return customName;
+		
+		AbstractTreeItem target = getTarget();
+		if (target == null) {
+			return getDisplayTargetPath();
+		} else {
+			return target.getDisplayName();
 		}
-		return name;
 	}
 	
 	@Override
@@ -41,8 +41,16 @@ public class LinkTreeItem extends AbstractTreeItem {
 		return "link";
 	}
 	
-	public void setName(String name) {
-		this.name = name;
+	public void setCustomName(String customName) {
+		this.customName = customName;
+	}
+	
+	public String getCustomName() {
+		return customName;
+	}
+	
+	public boolean hasCustomName() {
+		return customName != null;
 	}
 	
 	public String getTargetPath() {

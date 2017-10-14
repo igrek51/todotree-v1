@@ -8,6 +8,7 @@ import igrek.todotree.app.AppState;
 import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.logger.Logs;
 import igrek.todotree.model.treeitem.AbstractTreeItem;
+import igrek.todotree.model.treeitem.LinkTreeItem;
 import igrek.todotree.model.treeitem.TextTreeItem;
 import igrek.todotree.services.history.ChangesHistory;
 import igrek.todotree.services.lock.DatabaseLock;
@@ -84,12 +85,28 @@ public class ItemEditorController {
 		}
 	}
 	
+	private boolean tryToSaveExistingLink(LinkTreeItem editedLinkItem, String content) {
+		content = contentTrimmer.trimContent(content);
+		if (content.isEmpty()) {
+			treeManager.removeFromCurrent(editedLinkItem);
+			userInfo.showInfo("Empty link has been removed.");
+			return false;
+		} else {
+			editedLinkItem.setCustomName(content);
+			changesHistory.registerChange();
+			userInfo.showInfo("Link name has been saved.");
+			return true;
+		}
+	}
+	
 	private boolean tryToSaveItem(AbstractTreeItem editedItem, String content) {
 		if (editedItem == null) { // new item
 			return tryToSaveNewItem(content);
 		} else { // existing item
 			if (editedItem instanceof TextTreeItem) {
 				return tryToSaveExistingItem((TextTreeItem) editedItem, content);
+			} else if (editedItem instanceof LinkTreeItem) {
+				return tryToSaveExistingLink((LinkTreeItem) editedItem, content);
 			} else {
 				logger.warn("trying to save item of type: " + editedItem.getTypeName());
 				return false;

@@ -6,7 +6,7 @@ import java.util.List;
 
 import igrek.todotree.services.history.change.AbstractItemChange;
 
-//TODO: funkcja cofania zmian - zapisywanie modyfikacji, dodawania, usuwania elementów, przesuwania
+//TODO: revert changes - save modifications, creating, removing, moving items
 public class ChangesHistory {
 	
 	private LinkedList<AbstractItemChange> changes = new LinkedList<>();
