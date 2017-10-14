@@ -12,7 +12,6 @@ import igrek.todotree.dagger.AppFactoryModule;
 public interface TestComponent extends AppFactoryComponent {
 	
 	// Tests
-	
 	void inject(BaseDaggerTest there);
 	
 }

@@ -43,7 +43,7 @@ public class TreeManagerTest extends BaseDaggerTest {
 		itemRb.add(itemRbc);
 		treeManager.setRootItem(itemR);
 		
-		System.out.println("Serialized:\n" + serializer.serializeTree(itemR));
+		System.out.println("Serialized:\n" + persistenceService.serializeTree(itemR));
 		
 		// copy items
 		treeManager.goTo(itemRa);
@@ -55,7 +55,7 @@ public class TreeManagerTest extends BaseDaggerTest {
 		treeManager.goTo(itemRb);
 		new ClipboardController().pasteItemsAsLink(0);
 		LinkTreeItem link = (LinkTreeItem) treeManager.getCurrentItem().getChild(0);
-		System.out.println("After pasting link:\n" + serializer.serializeTree(itemR));
+		System.out.println("After pasting link:\n" + persistenceService.serializeTree(itemR));
 		
 		System.out.println("Link: " + link);
 		System.out.println("Link target: " + link.getTarget());

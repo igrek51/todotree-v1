@@ -22,7 +22,6 @@ public class DaggerInjectionTest extends BaseDaggerTest {
 	@Test
 	public void testInjections() {
 		System.out.println("injected activity: " + activity.toString());
-		System.out.println("injected jsonTreeSerializer: " + jsonTreeSerializer.toString());
 	}
 	
 }

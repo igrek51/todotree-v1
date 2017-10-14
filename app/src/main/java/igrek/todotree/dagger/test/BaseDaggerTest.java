@@ -11,15 +11,12 @@ import igrek.todotree.services.lock.DatabaseLock;
 import igrek.todotree.services.resources.UserInfoService;
 import igrek.todotree.services.tree.TreeManager;
 import igrek.todotree.services.tree.TreeScrollCache;
-import igrek.todotree.services.tree.serializer.JsonTreeSerializer;
+import igrek.todotree.services.tree.persistence.TreePersistenceService;
 
 public abstract class BaseDaggerTest {
 	
 	@Inject
 	protected Activity activity;
-	
-	@Inject
-	protected JsonTreeSerializer jsonTreeSerializer;
 	
 	@Inject
 	protected TreeManager treeManager;
@@ -31,7 +28,7 @@ public abstract class BaseDaggerTest {
 	protected TreeScrollCache scrollCache;
 	
 	@Inject
-	protected JsonTreeSerializer serializer;
+	protected TreePersistenceService persistenceService;
 	
 	@Inject
 	protected UserInfoService infoService;

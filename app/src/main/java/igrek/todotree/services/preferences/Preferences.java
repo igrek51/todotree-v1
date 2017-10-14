@@ -23,9 +23,13 @@ public class Preferences {
 	
 	public Preferences(Activity activity, Logs logger) {
 		this.logger = logger;
-		sharedPreferences = activity.getApplicationContext()
-				.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		sharedPreferences = createSharedPreferences(activity);
 		loadAll();
+	}
+	
+	protected SharedPreferences createSharedPreferences(Activity activity){
+		return activity.getApplicationContext()
+				.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 	}
 	
 	private void loadAll() {

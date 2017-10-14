@@ -1,4 +1,4 @@
-package igrek.todotree.services.tree.serializer;
+package igrek.todotree.services.tree.persistence;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +13,7 @@ import igrek.todotree.model.treeitem.RootTreeItem;
 import igrek.todotree.model.treeitem.SeparatorTreeItem;
 import igrek.todotree.model.treeitem.TextTreeItem;
 
-public class JsonTreeSerializer {
+class JsonTreeDeserializer {
 	
 	Pattern singleItemPattern;
 	Pattern multiItemPattern;
@@ -21,77 +21,13 @@ public class JsonTreeSerializer {
 	
 	final String CLOSING_BRACKET = "]},";
 	
-	public JsonTreeSerializer() {
+	JsonTreeDeserializer() {
 		singleItemPattern = Pattern.compile("^\\{ \"type\": \"([\\w/]+)\"(, \"(\\w+)\": \"((?:[^\"\\\\]|\\\\.)*)\")* \\},$");
 		multiItemPattern = Pattern.compile("^\\{ \"type\": \"([\\w/]+)\"(, \"(\\w+)\": \"((?:[^\"\\\\]|\\\\.)*)\")*, \"items\": \\[$");
 		nameValuePattern = Pattern.compile("\"(\\w+)\": \"((?:[^\"\\\\]|\\\\.)*)\"");
 	}
 	
-	public String serializeTree(AbstractTreeItem root) {
-		StringBuilder output = new StringBuilder();
-		serializeItem(output, root, 0);
-		return output.toString();
-	}
-	
-	private void serializeItem(StringBuilder output, AbstractTreeItem item, int indentLevel) {
-		indent(output, indentLevel);
-		// item type
-		output.append("{ \"type\": \"");
-		output.append(item.getTypeName());
-		output.append("\"");
-		// additional attributes
-		serializeAttributes(output, item);
-		// child items
-		if (item.isEmpty()) {
-			output.append(" },\n");
-		} else {
-			output.append(", \"items\": [\n");
-			for (AbstractTreeItem child : item.getChildren()) {
-				serializeItem(output, child, indentLevel + 1);
-			}
-			// end of children list
-			indent(output, indentLevel);
-			output.append("]},\n");
-		}
-	}
-	
-	private void indent(StringBuilder output, int indentLevel) {
-		for (int i = 0; i < indentLevel; i++)
-			output.append("\t");
-	}
-	
-	private void serializeAttributes(StringBuilder output, AbstractTreeItem item) {
-		if (item instanceof TextTreeItem) {
-			serializeAttribute(output, "name", ((TextTreeItem) item).getDisplayName());
-		} else if (item instanceof LinkTreeItem) {
-			serializeAttribute(output, "target", ((LinkTreeItem) item).getTargetPath());
-		} else if (item instanceof CheckboxTreeItem) {
-			serializeAttribute(output, "checked", ((CheckboxTreeItem) item).isChecked() ? "true" : "false");
-		}
-	}
-	
-	private void serializeAttribute(StringBuilder output, String name, String value) {
-		output.append(", \"");
-		output.append(name);
-		output.append("\": \"");
-		output.append(escape(value));
-		output.append("\"");
-	}
-	
-	private String escape(String s) {
-		s = s.replace("\\", "\\\\"); // escape \
-		s = s.replace("\"", "\\\""); // escape "
-		return s;
-	}
-	
-	private String unescape(String s) {
-		s = s.replace("\\\"", "\""); // unescape \"
-		s = s.replace("\\\\", "\\"); // unescape \\
-		return s;
-	}
-	
-	
-	public AbstractTreeItem deserializeTree(String data) throws DeserializationFailedException {
+	AbstractTreeItem deserializeTree(String data) throws DeserializationFailedException {
 		RootTreeItem rootItem = new RootTreeItem();
 		if (data.isEmpty())
 			throw new DeserializationFailedException("empty data");
@@ -154,6 +90,12 @@ public class JsonTreeSerializer {
 		
 		newItem.setParent(parent);
 		parent.add(newItem);
+	}
+	
+	private String unescape(String s) {
+		s = s.replace("\\\"", "\""); // unescape \"
+		s = s.replace("\\\\", "\\"); // unescape \\
+		return s;
 	}
 	
 	boolean isHeaderMatchingSingleItem(String line) {

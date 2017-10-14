@@ -1,12 +1,12 @@
-package igrek.todotree.services.tree.serializer;
+package igrek.todotree.services.tree.persistence;
 
 
-public class IndentedLine {
+class IndentedLine {
 	
 	private String indentedLine;
 	private int indentation;
 	
-	public IndentedLine(String unindentedLine) {
+	IndentedLine(String unindentedLine) {
 		indentation = countIndentation(unindentedLine);
 		indentedLine = unindentedLine.substring(indentation).trim();
 	}

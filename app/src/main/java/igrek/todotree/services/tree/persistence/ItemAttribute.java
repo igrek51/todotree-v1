@@ -1,12 +1,12 @@
-package igrek.todotree.services.tree.serializer;
+package igrek.todotree.services.tree.persistence;
 
 
-public class ItemAttribute {
+class ItemAttribute {
 	
 	private String name;
 	private String value;
 	
-	public ItemAttribute(String name, String value) {
+	ItemAttribute(String name, String value) {
 		this.name = name;
 		this.value = value;
 	}

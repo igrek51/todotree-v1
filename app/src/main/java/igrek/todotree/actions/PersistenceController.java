@@ -19,7 +19,7 @@ import igrek.todotree.services.preferences.PropertyDefinition;
 import igrek.todotree.services.resources.UserInfoService;
 import igrek.todotree.services.tree.TreeManager;
 import igrek.todotree.services.tree.TreeScrollCache;
-import igrek.todotree.services.tree.serializer.JsonTreeSerializer;
+import igrek.todotree.services.tree.persistence.TreePersistenceService;
 import igrek.todotree.ui.contextmenu.BackupListMenu;
 
 public class PersistenceController {
@@ -43,7 +43,7 @@ public class PersistenceController {
 	Preferences preferences;
 	
 	@Inject
-	JsonTreeSerializer treeSerializer;
+	TreePersistenceService persistenceService;
 	
 	@Inject
 	ChangesHistory changesHistory;
@@ -103,7 +103,7 @@ public class PersistenceController {
 		try {
 			String fileContent = filesystem.openFileString(dbFilePath);
 			// AbstractTreeItem rootItem = SimpleTreeSerializer.loadTree(fileContent); // porting db to JSON
-			AbstractTreeItem rootItem = treeSerializer.deserializeTree(fileContent);
+			AbstractTreeItem rootItem = persistenceService.deserializeTree(fileContent);
 			treeManager.setRootItem(rootItem);
 			logger.info("Database loaded.");
 		} catch (IOException | DeserializationFailedException e) {
@@ -117,7 +117,7 @@ public class PersistenceController {
 		PathBuilder dbFilePath = filesystem.pathSD()
 				.append(preferences.getValue(PropertyDefinition.dbFilePath, String.class));
 		try {
-			String output = treeSerializer.serializeTree(treeManager.getRootItem());
+			String output = persistenceService.serializeTree(treeManager.getRootItem());
 			//Logs.debug("Serialized data: " + output);
 			filesystem.saveFile(dbFilePath.toString(), output);
 		} catch (IOException e) {

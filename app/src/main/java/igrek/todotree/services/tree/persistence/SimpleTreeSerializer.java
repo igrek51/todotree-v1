@@ -1,4 +1,4 @@
-package igrek.todotree.services.tree.serializer;
+package igrek.todotree.services.tree.persistence;
 
 import java.text.ParseException;
 import java.util.ArrayList;
