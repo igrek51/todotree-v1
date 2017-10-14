@@ -140,6 +140,10 @@ public class ClipboardController {
 	}
 	
 	private AbstractTreeItem buildLinkItem(AbstractTreeItem clipboardItem) {
+		if (clipboardItem instanceof LinkTreeItem) { // making link to link
+			LinkTreeItem linkItem = (LinkTreeItem) clipboardItem;
+			return linkItem.clone();
+		}
 		LinkTreeItem link = new LinkTreeItem(treeManager.getCurrentItem(), null, null);
 		link.setTarget(treeClipboardManager.getCopiedFrom(), clipboardItem.getDisplayName());
 		return link;
