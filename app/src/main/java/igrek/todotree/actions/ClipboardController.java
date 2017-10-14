@@ -64,6 +64,10 @@ public class ClipboardController {
 				if (info)
 					userInfo.showInfo("Items copied: " + treeClipboardManager.getClipboardSize());
 			}
+			// deselect items
+			if (selectionManager.isAnythingSelected()) {
+				new ItemSelectionController().deselectAll();
+			}
 		} else {
 			if (info)
 				userInfo.showInfo("No items to copy.");

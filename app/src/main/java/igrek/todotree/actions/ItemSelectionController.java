@@ -35,14 +35,19 @@ public class ItemSelectionController {
 		for (int i = 0; i < treeManager.getCurrentItem().size(); i++) {
 			selectionManager.setItemSelected(i, selectedState);
 		}
+		new GUIController().updateItemsList();
 	}
 	
 	public void toggleSelectAll() {
 		if (selectionManager.getSelectedItemsCount() == treeManager.getCurrentItem().size()) {
-			selectionManager.cancelSelectionMode();
+			deselectAll();
 		} else {
 			selectAllItems(true);
 		}
+	}
+	
+	public void deselectAll() {
+		selectionManager.cancelSelectionMode();
 		new GUIController().updateItemsList();
 	}
 	
