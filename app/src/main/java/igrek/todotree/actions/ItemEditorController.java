@@ -116,7 +116,9 @@ public class ItemEditorController {
 	
 	private void returnFromItemEditing() {
 		new GUIController().showItemsList();
-		if (getNewItemPosition() != null) { //editing new item
+		// when new item has been added to the end
+		if (getNewItemPosition() != null && getNewItemPosition() == treeManager.getCurrentItem()
+				.size() - 1) {
 			gui.scrollToBottom();
 		} else {
 			new GUIController().restoreScrollPosition(treeManager.getCurrentItem());
