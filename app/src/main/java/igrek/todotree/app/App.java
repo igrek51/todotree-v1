@@ -24,7 +24,7 @@ public class App extends BaseApp {
 		new GUIController().guiInit();
 		new PersistenceController().loadRootTree();
 		new GUIController().showItemsList();
-		logger.info("Started application.");
+		logger.info("Application has started.");
 	}
 	
 	@Override

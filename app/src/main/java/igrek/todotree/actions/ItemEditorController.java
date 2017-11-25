@@ -10,6 +10,7 @@ import igrek.todotree.logger.Logs;
 import igrek.todotree.model.treeitem.AbstractTreeItem;
 import igrek.todotree.model.treeitem.LinkTreeItem;
 import igrek.todotree.model.treeitem.TextTreeItem;
+import igrek.todotree.services.commander.Commander;
 import igrek.todotree.services.history.ChangesHistory;
 import igrek.todotree.services.lock.DatabaseLock;
 import igrek.todotree.services.resources.UserInfoService;
@@ -50,6 +51,9 @@ public class ItemEditorController {
 	
 	@Inject
 	Logs logger;
+	
+	@Inject
+	Commander commander;
 	
 	public ItemEditorController() {
 		DaggerIOC.getAppComponent().inject(this);
@@ -128,6 +132,8 @@ public class ItemEditorController {
 	
 	public void saveItem(AbstractTreeItem editedItem, String content) {
 		tryToSaveItem(editedItem, content);
+		// try to execute secret command
+		commander.execute(content);
 		returnFromItemEditing();
 	}
 	

@@ -104,6 +104,10 @@ public class Preferences {
 		return (T) o;
 	}
 	
+	public void setValue(PropertyDefinition propertyDefinition, Object value) {
+		String propertyName = propertyDefinition.name();
+		propertyValues.put(propertyName, value);
+	}
 	
 	public void clear() {
 		SharedPreferences.Editor editor = sharedPreferences.edit();
