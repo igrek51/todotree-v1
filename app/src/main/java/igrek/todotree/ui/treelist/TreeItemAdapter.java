@@ -104,6 +104,14 @@ class TreeItemAdapter extends ArrayAdapter<AbstractTreeItem> {
 					new ItemEditorCommand().addItemClicked();
 				}
 			});
+			// redirect long click to tree list view
+			plusButton.setLongClickable(true);
+			plusButton.setOnLongClickListener(new View.OnLongClickListener() {
+				@Override
+				public boolean onLongClick(View v) {
+					return listView.onItemLongClick(null, null, position, 0);
+				}
+			});
 			
 			return itemPlus;
 		} else {
