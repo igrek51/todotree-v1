@@ -10,7 +10,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import igrek.todotree.actions.ItemActionController;
+import igrek.todotree.commands.ItemActionCommand;
 import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.services.clipboard.TreeClipboardManager;
 import igrek.todotree.services.tree.TreeManager;
@@ -65,7 +65,7 @@ public class ItemActionsMenu {
 		actions.add(new ItemAction("Remove") {
 			@Override
 			public void execute() {
-				new ItemActionController().actionRemove(position);
+				new ItemActionCommand().actionRemove(position);
 			}
 			
 			@Override
@@ -77,7 +77,7 @@ public class ItemActionsMenu {
 		actions.add(new ItemAction("Select") {
 			@Override
 			public void execute() {
-				new ItemActionController().actionSelect(position);
+				new ItemActionCommand().actionSelect(position);
 			}
 			
 			@Override
@@ -89,7 +89,7 @@ public class ItemActionsMenu {
 		actions.add(new ItemAction("Edit") {
 			@Override
 			public void execute() {
-				new ItemActionController().actionEdit(position);
+				new ItemActionCommand().actionEdit(position);
 			}
 			
 			@Override
@@ -101,14 +101,14 @@ public class ItemActionsMenu {
 		actions.add(new ItemAction("Add above") {
 			@Override
 			public void execute() {
-				new ItemActionController().actionAddAbove(position);
+				new ItemActionCommand().actionAddAbove(position);
 			}
 		});
 		
 		actions.add(new ItemAction("Cut") {
 			@Override
 			public void execute() {
-				new ItemActionController().actionCut(position);
+				new ItemActionCommand().actionCut(position);
 			}
 			
 			@Override
@@ -120,7 +120,7 @@ public class ItemActionsMenu {
 		actions.add(new ItemAction("Copy") {
 			@Override
 			public void execute() {
-				new ItemActionController().actionCopy(position);
+				new ItemActionCommand().actionCopy(position);
 			}
 			
 			@Override
@@ -132,14 +132,14 @@ public class ItemActionsMenu {
 		actions.add(new ItemAction("Paste above") {
 			@Override
 			public void execute() {
-				new ItemActionController().actionPasteAbove(position);
+				new ItemActionCommand().actionPasteAbove(position);
 			}
 		});
 		
 		actions.add(new ItemAction("Paste as link") {
 			@Override
 			public void execute() {
-				new ItemActionController().actionPasteAboveAsLink(position);
+				new ItemActionCommand().actionPasteAboveAsLink(position);
 			}
 			
 			@Override
@@ -151,7 +151,7 @@ public class ItemActionsMenu {
 		actions.add(new ItemAction("Select all") {
 			@Override
 			public void execute() {
-				new ItemActionController().actionSelectAll(position);
+				new ItemActionCommand().actionSelectAll(position);
 			}
 		});
 		

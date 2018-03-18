@@ -5,7 +5,7 @@ import com.google.common.base.Joiner;
 
 import java.util.List;
 
-import igrek.todotree.actions.TreeController;
+import igrek.todotree.commands.TreeCommand;
 
 public class LinkTreeItem extends AbstractTreeItem {
 	
@@ -63,7 +63,7 @@ public class LinkTreeItem extends AbstractTreeItem {
 	
 	public AbstractTreeItem getTarget() {
 		String[] paths = targetPath.split("\\t");
-		return new TreeController().findItemByPath(paths);
+		return new TreeCommand().findItemByPath(paths);
 	}
 	
 	public void setTarget(AbstractTreeItem target) {

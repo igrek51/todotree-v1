@@ -4,16 +4,16 @@ package igrek.todotree.dagger;
 import javax.inject.Singleton;
 
 import dagger.Component;
-import igrek.todotree.actions.ClipboardController;
-import igrek.todotree.actions.ExitController;
-import igrek.todotree.actions.GUIController;
-import igrek.todotree.actions.ItemActionController;
-import igrek.todotree.actions.ItemEditorController;
-import igrek.todotree.actions.ItemSelectionController;
-import igrek.todotree.actions.ItemTrashController;
-import igrek.todotree.actions.MainController;
-import igrek.todotree.actions.PersistenceController;
-import igrek.todotree.actions.TreeController;
+import igrek.todotree.commands.ClipboardCommand;
+import igrek.todotree.commands.ExitCommand;
+import igrek.todotree.commands.GUICommand;
+import igrek.todotree.commands.ItemActionCommand;
+import igrek.todotree.commands.ItemEditorCommand;
+import igrek.todotree.commands.ItemSelectionCommand;
+import igrek.todotree.commands.ItemTrashCommand;
+import igrek.todotree.commands.NavigationCommand;
+import igrek.todotree.commands.PersistenceCommand;
+import igrek.todotree.commands.TreeCommand;
 import igrek.todotree.ui.contextmenu.BackupListMenu;
 import igrek.todotree.ui.contextmenu.ItemActionsMenu;
 import igrek.todotree.ui.errorcheck.UIErrorHandler;
@@ -30,24 +30,24 @@ public interface AppFactoryComponent {
 	
 	// Controllers
 	
-	void inject(MainController there);
+	void inject(NavigationCommand there);
 	
-	void inject(ExitController there);
+	void inject(ExitCommand there);
 	
-	void inject(PersistenceController there);
+	void inject(PersistenceCommand there);
 	
-	void inject(ClipboardController there);
+	void inject(ClipboardCommand there);
 	
-	void inject(GUIController there);
+	void inject(GUICommand there);
 	
-	void inject(TreeController there);
+	void inject(TreeCommand there);
 	
-	void inject(ItemEditorController there);
+	void inject(ItemEditorCommand there);
 	
-	void inject(ItemTrashController there);
+	void inject(ItemTrashCommand there);
 	
-	void inject(ItemSelectionController there);
+	void inject(ItemSelectionCommand there);
 	
-	void inject(ItemActionController there);
+	void inject(ItemActionCommand there);
 	
 }

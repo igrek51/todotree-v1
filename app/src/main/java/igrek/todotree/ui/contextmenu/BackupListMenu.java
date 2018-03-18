@@ -12,8 +12,8 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
-import igrek.todotree.actions.GUIController;
-import igrek.todotree.actions.PersistenceController;
+import igrek.todotree.commands.GUICommand;
+import igrek.todotree.commands.PersistenceCommand;
 import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.services.backup.Backup;
 import igrek.todotree.services.backup.BackupManager;
@@ -77,8 +77,8 @@ public class BackupListMenu {
 				public void execute() {
 					treeManager.reset();
 					scrollCache.clear();
-					new PersistenceController().loadRootTreeFromBackup(backup);
-					new GUIController().updateItemsList();
+					new PersistenceCommand().loadRootTreeFromBackup(backup);
+					new GUICommand().updateItemsList();
 					userInfo.showInfo("Database backup loaded: " + backup.getFilename());
 				}
 			});

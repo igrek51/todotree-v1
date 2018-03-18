@@ -1,4 +1,4 @@
-package igrek.todotree.actions;
+package igrek.todotree.commands;
 
 
 import java.io.IOException;
@@ -22,7 +22,7 @@ import igrek.todotree.services.tree.TreeScrollCache;
 import igrek.todotree.services.tree.persistence.TreePersistenceService;
 import igrek.todotree.ui.contextmenu.BackupListMenu;
 
-public class PersistenceController {
+public class PersistenceCommand {
 	
 	@Inject
 	TreeManager treeManager;
@@ -51,7 +51,7 @@ public class PersistenceController {
 	@Inject
 	Logs logger;
 	
-	public PersistenceController() {
+	public PersistenceCommand() {
 		DaggerIOC.getAppComponent().inject(this);
 	}
 	
@@ -59,7 +59,7 @@ public class PersistenceController {
 		treeManager.reset();
 		scrollCache.clear();
 		loadRootTree();
-		new GUIController().updateItemsList();
+		new GUICommand().updateItemsList();
 		userInfo.showInfo("Database loaded.");
 	}
 	

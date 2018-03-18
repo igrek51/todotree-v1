@@ -1,4 +1,4 @@
-package igrek.todotree.actions;
+package igrek.todotree.commands;
 
 
 import javax.inject.Inject;
@@ -12,7 +12,7 @@ import igrek.todotree.services.tree.TreeScrollCache;
 import igrek.todotree.services.tree.TreeSelectionManager;
 import igrek.todotree.ui.GUI;
 
-public class GUIController {
+public class GUICommand {
 	
 	@Inject
 	TreeManager treeManager;
@@ -29,7 +29,7 @@ public class GUIController {
 	@Inject
 	TreeSelectionManager selectionManager;
 	
-	public GUIController() {
+	public GUICommand() {
 		DaggerIOC.getAppComponent().inject(this);
 	}
 	

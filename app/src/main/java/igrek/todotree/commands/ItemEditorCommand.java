@@ -1,4 +1,4 @@
-package igrek.todotree.actions;
+package igrek.todotree.commands;
 
 
 import javax.inject.Inject;
@@ -20,7 +20,7 @@ import igrek.todotree.services.tree.TreeScrollCache;
 import igrek.todotree.services.tree.TreeSelectionManager;
 import igrek.todotree.ui.GUI;
 
-public class ItemEditorController {
+public class ItemEditorCommand {
 	
 	@Inject
 	TreeManager treeManager;
@@ -55,7 +55,7 @@ public class ItemEditorController {
 	@Inject
 	Commander commander;
 	
-	public ItemEditorController() {
+	public ItemEditorCommand() {
 		DaggerIOC.getAppComponent().inject(this);
 	}
 	
@@ -119,13 +119,13 @@ public class ItemEditorController {
 	}
 	
 	private void returnFromItemEditing() {
-		new GUIController().showItemsList();
+		new GUICommand().showItemsList();
 		// when new item has been added to the end
 		if (getNewItemPosition() != null && getNewItemPosition() == treeManager.getCurrentItem()
 				.size() - 1) {
 			gui.scrollToBottom();
 		} else {
-			new GUIController().restoreScrollPosition(treeManager.getCurrentItem());
+			new GUICommand().restoreScrollPosition(treeManager.getCurrentItem());
 		}
 		treeManager.setNewItemPosition(null);
 	}
@@ -157,7 +157,7 @@ public class ItemEditorController {
 		if (editedItemIndex == null) {
 			editedItemIndex = editedItem.getIndexInParent();
 		}
-		new TreeController().goInto(editedItemIndex);
+		new TreeCommand().goInto(editedItemIndex);
 		newItem(-1);
 	}
 	

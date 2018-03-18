@@ -1,4 +1,4 @@
-package igrek.todotree.actions;
+package igrek.todotree.commands;
 
 
 import java.math.BigDecimal;
@@ -13,7 +13,7 @@ import igrek.todotree.services.resources.UserInfoService;
 import igrek.todotree.services.tree.TreeManager;
 import igrek.todotree.services.tree.TreeSelectionManager;
 
-public class ItemSelectionController {
+public class ItemSelectionCommand {
 	
 	@Inject
 	TreeManager treeManager;
@@ -27,7 +27,7 @@ public class ItemSelectionController {
 	@Inject
 	TreeSelectionManager selectionManager;
 	
-	public ItemSelectionController() {
+	public ItemSelectionCommand() {
 		DaggerIOC.getAppComponent().inject(this);
 	}
 	
@@ -35,7 +35,7 @@ public class ItemSelectionController {
 		for (int i = 0; i < treeManager.getCurrentItem().size(); i++) {
 			selectionManager.setItemSelected(i, selectedState);
 		}
-		new GUIController().updateItemsList();
+		new GUICommand().updateItemsList();
 	}
 	
 	public void toggleSelectAll() {
@@ -48,7 +48,7 @@ public class ItemSelectionController {
 	
 	public void deselectAll() {
 		selectionManager.cancelSelectionMode();
-		new GUIController().updateItemsList();
+		new GUICommand().updateItemsList();
 	}
 	
 	
@@ -76,7 +76,7 @@ public class ItemSelectionController {
 	
 	public void selectedItemClicked(int position, boolean checked) {
 		selectionManager.setItemSelected(position, checked);
-		new GUIController().updateItemsList();
+		new GUICommand().updateItemsList();
 	}
 	
 }

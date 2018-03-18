@@ -1,4 +1,4 @@
-package igrek.todotree.actions;
+package igrek.todotree.commands;
 
 
 import java.util.Iterator;
@@ -15,7 +15,7 @@ import igrek.todotree.services.tree.TreeManager;
 import igrek.todotree.services.tree.TreeSelectionManager;
 import igrek.todotree.ui.GUI;
 
-public class ItemTrashController {
+public class ItemTrashCommand {
 	
 	@Inject
 	TreeManager treeManager;
@@ -32,7 +32,7 @@ public class ItemTrashController {
 	@Inject
 	TreeSelectionManager selectionManager;
 	
-	public ItemTrashController() {
+	public ItemTrashCommand() {
 		DaggerIOC.getAppComponent().inject(this);
 	}
 	
@@ -49,7 +49,7 @@ public class ItemTrashController {
 		final AbstractTreeItem removing = treeManager.getCurrentItem().getChild(position);
 		
 		treeManager.removeFromCurrent(position);
-		new GUIController().updateItemsList();
+		new GUICommand().updateItemsList();
 		userInfo.showInfoCancellable("Item removed: " + removing.getDisplayName(), new InfoBarClickAction() {
 			@Override
 			public void onClick() {
@@ -60,7 +60,7 @@ public class ItemTrashController {
 	
 	private void restoreRemovedItem(AbstractTreeItem restored, int position) {
 		treeManager.addToCurrent(position, restored);
-		new GUIController().showItemsList();
+		new GUICommand().showItemsList();
 		gui.scrollToItem(position);
 		userInfo.showInfo("Removed item restored.");
 	}
@@ -79,6 +79,6 @@ public class ItemTrashController {
 			userInfo.showInfo("Items removed: " + selectedIds.size());
 		}
 		selectionManager.cancelSelectionMode();
-		new GUIController().updateItemsList();
+		new GUICommand().updateItemsList();
 	}
 }

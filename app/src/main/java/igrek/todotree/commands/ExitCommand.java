@@ -1,4 +1,4 @@
-package igrek.todotree.actions;
+package igrek.todotree.commands;
 
 
 import android.os.Handler;
@@ -12,7 +12,7 @@ import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.services.preferences.Preferences;
 import igrek.todotree.ui.GUI;
 
-public class ExitController {
+public class ExitCommand {
 	
 	@Inject
 	AppData appData;
@@ -26,7 +26,7 @@ public class ExitController {
 	@Inject
 	App app;
 	
-	ExitController() {
+	ExitCommand() {
 		DaggerIOC.getAppComponent().inject(this);
 	}
 	
@@ -55,7 +55,7 @@ public class ExitController {
 	}
 	
 	private void saveAndExit() {
-		new PersistenceController().saveDatabase();
+		new PersistenceCommand().saveDatabase();
 		exitApp();
 	}
 }

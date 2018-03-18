@@ -2,9 +2,9 @@ package igrek.todotree.app;
 
 import android.support.v7.app.AppCompatActivity;
 
-import igrek.todotree.actions.GUIController;
-import igrek.todotree.actions.MainController;
-import igrek.todotree.actions.PersistenceController;
+import igrek.todotree.commands.GUICommand;
+import igrek.todotree.commands.NavigationCommand;
+import igrek.todotree.commands.PersistenceCommand;
 import igrek.todotree.dagger.DaggerIOC;
 
 //TODO item types: link with name, checkbox, text with date / hour, text with number, separator, separator with group name
@@ -21,20 +21,20 @@ public class App extends BaseApp {
 	@Override
 	public void init() {
 		super.init();
-		new GUIController().guiInit();
-		new PersistenceController().loadRootTree();
-		new GUIController().showItemsList();
+		new GUICommand().guiInit();
+		new PersistenceCommand().loadRootTree();
+		new GUICommand().showItemsList();
 		logger.info("Application has started.");
 	}
 	
 	@Override
 	public boolean optionsSelect(int id) {
-		return new MainController().optionsSelect(id);
+		return new NavigationCommand().optionsSelect(id);
 	}
 	
 	@Override
 	public boolean onKeyBack() {
-		return new MainController().backClicked();
+		return new NavigationCommand().backClicked();
 	}
 	
 }

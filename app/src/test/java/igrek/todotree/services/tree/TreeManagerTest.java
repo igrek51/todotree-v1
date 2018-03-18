@@ -8,8 +8,8 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import igrek.todotree.MainActivity;
-import igrek.todotree.actions.ClipboardController;
-import igrek.todotree.actions.TreeController;
+import igrek.todotree.commands.ClipboardCommand;
+import igrek.todotree.commands.TreeCommand;
 import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.dagger.test.BaseDaggerTest;
 import igrek.todotree.model.treeitem.LinkTreeItem;
@@ -49,11 +49,11 @@ public class TreeManagerTest extends BaseDaggerTest {
 		treeManager.goTo(itemRa);
 		Set<Integer> itemPosistions = new TreeSet<>();
 		itemPosistions.add(0);
-		new ClipboardController().copyItems(itemPosistions, true);
+		new ClipboardCommand().copyItems(itemPosistions, true);
 		
 		// paste as link
 		treeManager.goTo(itemRb);
-		new ClipboardController().pasteItemsAsLink(0);
+		new ClipboardCommand().pasteItemsAsLink(0);
 		LinkTreeItem link = (LinkTreeItem) treeManager.getCurrentItem().getChild(0);
 		System.out.println("After pasting link:\n" + persistenceService.serializeTree(itemR));
 		
@@ -67,7 +67,7 @@ public class TreeManagerTest extends BaseDaggerTest {
 		assertEquals(itemRb, treeManager.getCurrentItem());
 		// click pasted link
 		dbLock.setLocked(false);
-		new TreeController().itemClicked(0, link);
+		new TreeCommand().itemClicked(0, link);
 		assertEquals(itemRa1, treeManager.getCurrentItem());
 		System.out.println("current Item: " + treeManager.getCurrentItem());
 		

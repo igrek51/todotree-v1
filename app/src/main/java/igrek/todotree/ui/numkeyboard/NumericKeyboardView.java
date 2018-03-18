@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.EditText;
 
 import igrek.todotree.R;
-import igrek.todotree.actions.GUIController;
+import igrek.todotree.commands.GUICommand;
 
 public class NumericKeyboardView extends KeyboardView implements KeyboardView.OnKeyboardActionListener {
 	
@@ -155,7 +155,7 @@ public class NumericKeyboardView extends KeyboardView implements KeyboardView.On
 	}
 	
 	private void typedHyphen() {
-		new GUIController().numKeyboardHyphenTyped();
+		new GUICommand().numKeyboardHyphenTyped();
 	}
 	
 	private void typedBackspace() {

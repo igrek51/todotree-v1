@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.Set;
 
 import igrek.todotree.R;
-import igrek.todotree.actions.ItemEditorController;
-import igrek.todotree.actions.ItemSelectionController;
+import igrek.todotree.commands.ItemEditorCommand;
+import igrek.todotree.commands.ItemSelectionCommand;
 import igrek.todotree.model.treeitem.AbstractTreeItem;
 import igrek.todotree.model.treeitem.LinkTreeItem;
 import igrek.todotree.ui.errorcheck.SafeClickListener;
@@ -101,7 +101,7 @@ class TreeItemAdapter extends ArrayAdapter<AbstractTreeItem> {
 			plusButton.setOnClickListener(new SafeClickListener() {
 				@Override
 				public void onClick() {
-					new ItemEditorController().addItemClicked();
+					new ItemEditorCommand().addItemClicked();
 				}
 			});
 			
@@ -141,7 +141,7 @@ class TreeItemAdapter extends ArrayAdapter<AbstractTreeItem> {
 				editButton.setOnClickListener(new SafeClickListener() {
 					@Override
 					public void onClick() {
-						new ItemEditorController().itemEditClicked(item);
+						new ItemEditorCommand().itemEditClicked(item);
 					}
 				});
 			} else {
@@ -197,7 +197,7 @@ class TreeItemAdapter extends ArrayAdapter<AbstractTreeItem> {
 				cbItemSelected.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 					@Override
 					public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-						new ItemSelectionController().selectedItemClicked(position, isChecked);
+						new ItemSelectionCommand().selectedItemClicked(position, isChecked);
 					}
 				});
 			}

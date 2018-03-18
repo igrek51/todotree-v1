@@ -1,4 +1,4 @@
-package igrek.todotree.actions;
+package igrek.todotree.commands;
 
 
 import java.util.List;
@@ -20,7 +20,7 @@ import igrek.todotree.services.tree.TreeScrollCache;
 import igrek.todotree.services.tree.TreeSelectionManager;
 import igrek.todotree.ui.GUI;
 
-public class TreeController {
+public class TreeCommand {
 	
 	@Inject
 	TreeManager treeManager;
@@ -49,7 +49,7 @@ public class TreeController {
 	@Inject
 	Logs logger;
 	
-	public TreeController() {
+	public TreeCommand() {
 		DaggerIOC.getAppComponent().inject(this);
 	}
 	
@@ -58,10 +58,10 @@ public class TreeController {
 			AbstractTreeItem current = treeManager.getCurrentItem();
 			AbstractTreeItem parent = current.getParent();
 			treeManager.goUp();
-			new GUIController().updateItemsList();
-			new GUIController().restoreScrollPosition(parent);
+			new GUICommand().updateItemsList();
+			new GUICommand().restoreScrollPosition(parent);
 		} catch (NoSuperItemException e) {
-			new ExitController().saveAndExitRequested();
+			new ExitCommand().saveAndExitRequested();
 		}
 	}
 	
@@ -75,7 +75,7 @@ public class TreeController {
 		} else {
 			selectionManager.cancelSelectionMode();
 			goInto(position);
-			new GUIController().updateItemsList();
+			new GUICommand().updateItemsList();
 			gui.scrollToItem(0);
 		}
 	}
@@ -88,7 +88,7 @@ public class TreeController {
 	public void navigateTo(AbstractTreeItem item) {
 		storeCurrentScroll();
 		treeManager.goTo(item);
-		new GUIController().updateItemsList();
+		new GUICommand().updateItemsList();
 		gui.scrollToItem(0);
 	}
 	
@@ -103,11 +103,11 @@ public class TreeController {
 		if (!selectionManager.isAnythingSelected()) {
 			selectionManager.startSelectionMode();
 			selectionManager.setItemSelected(position, true);
-			new GUIController().updateItemsList();
+			new GUICommand().updateItemsList();
 			gui.scrollToItem(position);
 		} else {
 			selectionManager.setItemSelected(position, true);
-			new GUIController().updateItemsList();
+			new GUICommand().updateItemsList();
 		}
 	}
 	
@@ -115,11 +115,11 @@ public class TreeController {
 		lock.assertUnlocked();
 		if (selectionManager.isAnythingSelected()) {
 			selectionManager.toggleItemSelected(position);
-			new GUIController().updateItemsList();
+			new GUICommand().updateItemsList();
 		} else {
 			if (item instanceof TextTreeItem) {
 				if (item.isEmpty()) {
-					new ItemEditorController().itemEditClicked(item);
+					new ItemEditorCommand().itemEditClicked(item);
 				} else {
 					itemGoIntoClicked(position, item);
 				}

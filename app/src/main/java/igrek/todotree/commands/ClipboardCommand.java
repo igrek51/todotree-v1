@@ -1,4 +1,4 @@
-package igrek.todotree.actions;
+package igrek.todotree.commands;
 
 
 import java.util.Set;
@@ -18,7 +18,7 @@ import igrek.todotree.services.tree.TreeScrollCache;
 import igrek.todotree.services.tree.TreeSelectionManager;
 import igrek.todotree.ui.GUI;
 
-public class ClipboardController {
+public class ClipboardCommand {
 	
 	@Inject
 	TreeManager treeManager;
@@ -41,7 +41,7 @@ public class ClipboardController {
 	@Inject
 	TreeScrollCache scrollCache;
 	
-	public ClipboardController() {
+	public ClipboardCommand() {
 		DaggerIOC.getAppComponent().inject(this);
 	}
 	
@@ -66,7 +66,7 @@ public class ClipboardController {
 			}
 			// deselect items
 			if (selectionManager.isAnythingSelected()) {
-				new ItemSelectionController().deselectAll();
+				new ItemSelectionCommand().deselectAll();
 			}
 		} else {
 			if (info)
@@ -86,7 +86,7 @@ public class ClipboardController {
 		if (!itemPosistions.isEmpty()) {
 			copyItems(itemPosistions, false);
 			userInfo.showInfo("Items cut: " + itemPosistions.size());
-			new ItemTrashController().removeItems(itemPosistions, false);
+			new ItemTrashCommand().removeItems(itemPosistions, false);
 		}
 	}
 	
@@ -106,7 +106,7 @@ public class ClipboardController {
 				//wklejanie 1 elementu z systemowego schowka
 				treeManager.addToCurrent(position, new TextTreeItem(systemClipboard));
 				userInfo.showInfo("Item pasted: " + systemClipboard);
-				new GUIController().updateItemsList();
+				new GUICommand().updateItemsList();
 				gui.scrollToPosition(scrollCache.restoreScrollPosition(treeManager.getCurrentItem()));
 			} else {
 				userInfo.showInfo("Clipboard is empty.");
@@ -119,7 +119,7 @@ public class ClipboardController {
 			}
 			userInfo.showInfo("Items pasted: " + treeClipboardManager.getClipboardSize());
 			treeClipboardManager.recopyClipboard();
-			new GUIController().updateItemsList();
+			new GUICommand().updateItemsList();
 			gui.scrollToPosition(scrollCache.restoreScrollPosition(treeManager.getCurrentItem()));
 		}
 	}
@@ -134,7 +134,7 @@ public class ClipboardController {
 				position++; // next item pasted below
 			}
 			userInfo.showInfo("Items pasted as links: " + treeClipboardManager.getClipboardSize());
-			new GUIController().updateItemsList();
+			new GUICommand().updateItemsList();
 			gui.scrollToPosition(scrollCache.restoreScrollPosition(treeManager.getCurrentItem()));
 		}
 	}

@@ -11,7 +11,7 @@ import android.widget.RelativeLayout;
 import java.util.Set;
 
 import igrek.todotree.R;
-import igrek.todotree.actions.MainController;
+import igrek.todotree.commands.NavigationCommand;
 import igrek.todotree.model.treeitem.AbstractTreeItem;
 import igrek.todotree.ui.edititem.EditItemGUI;
 import igrek.todotree.ui.errorcheck.SafeClickListener;
@@ -39,7 +39,7 @@ public class GUI extends BaseGUI {
 		toolbar1.setNavigationOnClickListener(new SafeClickListener() {
 			@Override
 			public void onClick() {
-				new MainController().backClicked();
+				new NavigationCommand().backClicked();
 			}
 		});
 		

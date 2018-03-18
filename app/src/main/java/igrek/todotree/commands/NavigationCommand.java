@@ -1,4 +1,4 @@
-package igrek.todotree.actions;
+package igrek.todotree.commands;
 
 
 import javax.inject.Inject;
@@ -12,7 +12,7 @@ import igrek.todotree.services.tree.TreeManager;
 import igrek.todotree.services.tree.TreeSelectionManager;
 import igrek.todotree.ui.GUI;
 
-public class MainController {
+public class NavigationCommand {
 	
 	@Inject
 	TreeManager treeManager;
@@ -29,7 +29,7 @@ public class MainController {
 	@Inject
 	TreeSelectionManager selectionManager;
 	
-	public MainController() {
+	public NavigationCommand() {
 		DaggerIOC.getAppComponent().inject(this);
 	}
 	
@@ -39,31 +39,31 @@ public class MainController {
 				app.minimize();
 				return true;
 			case R.id.action_exit_without_saving:
-				new ExitController().exitApp();
+				new ExitCommand().exitApp();
 				return true;
 			case R.id.action_save_exit:
-				new ExitController().optionSaveAndExit();
+				new ExitCommand().optionSaveAndExit();
 				return true;
 			case R.id.action_save:
-				new PersistenceController().optionSave();
+				new PersistenceCommand().optionSave();
 				return true;
 			case R.id.action_reload:
-				new PersistenceController().optionReload();
+				new PersistenceCommand().optionReload();
 				return true;
 			case R.id.action_restore_backup:
-				new PersistenceController().optionRestoreBackup();
+				new PersistenceCommand().optionRestoreBackup();
 				return true;
 			case R.id.action_select_all:
-				new ItemSelectionController().toggleSelectAll();
+				new ItemSelectionCommand().toggleSelectAll();
 				return false;
 			case R.id.action_cut:
-				new ClipboardController().cutSelectedItems();
+				new ClipboardCommand().cutSelectedItems();
 				return false;
 			case R.id.action_copy:
-				new ClipboardController().copySelectedItems();
+				new ClipboardCommand().copySelectedItems();
 				return false;
 			case R.id.action_sum_selected:
-				new ItemSelectionController().sumItems();
+				new ItemSelectionCommand().sumItems();
 				return false;
 		}
 		return false;
@@ -73,14 +73,14 @@ public class MainController {
 		if (appData.isState(AppState.ITEMS_LIST)) {
 			if (selectionManager.isAnythingSelected()) {
 				selectionManager.cancelSelectionMode();
-				new GUIController().updateItemsList();
+				new GUICommand().updateItemsList();
 			} else {
-				new TreeController().goUp();
+				new TreeCommand().goUp();
 			}
 		} else if (appData.isState(AppState.EDIT_ITEM_CONTENT)) {
 			if (gui.editItemBackClicked())
 				return true;
-			new ItemEditorController().cancelEditedItem();
+			new ItemEditorCommand().cancelEditedItem();
 		}
 		return true;
 	}

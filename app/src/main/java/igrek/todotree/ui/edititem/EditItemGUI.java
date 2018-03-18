@@ -10,7 +10,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import igrek.todotree.R;
-import igrek.todotree.actions.ItemEditorController;
+import igrek.todotree.commands.ItemEditorCommand;
 import igrek.todotree.model.treeitem.AbstractTreeItem;
 import igrek.todotree.ui.GUI;
 import igrek.todotree.ui.errorcheck.SafeClickListener;
@@ -55,13 +55,13 @@ public class EditItemGUI implements NumKeyboardListener {
 						numericKeyboard.finishTyping();
 					}
 					hideKeyboards();
-					new ItemEditorController().saveItem(item, etEditItem.getText().toString());
+					new ItemEditorCommand().saveItem(item, etEditItem.getText().toString());
 				}
 			});
 			buttonSaveAndAdd.setOnClickListener(new SafeClickListener() {
 				@Override
 				public void onClick() {
-					new ItemEditorController().saveAndAddItemClicked(item, etEditItem.getText()
+					new ItemEditorCommand().saveAndAddItemClicked(item, etEditItem.getText()
 							.toString());
 					hideKeyboards();
 				}
@@ -69,7 +69,7 @@ public class EditItemGUI implements NumKeyboardListener {
 			buttonSaveAndGoInto.setOnClickListener(new SafeClickListener() {
 				@Override
 				public void onClick() {
-					new ItemEditorController().saveAndGoIntoItemClicked(item, etEditItem.getText()
+					new ItemEditorCommand().saveAndGoIntoItemClicked(item, etEditItem.getText()
 							.toString());
 					hideKeyboards();
 				}
@@ -83,13 +83,13 @@ public class EditItemGUI implements NumKeyboardListener {
 						numericKeyboard.finishTyping();
 					}
 					hideKeyboards();
-					new ItemEditorController().saveItem(null, etEditItem.getText().toString());
+					new ItemEditorCommand().saveItem(null, etEditItem.getText().toString());
 				}
 			});
 			buttonSaveAndAdd.setOnClickListener(new SafeClickListener() {
 				@Override
 				public void onClick() {
-					new ItemEditorController().saveAndAddItemClicked(null, etEditItem.getText()
+					new ItemEditorCommand().saveAndAddItemClicked(null, etEditItem.getText()
 							.toString());
 					hideKeyboards();
 				}
@@ -97,7 +97,7 @@ public class EditItemGUI implements NumKeyboardListener {
 			buttonSaveAndGoInto.setOnClickListener(new SafeClickListener() {
 				@Override
 				public void onClick() {
-					new ItemEditorController().saveAndGoIntoItemClicked(null, etEditItem.getText()
+					new ItemEditorCommand().saveAndGoIntoItemClicked(null, etEditItem.getText()
 							.toString());
 					hideKeyboards();
 				}
@@ -116,7 +116,7 @@ public class EditItemGUI implements NumKeyboardListener {
 		buttonEditCancel.setOnClickListener(new SafeClickListener() {
 			@Override
 			public void onClick() {
-				new ItemEditorController().cancelEditedItem();
+				new ItemEditorCommand().cancelEditedItem();
 				hideKeyboards();
 			}
 		});

@@ -1,4 +1,4 @@
-package igrek.todotree.actions;
+package igrek.todotree.commands;
 
 
 import android.os.Handler;
@@ -15,7 +15,7 @@ import igrek.todotree.services.tree.TreeManager;
 import igrek.todotree.services.tree.TreeSelectionManager;
 import igrek.todotree.ui.GUI;
 
-public class ItemActionController {
+public class ItemActionCommand {
 	
 	@Inject
 	TreeManager treeManager;
@@ -29,7 +29,7 @@ public class ItemActionController {
 	@Inject
 	UserInfoService userInfoService;
 	
-	public ItemActionController() {
+	public ItemActionCommand() {
 		DaggerIOC.getAppComponent().inject(this);
 	}
 	
@@ -38,7 +38,7 @@ public class ItemActionController {
 			userInfoService.showInfo("Could not select");
 		} else {
 			//tryb zaznaczania elementów
-			new TreeController().itemLongClicked(position);
+			new TreeCommand().itemLongClicked(position);
 		}
 	}
 	
@@ -47,7 +47,7 @@ public class ItemActionController {
 		new Handler().post(new Runnable() {
 			@Override
 			public void run() {
-				new ItemEditorController().addItemHereClicked(position);
+				new ItemEditorCommand().addItemHereClicked(position);
 			}
 		});
 	}
@@ -58,14 +58,14 @@ public class ItemActionController {
 		if (itemPosistions.isEmpty()) {
 			itemPosistions.add(position);
 		}
-		new ClipboardController().copyItems(itemPosistions, true);
+		new ClipboardCommand().copyItems(itemPosistions, true);
 	}
 	
 	public void actionPasteAbove(final int position) {
 		new Handler().post(new Runnable() {
 			@Override
 			public void run() {
-				new ClipboardController().pasteItems(position);
+				new ClipboardCommand().pasteItems(position);
 			}
 		});
 	}
@@ -74,7 +74,7 @@ public class ItemActionController {
 		new Handler().post(new Runnable() {
 			@Override
 			public void run() {
-				new ClipboardController().pasteItemsAsLink(position);
+				new ClipboardCommand().pasteItemsAsLink(position);
 			}
 		});
 	}
@@ -85,15 +85,15 @@ public class ItemActionController {
 		if (itemPosistions.isEmpty()) {
 			itemPosistions.add(position);
 		}
-		new ClipboardController().cutItems(itemPosistions);
+		new ClipboardCommand().cutItems(itemPosistions);
 	}
 	
 	public void actionRemove(int position) {
-		new ItemTrashController().itemRemoveClicked(position);
+		new ItemTrashCommand().itemRemoveClicked(position);
 	}
 	
 	public void actionSelectAll(int position) {
-		new ItemSelectionController().toggleSelectAll();
+		new ItemSelectionCommand().toggleSelectAll();
 	}
 	
 	public void actionEdit(final int position) {
@@ -102,7 +102,7 @@ public class ItemActionController {
 			@Override
 			public void run() {
 				AbstractTreeItem item = treeManager.getCurrentItem().getChild(position);
-				new ItemEditorController().itemEditClicked(item);
+				new ItemEditorCommand().itemEditClicked(item);
 			}
 		});
 	}

@@ -23,8 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-import igrek.todotree.actions.ItemEditorController;
-import igrek.todotree.actions.TreeController;
+import igrek.todotree.commands.ItemEditorCommand;
+import igrek.todotree.commands.TreeCommand;
 import igrek.todotree.logger.Logs;
 import igrek.todotree.model.treeitem.AbstractTreeItem;
 import igrek.todotree.ui.contextmenu.ItemActionsMenu;
@@ -182,11 +182,11 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
 		try {
 			if (position == items.size()) {
 				//nowy element
-				new ItemEditorController().addItemClicked();
+				new ItemEditorCommand().addItemClicked();
 			} else {
 				//istniejący element
 				AbstractTreeItem item = adapter.getItem(position);
-				new TreeController().itemClicked(position, item);
+				new TreeCommand().itemClicked(position, item);
 			}
 		} catch (Throwable t) {
 			UIErrorHandler.showError(t);
@@ -343,7 +343,7 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
 		if (step != 0) {
 			int targetPosition = draggedItemPos + step;
 			
-			items = new TreeController().itemMoved(draggedItemPos, step);
+			items = new TreeCommand().itemMoved(draggedItemPos, step);
 			
 			//update mapy wysokości
 			if (step > 0) {
@@ -536,7 +536,7 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
 			//przeniesienie na koniec
 			itemDraggingStopped();
 			
-			items = new TreeController().itemMoved(position, items.size() - 1);
+			items = new TreeCommand().itemMoved(position, items.size() - 1);
 			
 			adapter.setDataSource(items);
 			scrollToItem(items.size() - 1);
@@ -546,7 +546,7 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
 			//przeniesienie na początek
 			itemDraggingStopped();
 			
-			items = new TreeController().itemMoved(position, -(items.size() - 1));
+			items = new TreeCommand().itemMoved(position, -(items.size() - 1));
 			
 			adapter.setDataSource(items);
 			scrollToItem(0);
@@ -568,7 +568,7 @@ public class TreeListView extends ListView implements AbsListView.OnScrollListen
 						//wejście wgłąb elementu smyraniem w prawo
 						//Logs.debug("gesture: go into intercepted, dx: " + (dx / getWidth()) + " , dy: " + (Math.abs(dy) / itemH));
 						AbstractTreeItem item = adapter.getItem(gestureStartPos);
-						new TreeController().itemGoIntoClicked(gestureStartPos, item);
+						new TreeCommand().itemGoIntoClicked(gestureStartPos, item);
 						gestureStartPos = null; //reset
 						return true;
 					}
