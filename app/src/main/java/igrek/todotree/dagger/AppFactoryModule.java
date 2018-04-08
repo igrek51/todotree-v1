@@ -13,7 +13,7 @@ import igrek.todotree.logger.Logs;
 import igrek.todotree.services.backup.BackupManager;
 import igrek.todotree.services.clipboard.SystemClipboardManager;
 import igrek.todotree.services.clipboard.TreeClipboardManager;
-import igrek.todotree.services.commander.Commander;
+import igrek.todotree.services.commander.SecretCommander;
 import igrek.todotree.services.filesystem.FilesystemService;
 import igrek.todotree.services.history.ChangesHistory;
 import igrek.todotree.services.lock.DatabaseLock;
@@ -160,8 +160,8 @@ public class AppFactoryModule {
 	
 	@Provides
 	@Singleton
-	protected Commander provideCommander(Logs logger, Preferences preferences, UserInfoService userInfo) {
-		return new Commander(logger, preferences, userInfo);
+	protected SecretCommander provideCommander(Logs logger, Preferences preferences, UserInfoService userInfo) {
+		return new SecretCommander(logger, preferences, userInfo);
 	}
 	
 }

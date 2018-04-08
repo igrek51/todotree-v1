@@ -9,7 +9,13 @@ import igrek.todotree.services.preferences.Preferences;
 import igrek.todotree.services.preferences.PropertyDefinition;
 import igrek.todotree.services.resources.UserInfoService;
 
-public class Commander {
+/**
+ * secret commands parser:
+ * ###dupa
+ * ###config lockdb true
+ * ###config lockdb false
+ */
+public class SecretCommander {
 	
 	private Logs logger;
 	private Preferences preferences;
@@ -17,7 +23,7 @@ public class Commander {
 	
 	private static final String CMD_PREFIX = "###";
 	
-	public Commander(Logs logger, Preferences preferences, UserInfoService userInfo) {
+	public SecretCommander(Logs logger, Preferences preferences, UserInfoService userInfo) {
 		this.logger = logger;
 		this.preferences = preferences;
 		this.userInfo = userInfo;

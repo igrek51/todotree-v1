@@ -129,7 +129,8 @@ public class BackupManager {
 	}
 	
 	private PathBuilder getDBFilePath() {
-		return filesystem.pathSD().append(preferences.getValue(PropertyDefinition.dbFilePath, String.class));
+		return filesystem.externalAndroidDir()
+				.append(preferences.getValue(PropertyDefinition.dbFilePath, String.class));
 	}
 	
 	private boolean isSameDay(Calendar cal1, Date date2) {

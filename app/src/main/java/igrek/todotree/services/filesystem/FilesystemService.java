@@ -35,6 +35,12 @@ public class FilesystemService {
 		return new PathBuilder(pathToExtSD);
 	}
 	
+	public PathBuilder externalAndroidDir() {
+		// returns internal dir but creates also /storage/extSdCard/Android/data/pkg - WTF?!
+		activity.getExternalFilesDir("data");
+		return pathSD();
+	}
+	
 	public boolean mkdirIfNotExist(String path) {
 		File f = new File(path);
 		return !f.exists() && f.mkdirs();

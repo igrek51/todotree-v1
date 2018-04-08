@@ -79,14 +79,14 @@ public class PersistenceCommand {
 	}
 	
 	public void loadRootTree() {
-		filesystem.mkdirIfNotExist(filesystem.pathSD().toString());
-		PathBuilder dbFilePath = filesystem.pathSD()
+		filesystem.mkdirIfNotExist(filesystem.externalAndroidDir().toString());
+		PathBuilder dbFilePath = filesystem.externalAndroidDir()
 				.append(preferences.getValue(PropertyDefinition.dbFilePath, String.class));
 		loadDbFromFile(dbFilePath.toString());
 	}
 	
 	public void loadRootTreeFromBackup(Backup backup) {
-		PathBuilder dbFilePath = filesystem.pathSD()
+		PathBuilder dbFilePath = filesystem.externalAndroidDir()
 				.append(preferences.getValue(PropertyDefinition.dbFilePath, String.class));
 		String path = dbFilePath.parent().append(backup.getFilename()).toString();
 		loadDbFromFile(path);
@@ -114,7 +114,7 @@ public class PersistenceCommand {
 	}
 	
 	private void saveRootTree() {
-		PathBuilder dbFilePath = filesystem.pathSD()
+		PathBuilder dbFilePath = filesystem.externalAndroidDir()
 				.append(preferences.getValue(PropertyDefinition.dbFilePath, String.class));
 		try {
 			String output = persistenceService.serializeTree(treeManager.getRootItem());
