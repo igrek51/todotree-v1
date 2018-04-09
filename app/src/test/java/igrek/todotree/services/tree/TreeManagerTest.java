@@ -66,7 +66,7 @@ public class TreeManagerTest extends BaseDaggerTest {
 		
 		assertEquals(itemRb, treeManager.getCurrentItem());
 		// click pasted link
-		dbLock.setLocked(false);
+		dbLock.unlockIfLocked();
 		new TreeCommand().itemClicked(0, link);
 		assertEquals(itemRa1, treeManager.getCurrentItem());
 		System.out.println("current Item: " + treeManager.getCurrentItem());

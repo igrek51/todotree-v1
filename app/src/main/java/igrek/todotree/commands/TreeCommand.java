@@ -11,8 +11,8 @@ import igrek.todotree.logger.Logs;
 import igrek.todotree.model.treeitem.AbstractTreeItem;
 import igrek.todotree.model.treeitem.LinkTreeItem;
 import igrek.todotree.model.treeitem.TextTreeItem;
+import igrek.todotree.services.access.DatabaseLock;
 import igrek.todotree.services.history.ChangesHistory;
-import igrek.todotree.services.lock.DatabaseLock;
 import igrek.todotree.services.resources.UserInfoService;
 import igrek.todotree.services.tree.TreeManager;
 import igrek.todotree.services.tree.TreeMover;
@@ -66,10 +66,7 @@ public class TreeCommand {
 	}
 	
 	public void itemGoIntoClicked(int position, AbstractTreeItem item) {
-		if (lock.isLocked()) {
-			lock.setLocked(false);
-			logger.debug("Database unlocked.");
-		}
+		lock.unlockIfLocked();
 		if (item instanceof LinkTreeItem) {
 			goToLinkTarget((LinkTreeItem) item);
 		} else {

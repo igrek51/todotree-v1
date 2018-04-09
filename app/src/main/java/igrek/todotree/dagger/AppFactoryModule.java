@@ -10,13 +10,14 @@ import dagger.Provides;
 import igrek.todotree.app.App;
 import igrek.todotree.app.AppData;
 import igrek.todotree.logger.Logs;
+import igrek.todotree.services.access.AccessLogService;
+import igrek.todotree.services.access.DatabaseLock;
 import igrek.todotree.services.backup.BackupManager;
 import igrek.todotree.services.clipboard.SystemClipboardManager;
 import igrek.todotree.services.clipboard.TreeClipboardManager;
 import igrek.todotree.services.commander.SecretCommander;
 import igrek.todotree.services.filesystem.FilesystemService;
 import igrek.todotree.services.history.ChangesHistory;
-import igrek.todotree.services.lock.DatabaseLock;
 import igrek.todotree.services.preferences.Preferences;
 import igrek.todotree.services.resources.UserInfoService;
 import igrek.todotree.services.tree.ContentTrimmer;
@@ -27,6 +28,9 @@ import igrek.todotree.services.tree.TreeSelectionManager;
 import igrek.todotree.services.tree.persistence.TreePersistenceService;
 import igrek.todotree.ui.GUI;
 
+/**
+ * Module with providers. These classes can be injected
+ */
 @Module
 public class AppFactoryModule {
 	
@@ -112,8 +116,14 @@ public class AppFactoryModule {
 	
 	@Provides
 	@Singleton
-	protected DatabaseLock provideDatabaseLock(Preferences preferences) {
-		return new DatabaseLock(preferences);
+	protected DatabaseLock provideDatabaseLock(Preferences preferences, Logs logger, AccessLogService accessLogService) {
+		return new DatabaseLock(preferences, logger, accessLogService);
+	}
+	
+	@Provides
+	@Singleton
+	protected AccessLogService provideAccessLogService(FilesystemService filesystem, Preferences preferences, Logs logger) {
+		return new AccessLogService(filesystem, preferences, logger);
 	}
 	
 	@Provides

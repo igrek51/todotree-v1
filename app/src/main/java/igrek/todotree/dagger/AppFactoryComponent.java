@@ -18,6 +18,9 @@ import igrek.todotree.ui.contextmenu.BackupListMenu;
 import igrek.todotree.ui.contextmenu.ItemActionsMenu;
 import igrek.todotree.ui.errorcheck.UIErrorHandler;
 
+/**
+ * Dagger will be injecting to those classes
+ */
 @Singleton
 @Component(modules = {AppFactoryModule.class})
 public interface AppFactoryComponent {

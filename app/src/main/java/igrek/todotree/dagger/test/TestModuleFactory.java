@@ -7,12 +7,14 @@ import android.support.v7.app.AppCompatActivity;
 import igrek.todotree.app.App;
 import igrek.todotree.dagger.AppFactoryModule;
 import igrek.todotree.logger.Logs;
+import igrek.todotree.mock.MockedFilesystemService;
 import igrek.todotree.mock.MockedGUI;
 import igrek.todotree.mock.MockedLogs;
 import igrek.todotree.mock.MockedPreferences;
 import igrek.todotree.mock.MockedSystemClipboardManager;
 import igrek.todotree.mock.MockedUserInfoService;
 import igrek.todotree.services.clipboard.SystemClipboardManager;
+import igrek.todotree.services.filesystem.FilesystemService;
 import igrek.todotree.services.preferences.Preferences;
 import igrek.todotree.services.resources.UserInfoService;
 import igrek.todotree.ui.GUI;
@@ -25,6 +27,11 @@ public class TestModuleFactory {
 			@Override
 			protected UserInfoService provideUserInfoService(Activity activity, GUI gui, Logs logger) {
 				return new MockedUserInfoService(activity, gui, logger);
+			}
+			
+			@Override
+			protected FilesystemService provideFilesystemService(Activity activity) {
+				return new MockedFilesystemService(activity);
 			}
 			
 			@Override

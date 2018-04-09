@@ -24,7 +24,7 @@ public class FilesystemService {
 		pathSDInit();
 	}
 	
-	private void pathSDInit() {
+	protected void pathSDInit() {
 		pathToExtSD = "/storage/extSdCard";
 		if (!exists(pathToExtSD)) {
 			pathToExtSD = Environment.getExternalStorageDirectory().toString();
@@ -37,7 +37,7 @@ public class FilesystemService {
 	
 	public PathBuilder externalAndroidDir() {
 		// returns internal dir but creates also /storage/extSdCard/Android/data/pkg - WTF?!
-		activity.getExternalFilesDir("data");
+		//		activity.getExternalFilesDir("data");
 		return pathSD();
 	}
 	

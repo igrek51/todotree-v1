@@ -8,7 +8,7 @@ import javax.inject.Inject;
 
 import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.model.treeitem.AbstractTreeItem;
-import igrek.todotree.services.lock.DatabaseLock;
+import igrek.todotree.services.access.DatabaseLock;
 import igrek.todotree.services.resources.InfoBarClickAction;
 import igrek.todotree.services.resources.UserInfoService;
 import igrek.todotree.services.tree.TreeManager;
