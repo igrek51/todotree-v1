@@ -46,6 +46,8 @@ android {
         maven { url 'http://repo1.maven.org/maven2' }
     }
     compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 

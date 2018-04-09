@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Locale;
 
 import igrek.todotree.logger.Logs;
+import igrek.todotree.model.treeitem.AbstractTreeItem;
 import igrek.todotree.services.filesystem.FilesystemService;
 import igrek.todotree.services.filesystem.PathBuilder;
 import igrek.todotree.services.preferences.Preferences;
@@ -23,7 +24,7 @@ public class AccessLogService {
 	private static final String ACCESS_LOGS_SUBDIR = "access";
 	private static final String ACCESS_LOG_PREFIX = "access-";
 	private static final String ACCESS_LOG_SUFFIX = ".log";
-	private SimpleDateFormat filenameDateFormat = new SimpleDateFormat("yyyy-MM-dd_HHmmss", Locale.ENGLISH);
+	private SimpleDateFormat filenameDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
 	private SimpleDateFormat lineDateFormat = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss", Locale.ENGLISH);
 	
 	private FilesystemService filesystem;
@@ -50,12 +51,14 @@ public class AccessLogService {
 	/**
 	 * logs database unlock event
 	 */
-	public void logDBUnlocked() {
+	public void logDBUnlocked(AbstractTreeItem item) {
 		try {
 			File todayLog = getTodayLog();
 			StringBuilder line = new StringBuilder();
 			line.append("db-unlocked\t");
-			line.append(lineDateFormat.format(new Date()) + "\t");
+			line.append(lineDateFormat.format(new Date()));
+			if (item != null)
+				line.append("\t" + item.getDisplayName());
 			appendLine(todayLog, line.toString());
 			cleanUpLogs();
 		} catch (IOException e) {
@@ -105,7 +108,12 @@ public class AccessLogService {
 	}
 	
 	private PathBuilder getAccessDirPath() {
-		return getDBFilePath().parent().append(ACCESS_LOGS_SUBDIR);
+		PathBuilder dirPath = getDBFilePath().parent().append(ACCESS_LOGS_SUBDIR);
+		if (!dirPath.getFile().exists()) {
+			dirPath.getFile().mkdir();
+			logger.info("missing access dir created: " + dirPath.toString());
+		}
+		return dirPath;
 	}
 	
 	private PathBuilder getDBFilePath() {

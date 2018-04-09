@@ -66,7 +66,7 @@ public class TreeCommand {
 	}
 	
 	public void itemGoIntoClicked(int position, AbstractTreeItem item) {
-		lock.unlockIfLocked();
+		lock.unlockIfLocked(item);
 		if (item instanceof LinkTreeItem) {
 			goToLinkTarget((LinkTreeItem) item);
 		} else {

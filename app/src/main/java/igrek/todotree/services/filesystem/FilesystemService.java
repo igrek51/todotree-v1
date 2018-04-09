@@ -15,7 +15,7 @@ import java.util.List;
 
 public class FilesystemService {
 	
-	private String pathToExtSD;
+	protected String pathToExtSD;
 	private Activity activity;
 	
 	public FilesystemService(Activity activity) {

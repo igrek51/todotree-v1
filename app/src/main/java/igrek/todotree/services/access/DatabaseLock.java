@@ -3,6 +3,7 @@ package igrek.todotree.services.access;
 
 import igrek.todotree.exceptions.DatabaseLockedException;
 import igrek.todotree.logger.Logs;
+import igrek.todotree.model.treeitem.AbstractTreeItem;
 import igrek.todotree.services.preferences.Preferences;
 import igrek.todotree.services.preferences.PropertyDefinition;
 
@@ -27,10 +28,10 @@ public class DatabaseLock {
 		this.locked = locked;
 	}
 	
-	public boolean unlockIfLocked() {
+	public boolean unlockIfLocked(AbstractTreeItem item) {
 		if (isLocked()) {
 			setLocked(false);
-			accessLogService.logDBUnlocked();
+			accessLogService.logDBUnlocked(item);
 			logger.debug("Database unlocked.");
 			return true;
 		}

@@ -4,7 +4,6 @@ package igrek.todotree.mock;
 import android.app.Activity;
 
 import igrek.todotree.services.filesystem.FilesystemService;
-import igrek.todotree.services.filesystem.PathBuilder;
 
 public class MockedFilesystemService extends FilesystemService {
 	
@@ -13,7 +12,7 @@ public class MockedFilesystemService extends FilesystemService {
 	}
 	
 	@Override
-	public PathBuilder externalAndroidDir() {
-		return pathSD();
+	protected void pathSDInit() {
+		pathToExtSD = "/storage/extSdCard";
 	}
 }
