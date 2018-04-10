@@ -41,7 +41,7 @@ public class StatisticsLogService {
 	 * @return latest log file
 	 */
 	private File getTodayLog() throws IOException {
-		File logFile = getAccessDirPath().append(LOG_FILENAME_PREFIX + filenameDateFormat.format(new Date()) + LOG_FILENAME_SUFFIX)
+		File logFile = getLogsDirPath().append(LOG_FILENAME_PREFIX + filenameDateFormat.format(new Date()) + LOG_FILENAME_SUFFIX)
 				.getFile();
 		if (!logFile.exists())
 			logFile.createNewFile();
@@ -91,11 +91,11 @@ public class StatisticsLogService {
 	}
 	
 	/**
-	 * removes old access logs
+	 * removes old logs
 	 */
 	public void cleanUpLogs() {
-		PathBuilder accessDirPath = getAccessDirPath();
-		List<String> logs = filesystem.listDir(accessDirPath);
+		PathBuilder logsDirPath = getLogsDirPath();
+		List<String> logs = filesystem.listDir(logsDirPath);
 		// minimal keeping date = today minus keepDays
 		Calendar c = Calendar.getInstance();
 		c.setTime(new Date());
@@ -110,7 +110,7 @@ public class StatisticsLogService {
 					Date date = filenameDateFormat.parse(datePart);
 					if (date.before(minDate)) {
 						// need to be removed
-						removeLog(accessDirPath, filename);
+						removeLog(logsDirPath, filename);
 					}
 				} catch (ParseException e) {
 					logger.warn("Invalid date format in file name: " + filename);
@@ -123,7 +123,7 @@ public class StatisticsLogService {
 		path.append(filename).getFile().delete();
 	}
 	
-	private PathBuilder getAccessDirPath() {
+	private PathBuilder getLogsDirPath() {
 		PathBuilder dirPath = getDBFilePath().parent().append(LOGS_SUBDIR);
 		if (!dirPath.getFile().exists()) {
 			dirPath.getFile().mkdir();
