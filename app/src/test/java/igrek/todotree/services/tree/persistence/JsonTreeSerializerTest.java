@@ -22,7 +22,7 @@ public class JsonTreeSerializerTest {
 	private JsonTreeDeserializer deserializer;
 	
 	@Before
-	public void init() throws Exception {
+	public void init() {
 		serializer = new JsonTreeSerializer();
 		deserializer = new JsonTreeDeserializer();
 	}

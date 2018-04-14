@@ -12,7 +12,7 @@ import static org.mockito.Mockito.mock;
 public class DaggerMockTest extends BaseDaggerTest {
 	
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() {
 		MainActivity activity = mock(MainActivity.class);
 		// Dagger init test
 		DaggerIOC.initTest(null, activity);

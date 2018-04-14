@@ -157,7 +157,7 @@ class JsonTreeDeserializer {
 		return value;
 	}
 	
-	private String getOptionalAttributeValue(List<ItemAttribute> attributes, String name) throws DeserializationFailedException {
+	private String getOptionalAttributeValue(List<ItemAttribute> attributes, String name) {
 		for (ItemAttribute attribute : attributes) {
 			if (attribute.getName().equals(name))
 				return attribute.getValue();

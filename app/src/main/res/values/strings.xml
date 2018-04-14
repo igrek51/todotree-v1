@@ -27,4 +27,5 @@
     <string name="action_sum_selected">Sum selected</string>
     <string name="action_restore_backup">Restore backup</string>
     <string name="exitScreenMessage">Closing...</string>
+    <string name="action_show_statistics">Statistics</string>
 </resources>

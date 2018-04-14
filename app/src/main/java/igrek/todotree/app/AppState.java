@@ -4,6 +4,6 @@ public enum AppState {
 	
 	ITEMS_LIST,
 	
-	EDIT_ITEM_CONTENT;
+	EDIT_ITEM_CONTENT
 	
 }

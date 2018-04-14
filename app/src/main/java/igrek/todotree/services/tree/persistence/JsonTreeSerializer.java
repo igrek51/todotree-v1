@@ -42,7 +42,7 @@ class JsonTreeSerializer {
 	
 	private void serializeAttributes(StringBuilder output, AbstractTreeItem item) {
 		if (item instanceof TextTreeItem) {
-			serializeAttribute(output, "name", ((TextTreeItem) item).getDisplayName());
+			serializeAttribute(output, "name", item.getDisplayName());
 		} else if (item instanceof LinkTreeItem) {
 			LinkTreeItem linkItem = (LinkTreeItem) item;
 			serializeAttribute(output, "target", linkItem.getTargetPath());

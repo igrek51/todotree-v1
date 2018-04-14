@@ -65,6 +65,9 @@ public class NavigationCommand {
 			case R.id.action_sum_selected:
 				new ItemSelectionCommand().sumItems();
 				return false;
+			case R.id.action_show_statistics:
+				new StatisticsCommand().showStatisticsInfo();
+				return false;
 		}
 		return false;
 	}
