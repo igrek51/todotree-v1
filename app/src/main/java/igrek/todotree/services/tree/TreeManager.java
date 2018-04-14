@@ -2,6 +2,7 @@ package igrek.todotree.services.tree;
 
 import java.util.TreeSet;
 
+import igrek.todotree.commands.StatisticsCommand;
 import igrek.todotree.exceptions.NoSuperItemException;
 import igrek.todotree.model.treeitem.AbstractTreeItem;
 import igrek.todotree.model.treeitem.RootTreeItem;
@@ -74,20 +75,19 @@ public class TreeManager {
 		item.setParent(currentItem);
 		changesHistory.registerChange();
 		currentItem.add(position, item);
-	}
-	
-	public void addToCurrent(AbstractTreeItem item) {
-		changesHistory.registerChange();
-		currentItem.add(item);
+		new StatisticsCommand().onTaskCreated(item);
 	}
 	
 	public void removeFromCurrent(int position) {
+		AbstractTreeItem removingChild = currentItem.getChild(position);
+		new StatisticsCommand().onTaskRemoved(removingChild);
 		changesHistory.registerChange();
 		currentItem.remove(position);
 	}
 	
 	public void removeFromCurrent(AbstractTreeItem item) {
 		changesHistory.registerChange();
+		new StatisticsCommand().onTaskRemoved(item);
 		currentItem.remove(item);
 	}
 	

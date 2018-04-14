@@ -13,6 +13,7 @@ import igrek.todotree.commands.ItemSelectionCommand;
 import igrek.todotree.commands.ItemTrashCommand;
 import igrek.todotree.commands.NavigationCommand;
 import igrek.todotree.commands.PersistenceCommand;
+import igrek.todotree.commands.StatisticsCommand;
 import igrek.todotree.commands.TreeCommand;
 import igrek.todotree.ui.contextmenu.BackupListMenu;
 import igrek.todotree.ui.contextmenu.ItemActionsMenu;
@@ -31,8 +32,7 @@ public interface AppFactoryComponent {
 	
 	void inject(BackupListMenu there);
 	
-	// Controllers
-	
+	// Commands
 	void inject(NavigationCommand there);
 	
 	void inject(ExitCommand there);
@@ -52,5 +52,7 @@ public interface AppFactoryComponent {
 	void inject(ItemSelectionCommand there);
 	
 	void inject(ItemActionCommand there);
+	
+	void inject(StatisticsCommand there);
 	
 }

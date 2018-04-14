@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Locale;
 
 import igrek.todotree.logger.Logs;
-import igrek.todotree.model.treeitem.AbstractTreeItem;
 import igrek.todotree.services.filesystem.FilesystemService;
 import igrek.todotree.services.filesystem.PathBuilder;
 import igrek.todotree.services.preferences.Preferences;
@@ -49,20 +48,11 @@ public class StatisticsLogService {
 	}
 
 	public void logTaskCreate(String taskName) {
-		logTaskChange(taskName, "task-create");
+		logTaskChange(taskName, "task-created");
 	}
-
-	public void logTaskRemove(AbstractTreeItem item) {
-		// TODO log item and its children
-		// TODO if its not link
-		logTaskRemove(item.getdisplayName());
-		for (AbstractTreeItem child : item.children()){
-			logTaskRemove(child);
-		}
-	}
-
-	public void logTaskRemove(String taskName) {
-		logTaskChange(taskName, "task-remove");
+	
+	public void logTaskComplete(String taskName) {
+		logTaskChange(taskName, "task-completed");
 	}
 	
 	/**
@@ -73,7 +63,7 @@ public class StatisticsLogService {
 			File todayLog = getTodayLog();
 			StringBuilder line = new StringBuilder();
 			line.append(type).append("\t");
-			line.append(lineDateFormat.format(new Date()));
+			line.append(lineDateFormat.format(new Date())).append("\t");
 			line.append(taskName);
 			appendLine(todayLog, line.toString());
 			cleanUpLogs();
@@ -88,6 +78,7 @@ public class StatisticsLogService {
 				bw.write(line + "\n");
 			}
 		}
+		logger.debug("stats log line appended: " + line);
 	}
 	
 	/**
@@ -121,6 +112,7 @@ public class StatisticsLogService {
 	
 	private void removeLog(PathBuilder path, String filename) {
 		path.append(filename).getFile().delete();
+		logger.debug("log file removed: " + filename);
 	}
 	
 	private PathBuilder getLogsDirPath() {

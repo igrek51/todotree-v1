@@ -44,12 +44,7 @@ public class ItemActionCommand {
 	
 	public void actionAddAbove(final int position) {
 		//delayed execution due to not showing keyboard
-		new Handler().post(new Runnable() {
-			@Override
-			public void run() {
-				new ItemEditorCommand().addItemHereClicked(position);
-			}
-		});
+		new Handler().post(() -> new ItemEditorCommand().addItemHereClicked(position));
 	}
 	
 	public void actionCopy(int position) {
@@ -62,21 +57,11 @@ public class ItemActionCommand {
 	}
 	
 	public void actionPasteAbove(final int position) {
-		new Handler().post(new Runnable() {
-			@Override
-			public void run() {
-				new ClipboardCommand().pasteItems(position);
-			}
-		});
+		new Handler().post(() -> new ClipboardCommand().pasteItems(position));
 	}
 	
 	public void actionPasteAboveAsLink(final int position) {
-		new Handler().post(new Runnable() {
-			@Override
-			public void run() {
-				new ClipboardCommand().pasteItemsAsLink(position);
-			}
-		});
+		new Handler().post(() -> new ClipboardCommand().pasteItemsAsLink(position));
 	}
 	
 	public void actionCut(int position) {
@@ -98,12 +83,9 @@ public class ItemActionCommand {
 	
 	public void actionEdit(final int position) {
 		//delayed execution due to not showing keyboard
-		new Handler().post(new Runnable() {
-			@Override
-			public void run() {
-				AbstractTreeItem item = treeManager.getCurrentItem().getChild(position);
-				new ItemEditorCommand().itemEditClicked(item);
-			}
+		new Handler().post(() -> {
+			AbstractTreeItem item = treeManager.getCurrentItem().getChild(position);
+			new ItemEditorCommand().itemEditClicked(item);
 		});
 	}
 }
