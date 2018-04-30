@@ -74,7 +74,11 @@ public class StatisticsCommand {
 			message.append("\nCompleted: " + completed);
 			message.append("\nDiff: " + (created - completed));
 			
-			message.append("\n\nLast completed tasks:");
+			if (completed > created) {
+				message.append("\nCongratulations ! :)");
+			}
+			
+			message.append("\n\nLast completed tasks (" + completed + "):");
 			for (StatisticEvent event : events) {
 				if (event.getType().equals(StatisticEventType.TASK_COMPLETED)) {
 					message.append("\n");
@@ -83,8 +87,13 @@ public class StatisticsCommand {
 				}
 			}
 			
-			if (completed > created) {
-				message.append("\n\nCongratulations :) !");
+			message.append("\n\nRecently created tasks (" + created + "):");
+			for (StatisticEvent event : events) {
+				if (event.getType().equals(StatisticEventType.TASK_CREATED)) {
+					message.append("\n");
+					message.append(event.getTaskName());
+					message.append(" - ").append(displayDateFormat.format(event.getDatetime()));
+				}
 			}
 			
 			dlgAlert.setMessage(message.toString());
