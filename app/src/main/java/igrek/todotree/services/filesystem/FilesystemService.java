@@ -3,6 +3,8 @@ package igrek.todotree.services.filesystem;
 import android.app.Activity;
 import android.os.Environment;
 
+import com.google.common.base.Joiner;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -11,24 +13,74 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
+
+import igrek.todotree.logger.Logs;
 
 public class FilesystemService {
 	
 	protected String pathToExtSD;
+	private Logs logger;
 	private Activity activity;
 	
-	public FilesystemService(Activity activity) {
+	public FilesystemService(Logs logger, Activity activity, ExternalCardService externalCardService) {
+		this.logger = logger;
 		this.activity = activity;
 		
 		pathSDInit();
 	}
 	
 	protected void pathSDInit() {
-		pathToExtSD = "/storage/extSdCard";
-		if (!exists(pathToExtSD)) {
+		HashSet<String> externalMounts = getExternalMounts();
+		logger.debug("External mounts: " + Joiner.on(", ").join(externalMounts));
+		if (!externalMounts.isEmpty())
+			pathToExtSD = externalMounts.iterator().next();
+		if (!exists(pathToExtSD))
+			pathToExtSD = "/storage/extSdCard";
+		if (!exists(pathToExtSD))
 			pathToExtSD = Environment.getExternalStorageDirectory().toString();
+	}
+	
+	public static HashSet<String> getExternalMounts() {
+		// FIXME fuckin Android
+		final HashSet<String> out = new HashSet<>();
+		String reg = "(?i).*vold.*(vfat|ntfs|exfat|fat32|ext3|ext4).*rw.*";
+		String s = "";
+		try {
+			final Process process = new ProcessBuilder().command("mount")
+					.redirectErrorStream(true)
+					.start();
+			process.waitFor();
+			final InputStream is = process.getInputStream();
+			final byte[] buffer = new byte[1024];
+			while (is.read(buffer) != -1) {
+				s = s + new String(buffer);
+			}
+			is.close();
+		} catch (final Exception e) {
+			e.printStackTrace();
 		}
+		
+		// parse output
+		final String[] lines = s.split("\n");
+		for (String line : lines) {
+			if (!line.toLowerCase(Locale.US).contains("asec")) {
+				if (line.matches(reg)) {
+					String[] parts = line.split(" ");
+					for (String part : parts) {
+						if (part.startsWith("/"))
+							if (!part.toLowerCase(Locale.US).contains("vold")) {
+								// FIXME lg workaround
+								part = part.replaceAll("^/mnt/media_rw", "/storage");
+								out.add(part);
+							}
+					}
+				}
+			}
+		}
+		return out;
 	}
 	
 	public PathBuilder pathSD() {
@@ -36,6 +88,7 @@ public class FilesystemService {
 	}
 	
 	public PathBuilder externalAndroidDir() {
+		// FIXME
 		// returns internal dir but creates also /storage/extSdCard/Android/data/pkg - WTF?!
 		//		activity.getExternalFilesDir("data");
 		return pathSD();

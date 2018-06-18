@@ -16,6 +16,7 @@ import igrek.todotree.services.backup.BackupManager;
 import igrek.todotree.services.clipboard.SystemClipboardManager;
 import igrek.todotree.services.clipboard.TreeClipboardManager;
 import igrek.todotree.services.commander.SecretCommander;
+import igrek.todotree.services.filesystem.ExternalCardService;
 import igrek.todotree.services.filesystem.FilesystemService;
 import igrek.todotree.services.history.ChangesHistory;
 import igrek.todotree.services.preferences.Preferences;
@@ -63,8 +64,8 @@ public class AppFactoryModule {
 	
 	@Provides
 	@Singleton
-	protected FilesystemService provideFilesystemService(Activity activity) {
-		return new FilesystemService(activity);
+	protected FilesystemService provideFilesystemService(Logs logger, Activity activity, ExternalCardService externalCardService) {
+		return new FilesystemService(logger, activity, externalCardService);
 	}
 	
 	@Provides
@@ -179,6 +180,12 @@ public class AppFactoryModule {
 	@Singleton
 	protected StatisticsLogService provideStatisticsLogService(FilesystemService filesystem, Preferences preferences, Logs logger) {
 		return new StatisticsLogService(filesystem, preferences, logger);
+	}
+	
+	@Provides
+	@Singleton
+	protected ExternalCardService provideExternalCardService(Logs logger, Activity activity) {
+		return new ExternalCardService(logger, activity);
 	}
 	
 }

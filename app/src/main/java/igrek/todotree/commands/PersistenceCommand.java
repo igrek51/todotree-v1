@@ -80,9 +80,13 @@ public class PersistenceCommand {
 	
 	public void loadRootTree() {
 		filesystem.mkdirIfNotExist(filesystem.externalAndroidDir().toString());
-		PathBuilder dbFilePath = filesystem.externalAndroidDir()
-				.append(preferences.getValue(PropertyDefinition.dbFilePath, String.class));
-		loadDbFromFile(dbFilePath.toString());
+		String dbFilePath = preferences.getValue(PropertyDefinition.dbFilePath, String.class);
+		if (dbFilePath.startsWith("/")) { //absolute
+			loadDbFromFile(dbFilePath);
+		} else { // relative
+			PathBuilder dbFilePathBuilder = filesystem.externalAndroidDir().append(dbFilePath);
+			loadDbFromFile(dbFilePathBuilder.toString());
+		}
 	}
 	
 	public void loadRootTreeFromBackup(Backup backup) {

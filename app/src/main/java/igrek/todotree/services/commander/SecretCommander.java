@@ -14,6 +14,7 @@ import igrek.todotree.services.resources.UserInfoService;
  * ###dupa
  * ###config lockdb true
  * ###config lockdb false
+ * ###config dbFilePath /storage/6D49-845B/Android/data/igrek.todotree/todo.json
  */
 public class SecretCommander {
 	
@@ -69,13 +70,16 @@ public class SecretCommander {
 			logger.warn("not enough params");
 			return;
 		}
-		String property = params.get(0);
+		String property = params.get(0).toLowerCase();
 		String value = params.get(1);
 		if (property.equals("lockdb")) {
 			value = value.toLowerCase();
 			boolean valueB = value.equals("true") || value.equals("on") || value.equals("1");
 			preferences.setValue(PropertyDefinition.lockDB, valueB);
 			userInfo.showInfo("Property saved: lockdb = " + valueB);
+		} else if (property.equals("dbfilepath")) {
+			preferences.setValue(PropertyDefinition.dbFilePath, value);
+			userInfo.showInfo("Property saved: dbFilePath = " + value);
 		} else {
 			logger.warn("unknown property: " + property);
 		}

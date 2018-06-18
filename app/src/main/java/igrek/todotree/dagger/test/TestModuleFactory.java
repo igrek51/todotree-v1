@@ -14,6 +14,7 @@ import igrek.todotree.mock.MockedPreferences;
 import igrek.todotree.mock.MockedSystemClipboardManager;
 import igrek.todotree.mock.MockedUserInfoService;
 import igrek.todotree.services.clipboard.SystemClipboardManager;
+import igrek.todotree.services.filesystem.ExternalCardService;
 import igrek.todotree.services.filesystem.FilesystemService;
 import igrek.todotree.services.preferences.Preferences;
 import igrek.todotree.services.resources.UserInfoService;
@@ -30,8 +31,8 @@ public class TestModuleFactory {
 			}
 			
 			@Override
-			protected FilesystemService provideFilesystemService(Activity activity) {
-				return new MockedFilesystemService(activity);
+			protected FilesystemService provideFilesystemService(Logs logger, Activity activity, ExternalCardService externalCardService) {
+				return new MockedFilesystemService(logger, activity, externalCardService);
 			}
 			
 			@Override
