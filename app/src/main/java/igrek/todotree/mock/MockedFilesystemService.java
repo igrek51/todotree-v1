@@ -13,8 +13,4 @@ public class MockedFilesystemService extends FilesystemService {
 		super(logger, activity, externalCardService);
 	}
 	
-	@Override
-	protected void pathSDInit() {
-		pathToExtSD = "/storage/extSdCard";
-	}
 }

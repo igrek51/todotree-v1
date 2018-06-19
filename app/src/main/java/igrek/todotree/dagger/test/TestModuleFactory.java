@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import igrek.todotree.app.App;
 import igrek.todotree.dagger.AppFactoryModule;
 import igrek.todotree.logger.Logs;
+import igrek.todotree.mock.MockedExternalCardService;
 import igrek.todotree.mock.MockedFilesystemService;
 import igrek.todotree.mock.MockedGUI;
 import igrek.todotree.mock.MockedLogs;
@@ -33,6 +34,11 @@ public class TestModuleFactory {
 			@Override
 			protected FilesystemService provideFilesystemService(Logs logger, Activity activity, ExternalCardService externalCardService) {
 				return new MockedFilesystemService(logger, activity, externalCardService);
+			}
+			
+			@Override
+			protected ExternalCardService provideExternalCardService(Logs logger, Activity activity) {
+				return new MockedExternalCardService(logger, activity);
 			}
 			
 			@Override

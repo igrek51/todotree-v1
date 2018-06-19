@@ -129,7 +129,7 @@ public class BackupManager {
 	}
 	
 	private PathBuilder getDBFilePath() {
-		return filesystem.externalAndroidDir()
+		return filesystem.externalSDPath()
 				.append(preferences.getValue(PropertyDefinition.dbFilePath, String.class));
 	}
 	

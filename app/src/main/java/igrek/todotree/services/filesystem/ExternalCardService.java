@@ -30,7 +30,11 @@ public class ExternalCardService {
 		//		logger.debug("MANUFACTURER = " + android.os.Build.MANUFACTURER);
 	}
 	
-	private String findExternalSDPath() {
+	public String getExternalSDPath() {
+		return externalSDPath;
+	}
+	
+	protected String findExternalSDPath() {
 		return new FirstFinder<String>().addRule(this::isSamsung, checkDirExists("/storage/extSdCard"))
 				.addRule(getExternalMount())
 				.addRule(checkDirExists("/storage/extSdCard"))
