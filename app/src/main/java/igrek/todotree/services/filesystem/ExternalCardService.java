@@ -3,6 +3,9 @@ package igrek.todotree.services.filesystem;
 import android.app.Activity;
 import android.os.Build;
 import android.os.Environment;
+import android.support.annotation.NonNull;
+
+import com.google.common.base.Joiner;
 
 import java.io.File;
 import java.io.InputStream;
@@ -24,6 +27,7 @@ public class ExternalCardService {
 	public ExternalCardService(Logs logger, Activity activity) {
 		this.logger = logger;
 		this.activity = activity;
+		logger.debug(Joiner.on(", ").join(getExternalMounts()));
 		externalSDPath = findExternalSDPath();
 		logger.debug("External SD Card path: " + externalSDPath);
 		//		logger.debug("DEVICE = " + android.os.Build.DEVICE);
@@ -35,14 +39,20 @@ public class ExternalCardService {
 	}
 	
 	protected String findExternalSDPath() {
-		return new FirstFinder<String>().addRule(this::isSamsung, checkDirExists("/storage/extSdCard"))
-				.addRule(getExternalMount())
-				.addRule(checkDirExists("/storage/extSdCard"))
-				.addRule(checkDirExists("/storage/external_sd"))
-				.addRule(checkDirExists("/storage/ext_sd"))
-				.addRule(checkDirExists("/storage/external"))
-				.addRule(Environment.getExternalStorageDirectory().getAbsolutePath())
+		return new FirstFinder<String>().addRule(this::isSamsung, () -> checkDirExists("/storage/extSdCard"))
+				.addRule(() -> getExternalMount())
+				.addRule(() -> checkDirExists("/storage/extSdCard"))
+				.addRule(() -> checkDirExists("/storage/external_sd"))
+				.addRule(() -> checkDirExists("/storage/ext_sd"))
+				.addRule(() -> checkDirExists("/storage/external"))
+				.addRule(() -> getExternalStorageDirectory())
 				.find();
+	}
+	
+	@NonNull
+	private String getExternalStorageDirectory() {
+		logger.warn("getting Environment.getExternalStorageDirectory() -  it's probably not what it's named for");
+		return Environment.getExternalStorageDirectory().getAbsolutePath();
 	}
 	
 	private String checkDirExists(String path) {
