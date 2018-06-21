@@ -121,13 +121,9 @@ public class TreeListView extends ListView implements AdapterView.OnItemClickLis
 	}
 	
 	public void setItems(List<AbstractTreeItem> items) {
-		
-		adapter = new TreeItemAdapter(context, null, this);
-		setAdapter(adapter);
 		adapter.setDataSource(items);
 		
 		invalidate();
-		// TODO optional
 		calculateViewHeights();
 	}
 	
@@ -136,10 +132,7 @@ public class TreeListView extends ListView implements AdapterView.OnItemClickLis
 	}
 	
 	private void calculateViewHeights() {
-		
-		// FIXME invoked at least 2 times
 		itemHeights = new HashMap<>();
-		logger.debug("calculateViewHeights");
 		
 		final ViewTreeObserver observer = this.getViewTreeObserver();
 		observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -165,7 +158,7 @@ public class TreeListView extends ListView implements AdapterView.OnItemClickLis
 	public int getItemHeight(int position) {
 		Integer h = itemHeights.get(position);
 		if (h == null)
-			logger.warn("Item View = null");
+			logger.warn("Item View (" + position + ") = null");
 		return h != null ? h : 0;
 	}
 	

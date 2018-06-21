@@ -35,7 +35,7 @@ public class GUICommand {
 	
 	public void updateItemsList() {
 		appData.setState(AppState.ITEMS_LIST);
-		gui.updateItemsList(treeManager.getCurrentItem(), selectionManager.getSelectedItems());
+		gui.updateItemsList(treeManager.getCurrentItem(), null, selectionManager.getSelectedItems());
 	}
 	
 	public void showItemsList() {

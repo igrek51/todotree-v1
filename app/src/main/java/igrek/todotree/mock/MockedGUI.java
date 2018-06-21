@@ -4,6 +4,7 @@ package igrek.todotree.mock;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+import java.util.List;
 import java.util.Set;
 
 import igrek.todotree.model.treeitem.AbstractTreeItem;
@@ -21,7 +22,7 @@ public class MockedGUI extends GUI {
 	
 	@Override
 	public void showItemsList(AbstractTreeItem currentItem) {
-		updateItemsList(currentItem, null);
+		updateItemsList(currentItem, null, null);
 	}
 	
 	@Override
@@ -34,7 +35,7 @@ public class MockedGUI extends GUI {
 	}
 	
 	@Override
-	public void updateItemsList(AbstractTreeItem currentItem, Set<Integer> selectedPositions) {
+	public void updateItemsList(AbstractTreeItem currentItem, List<AbstractTreeItem> items, Set<Integer> selectedPositions) {
 	}
 	
 	@Override

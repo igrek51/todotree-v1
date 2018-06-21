@@ -8,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.RelativeLayout;
 
+import java.util.List;
 import java.util.Set;
 
 import igrek.todotree.R;
@@ -61,9 +62,7 @@ public class GUI extends BaseGUI {
 		
 		itemsListView = (TreeListView) itemsListLayout.findViewById(R.id.treeItemsList);
 		itemsListView.init(activity);
-		itemsListView.setItems(currentItem.getChildren());
-		
-		updateItemsList(currentItem, null);
+		updateItemsList(currentItem, currentItem.getChildren(), null);
 	}
 	
 	public void showEditItemPanel(final AbstractTreeItem item, AbstractTreeItem parent) {
@@ -76,7 +75,10 @@ public class GUI extends BaseGUI {
 		return setMainContentLayout(R.layout.exit_screen);
 	}
 	
-	public void updateItemsList(AbstractTreeItem currentItem, Set<Integer> selectedPositions) {
+	public void updateItemsList(AbstractTreeItem currentItem, List<AbstractTreeItem> items, Set<Integer> selectedPositions) {
+		if (items == null)
+			items = currentItem.getChildren();
+		
 		//tytuł gałęzi
 		StringBuilder sb = new StringBuilder(currentItem.getDisplayName());
 		if (!currentItem.isEmpty()) {
@@ -90,7 +92,7 @@ public class GUI extends BaseGUI {
 		showBackButton(currentItem.getParent() != null);
 		
 		//lista elementów
-		itemsListView.setItemsAndSelected(currentItem.getChildren(), selectedPositions);
+		itemsListView.setItemsAndSelected(items, selectedPositions);
 	}
 	
 	public void scrollToItem(int itemIndex) {
