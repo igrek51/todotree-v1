@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
@@ -26,6 +27,7 @@ public class TreeListView extends ListView implements AdapterView.OnItemClickLis
 	private TreeListScrollHandler scrollHandler;
 	private TreeListReorder reorder = new TreeListReorder(this);
 	private TreeListGestureHandler gestureHandler = new TreeListGestureHandler(this);
+	private Context context;
 	
 	/** view index -> view height */
 	private HashMap<Integer, Integer> itemHeights = new HashMap<>();
@@ -45,6 +47,7 @@ public class TreeListView extends ListView implements AdapterView.OnItemClickLis
 	public void init(Context context) {
 		adapter = new TreeItemAdapter(context, null, this);
 		scrollHandler = new TreeListScrollHandler(this, context);
+		this.context = context;
 		
 		setOnItemClickListener(this);
 		setOnItemLongClickListener(this);
@@ -118,7 +121,11 @@ public class TreeListView extends ListView implements AdapterView.OnItemClickLis
 	}
 	
 	public void setItems(List<AbstractTreeItem> items) {
+		
+		adapter = new TreeItemAdapter(context, null, this);
+		setAdapter(adapter);
 		adapter.setDataSource(items);
+		
 		invalidate();
 		// TODO optional
 		calculateViewHeights();
@@ -129,19 +136,30 @@ public class TreeListView extends ListView implements AdapterView.OnItemClickLis
 	}
 	
 	private void calculateViewHeights() {
-		int measureSpecW = MeasureSpec.makeMeasureSpec(this.getWidth(), MeasureSpec.EXACTLY);
-		int measureSpecH = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED);
-		itemHeights = new HashMap<>();
-		for (int i = 0; i < adapter.getCount(); i++) {
-			View mView = adapter.getView(i, null, this);
-			mView.measure(measureSpecW, measureSpecH);
-			itemHeights.put(i, mView.getMeasuredHeight());
-		}
 		
-		logger.debug("calculateViewHeights:");
-		for (int i = 0; i < adapter.getCount(); i++) {
-			logger.debug(i + ": " + itemHeights.get(i));
-		}
+		// FIXME invoked at least 2 times
+		itemHeights = new HashMap<>();
+		logger.debug("calculateViewHeights");
+		
+		final ViewTreeObserver observer = this.getViewTreeObserver();
+		observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+			@Override
+			public void onGlobalLayout() {
+				TreeListView.this.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+				// now view width should be available at last
+				int viewWidth = TreeListView.this.getWidth();
+				if (viewWidth == 0)
+					logger.warn("List view width == 0");
+				
+				int measureSpecW = MeasureSpec.makeMeasureSpec(viewWidth, MeasureSpec.EXACTLY);
+				for (int i = 0; i < adapter.getCount(); i++) {
+					View itemView = adapter.getView(i, null, TreeListView.this);
+					itemView.measure(measureSpecW, MeasureSpec.UNSPECIFIED);
+					itemHeights.put(i, itemView.getMeasuredHeight());
+				}
+				
+			}
+		});
 	}
 	
 	public int getItemHeight(int position) {

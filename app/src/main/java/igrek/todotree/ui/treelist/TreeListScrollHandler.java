@@ -13,7 +13,7 @@ public class TreeListScrollHandler implements AbsListView.OnScrollListener {
 	
 	private int scrollState = SCROLL_STATE_IDLE;
 	
-	private final int SMOOTH_SCROLL_EDGE_DP = 160;
+	private final int SMOOTH_SCROLL_EDGE_DP = 200;
 	private int SMOOTH_SCROLL_EDGE_PX;
 	private final float SMOOTH_SCROLL_FACTOR = 0.34f;
 	private final int SMOOTH_SCROLL_DURATION = 10;
