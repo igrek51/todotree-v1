@@ -132,12 +132,12 @@ public class TreeListView extends ListView implements AdapterView.OnItemClickLis
 	}
 	
 	private void calculateViewHeights() {
-		itemHeights = new HashMap<>();
-		
+		// WARNING: for a moment - there's invalidated item heights map
 		final ViewTreeObserver observer = this.getViewTreeObserver();
 		observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
 			@Override
 			public void onGlobalLayout() {
+				itemHeights = new HashMap<>();
 				TreeListView.this.getViewTreeObserver().removeGlobalOnLayoutListener(this);
 				// now view width should be available at last
 				int viewWidth = TreeListView.this.getWidth();
@@ -157,8 +157,9 @@ public class TreeListView extends ListView implements AdapterView.OnItemClickLis
 	
 	public int getItemHeight(int position) {
 		Integer h = itemHeights.get(position);
-		if (h == null)
+		if (h == null) {
 			logger.warn("Item View (" + position + ") = null");
+		}
 		return h != null ? h : 0;
 	}
 	

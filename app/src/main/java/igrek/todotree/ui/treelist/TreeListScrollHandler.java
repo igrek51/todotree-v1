@@ -4,9 +4,12 @@ import android.content.Context;
 import android.util.DisplayMetrics;
 import android.widget.AbsListView;
 
+import igrek.todotree.logger.Logs;
+
 public class TreeListScrollHandler implements AbsListView.OnScrollListener {
 	
 	private TreeListView listView;
+	private Logs logger = new Logs();
 	
 	/** aktualne położenie scrolla */
 	private Integer scrollOffset = 0;
@@ -98,14 +101,22 @@ public class TreeListScrollHandler implements AbsListView.OnScrollListener {
 	
 	public void scrollToPosition(int y) {
 		//wyznaczenie najbliższego elementu i przesunięcie względem niego
-		int position = 0;
-		while (y > listView.getItemHeight(position)) {
-			y -= listView.getItemHeight(position);
-			position++;
+		try {
+			int position = 0;
+			while (y > listView.getItemHeight(position)) {
+				int itemHeight = listView.getItemHeight(position);
+				if (itemHeight == 0) {
+					throw new RuntimeException("item height = 0, cant scroll to position");
+				}
+				y -= itemHeight;
+				position++;
+			}
+			
+			listView.setSelection(position);
+			listView.smoothScrollBy(y, 50);
+		} catch (RuntimeException e) {
+			logger.warn(e.getMessage());
 		}
-		
-		listView.setSelection(position);
-		listView.smoothScrollBy(y, 50);
 		
 		listView.invalidate();
 	}
