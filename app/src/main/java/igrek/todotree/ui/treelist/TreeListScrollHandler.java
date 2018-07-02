@@ -1,6 +1,7 @@
 package igrek.todotree.ui.treelist;
 
 import android.content.Context;
+import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.widget.AbsListView;
 
@@ -115,6 +116,10 @@ public class TreeListScrollHandler implements AbsListView.OnScrollListener {
 			listView.setSelection(position);
 			listView.smoothScrollBy(y, 50);
 		} catch (RuntimeException e) {
+			final int move = y;
+			new Handler().post(() -> {
+				listView.smoothScrollBy(move, 50);
+			});
 			logger.warn(e.getMessage());
 		}
 		
