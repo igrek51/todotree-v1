@@ -150,6 +150,7 @@ class TreeItemAdapter extends ArrayAdapter<AbstractTreeItem> {
 		final ImageButton moveButton = (ImageButton) itemView.findViewById(R.id.buttonItemMove);
 		moveButton.setFocusableInTouchMode(false);
 		moveButton.setFocusable(false);
+		moveButton.setClickable(false);
 		if (selections == null) {
 			moveButton.setOnTouchListener((v, event) -> {
 				switch (event.getAction()) {
@@ -166,8 +167,6 @@ class TreeItemAdapter extends ArrayAdapter<AbstractTreeItem> {
 				}
 				return false;
 			});
-			moveButton.setOnLongClickListener(v -> listView.getReorder()
-					.onItemMoveLongPressed(position, item));
 		} else {
 			moveButton.setVisibility(View.INVISIBLE);
 			moveButton.setLayoutParams(new RelativeLayout.LayoutParams(0, 0));

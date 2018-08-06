@@ -9,19 +9,20 @@
 
     <ImageButton
         android:id="@+id/buttonItemMove"
-        android:layout_width="18dp"
+        android:layout_width="22dp"
         android:layout_height="22dp"
         android:layout_centerVertical="true"
         android:layout_gravity="start|center_vertical"
         android:background="@drawable/ic_reorder_white"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
         android:scaleType="fitCenter"
         android:padding="10dp"
+        android:paddingRight="15dp"
+        android:paddingEnd="15dp"
         android:layout_marginStart="2dp"
         android:layout_marginLeft="2dp"
         android:layout_marginEnd="4dp"
-        android:layout_marginRight="4dp"/>
+        android:layout_marginRight="4dp"
+        />
 
     <CheckBox
         android:id="@+id/cbItemSelected"

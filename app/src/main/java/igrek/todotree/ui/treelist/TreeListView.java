@@ -74,6 +74,13 @@ public class TreeListView extends ListView implements AdapterView.OnItemClickLis
 	}
 	
 	@Override
+	public boolean onInterceptTouchEvent(MotionEvent ev) {
+		if (ev.getAction() == MotionEvent.ACTION_MOVE)
+			return true;
+		return super.onInterceptTouchEvent(ev);
+	}
+	
+	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		switch (event.getAction() & MotionEvent.ACTION_MASK) {
 			case MotionEvent.ACTION_DOWN:
