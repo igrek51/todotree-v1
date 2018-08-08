@@ -1,12 +1,14 @@
 package igrek.todotree.ui.treelist;
 
 import android.content.Context;
+import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
+import android.view.TouchDelegate;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -135,6 +137,8 @@ class TreeItemAdapter extends ArrayAdapter<AbstractTreeItem> {
 		ImageButton editButton = (ImageButton) itemView.findViewById(R.id.buttonItemEdit);
 		editButton.setFocusableInTouchMode(false);
 		editButton.setFocusable(false);
+		editButton.setClickable(true);
+		increaseTouchArea(editButton, 20);
 		if (selections == null && !item.isEmpty()) {
 			editButton.setOnClickListener(new SafeClickListener() {
 				@Override
@@ -151,13 +155,17 @@ class TreeItemAdapter extends ArrayAdapter<AbstractTreeItem> {
 		moveButton.setFocusableInTouchMode(false);
 		moveButton.setFocusable(false);
 		moveButton.setClickable(false);
+		increaseTouchArea(moveButton, 20);
 		if (selections == null) {
 			moveButton.setOnTouchListener((v, event) -> {
+				event.setSource(777); // from moveButton
 				switch (event.getAction()) {
 					case MotionEvent.ACTION_DOWN:
 						listView.getReorder()
 								.onItemMoveButtonPressed(position, item, itemView, event.getX(), event
 										.getY() + moveButton.getTop());
+						return false;
+					case MotionEvent.ACTION_MOVE:
 						return false;
 					case MotionEvent.ACTION_UP:
 						listView.getReorder()
@@ -219,4 +227,16 @@ class TreeItemAdapter extends ArrayAdapter<AbstractTreeItem> {
 		return itemPlus;
 	}
 	
+	private void increaseTouchArea(View component, int sidePx) {
+		final View parent = (View) component.getParent();  // button: the view you want to enlarge hit area
+		parent.post(() -> {
+			final Rect rect = new Rect();
+			component.getHitRect(rect);
+			rect.top -= sidePx;    // increase top hit area
+			rect.left -= sidePx;   // increase left hit area
+			rect.bottom += sidePx; // increase bottom hit area
+			rect.right += sidePx;  // increase right hit area
+			parent.setTouchDelegate(new TouchDelegate(rect, component));
+		});
+	}
 }
