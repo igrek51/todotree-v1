@@ -14,15 +14,16 @@ import android.view.View;
 import java.util.List;
 
 import igrek.todotree.commands.TreeCommand;
-import igrek.todotree.logger.Logs;
-import igrek.todotree.model.treeitem.AbstractTreeItem;
+import igrek.todotree.domain.treeitem.AbstractTreeItem;
+import igrek.todotree.logger.Logger;
+import igrek.todotree.logger.LoggerFactory;
 
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 
 public class TreeListReorder {
 	
-	private Logs logger = new Logs();
+	private Logger logger = LoggerFactory.getLogger();
 	private TreeListView listView;
 	
 	/** początkowa pozycja kursora przy rozpoczęciu przeciągania (ulega zmianie przy zamianie elementów) */

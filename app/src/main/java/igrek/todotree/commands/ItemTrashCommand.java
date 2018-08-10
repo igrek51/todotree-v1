@@ -7,12 +7,12 @@ import java.util.TreeSet;
 import javax.inject.Inject;
 
 import igrek.todotree.dagger.DaggerIOC;
-import igrek.todotree.model.treeitem.AbstractTreeItem;
-import igrek.todotree.services.access.DatabaseLock;
-import igrek.todotree.services.resources.InfoBarClickAction;
-import igrek.todotree.services.resources.UserInfoService;
-import igrek.todotree.services.tree.TreeManager;
-import igrek.todotree.services.tree.TreeSelectionManager;
+import igrek.todotree.domain.treeitem.AbstractTreeItem;
+import igrek.todotree.service.access.DatabaseLock;
+import igrek.todotree.service.resources.InfoBarClickAction;
+import igrek.todotree.service.resources.UserInfoService;
+import igrek.todotree.service.tree.TreeManager;
+import igrek.todotree.service.tree.TreeSelectionManager;
 import igrek.todotree.ui.GUI;
 
 public class ItemTrashCommand {
@@ -33,7 +33,7 @@ public class ItemTrashCommand {
 	TreeSelectionManager selectionManager;
 	
 	public ItemTrashCommand() {
-		DaggerIOC.getAppComponent().inject(this);
+		DaggerIOC.getFactoryComponent().inject(this);
 	}
 	
 	public void itemRemoveClicked(int position) {// removing locked before going into first element

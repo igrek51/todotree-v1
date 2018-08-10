@@ -4,12 +4,12 @@ package igrek.todotree.dagger.test;
 import javax.inject.Singleton;
 
 import dagger.Component;
-import igrek.todotree.dagger.AppFactoryComponent;
-import igrek.todotree.dagger.AppFactoryModule;
+import igrek.todotree.dagger.FactoryComponent;
+import igrek.todotree.dagger.FactoryModule;
 
 @Singleton
-@Component(modules = {AppFactoryModule.class})
-public interface TestComponent extends AppFactoryComponent {
+@Component(modules = {FactoryModule.class})
+public interface TestComponent extends FactoryComponent {
 	
 	// Tests
 	void inject(BaseDaggerTest there);

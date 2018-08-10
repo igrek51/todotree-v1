@@ -3,7 +3,7 @@ package igrek.todotree.mock;
 
 import android.app.Activity;
 
-import igrek.todotree.services.clipboard.SystemClipboardManager;
+import igrek.todotree.service.clipboard.SystemClipboardManager;
 
 public class MockedSystemClipboardManager extends SystemClipboardManager {
 	

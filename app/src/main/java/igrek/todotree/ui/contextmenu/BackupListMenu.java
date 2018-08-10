@@ -15,11 +15,11 @@ import javax.inject.Inject;
 import igrek.todotree.commands.GUICommand;
 import igrek.todotree.commands.PersistenceCommand;
 import igrek.todotree.dagger.DaggerIOC;
-import igrek.todotree.services.backup.Backup;
-import igrek.todotree.services.backup.BackupManager;
-import igrek.todotree.services.resources.UserInfoService;
-import igrek.todotree.services.tree.TreeManager;
-import igrek.todotree.services.tree.TreeScrollCache;
+import igrek.todotree.service.backup.Backup;
+import igrek.todotree.service.backup.BackupManager;
+import igrek.todotree.service.resources.UserInfoService;
+import igrek.todotree.service.tree.TreeManager;
+import igrek.todotree.service.tree.TreeScrollCache;
 import igrek.todotree.ui.errorcheck.UIErrorHandler;
 
 public class BackupListMenu {
@@ -42,7 +42,7 @@ public class BackupListMenu {
 	private SimpleDateFormat displayDateFormat = new SimpleDateFormat("yyyy-MM-dd, HH:mm:ss", Locale.ENGLISH);
 	
 	public BackupListMenu() {
-		DaggerIOC.getAppComponent().inject(this);
+		DaggerIOC.getFactoryComponent().inject(this);
 	}
 	
 	public void show() {

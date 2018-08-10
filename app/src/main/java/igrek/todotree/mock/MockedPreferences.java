@@ -3,13 +3,13 @@ package igrek.todotree.mock;
 import android.app.Activity;
 import android.content.SharedPreferences;
 
-import igrek.todotree.logger.Logs;
-import igrek.todotree.services.preferences.Preferences;
-import igrek.todotree.services.preferences.PropertyDefinition;
+import igrek.todotree.logger.Logger;
+import igrek.todotree.service.preferences.Preferences;
+import igrek.todotree.service.preferences.PropertyDefinition;
 
 public class MockedPreferences extends Preferences {
 	
-	public MockedPreferences(Activity activity, Logs logger) {
+	public MockedPreferences(Activity activity, Logger logger) {
 		super(activity, logger);
 	}
 	

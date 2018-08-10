@@ -1,63 +1,63 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:app="http://schemas.android.com/apk/res-auto"
+      xmlns:appControllerService="http://schemas.android.com/apk/res-auto"
       xmlns:tools="http://schemas.android.com/tools"
-      tools:context=".MainActivity">
+      tools:context=".activity.MainActivity">
     <item
         android:id="@+id/action_minimize"
         android:orderInCategory="100"
         android:title="@string/action_minimize"
-        app:showAsAction="never"/>
+        appControllerService:showAsAction="never"/>
     <item
         android:id="@+id/action_reload"
         android:orderInCategory="100"
         android:title="@string/action_reload"
-        app:showAsAction="never"/>
+        appControllerService:showAsAction="never"/>
     <item
         android:id="@+id/action_restore_backup"
         android:orderInCategory="100"
         android:title="@string/action_restore_backup"
-        app:showAsAction="never"/>
+        appControllerService:showAsAction="never"/>
     <item
         android:id="@+id/action_save"
         android:orderInCategory="100"
         android:title="@string/action_save"
-        app:showAsAction="never"/>
+        appControllerService:showAsAction="never"/>
     <item
         android:id="@+id/action_exit_without_saving"
         android:orderInCategory="100"
         android:title="@string/action_exit_without_saving"
-        app:showAsAction="never"/>
+        appControllerService:showAsAction="never"/>
 
     <item
         android:id="@+id/action_select_all"
         android:orderInCategory="100"
         android:title="@string/action_select_all"
-        app:showAsAction="never"/>
+        appControllerService:showAsAction="never"/>
     <item
         android:id="@+id/action_cut"
         android:orderInCategory="100"
         android:title="@string/action_cut"
-        app:showAsAction="never"/>
+        appControllerService:showAsAction="never"/>
     <item
         android:id="@+id/action_copy"
         android:orderInCategory="100"
         android:title="@string/action_copy"
-        app:showAsAction="never"/>
+        appControllerService:showAsAction="never"/>
     <item
         android:id="@+id/action_sum_selected"
         android:orderInCategory="100"
         android:title="@string/action_sum_selected"
-        app:showAsAction="never"/>
+        appControllerService:showAsAction="never"/>
     <item
         android:id="@+id/action_show_statistics"
         android:orderInCategory="100"
         android:title="@string/action_show_statistics"
-        app:showAsAction="never"/>
+        appControllerService:showAsAction="never"/>
 
     <item
         android:id="@+id/action_save_exit"
         android:orderInCategory="300"
         android:title="@string/action_save_exit"
         android:icon="@drawable/ic_menu_save"
-        app:showAsAction="ifRoom"/>
+        appControllerService:showAsAction="ifRoom"/>
 </menu>

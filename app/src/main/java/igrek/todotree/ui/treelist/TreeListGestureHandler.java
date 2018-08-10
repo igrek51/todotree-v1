@@ -1,7 +1,7 @@
 package igrek.todotree.ui.treelist;
 
 import igrek.todotree.commands.TreeCommand;
-import igrek.todotree.model.treeitem.AbstractTreeItem;
+import igrek.todotree.domain.treeitem.AbstractTreeItem;
 
 public class TreeListGestureHandler {
 	
@@ -44,7 +44,7 @@ public class TreeListGestureHandler {
 				if (dx >= listView.getWidth() * GESTURE_MIN_DX) { // warunek przesunięcia w prawo
 					if (Math.abs(dy) <= itemH * GESTURE_MAX_DY) { //zachowanie braku przesunięcia w pionie
 						//wejście wgłąb elementu smyraniem w prawo
-						//Logs.debug("gesture: go into intercepted, dx: " + (dx / getWidth()) + " , dy: " + (Math.abs(dy) / itemH));
+						//Logger.debug("gesture: go into intercepted, dx: " + (dx / getWidth()) + " , dy: " + (Math.abs(dy) / itemH));
 						AbstractTreeItem item = listView.getAdapter().getItem(gestureStartPos);
 						new TreeCommand().itemGoIntoClicked(gestureStartPos, item);
 						gestureStartPos = null; //reset

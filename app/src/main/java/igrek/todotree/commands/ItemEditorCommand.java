@@ -6,18 +6,18 @@ import javax.inject.Inject;
 import igrek.todotree.app.AppData;
 import igrek.todotree.app.AppState;
 import igrek.todotree.dagger.DaggerIOC;
-import igrek.todotree.logger.Logs;
-import igrek.todotree.model.treeitem.AbstractTreeItem;
-import igrek.todotree.model.treeitem.LinkTreeItem;
-import igrek.todotree.model.treeitem.TextTreeItem;
-import igrek.todotree.services.access.DatabaseLock;
-import igrek.todotree.services.commander.SecretCommander;
-import igrek.todotree.services.history.ChangesHistory;
-import igrek.todotree.services.resources.UserInfoService;
-import igrek.todotree.services.tree.ContentTrimmer;
-import igrek.todotree.services.tree.TreeManager;
-import igrek.todotree.services.tree.TreeScrollCache;
-import igrek.todotree.services.tree.TreeSelectionManager;
+import igrek.todotree.domain.treeitem.AbstractTreeItem;
+import igrek.todotree.domain.treeitem.LinkTreeItem;
+import igrek.todotree.domain.treeitem.TextTreeItem;
+import igrek.todotree.logger.Logger;
+import igrek.todotree.service.access.DatabaseLock;
+import igrek.todotree.service.commander.SecretCommander;
+import igrek.todotree.service.history.ChangesHistory;
+import igrek.todotree.service.resources.UserInfoService;
+import igrek.todotree.service.tree.ContentTrimmer;
+import igrek.todotree.service.tree.TreeManager;
+import igrek.todotree.service.tree.TreeScrollCache;
+import igrek.todotree.service.tree.TreeSelectionManager;
 import igrek.todotree.ui.GUI;
 
 public class ItemEditorCommand {
@@ -50,13 +50,13 @@ public class ItemEditorCommand {
 	ChangesHistory changesHistory;
 	
 	@Inject
-	Logs logger;
+	Logger logger;
 	
 	@Inject
 	SecretCommander secretCommander;
 	
 	public ItemEditorCommand() {
-		DaggerIOC.getAppComponent().inject(this);
+		DaggerIOC.getFactoryComponent().inject(this);
 	}
 	
 	private Integer getNewItemPosition() {

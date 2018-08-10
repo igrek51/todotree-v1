@@ -15,14 +15,15 @@ import java.util.Set;
 
 import igrek.todotree.commands.ItemEditorCommand;
 import igrek.todotree.commands.TreeCommand;
-import igrek.todotree.logger.Logs;
-import igrek.todotree.model.treeitem.AbstractTreeItem;
+import igrek.todotree.domain.treeitem.AbstractTreeItem;
+import igrek.todotree.logger.Logger;
+import igrek.todotree.logger.LoggerFactory;
 import igrek.todotree.ui.contextmenu.ItemActionsMenu;
 import igrek.todotree.ui.errorcheck.UIErrorHandler;
 
 public class TreeListView extends ListView implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
 	
-	private Logs logger = new Logs();
+	private Logger logger = LoggerFactory.getLogger();
 	private TreeItemAdapter adapter;
 	private TreeListScrollHandler scrollHandler;
 	private TreeListReorder reorder = new TreeListReorder(this);

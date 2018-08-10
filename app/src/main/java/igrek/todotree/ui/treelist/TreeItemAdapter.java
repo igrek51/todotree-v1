@@ -25,8 +25,8 @@ import java.util.Set;
 import igrek.todotree.R;
 import igrek.todotree.commands.ItemEditorCommand;
 import igrek.todotree.commands.ItemSelectionCommand;
-import igrek.todotree.model.treeitem.AbstractTreeItem;
-import igrek.todotree.model.treeitem.LinkTreeItem;
+import igrek.todotree.domain.treeitem.AbstractTreeItem;
+import igrek.todotree.domain.treeitem.LinkTreeItem;
 import igrek.todotree.ui.errorcheck.SafeClickListener;
 
 class TreeItemAdapter extends ArrayAdapter<AbstractTreeItem> {

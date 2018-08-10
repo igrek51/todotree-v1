@@ -12,9 +12,9 @@ import javax.inject.Inject;
 
 import igrek.todotree.commands.ItemActionCommand;
 import igrek.todotree.dagger.DaggerIOC;
-import igrek.todotree.services.clipboard.TreeClipboardManager;
-import igrek.todotree.services.tree.TreeManager;
-import igrek.todotree.services.tree.TreeSelectionManager;
+import igrek.todotree.service.clipboard.TreeClipboardManager;
+import igrek.todotree.service.tree.TreeManager;
+import igrek.todotree.service.tree.TreeSelectionManager;
 import igrek.todotree.ui.errorcheck.UIErrorHandler;
 
 public class ItemActionsMenu {
@@ -35,7 +35,7 @@ public class ItemActionsMenu {
 	
 	public ItemActionsMenu(int position) {
 		this.position = position;
-		DaggerIOC.getAppComponent().inject(this);
+		DaggerIOC.getFactoryComponent().inject(this);
 	}
 	
 	public void show() {

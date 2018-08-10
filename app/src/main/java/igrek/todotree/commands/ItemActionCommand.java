@@ -9,10 +9,10 @@ import java.util.TreeSet;
 import javax.inject.Inject;
 
 import igrek.todotree.dagger.DaggerIOC;
-import igrek.todotree.model.treeitem.AbstractTreeItem;
-import igrek.todotree.services.resources.UserInfoService;
-import igrek.todotree.services.tree.TreeManager;
-import igrek.todotree.services.tree.TreeSelectionManager;
+import igrek.todotree.domain.treeitem.AbstractTreeItem;
+import igrek.todotree.service.resources.UserInfoService;
+import igrek.todotree.service.tree.TreeManager;
+import igrek.todotree.service.tree.TreeSelectionManager;
 import igrek.todotree.ui.GUI;
 
 public class ItemActionCommand {
@@ -30,7 +30,7 @@ public class ItemActionCommand {
 	UserInfoService userInfoService;
 	
 	public ItemActionCommand() {
-		DaggerIOC.getAppComponent().inject(this);
+		DaggerIOC.getFactoryComponent().inject(this);
 	}
 	
 	public void actionSelect(int position) {

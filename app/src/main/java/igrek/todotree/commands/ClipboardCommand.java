@@ -7,15 +7,15 @@ import java.util.TreeSet;
 import javax.inject.Inject;
 
 import igrek.todotree.dagger.DaggerIOC;
-import igrek.todotree.model.treeitem.AbstractTreeItem;
-import igrek.todotree.model.treeitem.LinkTreeItem;
-import igrek.todotree.model.treeitem.TextTreeItem;
-import igrek.todotree.services.clipboard.SystemClipboardManager;
-import igrek.todotree.services.clipboard.TreeClipboardManager;
-import igrek.todotree.services.resources.UserInfoService;
-import igrek.todotree.services.tree.TreeManager;
-import igrek.todotree.services.tree.TreeScrollCache;
-import igrek.todotree.services.tree.TreeSelectionManager;
+import igrek.todotree.domain.treeitem.AbstractTreeItem;
+import igrek.todotree.domain.treeitem.LinkTreeItem;
+import igrek.todotree.domain.treeitem.TextTreeItem;
+import igrek.todotree.service.clipboard.SystemClipboardManager;
+import igrek.todotree.service.clipboard.TreeClipboardManager;
+import igrek.todotree.service.resources.UserInfoService;
+import igrek.todotree.service.tree.TreeManager;
+import igrek.todotree.service.tree.TreeScrollCache;
+import igrek.todotree.service.tree.TreeSelectionManager;
 import igrek.todotree.ui.GUI;
 
 public class ClipboardCommand {
@@ -42,7 +42,7 @@ public class ClipboardCommand {
 	TreeScrollCache scrollCache;
 	
 	public ClipboardCommand() {
-		DaggerIOC.getAppComponent().inject(this);
+		DaggerIOC.getFactoryComponent().inject(this);
 	}
 	
 	public void copyItems(Set<Integer> itemPosistions, boolean info) {

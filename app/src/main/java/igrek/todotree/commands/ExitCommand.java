@@ -5,11 +5,11 @@ import android.os.Handler;
 
 import javax.inject.Inject;
 
-import igrek.todotree.app.App;
+import igrek.todotree.app.AppControllerService;
 import igrek.todotree.app.AppData;
 import igrek.todotree.app.AppState;
 import igrek.todotree.dagger.DaggerIOC;
-import igrek.todotree.services.preferences.Preferences;
+import igrek.todotree.service.preferences.Preferences;
 import igrek.todotree.ui.GUI;
 
 public class ExitCommand {
@@ -24,10 +24,10 @@ public class ExitCommand {
 	Preferences preferences;
 	
 	@Inject
-	App app;
+	AppControllerService appControllerService;
 	
 	ExitCommand() {
-		DaggerIOC.getAppComponent().inject(this);
+		DaggerIOC.getFactoryComponent().inject(this);
 	}
 	
 	void saveAndExitRequested() {
@@ -51,7 +51,7 @@ public class ExitCommand {
 	
 	void exitApp() {
 		preferences.saveAll();
-		app.quit();
+		appControllerService.quit();
 	}
 	
 	private void saveAndExit() {

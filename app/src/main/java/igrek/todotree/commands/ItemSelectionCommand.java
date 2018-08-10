@@ -7,11 +7,11 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import igrek.todotree.dagger.DaggerIOC;
-import igrek.todotree.services.calc.NumericAdder;
-import igrek.todotree.services.clipboard.SystemClipboardManager;
-import igrek.todotree.services.resources.UserInfoService;
-import igrek.todotree.services.tree.TreeManager;
-import igrek.todotree.services.tree.TreeSelectionManager;
+import igrek.todotree.service.calc.NumericAdder;
+import igrek.todotree.service.clipboard.SystemClipboardManager;
+import igrek.todotree.service.resources.UserInfoService;
+import igrek.todotree.service.tree.TreeManager;
+import igrek.todotree.service.tree.TreeSelectionManager;
 
 public class ItemSelectionCommand {
 	
@@ -28,7 +28,7 @@ public class ItemSelectionCommand {
 	TreeSelectionManager selectionManager;
 	
 	public ItemSelectionCommand() {
-		DaggerIOC.getAppComponent().inject(this);
+		DaggerIOC.getFactoryComponent().inject(this);
 	}
 	
 	private void selectAllItems(boolean selectedState) {

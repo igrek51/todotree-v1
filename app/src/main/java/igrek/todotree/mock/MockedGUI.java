@@ -7,7 +7,7 @@ import android.view.View;
 import java.util.List;
 import java.util.Set;
 
-import igrek.todotree.model.treeitem.AbstractTreeItem;
+import igrek.todotree.domain.treeitem.AbstractTreeItem;
 import igrek.todotree.ui.GUI;
 
 public class MockedGUI extends GUI {

@@ -6,20 +6,20 @@ import java.io.IOException;
 import javax.inject.Inject;
 
 import igrek.todotree.dagger.DaggerIOC;
+import igrek.todotree.domain.treeitem.AbstractTreeItem;
 import igrek.todotree.exceptions.DeserializationFailedException;
-import igrek.todotree.logger.Logs;
-import igrek.todotree.model.treeitem.AbstractTreeItem;
-import igrek.todotree.services.backup.Backup;
-import igrek.todotree.services.backup.BackupManager;
-import igrek.todotree.services.filesystem.FilesystemService;
-import igrek.todotree.services.filesystem.PathBuilder;
-import igrek.todotree.services.history.ChangesHistory;
-import igrek.todotree.services.preferences.Preferences;
-import igrek.todotree.services.preferences.PropertyDefinition;
-import igrek.todotree.services.resources.UserInfoService;
-import igrek.todotree.services.tree.TreeManager;
-import igrek.todotree.services.tree.TreeScrollCache;
-import igrek.todotree.services.tree.persistence.TreePersistenceService;
+import igrek.todotree.logger.Logger;
+import igrek.todotree.service.backup.Backup;
+import igrek.todotree.service.backup.BackupManager;
+import igrek.todotree.service.filesystem.FilesystemService;
+import igrek.todotree.service.filesystem.PathBuilder;
+import igrek.todotree.service.history.ChangesHistory;
+import igrek.todotree.service.preferences.Preferences;
+import igrek.todotree.service.preferences.PropertyDefinition;
+import igrek.todotree.service.resources.UserInfoService;
+import igrek.todotree.service.tree.TreeManager;
+import igrek.todotree.service.tree.TreeScrollCache;
+import igrek.todotree.service.tree.persistence.TreePersistenceService;
 import igrek.todotree.ui.contextmenu.BackupListMenu;
 
 public class PersistenceCommand {
@@ -49,10 +49,10 @@ public class PersistenceCommand {
 	ChangesHistory changesHistory;
 	
 	@Inject
-	Logs logger;
+	Logger logger;
 	
 	public PersistenceCommand() {
-		DaggerIOC.getAppComponent().inject(this);
+		DaggerIOC.getFactoryComponent().inject(this);
 	}
 	
 	void optionReload() {
@@ -122,7 +122,7 @@ public class PersistenceCommand {
 				.append(preferences.getValue(PropertyDefinition.dbFilePath, String.class));
 		try {
 			String output = persistenceService.serializeTree(treeManager.getRootItem());
-			//Logs.debug("Serialized data: " + output);
+			//Logger.debug("Serialized data: " + output);
 			filesystem.saveFile(dbFilePath.toString(), output);
 		} catch (IOException e) {
 			logger.error(e);

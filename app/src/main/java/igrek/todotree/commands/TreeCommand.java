@@ -6,18 +6,18 @@ import java.util.List;
 import javax.inject.Inject;
 
 import igrek.todotree.dagger.DaggerIOC;
+import igrek.todotree.domain.treeitem.AbstractTreeItem;
+import igrek.todotree.domain.treeitem.LinkTreeItem;
+import igrek.todotree.domain.treeitem.TextTreeItem;
 import igrek.todotree.exceptions.NoSuperItemException;
-import igrek.todotree.logger.Logs;
-import igrek.todotree.model.treeitem.AbstractTreeItem;
-import igrek.todotree.model.treeitem.LinkTreeItem;
-import igrek.todotree.model.treeitem.TextTreeItem;
-import igrek.todotree.services.access.DatabaseLock;
-import igrek.todotree.services.history.ChangesHistory;
-import igrek.todotree.services.resources.UserInfoService;
-import igrek.todotree.services.tree.TreeManager;
-import igrek.todotree.services.tree.TreeMover;
-import igrek.todotree.services.tree.TreeScrollCache;
-import igrek.todotree.services.tree.TreeSelectionManager;
+import igrek.todotree.logger.Logger;
+import igrek.todotree.service.access.DatabaseLock;
+import igrek.todotree.service.history.ChangesHistory;
+import igrek.todotree.service.resources.UserInfoService;
+import igrek.todotree.service.tree.TreeManager;
+import igrek.todotree.service.tree.TreeMover;
+import igrek.todotree.service.tree.TreeScrollCache;
+import igrek.todotree.service.tree.TreeSelectionManager;
 import igrek.todotree.ui.GUI;
 
 public class TreeCommand {
@@ -47,10 +47,10 @@ public class TreeCommand {
 	UserInfoService infoService;
 	
 	@Inject
-	Logs logger;
+	Logger logger;
 	
 	public TreeCommand() {
-		DaggerIOC.getAppComponent().inject(this);
+		DaggerIOC.getFactoryComponent().inject(this);
 	}
 	
 	public void goUp() {

@@ -13,7 +13,7 @@ import java.util.Set;
 
 import igrek.todotree.R;
 import igrek.todotree.commands.NavigationCommand;
-import igrek.todotree.model.treeitem.AbstractTreeItem;
+import igrek.todotree.domain.treeitem.AbstractTreeItem;
 import igrek.todotree.ui.edititem.EditItemGUI;
 import igrek.todotree.ui.errorcheck.SafeClickListener;
 import igrek.todotree.ui.treelist.TreeListView;

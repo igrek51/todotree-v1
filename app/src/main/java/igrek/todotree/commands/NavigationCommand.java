@@ -4,12 +4,12 @@ package igrek.todotree.commands;
 import javax.inject.Inject;
 
 import igrek.todotree.R;
-import igrek.todotree.app.App;
+import igrek.todotree.app.AppControllerService;
 import igrek.todotree.app.AppData;
 import igrek.todotree.app.AppState;
 import igrek.todotree.dagger.DaggerIOC;
-import igrek.todotree.services.tree.TreeManager;
-import igrek.todotree.services.tree.TreeSelectionManager;
+import igrek.todotree.service.tree.TreeManager;
+import igrek.todotree.service.tree.TreeSelectionManager;
 import igrek.todotree.ui.GUI;
 
 public class NavigationCommand {
@@ -21,7 +21,7 @@ public class NavigationCommand {
 	GUI gui;
 	
 	@Inject
-	App app;
+	AppControllerService appControllerService;
 	
 	@Inject
 	AppData appData;
@@ -30,13 +30,13 @@ public class NavigationCommand {
 	TreeSelectionManager selectionManager;
 	
 	public NavigationCommand() {
-		DaggerIOC.getAppComponent().inject(this);
+		DaggerIOC.getFactoryComponent().inject(this);
 	}
 	
 	public boolean optionsSelect(int id) {
 		switch (id) {
 			case R.id.action_minimize:
-				app.minimize();
+				appControllerService.minimize();
 				return true;
 			case R.id.action_exit_without_saving:
 				new ExitCommand().exitApp();

@@ -5,8 +5,8 @@ import javax.inject.Inject;
 
 import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.exceptions.DatabaseLockedException;
-import igrek.todotree.logger.Logs;
-import igrek.todotree.services.resources.UserInfoService;
+import igrek.todotree.logger.Logger;
+import igrek.todotree.service.resources.UserInfoService;
 
 public class UIErrorHandler {
 	
@@ -14,10 +14,10 @@ public class UIErrorHandler {
 	UserInfoService userInfoService;
 	
 	@Inject
-	Logs logger;
+	Logger logger;
 	
 	private void _handleError(Throwable t) {
-		DaggerIOC.getAppComponent().inject(this);
+		DaggerIOC.getFactoryComponent().inject(this);
 		// database locked
 		if (t instanceof DatabaseLockedException) {
 			logger.warn(t.getMessage());

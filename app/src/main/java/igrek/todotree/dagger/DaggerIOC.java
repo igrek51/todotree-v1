@@ -1,38 +1,30 @@
 package igrek.todotree.dagger;
 
 
-import android.app.Activity;
-
-import igrek.todotree.app.App;
-import igrek.todotree.dagger.test.DaggerTestComponent;
-import igrek.todotree.dagger.test.TestComponent;
-import igrek.todotree.dagger.test.TestModuleFactory;
+import igrek.todotree.MainApplication;
 
 public class DaggerIOC {
 	
-	private static AppFactoryComponent appComponent;
+	private static FactoryComponent appComponent;
 	
 	private DaggerIOC() {
 	}
 	
-	public static void init(App app, Activity activity) {
-		appComponent = DaggerAppFactoryComponent.builder()
-				.appFactoryModule(new AppFactoryModule(app, activity))
+	public static void init(MainApplication application) {
+		appComponent = DaggerFactoryComponent.builder()
+				.factoryModule(new FactoryModule(application))
 				.build();
 	}
 	
-	public static AppFactoryComponent getAppComponent() {
+	public static FactoryComponent getFactoryComponent() {
 		return appComponent;
 	}
 	
-	public static void initTest(App app, Activity activity) {
-		appComponent = DaggerTestComponent.builder()
-				.appFactoryModule(TestModuleFactory.getTestModule(app, activity))
-				.build();
-	}
-	
-	public static TestComponent getTestComponent() {
-		return (TestComponent) appComponent;
+	/**
+	 * only for testing purposes
+	 */
+	public static void setFactoryComponent(FactoryComponent component) {
+		appComponent = component;
 	}
 	
 }

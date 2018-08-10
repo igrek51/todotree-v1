@@ -13,10 +13,10 @@ import javax.inject.Inject;
 import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.domain.stats.StatisticEvent;
 import igrek.todotree.domain.stats.StatisticEventType;
-import igrek.todotree.logger.Logs;
-import igrek.todotree.model.treeitem.AbstractTreeItem;
-import igrek.todotree.model.treeitem.TextTreeItem;
-import igrek.todotree.services.statistics.StatisticsLogService;
+import igrek.todotree.domain.treeitem.AbstractTreeItem;
+import igrek.todotree.domain.treeitem.TextTreeItem;
+import igrek.todotree.logger.Logger;
+import igrek.todotree.service.statistics.StatisticsLogService;
 
 //TODO when deleted add event to interim buffer only, save to log when db is really saved
 public class StatisticsCommand {
@@ -30,10 +30,10 @@ public class StatisticsCommand {
 	Activity activity;
 	
 	@Inject
-	Logs logger;
+	Logger logger;
 	
 	public StatisticsCommand() {
-		DaggerIOC.getAppComponent().inject(this);
+		DaggerIOC.getFactoryComponent().inject(this);
 	}
 	
 	public void onTaskCreated(AbstractTreeItem item) {

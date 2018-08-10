@@ -4,7 +4,7 @@ package igrek.todotree.dagger;
 import org.junit.Before;
 import org.junit.Test;
 
-import igrek.todotree.MainActivity;
+import igrek.todotree.activity.MainActivity;
 import igrek.todotree.dagger.test.BaseDaggerTest;
 
 import static org.mockito.Mockito.mock;

@@ -5,12 +5,13 @@ import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.widget.AbsListView;
 
-import igrek.todotree.logger.Logs;
+import igrek.todotree.logger.Logger;
+import igrek.todotree.logger.LoggerFactory;
 
 public class TreeListScrollHandler implements AbsListView.OnScrollListener {
 	
 	private TreeListView listView;
-	private Logs logger = new Logs();
+	private Logger logger = LoggerFactory.getLogger();
 	
 	/** aktualne położenie scrolla */
 	private Integer scrollOffset = 0;

@@ -6,10 +6,10 @@ import javax.inject.Inject;
 import igrek.todotree.app.AppData;
 import igrek.todotree.app.AppState;
 import igrek.todotree.dagger.DaggerIOC;
-import igrek.todotree.model.treeitem.AbstractTreeItem;
-import igrek.todotree.services.tree.TreeManager;
-import igrek.todotree.services.tree.TreeScrollCache;
-import igrek.todotree.services.tree.TreeSelectionManager;
+import igrek.todotree.domain.treeitem.AbstractTreeItem;
+import igrek.todotree.service.tree.TreeManager;
+import igrek.todotree.service.tree.TreeScrollCache;
+import igrek.todotree.service.tree.TreeSelectionManager;
 import igrek.todotree.ui.GUI;
 
 public class GUICommand {
@@ -30,7 +30,7 @@ public class GUICommand {
 	TreeSelectionManager selectionManager;
 	
 	public GUICommand() {
-		DaggerIOC.getAppComponent().inject(this);
+		DaggerIOC.getFactoryComponent().inject(this);
 	}
 	
 	public void updateItemsList() {
