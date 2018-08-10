@@ -72,7 +72,6 @@ public class FactoryModule {
 	}
 	
 	@Provides
-	@Singleton
 	protected AppControllerService provideApp(Activity activity) {
 		return new AppControllerService(activity);
 	}

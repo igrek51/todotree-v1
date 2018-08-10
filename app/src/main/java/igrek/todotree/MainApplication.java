@@ -40,6 +40,6 @@ public class MainApplication extends Application {
 	}
 	
 	public AppCompatActivity getCurrentActivity() {
-		return currentActivityListener.getCurrentActivity();
+		return (AppCompatActivity) currentActivityListener.getCurrentActivity();
 	}
 }

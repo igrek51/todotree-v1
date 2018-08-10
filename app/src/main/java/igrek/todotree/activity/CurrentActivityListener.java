@@ -3,14 +3,13 @@ package igrek.todotree.activity;
 import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 
 public class CurrentActivityListener implements Application.ActivityLifecycleCallbacks {
 	
 	private Activity currentActivity;
 	
-	public AppCompatActivity getCurrentActivity() {
-		return (AppCompatActivity) currentActivity;
+	public Activity getCurrentActivity() {
+		return currentActivity;
 	}
 	
 	@Override
