@@ -1,33 +1,21 @@
 package igrek.todotree.service.tree;
 
 
-import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Set;
 import java.util.TreeSet;
 
-import igrek.todotree.activity.MainActivity;
 import igrek.todotree.commands.ClipboardCommand;
 import igrek.todotree.commands.TreeCommand;
-import igrek.todotree.dagger.DaggerIOC;
-import igrek.todotree.dagger.test.BaseDaggerTest;
+import igrek.todotree.dagger.base.BaseDaggerTest;
 import igrek.todotree.domain.treeitem.LinkTreeItem;
 import igrek.todotree.domain.treeitem.RootTreeItem;
 import igrek.todotree.domain.treeitem.TextTreeItem;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
 
 public class TreeManagerTest extends BaseDaggerTest {
-	
-	@Before
-	public void setUp() {
-		MainActivity activity = mock(MainActivity.class);
-		// Dagger init test
-		DaggerIOC.initTest(null, activity);
-		DaggerIOC.getTestComponent().inject(this);
-	}
 	
 	@Test
 	public void testLinkPasting() {
