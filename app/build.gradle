@@ -1,18 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 25
+    compileSdkVersion 27
     buildToolsVersion '27.0.3'
     def versionPropsFile = file('version.properties')
     if (versionPropsFile.canRead()) {
         Properties versionProps = new Properties()
         versionProps.load(new FileInputStream(versionPropsFile))
-
-//        def value = 0
-//        def runTasks = gradle.startParameter.taskNames
-//        if ('assemble' in runTasks || 'assembleRelease' in runTasks || 'aR' in runTasks) {
-//            value = 1;
-//        }
 
         int vMajor = versionProps['VERSION_MAJOR'].toInteger()
         int vMinor = versionProps['VERSION_MINOR'].toInteger()
@@ -30,8 +24,8 @@ android {
             versionCode vCode
             versionName vName
             applicationId "igrek.todotree"
-            minSdkVersion 13
-            targetSdkVersion 23
+            minSdkVersion 19
+            targetSdkVersion 27
         }
     } else {
         throw new GradleException("Could not read version.properties!")
@@ -43,7 +37,10 @@ android {
         }
     }
     repositories {
-        maven { url 'http://repo1.maven.org/maven2' }
+        mavenLocal()
+        mavenCentral()
+        google()
+        jcenter()
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -52,20 +49,26 @@ android {
 }
 
 dependencies {
+    // Lombok
+//    compileOnly 'org.projectlombok:lombok:1.18.0'
+//    compileOnly 'javax.annotation:javax.annotation-api:1.3.1'
+//    annotationProcessor 'org.projectlombok:lombok:1.18.0'
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.android.support:appcompat-v7:25.0.0'
-    implementation 'com.android.support:design:25.0.0'
-    androidTestImplementation 'junit:junit:4.12'
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'com.android.support:design:27.1.1'
     // DAGGER 2
     implementation 'com.google.dagger:dagger:2.10'
-    annotationProcessor "com.google.dagger:dagger-compiler:2.10"
-    testImplementation 'org.testng:testng:6.9.6'
-    implementation 'com.google.guava:guava:16.0.1'
-    // Tests
-    testImplementation 'org.mockito:mockito-core:1.9.5'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.10'
+    testImplementation 'com.google.dagger:dagger:2.10'
+    testAnnotationProcessor 'com.google.dagger:dagger-compiler:2.10'
+    // Guava
+    implementation 'com.google.guava:guava:22.0'
+    // Testing
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.robolectric:robolectric:3.0'
+    testImplementation 'org.mockito:mockito-core:1.10.19'
+    // Joda Time
+    implementation 'joda-time:joda-time:2.9.9'
+    // AssertJ
     testImplementation 'org.assertj:assertj-core:2.9.1'
 }
-
-//task clean(type: Delete) {
-//    delete rootProject.buildDir
-//}
