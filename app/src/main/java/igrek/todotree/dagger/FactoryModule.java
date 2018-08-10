@@ -57,8 +57,13 @@ public class FactoryModule {
 	}
 	
 	@Provides
-	protected Activity provideActivity() {
+	protected AppCompatActivity provideAppCompatActivity() {
 		return application.getCurrentActivity();
+	}
+	
+	@Provides
+	protected Activity provideActivity() {
+		return provideAppCompatActivity();
 	}
 	
 	@Provides
@@ -68,13 +73,7 @@ public class FactoryModule {
 	
 	@Provides
 	@Singleton
-	protected AppCompatActivity provideAppCompatActivity() {
-		return (AppCompatActivity) provideActivity();
-	}
-	
-	@Provides
-	@Singleton
-	protected AppControllerService provideApp(AppCompatActivity activity) {
+	protected AppControllerService provideApp(Activity activity) {
 		return new AppControllerService(activity);
 	}
 	

@@ -34,8 +34,8 @@ public class TestModule extends FactoryModule {
 	}
 	
 	@Override
-	protected Activity provideActivity() {
-		return Mockito.mock(Activity.class);
+	protected AppCompatActivity provideAppCompatActivity() {
+		return Mockito.mock(AppCompatActivity.class);
 	}
 	
 	

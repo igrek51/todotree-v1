@@ -1,5 +1,6 @@
 package igrek.todotree.app;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.support.v7.app.AppCompatActivity;
@@ -20,13 +21,13 @@ public class AppControllerService {
 	private static final boolean HIDE_TASKBAR = true;
 	private static final boolean KEEP_SCREEN_ON = false;
 	
-	public AppCompatActivity activity;
+	public Activity activity;
 	
 	private boolean running = true;
 	
 	protected Logger logger = LoggerFactory.getLogger();
 	
-	public AppControllerService(AppCompatActivity activity) {
+	public AppControllerService(Activity activity) {
 		this.activity = activity;
 	}
 	
@@ -35,8 +36,11 @@ public class AppControllerService {
 		
 		//hide task bar
 		if (HIDE_TASKBAR) {
-			if (activity.getSupportActionBar() != null) {
-				activity.getSupportActionBar().hide();
+			if (activity instanceof AppCompatActivity) {
+				AppCompatActivity appCompatActivity = (AppCompatActivity) activity;
+				if (appCompatActivity.getSupportActionBar() != null) {
+					appCompatActivity.getSupportActionBar().hide();
+				}
 			}
 		}
 		//fullscreen

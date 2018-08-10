@@ -1,7 +1,7 @@
 package igrek.todotree;
 
-import android.app.Activity;
 import android.app.Application;
+import android.support.v7.app.AppCompatActivity;
 
 import igrek.todotree.activity.CurrentActivityListener;
 import igrek.todotree.dagger.DaggerIOC;
@@ -39,7 +39,7 @@ public class MainApplication extends Application {
 		unregisterActivityLifecycleCallbacks(currentActivityListener);
 	}
 	
-	public Activity getCurrentActivity() {
+	public AppCompatActivity getCurrentActivity() {
 		return currentActivityListener.getCurrentActivity();
 	}
 }
