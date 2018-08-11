@@ -67,11 +67,20 @@ public class FilesystemService {
 	
 	private void saveFile(String filename, byte[] data) throws IOException {
 		File file = new File(filename);
+		createMissingParentDir(file);
 		FileOutputStream fos;
 		fos = new FileOutputStream(file);
 		fos.write(data);
 		fos.flush();
 		fos.close();
+	}
+	
+	public void createMissingParentDir(File file) {
+		File parentDir = file.getParentFile();
+		if (!parentDir.exists()) {
+			parentDir.mkdir();
+			logger.debug("missing dir created: " + parentDir.toString());
+		}
 	}
 	
 	public void saveFile(String filename, String str) throws IOException {
