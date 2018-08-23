@@ -1,11 +1,11 @@
 package igrek.todotree.dagger;
 
-import android.app.Application;
+import android.app.Activity;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
@@ -17,12 +17,12 @@ import igrek.todotree.dagger.base.DaggerTestComponent;
 import igrek.todotree.dagger.base.TestComponent;
 import igrek.todotree.dagger.base.TestModule;
 
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(RobolectricTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = 21, application = MainApplication.class)
 public class SimpleDaggerInjectionTest {
 	
 	@Inject
-	Application application;
+	Activity activity;
 	
 	@Before
 	public void setUp() {
@@ -38,8 +38,8 @@ public class SimpleDaggerInjectionTest {
 	}
 	
 	@Test
-	public void testApplicationInjection() {
-		System.out.println("injected application: " + application.toString());
+	public void testActivityInjection() {
+		System.out.println("injected activity: " + activity.toString());
 	}
 	
 }

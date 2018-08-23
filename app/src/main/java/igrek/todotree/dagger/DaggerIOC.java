@@ -1,7 +1,7 @@
 package igrek.todotree.dagger;
 
 
-import igrek.todotree.MainApplication;
+import android.support.v7.app.AppCompatActivity;
 
 public class DaggerIOC {
 	
@@ -10,9 +10,8 @@ public class DaggerIOC {
 	private DaggerIOC() {
 	}
 	
-	public static void init(MainApplication application) {
-		appComponent = DaggerFactoryComponent.builder()
-				.factoryModule(new FactoryModule(application))
+	public static void init(AppCompatActivity activity) {
+		appComponent = DaggerFactoryComponent.builder().factoryModule(new FactoryModule(activity))
 				.build();
 	}
 	

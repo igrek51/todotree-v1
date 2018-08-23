@@ -30,13 +30,18 @@ public class MainActivity extends AppCompatActivity {
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
 		
 		super.onCreate(savedInstanceState);
+		
+		// Dagger Container init
+		DaggerIOC.init(this);
 		DaggerIOC.getFactoryComponent().inject(this);
+		logger.debug("Creating activity " + this.getClass().getName());
 		
 		try {
 			appControllerService.init();
 		} catch (Exception ex) {
 			logger.fatal(this, ex);
 		}
+		logger.debug("Activity has been created: " + this.getClass().getName());
 	}
 	
 	@Override

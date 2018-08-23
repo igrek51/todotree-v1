@@ -26,6 +26,7 @@ android {
             applicationId "igrek.todotree"
             minSdkVersion 19
             targetSdkVersion 27
+//            testInstrumentationRunner "org.robolectric.RobolectricTestRunner"
         }
     } else {
         throw new GradleException("Could not read version.properties!")
@@ -49,6 +50,7 @@ android {
 }
 
 dependencies {
+    implementation 'com.android.support:support-annotations:27.1.1'
     // Lombok
 //    compileOnly 'org.projectlombok:lombok:1.18.0'
 //    compileOnly 'javax.annotation:javax.annotation-api:1.3.1'
@@ -65,7 +67,7 @@ dependencies {
     implementation 'com.google.guava:guava:22.0'
     // Testing
     testImplementation 'junit:junit:4.12'
-    testImplementation 'org.robolectric:robolectric:3.0'
+    testImplementation 'org.robolectric:robolectric:3.8'
     testImplementation 'org.mockito:mockito-core:1.10.19'
     // Joda Time
     implementation 'joda-time:joda-time:2.9.9'

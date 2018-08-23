@@ -54,7 +54,7 @@ public class AppControllerService {
 		new GUICommand().guiInit();
 		new PersistenceCommand().loadRootTree();
 		new GUICommand().showItemsList();
-		logger.info("Application has started.");
+		logger.info("Application has been initialized.");
 	}
 	
 	public void quit() {

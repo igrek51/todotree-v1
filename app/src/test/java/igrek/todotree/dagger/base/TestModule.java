@@ -25,7 +25,7 @@ import igrek.todotree.ui.GUI;
 public class TestModule extends FactoryModule {
 	
 	public TestModule(MainApplication application) {
-		super(application);
+		super(application.getCurrentActivity());
 	}
 	
 	@Override

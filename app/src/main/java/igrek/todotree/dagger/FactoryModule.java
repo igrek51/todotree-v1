@@ -1,15 +1,12 @@
 package igrek.todotree.dagger;
 
 import android.app.Activity;
-import android.app.Application;
-import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import igrek.todotree.MainApplication;
 import igrek.todotree.app.AppControllerService;
 import igrek.todotree.app.AppData;
 import igrek.todotree.logger.Logger;
@@ -40,25 +37,15 @@ import igrek.todotree.ui.GUI;
 @Module
 public class FactoryModule {
 	
-	private MainApplication application;
+	private AppCompatActivity activity;
 	
-	public FactoryModule(MainApplication application) {
-		this.application = application;
-	}
-	
-	@Provides
-	protected Application provideApplication() {
-		return application;
-	}
-	
-	@Provides
-	protected Context provideContext() {
-		return application.getApplicationContext();
+	public FactoryModule(AppCompatActivity activity) {
+		this.activity = activity;
 	}
 	
 	@Provides
 	protected AppCompatActivity provideAppCompatActivity() {
-		return application.getCurrentActivity();
+		return activity;
 	}
 	
 	@Provides
@@ -72,6 +59,7 @@ public class FactoryModule {
 	}
 	
 	@Provides
+	@Singleton
 	protected AppControllerService provideApp(Activity activity) {
 		return new AppControllerService(activity);
 	}
