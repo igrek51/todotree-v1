@@ -19,7 +19,6 @@ public class MainApplication extends Application {
 		
 		registerActivityLifecycleCallbacks(currentActivityListener);
 		
-		
 		// catch all uncaught exceptions
 		Thread.UncaughtExceptionHandler defaultUEH = Thread.getDefaultUncaughtExceptionHandler();
 		Thread.setDefaultUncaughtExceptionHandler((thread, th) -> {

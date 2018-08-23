@@ -13,6 +13,7 @@ import igrek.todotree.logger.Logger;
 import igrek.todotree.logger.LoggerFactory;
 import igrek.todotree.service.access.AccessLogService;
 import igrek.todotree.service.access.DatabaseLock;
+import igrek.todotree.service.access.QuickAddService;
 import igrek.todotree.service.backup.BackupManager;
 import igrek.todotree.service.clipboard.SystemClipboardManager;
 import igrek.todotree.service.clipboard.TreeClipboardManager;
@@ -60,7 +61,7 @@ public class FactoryModule {
 	
 	@Provides
 	@Singleton
-	protected AppControllerService provideApp(Activity activity) {
+	protected AppControllerService provideAppControllerSerivce(Activity activity) {
 		return new AppControllerService(activity);
 	}
 	
@@ -183,6 +184,12 @@ public class FactoryModule {
 	@Singleton
 	protected ExternalCardService provideExternalCardService(Logger logger, Activity activity) {
 		return new ExternalCardService(logger, activity);
+	}
+	
+	@Provides
+	@Singleton
+	protected QuickAddService provideQuickAddService(Logger logger, Activity activity, TreeManager treeManager) {
+		return new QuickAddService(logger, activity, treeManager);
 	}
 	
 }

@@ -16,6 +16,7 @@ import igrek.todotree.app.AppControllerService;
 import igrek.todotree.commands.NavigationCommand;
 import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.logger.Logger;
+import igrek.todotree.service.access.QuickAddService;
 
 public class MainActivity extends AppCompatActivity {
 	
@@ -23,6 +24,8 @@ public class MainActivity extends AppCompatActivity {
 	AppControllerService appControllerService;
 	@Inject
 	Logger logger;
+	@Inject
+	QuickAddService quickAddService;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
