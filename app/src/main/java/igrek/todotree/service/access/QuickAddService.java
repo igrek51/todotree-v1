@@ -2,6 +2,7 @@ package igrek.todotree.service.access;
 
 import android.app.Activity;
 
+import igrek.todotree.commands.ExitCommand;
 import igrek.todotree.commands.ItemEditorCommand;
 import igrek.todotree.domain.treeitem.AbstractTreeItem;
 import igrek.todotree.logger.Logger;
@@ -44,5 +45,10 @@ public class QuickAddService {
 		treeManager.goTo(tmpItem);
 		// add item at the end
 		new ItemEditorCommand().addItemClicked();
+	}
+	
+	public void exitApp() {
+		logger.debug("Exitting quick add mode...");
+		new ExitCommand().optionSaveAndExit();
 	}
 }

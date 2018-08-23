@@ -26,7 +26,7 @@ public class ExitCommand {
 	@Inject
 	AppControllerService appControllerService;
 	
-	ExitCommand() {
+	public ExitCommand() {
 		DaggerIOC.getFactoryComponent().inject(this);
 	}
 	
@@ -42,7 +42,7 @@ public class ExitCommand {
 		});
 	}
 	
-	void optionSaveAndExit() {
+	public void optionSaveAndExit() {
 		if (appData.isState(AppState.EDIT_ITEM_CONTENT)) {
 			gui.requestSaveEditedItem();
 		}

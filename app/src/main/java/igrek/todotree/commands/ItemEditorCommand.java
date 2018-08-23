@@ -11,6 +11,7 @@ import igrek.todotree.domain.treeitem.LinkTreeItem;
 import igrek.todotree.domain.treeitem.TextTreeItem;
 import igrek.todotree.logger.Logger;
 import igrek.todotree.service.access.DatabaseLock;
+import igrek.todotree.service.access.QuickAddService;
 import igrek.todotree.service.commander.SecretCommander;
 import igrek.todotree.service.history.ChangesHistory;
 import igrek.todotree.service.resources.UserInfoService;
@@ -54,6 +55,9 @@ public class ItemEditorCommand {
 	
 	@Inject
 	SecretCommander secretCommander;
+	
+	@Inject
+	QuickAddService quickAddService;
 	
 	public ItemEditorCommand() {
 		DaggerIOC.getFactoryComponent().inject(this);
@@ -135,6 +139,9 @@ public class ItemEditorCommand {
 		// try to execute secret command
 		secretCommander.execute(content);
 		returnFromItemEditing();
+		// exit if it's quick add mode only
+		if (quickAddService.isQuickAddMode())
+			quickAddService.exitApp();
 	}
 	
 	public void saveAndAddItemClicked(AbstractTreeItem editedItem, String content) {
@@ -195,6 +202,9 @@ public class ItemEditorCommand {
 	public void cancelEditedItem() {
 		gui.hideSoftKeyboard();
 		discardEditingItem();
+		// exit if it's quick add mode only
+		if (quickAddService.isQuickAddMode())
+			quickAddService.exitApp();
 	}
 	
 	public void addItemHereClicked(int position) {
