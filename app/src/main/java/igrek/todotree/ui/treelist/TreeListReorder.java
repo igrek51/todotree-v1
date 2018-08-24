@@ -298,9 +298,13 @@ public class TreeListReorder {
 	}
 	
 	public void setDraggedItemView() {
+		View draggedItemViewOld = draggedItemView;
 		draggedItemView = listView.getItemView(draggedItemPos);
 		if (draggedItemView != null) {
 			draggedItemView.setVisibility(View.INVISIBLE);
+		}
+		if (draggedItemViewOld != draggedItemView && draggedItemViewOld != null) {
+			draggedItemViewOld.setVisibility(View.VISIBLE);
 		}
 	}
 	

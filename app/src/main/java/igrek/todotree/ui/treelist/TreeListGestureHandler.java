@@ -34,21 +34,23 @@ public class TreeListGestureHandler {
 	}
 	
 	public boolean handleItemGesture(float gestureX, float gestureY, Integer scrollOffset) {
-		if (gestureStartPos != null && gestureStartX != null && gestureStartY != null) {
-			if (gestureStartPos < listView.getItems().size()) {
-				float dx = gestureX - gestureStartX;
-				float dy = gestureY - gestureStartY;
-				float dscroll = scrollOffset - gestureStartScroll;
-				dy -= dscroll;
-				int itemH = listView.getItemHeight(gestureStartPos);
-				if (dx >= listView.getWidth() * GESTURE_MIN_DX) { // warunek przesunięcia w prawo
-					if (Math.abs(dy) <= itemH * GESTURE_MAX_DY) { //zachowanie braku przesunięcia w pionie
-						//wejście wgłąb elementu smyraniem w prawo
-						//Logger.debug("gesture: go into intercepted, dx: " + (dx / getWidth()) + " , dy: " + (Math.abs(dy) / itemH));
-						AbstractTreeItem item = listView.getAdapter().getItem(gestureStartPos);
-						new TreeCommand().itemGoIntoClicked(gestureStartPos, item);
-						gestureStartPos = null; //reset
-						return true;
+		if (!listView.getReorder().isDragging()) {
+			if (gestureStartPos != null && gestureStartX != null && gestureStartY != null) {
+				if (gestureStartPos < listView.getItems().size()) {
+					float dx = gestureX - gestureStartX;
+					float dy = gestureY - gestureStartY;
+					float dscroll = scrollOffset - gestureStartScroll;
+					dy -= dscroll;
+					int itemH = listView.getItemHeight(gestureStartPos);
+					if (dx >= listView.getWidth() * GESTURE_MIN_DX) { // warunek przesunięcia w prawo
+						if (Math.abs(dy) <= itemH * GESTURE_MAX_DY) { //zachowanie braku przesunięcia w pionie
+							//wejście wgłąb elementu smyraniem w prawo
+							//Logger.debug("gesture: go into intercepted, dx: " + (dx / getWidth()) + " , dy: " + (Math.abs(dy) / itemH));
+							AbstractTreeItem item = listView.getAdapter().getItem(gestureStartPos);
+							new TreeCommand().itemGoIntoClicked(gestureStartPos, item);
+							gestureStartPos = null; //reset
+							return true;
+						}
 					}
 				}
 			}
