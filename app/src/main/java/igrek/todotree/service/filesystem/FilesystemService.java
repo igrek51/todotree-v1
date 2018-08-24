@@ -121,4 +121,19 @@ public class FilesystemService {
 			}
 		}
 	}
+	
+	public void ensureAppDataDirExists() {
+		File externalSD = new File(externalSDPath().toString());
+		File appDataDir = new File(externalSD, "Android/data/igrek.todotree");
+		if (!appDataDir.exists()) {
+			// WTF!?? getExternalFilesDir creates dir on SD card but returns Internal storage path
+			logger.info(activity.getExternalFilesDir("data").getAbsolutePath());
+			appDataDir.mkdirs();
+			if (appDataDir.exists()) {
+				logger.info("Android app data directory has been created");
+			} else {
+				logger.error("Failed to create Android app data directory");
+			}
+		}
+	}
 }

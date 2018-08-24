@@ -1,7 +1,6 @@
 package igrek.todotree.commands;
 
 
-import java.io.File;
 import java.io.IOException;
 
 import javax.inject.Inject;
@@ -80,6 +79,7 @@ public class PersistenceCommand {
 	}
 	
 	public void loadRootTree() {
+		filesystem.ensureAppDataDirExists();
 		filesystem.mkdirIfNotExist(filesystem.externalSDPath().toString());
 		String dbFilePath = preferences.getValue(PropertyDefinition.dbFilePath, String.class);
 		if (dbFilePath.startsWith("/")) { //absolute

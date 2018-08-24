@@ -128,7 +128,7 @@ public class StatisticsLogService {
 	private PathBuilder getLogsDirPath() {
 		PathBuilder dirPath = getDBFilePath().parent().append(LOGS_SUBDIR);
 		if (!dirPath.getFile().exists()) {
-			dirPath.getFile().mkdir();
+			dirPath.getFile().mkdirs();
 			logger.info("missing dir created: " + dirPath.toString());
 		}
 		return dirPath;
