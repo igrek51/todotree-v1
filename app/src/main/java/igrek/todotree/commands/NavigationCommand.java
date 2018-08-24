@@ -68,6 +68,9 @@ public class NavigationCommand {
 			case R.id.action_show_statistics:
 				new StatisticsCommand().showStatisticsInfo();
 				return false;
+			case R.id.action_go_up:
+				new TreeCommand().goUp();
+				return false;
 		}
 		return false;
 	}
@@ -78,7 +81,7 @@ public class NavigationCommand {
 				selectionManager.cancelSelectionMode();
 				new GUICommand().updateItemsList();
 			} else {
-				new TreeCommand().goUp();
+				new TreeCommand().goBack();
 			}
 		} else if (appData.isState(AppState.EDIT_ITEM_CONTENT)) {
 			if (gui.editItemBackClicked())

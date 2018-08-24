@@ -57,7 +57,7 @@ public class TreeCommand {
 		DaggerIOC.getFactoryComponent().inject(this);
 	}
 	
-	public void goUp() {
+	public void goBack() {
 		try {
 			AbstractTreeItem current = treeManager.getCurrentItem();
 			AbstractTreeItem parent = current.getParent();
@@ -69,11 +69,24 @@ public class TreeCommand {
 				treeManager.goTo(parent);
 			} else {
 				treeManager.goUp();
+				linkHistoryService.resetTarget(current); // reset link target - just in case
 			}
 			new GUICommand().updateItemsList();
 			new GUICommand().restoreScrollPosition(parent);
 		} catch (NoSuperItemException e) {
 			new ExitCommand().saveAndExitRequested();
+		}
+	}
+	
+	public void goUp() {
+		try {
+			AbstractTreeItem current = treeManager.getCurrentItem();
+			AbstractTreeItem parent = current.getParent();
+			treeManager.goUp();
+			linkHistoryService.resetTarget(current); // reset link target - just in case
+			new GUICommand().updateItemsList();
+			new GUICommand().restoreScrollPosition(parent);
+		} catch (NoSuperItemException e) {
 		}
 	}
 	

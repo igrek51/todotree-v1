@@ -29,4 +29,5 @@
     <string name="action_restore_backup">Restore backup</string>
     <string name="exitScreenMessage">Closing...</string>
     <string name="action_show_statistics">Statistics</string>
+    <string name="action_go_up">Go up</string>
 </resources>
