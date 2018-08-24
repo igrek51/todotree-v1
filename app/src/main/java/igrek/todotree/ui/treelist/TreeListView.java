@@ -199,9 +199,11 @@ public class TreeListView extends ListView implements AdapterView.OnItemClickLis
 	
 	@Override
 	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-		reorder.itemDraggingStopped();
-		gestureHandler.reset();
-		new ItemActionsMenu(position).show();
+		if (!reorder.isDragging()) {
+			reorder.itemDraggingStopped();
+			gestureHandler.reset();
+			new ItemActionsMenu(position).show();
+		}
 		return true;
 	}
 	
