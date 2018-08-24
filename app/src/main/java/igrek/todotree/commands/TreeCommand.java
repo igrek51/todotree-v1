@@ -13,6 +13,7 @@ import igrek.todotree.exceptions.NoSuperItemException;
 import igrek.todotree.logger.Logger;
 import igrek.todotree.service.access.DatabaseLock;
 import igrek.todotree.service.history.ChangesHistory;
+import igrek.todotree.service.history.LinkHistoryService;
 import igrek.todotree.service.resources.UserInfoService;
 import igrek.todotree.service.tree.TreeManager;
 import igrek.todotree.service.tree.TreeMover;
@@ -49,6 +50,9 @@ public class TreeCommand {
 	@Inject
 	Logger logger;
 	
+	@Inject
+	LinkHistoryService linkHistoryService;
+	
 	public TreeCommand() {
 		DaggerIOC.getFactoryComponent().inject(this);
 	}
@@ -57,7 +61,15 @@ public class TreeCommand {
 		try {
 			AbstractTreeItem current = treeManager.getCurrentItem();
 			AbstractTreeItem parent = current.getParent();
-			treeManager.goUp();
+			// if item was reached from link - go back to link parent
+			if (linkHistoryService.hasLink(current)) {
+				LinkTreeItem linkFromTarget = linkHistoryService.getLinkFromTarget(current);
+				linkHistoryService.resetTarget(current);
+				parent = linkFromTarget.getParent();
+				treeManager.goTo(parent);
+			} else {
+				treeManager.goUp();
+			}
 			new GUICommand().updateItemsList();
 			new GUICommand().restoreScrollPosition(parent);
 		} catch (NoSuperItemException e) {
@@ -133,6 +145,7 @@ public class TreeCommand {
 		if (target == null) {
 			infoService.showInfo("Link is broken: " + link.getDisplayTargetPath());
 		} else {
+			linkHistoryService.storeTargetLink(target, link);
 			navigateTo(target);
 		}
 	}
