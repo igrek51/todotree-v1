@@ -6,7 +6,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.RelativeLayout;
 
 import java.util.List;
 import java.util.Set;
@@ -33,7 +32,7 @@ public class GUI extends BaseGUI {
 		activity.setContentView(R.layout.activity_main);
 		
 		//toolbar
-		Toolbar toolbar1 = (Toolbar) activity.findViewById(R.id.toolbar1);
+		Toolbar toolbar1 = activity.findViewById(R.id.toolbar1);
 		activity.setSupportActionBar(toolbar1);
 		actionBar = activity.getSupportActionBar();
 		showBackButton(true);
@@ -45,7 +44,7 @@ public class GUI extends BaseGUI {
 		});
 		
 		//  główna zawartość
-		mainContent = (RelativeLayout) activity.findViewById(R.id.mainContent);
+		mainContent = activity.findViewById(R.id.mainContent);
 	}
 	
 	private void showBackButton(boolean show) {
@@ -60,7 +59,7 @@ public class GUI extends BaseGUI {
 		
 		View itemsListLayout = setMainContentLayout(R.layout.items_list);
 		
-		itemsListView = (TreeListView) itemsListLayout.findViewById(R.id.treeItemsList);
+		itemsListView = itemsListLayout.findViewById(R.id.treeItemsList);
 		itemsListView.init(activity);
 		updateItemsList(currentItem, currentItem.getChildren(), null);
 	}

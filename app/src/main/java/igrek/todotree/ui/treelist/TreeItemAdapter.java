@@ -6,6 +6,7 @@ import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.TouchDelegate;
@@ -18,7 +19,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -31,25 +31,25 @@ import igrek.todotree.ui.errorcheck.SafeClickListener;
 
 class TreeItemAdapter extends ArrayAdapter<AbstractTreeItem> {
 	
-	private Context context;
 	private List<AbstractTreeItem> dataSource;
 	private Set<Integer> selections = null; // selected indexes
 	private TreeListView listView;
-	private HashMap<Integer, View> storedViews;
+	private SparseArray<View> storedViews;
+	private LayoutInflater inflater;
 	
 	TreeItemAdapter(Context context, List<AbstractTreeItem> dataSource, TreeListView listView) {
 		super(context, 0, new ArrayList<>());
-		this.context = context;
 		if (dataSource == null)
 			dataSource = new ArrayList<>();
 		this.dataSource = dataSource;
 		this.listView = listView;
-		storedViews = new HashMap<>();
+		storedViews = new SparseArray<>();
+		inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 	}
 	
 	void setDataSource(List<AbstractTreeItem> dataSource) {
 		this.dataSource = dataSource;
-		storedViews = new HashMap<>();
+		storedViews.clear();
 		notifyDataSetChanged();
 	}
 	
@@ -67,8 +67,6 @@ class TreeItemAdapter extends ArrayAdapter<AbstractTreeItem> {
 	
 	View getStoredView(int position) {
 		if (position >= dataSource.size())
-			return null;
-		if (!storedViews.containsKey(position))
 			return null;
 		return storedViews.get(position);
 	}
@@ -95,23 +93,25 @@ class TreeItemAdapter extends ArrayAdapter<AbstractTreeItem> {
 	@NonNull
 	@Override
 	public View getView(final int position, View convertView, @NonNull ViewGroup parent) {
-		
-		LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		
 		if (position == dataSource.size()) {
-			return getAddItemView(position, parent, inflater);
+			return getAddItemView(position, parent);
 		} else {
-			return getItemView(position, parent, inflater);
+			return getItemView(position, parent);
 		}
 	}
 	
 	@NonNull
-	private View getItemView(int position, @NonNull ViewGroup parent, LayoutInflater inflater) {
+	private View getItemView(int position, @NonNull ViewGroup parent) {
+		
+		// get from cache
+		if (storedViews.get(position) != null)
+			return storedViews.get(position);
+		
 		final View itemView = inflater.inflate(R.layout.tree_item, parent, false);
 		final AbstractTreeItem item = dataSource.get(position);
 		
 		//zawartość tekstowa elementu
-		TextView textView = (TextView) itemView.findViewById(R.id.tvItemContent);
+		TextView textView = itemView.findViewById(R.id.tvItemContent);
 		if (!item.isEmpty()) {
 			textView.setTypeface(null, Typeface.BOLD);
 		} else {
@@ -125,7 +125,7 @@ class TreeItemAdapter extends ArrayAdapter<AbstractTreeItem> {
 		}
 		
 		// ilość potomków
-		TextView tvItemChildSize = (TextView) itemView.findViewById(R.id.tvItemChildSize);
+		TextView tvItemChildSize = itemView.findViewById(R.id.tvItemChildSize);
 		if (!item.isEmpty()) {
 			String contentBuilder = "[" + item.size() + "]";
 			tvItemChildSize.setText(contentBuilder);
@@ -134,7 +134,7 @@ class TreeItemAdapter extends ArrayAdapter<AbstractTreeItem> {
 		}
 		
 		//edycja elementu
-		ImageButton editButton = (ImageButton) itemView.findViewById(R.id.buttonItemEdit);
+		ImageButton editButton = itemView.findViewById(R.id.buttonItemEdit);
 		editButton.setFocusableInTouchMode(false);
 		editButton.setFocusable(false);
 		editButton.setClickable(true);
@@ -151,7 +151,7 @@ class TreeItemAdapter extends ArrayAdapter<AbstractTreeItem> {
 		}
 		
 		//przesuwanie
-		final ImageButton moveButton = (ImageButton) itemView.findViewById(R.id.buttonItemMove);
+		final ImageButton moveButton = itemView.findViewById(R.id.buttonItemMove);
 		moveButton.setFocusableInTouchMode(false);
 		moveButton.setFocusable(false);
 		moveButton.setClickable(false);
@@ -181,7 +181,7 @@ class TreeItemAdapter extends ArrayAdapter<AbstractTreeItem> {
 		}
 		
 		//checkbox do zaznaczania wielu elementów
-		CheckBox cbItemSelected = (CheckBox) itemView.findViewById(R.id.cbItemSelected);
+		CheckBox cbItemSelected = itemView.findViewById(R.id.cbItemSelected);
 		cbItemSelected.setFocusableInTouchMode(false);
 		cbItemSelected.setFocusable(false);
 		
@@ -207,11 +207,11 @@ class TreeItemAdapter extends ArrayAdapter<AbstractTreeItem> {
 	}
 	
 	@NonNull
-	private View getAddItemView(int position, @NonNull ViewGroup parent, LayoutInflater inflater) {
-		//plusik
+	private View getAddItemView(int position, @NonNull ViewGroup parent) {
+		// plus
 		View itemPlus = inflater.inflate(R.layout.item_plus, parent, false);
 		
-		ImageButton plusButton = (ImageButton) itemPlus.findViewById(R.id.buttonAddNewItem);
+		ImageButton plusButton = itemPlus.findViewById(R.id.buttonAddNewItem);
 		plusButton.setFocusableInTouchMode(false);
 		plusButton.setFocusable(false);
 		plusButton.setOnClickListener(new SafeClickListener() {

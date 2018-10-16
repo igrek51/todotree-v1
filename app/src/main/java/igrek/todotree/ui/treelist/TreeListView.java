@@ -3,13 +3,13 @@ package igrek.todotree.ui.treelist;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
+import android.util.SparseArray;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -28,10 +28,9 @@ public class TreeListView extends ListView implements AdapterView.OnItemClickLis
 	private TreeListScrollHandler scrollHandler;
 	private TreeListReorder reorder = new TreeListReorder(this);
 	private TreeListGestureHandler gestureHandler = new TreeListGestureHandler(this);
-	private Context context;
 	
 	/** view index -> view height */
-	private HashMap<Integer, Integer> itemHeights = new HashMap<>();
+	private SparseArray<Integer> itemHeights = new SparseArray<>();
 	
 	public TreeListView(Context context) {
 		super(context);
@@ -48,7 +47,6 @@ public class TreeListView extends ListView implements AdapterView.OnItemClickLis
 	public void init(Context context) {
 		adapter = new TreeItemAdapter(context, null, this);
 		scrollHandler = new TreeListScrollHandler(this, context);
-		this.context = context;
 		
 		setOnItemClickListener(this);
 		setOnItemLongClickListener(this);
@@ -130,9 +128,8 @@ public class TreeListView extends ListView implements AdapterView.OnItemClickLis
 		setItems(items);
 	}
 	
-	public void setItems(List<AbstractTreeItem> items) {
+	private void setItems(List<AbstractTreeItem> items) {
 		adapter.setDataSource(items);
-		
 		invalidate();
 		calculateViewHeights();
 	}
@@ -147,7 +144,8 @@ public class TreeListView extends ListView implements AdapterView.OnItemClickLis
 		observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
 			@Override
 			public void onGlobalLayout() {
-				itemHeights = new HashMap<>();
+				
+				itemHeights.clear();
 				TreeListView.this.getViewTreeObserver().removeGlobalOnLayoutListener(this);
 				// now view width should be available at last
 				int viewWidth = TreeListView.this.getWidth();
@@ -169,8 +167,10 @@ public class TreeListView extends ListView implements AdapterView.OnItemClickLis
 		Integer h = itemHeights.get(position);
 		if (h == null) {
 			logger.warn("Item View (" + position + ") = null");
+			return 0;
 		}
-		return h != null ? h : 0;
+		
+		return h;
 	}
 	
 	public void putItemHeight(Integer position, Integer height) {

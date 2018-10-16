@@ -267,32 +267,6 @@ public class TreeListReorder {
 		itemDraggingStopped();
 	}
 	
-	public boolean onItemMoveLongPressed(int position, AbstractTreeItem item) {
-		if (position == 0) {
-			//przeniesienie na koniec
-			itemDraggingStopped();
-			
-			List<AbstractTreeItem> items = new TreeCommand().itemMoved(position, listView.getItems()
-					.size() - 1);
-			
-			listView.getAdapter().setDataSource(items);
-			listView.getScrollHandler().scrollToItem(items.size() - 1);
-			return true;
-		}
-		if (position == listView.getItems().size() - 1) {
-			//przeniesienie na początek
-			itemDraggingStopped();
-			
-			List<AbstractTreeItem> items = new TreeCommand().itemMoved(position, -(listView.getItems()
-					.size() - 1));
-			
-			listView.getAdapter().setDataSource(items);
-			listView.getScrollHandler().scrollToItem(0);
-			return true;
-		}
-		return false;
-	}
-	
 	public boolean isDragging() {
 		return draggedItemPos != null;
 	}
