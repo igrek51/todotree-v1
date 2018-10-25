@@ -61,6 +61,12 @@
         appControllerService:showAsAction="never"/>
 
     <item
+        android:id="@+id/action_notify"
+        android:orderInCategory="100"
+        android:title="@string/action_notify"
+        appControllerService:showAsAction="never"/>
+
+    <item
         android:id="@+id/action_save_exit"
         android:orderInCategory="300"
         android:title="@string/action_save_exit"

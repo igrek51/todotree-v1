@@ -22,6 +22,7 @@ import igrek.todotree.service.filesystem.ExternalCardService;
 import igrek.todotree.service.filesystem.FilesystemService;
 import igrek.todotree.service.history.ChangesHistory;
 import igrek.todotree.service.history.LinkHistoryService;
+import igrek.todotree.service.notification.NotificationService;
 import igrek.todotree.service.preferences.Preferences;
 import igrek.todotree.service.resources.UserInfoService;
 import igrek.todotree.service.statistics.StatisticsLogService;
@@ -197,6 +198,12 @@ public class FactoryModule {
 	@Singleton
 	protected LinkHistoryService provideLinkHistoryService() {
 		return new LinkHistoryService();
+	}
+	
+	@Provides
+	@Singleton
+	protected NotificationService provideNotificationService(Activity activity) {
+		return new NotificationService(activity);
 	}
 	
 }

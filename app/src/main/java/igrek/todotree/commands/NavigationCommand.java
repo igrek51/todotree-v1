@@ -8,6 +8,7 @@ import igrek.todotree.app.AppControllerService;
 import igrek.todotree.app.AppData;
 import igrek.todotree.app.AppState;
 import igrek.todotree.dagger.DaggerIOC;
+import igrek.todotree.service.notification.NotificationService;
 import igrek.todotree.service.tree.TreeManager;
 import igrek.todotree.service.tree.TreeSelectionManager;
 import igrek.todotree.ui.GUI;
@@ -28,6 +29,9 @@ public class NavigationCommand {
 	
 	@Inject
 	TreeSelectionManager selectionManager;
+	
+	@Inject
+	NotificationService notificationService;
 	
 	public NavigationCommand() {
 		DaggerIOC.getFactoryComponent().inject(this);
@@ -70,6 +74,9 @@ public class NavigationCommand {
 				return false;
 			case R.id.action_go_up:
 				new TreeCommand().goUp();
+				return false;
+			case R.id.action_notify:
+				notificationService.sendNotification();
 				return false;
 		}
 		return false;
