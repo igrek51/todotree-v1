@@ -56,7 +56,7 @@ public class DailySummaryService {
 					created++;
 			}
 			
-			if (completed < created) {
+			if (completed < created && completed < 10) {
 				// no message
 				return null;
 			}
