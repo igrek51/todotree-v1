@@ -15,10 +15,11 @@
         <activity
             android:name=".activity.MainActivity"
             android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"
-            android:screenOrientation="portrait"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme"
-            android:resizeableActivity="true">
+            android:launchMode="singleTop"
+            android:resizeableActivity="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -27,15 +28,18 @@
         <activity
             android:name=".activity.QuickAddActivity"
             android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"
-            android:screenOrientation="portrait"
             android:label="@string/quick_add_app_name"
-            android:theme="@style/AppTheme"
-            android:resizeableActivity="true">
+            android:resizeableActivity="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
+        <receiver android:name=".activity.DailyReceiver">
+        </receiver>
     </application>
 
 </manifest>

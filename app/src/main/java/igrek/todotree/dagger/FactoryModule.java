@@ -22,10 +22,12 @@ import igrek.todotree.service.filesystem.ExternalCardService;
 import igrek.todotree.service.filesystem.FilesystemService;
 import igrek.todotree.service.history.ChangesHistory;
 import igrek.todotree.service.history.LinkHistoryService;
-import igrek.todotree.service.notification.NotificationService;
 import igrek.todotree.service.preferences.Preferences;
 import igrek.todotree.service.resources.UserInfoService;
 import igrek.todotree.service.statistics.StatisticsLogService;
+import igrek.todotree.service.summary.AlarmService;
+import igrek.todotree.service.summary.DailySummaryService;
+import igrek.todotree.service.summary.NotificationService;
 import igrek.todotree.service.tree.ContentTrimmer;
 import igrek.todotree.service.tree.TreeManager;
 import igrek.todotree.service.tree.TreeMover;
@@ -63,8 +65,8 @@ public class FactoryModule {
 	
 	@Provides
 	@Singleton
-	protected AppControllerService provideAppControllerSerivce(Activity activity) {
-		return new AppControllerService(activity);
+	protected AppControllerService provideAppControllerSerivce(Activity activity, DailySummaryService dailySummaryService) {
+		return new AppControllerService(activity, dailySummaryService);
 	}
 	
 	
@@ -178,8 +180,8 @@ public class FactoryModule {
 	
 	@Provides
 	@Singleton
-	protected StatisticsLogService provideStatisticsLogService(FilesystemService filesystem, Preferences preferences, Logger logger) {
-		return new StatisticsLogService(filesystem, preferences, logger);
+	protected StatisticsLogService provideStatisticsLogService(FilesystemService filesystem, Preferences preferences) {
+		return new StatisticsLogService(filesystem, preferences);
 	}
 	
 	@Provides
@@ -204,6 +206,18 @@ public class FactoryModule {
 	@Singleton
 	protected NotificationService provideNotificationService(Activity activity) {
 		return new NotificationService(activity);
+	}
+	
+	@Provides
+	@Singleton
+	protected AlarmService provideAlarmService(Activity activity) {
+		return new AlarmService(activity);
+	}
+	
+	@Provides
+	@Singleton
+	protected DailySummaryService provideDailySummaryService(Activity activity, AlarmService alarmService, NotificationService notificationService, StatisticsLogService statisticsLogService) {
+		return new DailySummaryService(activity, alarmService, notificationService, statisticsLogService);
 	}
 	
 }

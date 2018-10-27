@@ -30,5 +30,5 @@
     <string name="exitScreenMessage">Closing...</string>
     <string name="action_show_statistics">Statistics</string>
     <string name="action_go_up">Go up</string>
-    <string name="action_notify">Notify</string>
+    <string name="action_notify">Summary</string>
 </resources>

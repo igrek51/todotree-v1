@@ -18,6 +18,7 @@ import java.util.Locale;
 import igrek.todotree.domain.stats.StatisticEvent;
 import igrek.todotree.domain.stats.StatisticEventType;
 import igrek.todotree.logger.Logger;
+import igrek.todotree.logger.LoggerFactory;
 import igrek.todotree.service.filesystem.FilesystemService;
 import igrek.todotree.service.filesystem.PathBuilder;
 import igrek.todotree.service.preferences.Preferences;
@@ -34,12 +35,11 @@ public class StatisticsLogService {
 	
 	private FilesystemService filesystem;
 	private Preferences preferences;
-	private Logger logger;
+	private Logger logger = LoggerFactory.getLogger();
 	
-	public StatisticsLogService(FilesystemService filesystem, Preferences preferences, Logger logger) {
+	public StatisticsLogService(FilesystemService filesystem, Preferences preferences) {
 		this.filesystem = filesystem;
 		this.preferences = preferences;
-		this.logger = logger;
 	}
 	
 	/**

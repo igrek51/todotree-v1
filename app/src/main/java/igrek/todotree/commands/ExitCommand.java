@@ -10,21 +10,21 @@ import igrek.todotree.app.AppData;
 import igrek.todotree.app.AppState;
 import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.service.preferences.Preferences;
+import igrek.todotree.service.summary.AlarmService;
 import igrek.todotree.ui.GUI;
 
 public class ExitCommand {
 	
 	@Inject
 	AppData appData;
-	
 	@Inject
 	GUI gui;
-	
 	@Inject
 	Preferences preferences;
-	
 	@Inject
 	AppControllerService appControllerService;
+	@Inject
+	AlarmService alarmService;
 	
 	public ExitCommand() {
 		DaggerIOC.getFactoryComponent().inject(this);
@@ -34,12 +34,7 @@ public class ExitCommand {
 		// show exit screen and wait for rendered
 		gui.showExitScreen();
 		
-		new Handler().post(new Runnable() {
-			@Override
-			public void run() {
-				saveAndExit();
-			}
-		});
+		new Handler().post(this::saveAndExit);
 	}
 	
 	public void optionSaveAndExit() {
@@ -56,6 +51,7 @@ public class ExitCommand {
 	
 	private void saveAndExit() {
 		new PersistenceCommand().saveDatabase();
+		alarmService.setAlarmAt(alarmService.getNextMidnight());
 		exitApp();
 	}
 }

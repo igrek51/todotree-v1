@@ -1,5 +1,6 @@
 package igrek.todotree.activity;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
@@ -27,6 +28,8 @@ public class MainActivity extends AppCompatActivity {
 	@Inject
 	QuickAddService quickAddService;
 	
+	public static final String EXTRA_ACTION_KEY = "extraAction";
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// prohibit from creating the thumbnails
@@ -40,11 +43,33 @@ public class MainActivity extends AppCompatActivity {
 		logger.debug("Creating activity " + this.getClass().getName());
 		
 		try {
+			// running extra action directly from launcher - finish activity
+			if (runExtraAction(getIntent()))
+				finish();
+			
 			appControllerService.init();
 		} catch (Exception ex) {
 			logger.fatal(this, ex);
 		}
 		logger.debug("Activity has been created: " + this.getClass().getName());
+	}
+	
+	private boolean runExtraAction(Intent intent) {
+		Bundle extras = intent.getExtras();
+		if (extras != null) {
+			String action = extras.getString(EXTRA_ACTION_KEY);
+			if (action != null) {
+				appControllerService.runExtraAction(action);
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	protected void onNewIntent(Intent intent) {
+		super.onNewIntent(intent);
+		runExtraAction(intent);
 	}
 	
 	@Override

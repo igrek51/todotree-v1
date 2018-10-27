@@ -1,6 +1,8 @@
 package igrek.todotree.commands;
 
 
+import org.joda.time.DateTime;
+
 import javax.inject.Inject;
 
 import igrek.todotree.R;
@@ -8,7 +10,8 @@ import igrek.todotree.app.AppControllerService;
 import igrek.todotree.app.AppData;
 import igrek.todotree.app.AppState;
 import igrek.todotree.dagger.DaggerIOC;
-import igrek.todotree.service.notification.NotificationService;
+import igrek.todotree.service.summary.AlarmService;
+import igrek.todotree.service.summary.NotificationService;
 import igrek.todotree.service.tree.TreeManager;
 import igrek.todotree.service.tree.TreeSelectionManager;
 import igrek.todotree.ui.GUI;
@@ -32,6 +35,9 @@ public class NavigationCommand {
 	
 	@Inject
 	NotificationService notificationService;
+	
+	@Inject
+	AlarmService alarmService;
 	
 	public NavigationCommand() {
 		DaggerIOC.getFactoryComponent().inject(this);
@@ -76,10 +82,14 @@ public class NavigationCommand {
 				new TreeCommand().goUp();
 				return false;
 			case R.id.action_notify:
-				notificationService.sendNotification();
+				summaryNotify();
 				return false;
 		}
 		return false;
+	}
+	
+	private void summaryNotify() {
+		alarmService.setAlarmAt(DateTime.now().plusSeconds(10));
 	}
 	
 	public boolean backClicked() {
