@@ -16,7 +16,7 @@
             android:name=".activity.MainActivity"
             android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"
             android:label="@string/app_name"
-            android:launchMode="singleTop"
+            android:launchMode="singleInstance"
             android:resizeableActivity="true"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme">

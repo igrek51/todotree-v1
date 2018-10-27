@@ -44,8 +44,10 @@ public class MainActivity extends AppCompatActivity {
 		
 		try {
 			// running extra action directly from launcher - finish activity
-			if (runExtraAction(getIntent()))
+			if (runExtraAction(getIntent())) {
+				moveTaskToBack(true);
 				finish();
+			}
 			
 			appControllerService.init();
 		} catch (Exception ex) {
@@ -69,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
 	@Override
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
+		logger.debug("new intent received");
 		runExtraAction(intent);
 	}
 	

@@ -22,6 +22,7 @@ public class DailyReceiver extends BroadcastReceiver {
 		Bundle b = new Bundle();
 		b.putString(MainActivity.EXTRA_ACTION_KEY, DailySummaryService.DAILY_SUMMARY_ACTION);
 		newIntent.putExtras(b);
+		newIntent.setFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
 		context.startActivity(newIntent);
 		
 	}

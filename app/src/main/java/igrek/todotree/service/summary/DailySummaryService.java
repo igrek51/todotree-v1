@@ -62,7 +62,7 @@ public class DailySummaryService {
 			}
 			
 			message.append("Congratulations! You have done a lot today :)");
-			message.append("\nDiff (" + created + " - " + completed + "): " + (created - completed));
+			message.append("\nDiff: " + created + " - " + completed + " = " + (created - completed));
 			
 			message.append("\n\nLast completed tasks (" + completed + "):");
 			Collections.reverse(events);

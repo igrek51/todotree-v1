@@ -33,6 +33,7 @@ public class NotificationService {
 		
 		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, CHANNEL_ID).setSmallIcon(R.drawable.icon)
 				.setContentTitle(title)
+				.setStyle(new NotificationCompat.BigTextStyle().bigText(text))
 				.setContentText(text)
 				.setContentIntent(pendingIntent)
 				.setPriority(NotificationCompat.PRIORITY_DEFAULT)

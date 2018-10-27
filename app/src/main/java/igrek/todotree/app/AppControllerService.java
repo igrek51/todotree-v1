@@ -64,7 +64,6 @@ public class AppControllerService {
 		logger.debug("Running extra action " + action);
 		switch (action) {
 			case DailySummaryService.DAILY_SUMMARY_ACTION:
-				activity.moveTaskToBack(true);
 				dailySummaryService.showSummaryNotification();
 				break;
 			default:
