@@ -2,7 +2,10 @@ package igrek.todotree.service.summary;
 
 import android.app.Activity;
 
+import com.google.common.base.Joiner;
+
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -34,7 +37,7 @@ public class DailySummaryService {
 	public void showSummaryNotification() {
 		String message = getMessage();
 		if (message != null) {
-			notificationService.sendNotification(activity, "Dupa!", message);
+			notificationService.sendNotification(activity, "Daily summary", message);
 		} else {
 			logger.debug("no summary to show");
 		}
@@ -61,18 +64,20 @@ public class DailySummaryService {
 				return null;
 			}
 			
-			message.append("Congratulations! You have done a lot today :)");
-			message.append("\nDiff: " + created + " - " + completed + " = " + (created - completed));
+			int diff = created - completed;
 			
-			message.append("\n\nLast completed tasks (" + completed + "):");
-			Collections.reverse(events);
+			message.append("You have done a lot today :) - diff: " + diff + ".\n");
+			
+			message.append("Recently completed tasks (" + completed + "):\n");
+			List<String> completedNames = new ArrayList<>();
 			for (StatisticEvent event : events) {
 				if (event.getType().equals(StatisticEventType.TASK_COMPLETED)) {
-					message.append("\n");
-					message.append(event.getTaskName());
-					message.append(" - ").append(datetimeFormat.format(event.getDatetime()));
+					completedNames.add(event.getTaskName());
+					//					message.append(" - ").append(datetimeFormat.format(event.getDatetime()));
 				}
 			}
+			Collections.reverse(completedNames);
+			message.append(Joiner.on("; ").join(completedNames));
 			
 			return message.toString();
 		} catch (Exception e) {
