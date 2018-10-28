@@ -1,6 +1,7 @@
 package igrek.todotree.service.access;
 
 import android.app.Activity;
+import android.view.WindowManager;
 
 import igrek.todotree.commands.ExitCommand;
 import igrek.todotree.commands.ItemEditorCommand;
@@ -31,8 +32,14 @@ public class QuickAddService {
 	}
 	
 	public void initQuickAdd() {
+		showOnLockScreen();
 		setQuickAddMode(true);
 		editNewTmpItem();
+	}
+	
+	public void showOnLockScreen() {
+		activity.getWindow()
+				.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
 	}
 	
 	private void editNewTmpItem() {

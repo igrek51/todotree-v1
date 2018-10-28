@@ -31,6 +31,8 @@
             android:label="@string/quick_add_app_name"
             android:resizeableActivity="true"
             android:screenOrientation="portrait"
+            android:showOnLockScreen="true"
+            android:windowSoftInputMode="stateVisible"
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

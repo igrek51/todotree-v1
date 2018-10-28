@@ -66,7 +66,7 @@ public class DailySummaryService {
 			
 			int diff = created - completed;
 			
-			message.append("You have done a lot today :) - diff: " + diff + ".\n");
+			message.append("You have done a lot today :) (diff: " + diff + ").\n");
 			
 			message.append("Recently completed tasks (" + completed + "):\n");
 			List<String> completedNames = new ArrayList<>();

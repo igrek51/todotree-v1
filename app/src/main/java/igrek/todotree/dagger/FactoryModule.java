@@ -28,6 +28,7 @@ import igrek.todotree.service.statistics.StatisticsLogService;
 import igrek.todotree.service.summary.AlarmService;
 import igrek.todotree.service.summary.DailySummaryService;
 import igrek.todotree.service.summary.NotificationService;
+import igrek.todotree.service.system.SoftKeyboardService;
 import igrek.todotree.service.tree.ContentTrimmer;
 import igrek.todotree.service.tree.TreeManager;
 import igrek.todotree.service.tree.TreeMover;
@@ -212,6 +213,12 @@ public class FactoryModule {
 	@Singleton
 	protected AlarmService provideAlarmService(Activity activity) {
 		return new AlarmService(activity);
+	}
+	
+	@Provides
+	@Singleton
+	protected SoftKeyboardService provideSoftKeyboardService(Activity activity) {
+		return new SoftKeyboardService(activity);
 	}
 	
 	@Provides
