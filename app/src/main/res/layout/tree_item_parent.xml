@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+    android:id="@+id/treeItemLayout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageButton
+        android:id="@+id/buttonItemMove"
+        android:layout_width="22dp"
+        android:layout_height="22dp"
+        android:layout_centerVertical="true"
+        android:layout_gravity="start|center_vertical"
+        android:background="@drawable/ic_reorder_white"
+        android:scaleType="fitCenter"
+        android:padding="10dp"
+        android:paddingRight="15dp"
+        android:paddingEnd="15dp"
+        android:layout_marginStart="2dp"
+        android:layout_marginLeft="2dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginRight="4dp"
+        />
+
+    <CheckBox
+        android:id="@+id/cbItemSelected"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_gravity="end|center_vertical"
+        android:layout_toEndOf="@+id/buttonItemMove"
+        android:layout_toRightOf="@+id/buttonItemMove"
+        android:gravity="center_vertical|center_horizontal"
+        android:visibility="gone"
+        android:padding="0dp"/>
+
+    <TextView
+        android:id="@+id/tvItemContent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_gravity="start|center_vertical"
+        android:layout_marginBottom="7dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginTop="7dp"
+        android:layout_toEndOf="@+id/cbItemSelected"
+        android:layout_toLeftOf="@+id/tvItemChildSize"
+        android:layout_toRightOf="@+id/cbItemSelected"
+        android:layout_toStartOf="@+id/tvItemChildSize"
+        android:gravity="start|center_vertical"
+        android:text="@string/example_item"
+        android:textStyle="bold"
+        android:textSize="16sp"/>
+
+    <TextView
+        android:id="@+id/tvItemChildSize"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_gravity="center_vertical|end"
+        android:layout_marginBottom="0dp"
+        android:layout_marginLeft="1dp"
+        android:layout_marginRight="3dp"
+        android:layout_marginTop="0dp"
+        android:layout_toLeftOf="@+id/layoutButtons"
+        android:layout_toStartOf="@+id/layoutButtons"
+        android:gravity="center_vertical|end"
+        android:text="[12]"
+        android:textColor="@color/colorItemChildSize"
+        android:textSize="16sp"/>
+
+    <LinearLayout
+        android:id="@+id/layoutButtons"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/buttonItemEdit"
+            android:layout_centerVertical="true"
+            android:layout_gravity="end|center_vertical"
+            android:layout_marginRight="5dp"
+            android:background="@android:drawable/ic_menu_edit"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:padding="16dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:scaleType="fitCenter"/>
+
+    </LinearLayout>
+</RelativeLayout>
