@@ -59,7 +59,7 @@ public class DailySummaryService {
 					created++;
 			}
 			
-			if (completed < created && completed < 10) {
+			if (!isSummaryToBeShown(completed, created)) {
 				// no message
 				return null;
 			}
@@ -84,5 +84,9 @@ public class DailySummaryService {
 			logger.error(e);
 			return null;
 		}
+	}
+	
+	private boolean isSummaryToBeShown(int completed, int created) {
+		return completed > created;
 	}
 }
