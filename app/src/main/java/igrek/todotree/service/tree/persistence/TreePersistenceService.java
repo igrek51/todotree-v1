@@ -6,7 +6,7 @@ import igrek.todotree.exceptions.DeserializationFailedException;
 
 public class TreePersistenceService {
 	
-	private JsonTreeDeserializer deserializer = new JsonTreeDeserializer();
+	private GsonTreeDeserializer deserializer = new GsonTreeDeserializer();
 	private JsonTreeSerializer serializer = new JsonTreeSerializer();
 	
 	public TreePersistenceService() {

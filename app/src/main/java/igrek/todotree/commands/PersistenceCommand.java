@@ -9,6 +9,7 @@ import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.domain.treeitem.AbstractTreeItem;
 import igrek.todotree.exceptions.DeserializationFailedException;
 import igrek.todotree.logger.Logger;
+import igrek.todotree.logger.LoggerFactory;
 import igrek.todotree.service.backup.Backup;
 import igrek.todotree.service.backup.BackupManager;
 import igrek.todotree.service.filesystem.FilesystemService;
@@ -48,8 +49,7 @@ public class PersistenceCommand {
 	@Inject
 	ChangesHistory changesHistory;
 	
-	@Inject
-	Logger logger;
+	private Logger logger = LoggerFactory.getLogger();
 	
 	public PersistenceCommand() {
 		DaggerIOC.getFactoryComponent().inject(this);
