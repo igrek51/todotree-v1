@@ -8,6 +8,8 @@ import com.google.common.base.Joiner;
 
 public class Logger {
 	
+	private long checkpoint = System.currentTimeMillis();
+	
 	protected Logger() {
 	}
 
@@ -113,6 +115,20 @@ public class Logger {
 				printDebug(consoleMessage);
 			}
 		}
+	}
+	
+	public void timelapse(Object... objs) {
+		long now = System.currentTimeMillis();
+		long interval = now - checkpoint;
+		checkpoint = now;
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append("time lapse: " + interval + " ms");
+		if (objs.length > 0) {
+			sb.append(" - ");
+			sb.append(Joiner.on(", ").join(objs));
+		}
+		log(sb.toString(), LogLevel.DEBUG, "[debug] ", 6);
 	}
 	
 	private void printExceptionStackTrace(Throwable ex) {
