@@ -17,11 +17,6 @@ import igrek.todotree.service.summary.DailySummaryService;
 
 public class AppControllerService {
 	
-	private static final int FULLSCREEN_FLAG = WindowManager.LayoutParams.FLAG_FULLSCREEN | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED;
-	private static final boolean FULLSCREEN = false;
-	private static final boolean HIDE_TASKBAR = true;
-	private static final boolean KEEP_SCREEN_ON = false;
-	
 	public Activity activity;
 	private DailySummaryService dailySummaryService;
 	
@@ -38,20 +33,11 @@ public class AppControllerService {
 		logger.info("Initializing application...");
 		
 		//hide task bar
-		if (HIDE_TASKBAR) {
-			if (activity instanceof AppCompatActivity) {
-				AppCompatActivity appCompatActivity = (AppCompatActivity) activity;
-				if (appCompatActivity.getSupportActionBar() != null) {
-					appCompatActivity.getSupportActionBar().hide();
-				}
+		if (activity instanceof AppCompatActivity) {
+			AppCompatActivity appCompatActivity = (AppCompatActivity) activity;
+			if (appCompatActivity.getSupportActionBar() != null) {
+				appCompatActivity.getSupportActionBar().hide();
 			}
-		}
-		//fullscreen
-		if (FULLSCREEN) {
-			activity.getWindow().setFlags(FULLSCREEN_FLAG, FULLSCREEN_FLAG);
-		}
-		if (KEEP_SCREEN_ON) {
-			activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		}
 		
 		new GUICommand().guiInit();

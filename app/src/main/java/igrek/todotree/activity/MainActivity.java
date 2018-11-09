@@ -17,6 +17,7 @@ import igrek.todotree.app.AppControllerService;
 import igrek.todotree.commands.NavigationCommand;
 import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.logger.Logger;
+import igrek.todotree.logger.LoggerFactory;
 import igrek.todotree.service.access.QuickAddService;
 
 public class MainActivity extends AppCompatActivity {
@@ -24,9 +25,9 @@ public class MainActivity extends AppCompatActivity {
 	@Inject
 	AppControllerService appControllerService;
 	@Inject
-	Logger logger;
-	@Inject
 	QuickAddService quickAddService;
+	
+	private Logger logger = LoggerFactory.getLogger();
 	
 	public static final String EXTRA_ACTION_KEY = "extraAction";
 	
@@ -81,6 +82,11 @@ public class MainActivity extends AppCompatActivity {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
 			appControllerService.onResizeEvent(newConfig);
 		}
+	}
+	
+	@Override
+	protected void onStart() {
+		super.onStart();
 	}
 	
 	@Override

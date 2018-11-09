@@ -1,56 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout
+<LinearLayout
     android:id="@+id/treeItemLayout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    >
 
     <ImageButton
         android:id="@+id/buttonItemMove"
         android:layout_width="22dp"
         android:layout_height="22dp"
-        android:layout_centerVertical="true"
         android:layout_gravity="start|center_vertical"
+        android:layout_marginEnd="4dp"
+        android:layout_marginStart="2dp"
         android:background="@drawable/ic_reorder_white"
         android:scaleType="fitCenter"
-        android:padding="10dp"
-        android:paddingRight="15dp"
-        android:paddingEnd="15dp"
-        android:layout_marginStart="2dp"
-        android:layout_marginLeft="2dp"
-        android:layout_marginEnd="4dp"
-        android:layout_marginRight="4dp"
         />
 
     <CheckBox
         android:id="@+id/cbItemSelected"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_gravity="end|center_vertical"
-        android:layout_toEndOf="@+id/buttonItemMove"
-        android:layout_toRightOf="@+id/buttonItemMove"
+        android:layout_gravity="start|center_vertical"
         android:gravity="center_vertical|center_horizontal"
+        android:padding="0dp"
         android:visibility="gone"
-        android:padding="0dp"/>
+        />
 
     <TextView
         android:id="@+id/tvItemContent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
         android:layout_gravity="start|center_vertical"
         android:layout_marginBottom="7dp"
         android:layout_marginLeft="0dp"
         android:layout_marginRight="0dp"
         android:layout_marginTop="7dp"
-        android:layout_toEndOf="@+id/cbItemSelected"
-        android:layout_toLeftOf="@+id/cbItemSelected"
-        android:layout_toRightOf="@+id/cbItemSelected"
-        android:layout_toStartOf="@+id/cbItemSelected"
         android:gravity="start|center_vertical"
-        android:text="@string/example_item"
-        android:textSize="16sp"/>
+        android:textSize="16sp"
+        />
 
-</RelativeLayout>
+</LinearLayout>
