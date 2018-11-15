@@ -153,4 +153,8 @@ public class GUI extends BaseGUI {
 			editItemGUI.quickInsertRange();
 		}
 	}
+	
+	public void forceKeyboardShow() {
+		editItemGUI.forceKeyboardShow();
+	}
 }

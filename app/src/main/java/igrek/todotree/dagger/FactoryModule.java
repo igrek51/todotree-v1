@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import javax.inject.Singleton;
 
+import dagger.Lazy;
 import dagger.Module;
 import dagger.Provides;
 import igrek.todotree.app.AppControllerService;
@@ -193,8 +194,8 @@ public class FactoryModule {
 	
 	@Provides
 	@Singleton
-	protected QuickAddService provideQuickAddService(Logger logger, Activity activity, TreeManager treeManager) {
-		return new QuickAddService(logger, activity, treeManager);
+	protected QuickAddService provideQuickAddService(Logger logger, Activity activity, TreeManager treeManager, SoftKeyboardService softKeyboardService, Lazy<GUI> gui) {
+		return new QuickAddService(logger, activity, treeManager, softKeyboardService, gui);
 	}
 	
 	@Provides

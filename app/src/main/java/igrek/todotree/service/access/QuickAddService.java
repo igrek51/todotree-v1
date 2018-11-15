@@ -1,26 +1,34 @@
 package igrek.todotree.service.access;
 
 import android.app.Activity;
+import android.os.Handler;
 import android.view.WindowManager;
 
+import dagger.Lazy;
 import igrek.todotree.commands.ExitCommand;
 import igrek.todotree.commands.ItemEditorCommand;
 import igrek.todotree.domain.treeitem.AbstractTreeItem;
 import igrek.todotree.logger.Logger;
+import igrek.todotree.service.system.SoftKeyboardService;
 import igrek.todotree.service.tree.TreeManager;
+import igrek.todotree.ui.GUI;
 
 public class QuickAddService {
 	
 	private Logger logger;
 	private Activity activity;
 	private TreeManager treeManager;
+	private SoftKeyboardService softKeyboardService;
+	private Lazy<GUI> gui;
 	
 	private boolean quickAddMode = false;
 	
-	public QuickAddService(Logger logger, Activity activity, TreeManager treeManager) {
+	public QuickAddService(Logger logger, Activity activity, TreeManager treeManager, SoftKeyboardService softKeyboardService, Lazy<GUI> gui) {
 		this.logger = logger;
 		this.activity = activity;
 		this.treeManager = treeManager;
+		this.softKeyboardService = softKeyboardService;
+		this.gui = gui;
 	}
 	
 	public boolean isQuickAddMode() {
@@ -35,9 +43,17 @@ public class QuickAddService {
 		showOnLockScreen();
 		setQuickAddMode(true);
 		editNewTmpItem();
+		showKeyboard();
 	}
 	
-	public void showOnLockScreen() {
+	private void showKeyboard() {
+		gui.get().forceKeyboardShow();
+		new Handler().postDelayed(() -> {
+			gui.get().forceKeyboardShow();
+		}, 300);
+	}
+	
+	private void showOnLockScreen() {
 		activity.getWindow()
 				.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
 	}
