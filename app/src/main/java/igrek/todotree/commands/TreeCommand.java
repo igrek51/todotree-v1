@@ -114,6 +114,10 @@ public class TreeCommand {
 		gui.scrollToItem(0);
 	}
 	
+	public void navigateToRoot() {
+		navigateTo(treeManager.getRootItem());
+	}
+	
 	private void storeCurrentScroll() {
 		Integer scrollPos = gui.getCurrentScrollPos();
 		if (scrollPos != null) {

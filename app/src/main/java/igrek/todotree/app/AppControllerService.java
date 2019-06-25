@@ -64,8 +64,12 @@ public class AppControllerService {
 		}
 		logger.info("Closing app...");
 		running = false;
-		activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		stopKeepingScreenOn();
 		activity.finish();
+	}
+	
+	public void stopKeepingScreenOn() {
+		activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 	}
 	
 	public void onResizeEvent(Configuration newConfig) {
