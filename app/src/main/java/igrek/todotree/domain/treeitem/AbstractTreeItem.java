@@ -7,7 +7,7 @@ import java.util.List;
 
 public abstract class AbstractTreeItem {
 	
-	protected AbstractTreeItem parent = null;
+	protected AbstractTreeItem parent;
 	protected List<AbstractTreeItem> children;
 	
 	public AbstractTreeItem(AbstractTreeItem parent) {
@@ -109,6 +109,14 @@ public abstract class AbstractTreeItem {
 	
 	public boolean remove(AbstractTreeItem item) {
 		return children.remove(item);
+	}
+	
+	public int removeItself() {
+		int indexInParent = getIndexInParent();
+		if (indexInParent > -1) {
+			getParent().remove(indexInParent);
+		}
+		return indexInParent;
 	}
 	
 	public List<String> getNamesPaths() {

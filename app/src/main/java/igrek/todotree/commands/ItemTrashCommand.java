@@ -8,6 +8,7 @@ import javax.inject.Inject;
 
 import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.domain.treeitem.AbstractTreeItem;
+import igrek.todotree.domain.treeitem.LinkTreeItem;
 import igrek.todotree.service.access.DatabaseLock;
 import igrek.todotree.service.resources.InfoBarClickAction;
 import igrek.todotree.service.resources.UserInfoService;
@@ -80,5 +81,41 @@ public class ItemTrashCommand {
 		}
 		selectionManager.cancelSelectionMode();
 		new GUICommand().updateItemsList();
+	}
+	
+	void removeLinkAndTarget(int linkPosition, LinkTreeItem linkItem) {
+		lock.assertUnlocked();
+		
+		// remove link
+		treeManager.removeFromCurrent(linkPosition);
+		
+		// remove target
+		AbstractTreeItem target = linkItem.getTarget();
+		final Runnable restoreTargetAction;
+		if (target != null) {
+			AbstractTreeItem parent = target.getParent();
+			int removedIndex = target.removeItself();
+			restoreTargetAction = () -> {
+				if (removedIndex >= 0) {
+					parent.add(removedIndex, target);
+				}
+			};
+		} else {
+			restoreTargetAction = () -> {
+			};
+		}
+		
+		new GUICommand().updateItemsList();
+		userInfo.showInfoCancellable("Link & item removed: " + linkItem.getDisplayName(), () -> {
+			// restore target
+			restoreTargetAction.run();
+			
+			// restore link
+			treeManager.addToCurrent(linkPosition, linkItem);
+			
+			new GUICommand().showItemsList();
+			gui.scrollToItem(linkPosition);
+			userInfo.showInfo("Removed items restored.");
+		});
 	}
 }

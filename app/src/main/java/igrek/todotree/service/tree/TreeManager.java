@@ -68,6 +68,10 @@ public class TreeManager {
 		return newItemPosition;
 	}
 	
+	public AbstractTreeItem getChild(int position) {
+		return currentItem.getChild(position);
+	}
+	
 	public void addToCurrent(Integer position, AbstractTreeItem item) {
 		if (position == null) {
 			position = currentItem.size();

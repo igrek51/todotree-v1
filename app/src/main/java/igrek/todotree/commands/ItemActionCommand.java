@@ -10,6 +10,7 @@ import javax.inject.Inject;
 
 import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.domain.treeitem.AbstractTreeItem;
+import igrek.todotree.domain.treeitem.LinkTreeItem;
 import igrek.todotree.service.resources.UserInfoService;
 import igrek.todotree.service.tree.TreeManager;
 import igrek.todotree.service.tree.TreeSelectionManager;
@@ -37,7 +38,6 @@ public class ItemActionCommand {
 		if (treeManager.isPositionBeyond(position)) {
 			userInfoService.showInfo("Could not select");
 		} else {
-			//tryb zaznaczania elementów
 			new TreeCommand().itemLongClicked(position);
 		}
 	}
@@ -75,6 +75,15 @@ public class ItemActionCommand {
 	
 	public void actionRemove(int position) {
 		new ItemTrashCommand().itemRemoveClicked(position);
+	}
+	
+	public void actionRemoveLinkAndTarget(int position) {
+		if (!selectionManager.isAnythingSelected()) {
+			final AbstractTreeItem linkItem = treeManager.getCurrentItem().getChild(position);
+			if (linkItem instanceof LinkTreeItem) {
+				new ItemTrashCommand().removeLinkAndTarget(position, (LinkTreeItem) linkItem);
+			}
+		}
 	}
 	
 	public void actionSelectAll(int position) {

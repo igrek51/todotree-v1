@@ -12,6 +12,8 @@ import javax.inject.Inject;
 
 import igrek.todotree.commands.ItemActionCommand;
 import igrek.todotree.dagger.DaggerIOC;
+import igrek.todotree.domain.treeitem.AbstractTreeItem;
+import igrek.todotree.domain.treeitem.LinkTreeItem;
 import igrek.todotree.service.clipboard.TreeClipboardManager;
 import igrek.todotree.service.tree.TreeManager;
 import igrek.todotree.service.tree.TreeSelectionManager;
@@ -71,6 +73,18 @@ public class ItemActionsMenu {
 			@Override
 			public boolean isVisible() {
 				return treeManager.isPositionAtItem(position);
+			}
+		});
+		
+		actions.add(new ItemAction("Remove link and target") {
+			@Override
+			public void execute() {
+				new ItemActionCommand().actionRemoveLinkAndTarget(position);
+			}
+			
+			@Override
+			public boolean isVisible() {
+				return isItemLink(position);
 			}
 		});
 		
@@ -156,6 +170,13 @@ public class ItemActionsMenu {
 		});
 		
 		return actions;
+	}
+	
+	private boolean isItemLink(int position) {
+		if (!treeManager.isPositionAtItem(position))
+			return false;
+		AbstractTreeItem item = treeManager.getChild(position);
+		return item instanceof LinkTreeItem;
 	}
 	
 	private List<ItemAction> filterVisibleOnly(List<ItemAction> actions) {
