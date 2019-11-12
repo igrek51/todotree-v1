@@ -6,11 +6,13 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.ImageButton;
 
 import java.util.List;
 import java.util.Set;
 
 import igrek.todotree.R;
+import igrek.todotree.commands.ExitCommand;
 import igrek.todotree.commands.NavigationCommand;
 import igrek.todotree.domain.treeitem.AbstractTreeItem;
 import igrek.todotree.ui.edititem.EditItemGUI;
@@ -28,7 +30,6 @@ public class GUI extends BaseGUI {
 	}
 	
 	public void lazyInit() {
-		
 		activity.setContentView(R.layout.activity_main);
 		
 		//toolbar
@@ -43,7 +44,11 @@ public class GUI extends BaseGUI {
 			}
 		});
 		
-		//  główna zawartość
+		ImageButton save2Button = activity.findViewById(R.id.save2Button);
+		save2Button.setOnClickListener(v -> {
+			new ExitCommand().optionSaveAndExit();
+		});
+		
 		mainContent = activity.findViewById(R.id.mainContent);
 	}
 	

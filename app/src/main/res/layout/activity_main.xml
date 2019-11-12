@@ -23,7 +23,26 @@
                 android:id="@+id/toolbar1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/colorPrimary"/>
+                android:background="@color/colorPrimary">
+
+                <ImageButton
+                    android:id="@+id/save2Button"
+                    android:layout_width="40dp"
+                    android:layout_height="match_parent"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="start|center_vertical"
+                    android:adjustViewBounds="true"
+                    android:background="?android:selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:paddingLeft="4dp"
+                    android:paddingRight="4dp"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_menu_save"/>
+
+            </android.support.v7.widget.Toolbar>
 
         </android.support.design.widget.AppBarLayout>
 
