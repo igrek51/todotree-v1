@@ -10,7 +10,6 @@ import igrek.todotree.commands.GUICommand;
 import igrek.todotree.commands.PersistenceCommand;
 import igrek.todotree.logger.Logger;
 import igrek.todotree.logger.LoggerFactory;
-import igrek.todotree.service.summary.DailySummaryService;
 
 //TODO item types: link with name, checkbox, text with date / hour, text with number, separator, separator with group name
 //TODO show changes: transaction commit, rollback, revert last change
@@ -18,15 +17,13 @@ import igrek.todotree.service.summary.DailySummaryService;
 public class AppControllerService {
 	
 	public Activity activity;
-	private DailySummaryService dailySummaryService;
 	
 	private boolean running = true;
 	
 	protected Logger logger = LoggerFactory.getLogger();
 	
-	public AppControllerService(Activity activity, DailySummaryService dailySummaryService) {
+	public AppControllerService(Activity activity) {
 		this.activity = activity;
-		this.dailySummaryService = dailySummaryService;
 	}
 	
 	public void init() {
@@ -44,17 +41,6 @@ public class AppControllerService {
 		new PersistenceCommand().loadRootTree();
 		new GUICommand().showItemsList();
 		logger.info("Application has been initialized.");
-	}
-	
-	public void runExtraAction(String action) {
-		logger.debug("Running extra action " + action);
-		switch (action) {
-			case DailySummaryService.DAILY_SUMMARY_ACTION:
-				dailySummaryService.showSummaryNotification();
-				break;
-			default:
-				logger.warn("Unknown action: " + action);
-		}
 	}
 	
 	public void quit() {

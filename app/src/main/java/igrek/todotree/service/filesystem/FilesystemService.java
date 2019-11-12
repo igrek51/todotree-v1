@@ -1,6 +1,6 @@
 package igrek.todotree.service.filesystem;
 
-import android.app.Activity;
+import android.content.Context;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,12 +17,12 @@ import igrek.todotree.logger.Logger;
 public class FilesystemService {
 	
 	private Logger logger;
-	private Activity activity;
+	private Context context;
 	private ExternalCardService externalCardService;
 	
-	public FilesystemService(Logger logger, Activity activity, ExternalCardService externalCardService) {
+	public FilesystemService(Logger logger, Context context, ExternalCardService externalCardService) {
 		this.logger = logger;
-		this.activity = activity;
+		this.context = context;
 		this.externalCardService = externalCardService;
 	}
 	
@@ -127,7 +127,7 @@ public class FilesystemService {
 		File appDataDir = new File(externalSD, "Android/data/igrek.todotree");
 		if (!appDataDir.exists()) {
 			// WTF!?? getExternalFilesDir creates dir on SD card but returns Internal storage path
-			logger.info(activity.getExternalFilesDir("data").getAbsolutePath());
+			logger.info(context.getExternalFilesDir("data").getAbsolutePath());
 			appDataDir.mkdirs();
 			if (appDataDir.exists()) {
 				logger.info("Android app data directory has been created");

@@ -8,8 +8,8 @@ import igrek.todotree.service.filesystem.ExternalCardService;
 
 public class MockedExternalCardService extends ExternalCardService {
 	
-	public MockedExternalCardService(Logger logger, Activity activity) {
-		super(logger, activity);
+	public MockedExternalCardService(Logger logger) {
+		super(logger);
 	}
 	
 	@Override

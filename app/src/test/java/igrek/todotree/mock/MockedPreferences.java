@@ -1,6 +1,7 @@
 package igrek.todotree.mock;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 
 import igrek.todotree.logger.Logger;
@@ -9,12 +10,12 @@ import igrek.todotree.service.preferences.PropertyDefinition;
 
 public class MockedPreferences extends Preferences {
 	
-	public MockedPreferences(Activity activity, Logger logger) {
-		super(activity, logger);
+	public MockedPreferences(Context context, Logger logger) {
+		super(context, logger);
 	}
 	
 	@Override
-	protected SharedPreferences createSharedPreferences(Activity activity) {
+	protected SharedPreferences createSharedPreferences(Context context) {
 		return null;
 	}
 	

@@ -20,7 +20,7 @@ public class NotificationService {
 	private static final String CHANNEL_ID = "todoTreeChanellNo5";
 	private Logger logger = LoggerFactory.getLogger();
 	
-	public NotificationService(Activity activity) {
+	public NotificationService() {
 	}
 	
 	public void sendNotification(Context context, String title, String text) {

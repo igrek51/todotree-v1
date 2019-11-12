@@ -1,6 +1,7 @@
 package igrek.todotree.dagger;
 
 import android.app.Activity;
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 
 import javax.inject.Singleton;
@@ -57,7 +58,12 @@ public class FactoryModule {
 	
 	@Provides
 	protected Activity provideActivity() {
-		return provideAppCompatActivity();
+		return activity;
+	}
+	
+	@Provides
+	protected Context provideContext() {
+		return activity;
 	}
 	
 	@Provides
@@ -67,10 +73,9 @@ public class FactoryModule {
 	
 	@Provides
 	@Singleton
-	protected AppControllerService provideAppControllerSerivce(Activity activity, DailySummaryService dailySummaryService) {
-		return new AppControllerService(activity, dailySummaryService);
+	protected AppControllerService provideAppControllerSerivce(Activity activity) {
+		return new AppControllerService(activity);
 	}
-	
 	
 	@Provides
 	@Singleton
@@ -86,8 +91,8 @@ public class FactoryModule {
 	
 	@Provides
 	@Singleton
-	protected Preferences providePreferences(Activity activity, Logger logger) {
-		return new Preferences(activity, logger);
+	protected Preferences providePreferences(Context context, Logger logger) {
+		return new Preferences(context, logger);
 	}
 	
 	@Provides
@@ -188,8 +193,8 @@ public class FactoryModule {
 	
 	@Provides
 	@Singleton
-	protected ExternalCardService provideExternalCardService(Logger logger, Activity activity) {
-		return new ExternalCardService(logger, activity);
+	protected ExternalCardService provideExternalCardService(Logger logger) {
+		return new ExternalCardService(logger);
 	}
 	
 	@Provides
@@ -206,8 +211,8 @@ public class FactoryModule {
 	
 	@Provides
 	@Singleton
-	protected NotificationService provideNotificationService(Activity activity) {
-		return new NotificationService(activity);
+	protected NotificationService provideNotificationService() {
+		return new NotificationService();
 	}
 	
 	@Provides
@@ -224,8 +229,8 @@ public class FactoryModule {
 	
 	@Provides
 	@Singleton
-	protected DailySummaryService provideDailySummaryService(Activity activity, AlarmService alarmService, NotificationService notificationService, StatisticsLogService statisticsLogService) {
-		return new DailySummaryService(activity, alarmService, notificationService, statisticsLogService);
+	protected DailySummaryService provideDailySummaryService(Activity activity, NotificationService notificationService, StatisticsLogService statisticsLogService) {
+		return new DailySummaryService(activity, notificationService, statisticsLogService);
 	}
 	
 }

@@ -43,8 +43,8 @@ android {
         jcenter()
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility java_version
+        targetCompatibility java_version
     }
 }
 

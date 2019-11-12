@@ -20,13 +20,11 @@ import igrek.todotree.logger.Logger;
 public class ExternalCardService {
 	
 	private Logger logger;
-	private Activity activity;
 	
 	private String externalSDPath;
 	
-	public ExternalCardService(Logger logger, Activity activity) {
+	public ExternalCardService(Logger logger) {
 		this.logger = logger;
-		this.activity = activity;
 		logger.debug(Joiner.on(", ").join(getExternalMounts()));
 		externalSDPath = findExternalSDPath();
 		logger.debug("External SD Card path: " + externalSDPath);

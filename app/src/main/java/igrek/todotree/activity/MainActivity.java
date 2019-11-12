@@ -44,12 +44,6 @@ public class MainActivity extends AppCompatActivity {
 		logger.debug("Creating activity " + this.getClass().getName());
 		
 		try {
-			// running extra action directly from launcher - finish activity
-			if (runExtraAction(getIntent())) {
-				moveTaskToBack(true);
-				finish();
-			}
-			
 			appControllerService.init();
 		} catch (Exception ex) {
 			logger.fatal(this, ex);
@@ -57,23 +51,10 @@ public class MainActivity extends AppCompatActivity {
 		logger.debug("Activity has been created: " + this.getClass().getName());
 	}
 	
-	private boolean runExtraAction(Intent intent) {
-		Bundle extras = intent.getExtras();
-		if (extras != null) {
-			String action = extras.getString(EXTRA_ACTION_KEY);
-			if (action != null) {
-				appControllerService.runExtraAction(action);
-				return true;
-			}
-		}
-		return false;
-	}
-	
 	@Override
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
 		logger.debug("new intent received");
-		runExtraAction(intent);
 	}
 	
 	@Override

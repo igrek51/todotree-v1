@@ -4,32 +4,28 @@ import android.app.Activity;
 
 import com.google.common.base.Joiner;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
 import igrek.todotree.domain.stats.StatisticEvent;
 import igrek.todotree.domain.stats.StatisticEventType;
 import igrek.todotree.logger.Logger;
+import android.content.Context;
 import igrek.todotree.logger.LoggerFactory;
 import igrek.todotree.service.statistics.StatisticsLogService;
 
 public class DailySummaryService {
 	
 	public static final String DAILY_SUMMARY_ACTION = "dailySummary";
-	private static final SimpleDateFormat datetimeFormat = new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH);
 	
 	private Logger logger = LoggerFactory.getLogger();
-	private Activity activity;
-	private AlarmService alarmService;
+	private Context context;
 	private NotificationService notificationService;
 	private StatisticsLogService statisticsLogService;
 	
-	public DailySummaryService(Activity activity, AlarmService alarmService, NotificationService notificationService, StatisticsLogService statisticsLogService) {
-		this.activity = activity;
-		this.alarmService = alarmService;
+	public DailySummaryService(Context context, NotificationService notificationService, StatisticsLogService statisticsLogService) {
+		this.context = context;
 		this.notificationService = notificationService;
 		this.statisticsLogService = statisticsLogService;
 	}
@@ -37,7 +33,7 @@ public class DailySummaryService {
 	public void showSummaryNotification() {
 		String message = getMessage();
 		if (message != null) {
-			notificationService.sendNotification(activity, "Daily summary", message);
+			notificationService.sendNotification(context, "Daily summary", message);
 		} else {
 			logger.debug("no summary to show");
 		}

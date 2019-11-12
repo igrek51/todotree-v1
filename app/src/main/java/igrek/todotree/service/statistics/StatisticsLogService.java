@@ -178,7 +178,4 @@ public class StatisticsLogService {
 		//		return lines.stream().map(String line -> StatisticEvent.parse(line)).collect(Collectors.toList());
 	}
 	
-	
-	
-	
 }

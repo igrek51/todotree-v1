@@ -7,7 +7,12 @@ import android.os.Bundle;
 
 import igrek.todotree.logger.Logger;
 import igrek.todotree.logger.LoggerFactory;
+import igrek.todotree.service.filesystem.ExternalCardService;
+import igrek.todotree.service.filesystem.FilesystemService;
+import igrek.todotree.service.preferences.Preferences;
+import igrek.todotree.service.statistics.StatisticsLogService;
 import igrek.todotree.service.summary.DailySummaryService;
+import igrek.todotree.service.summary.NotificationService;
 
 public class DailyReceiver extends BroadcastReceiver {
 	
@@ -18,13 +23,17 @@ public class DailyReceiver extends BroadcastReceiver {
 		
 		logger.debug("received Daily Summary request");
 		
-		Intent newIntent = new Intent(context, MainActivity.class);
-		Bundle b = new Bundle();
-		b.putString(MainActivity.EXTRA_ACTION_KEY, DailySummaryService.DAILY_SUMMARY_ACTION);
-		newIntent.putExtras(b);
-		newIntent.setFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
-		context.startActivity(newIntent);
+		Logger logger = LoggerFactory.getLogger();
+		ExternalCardService externalCardService = new ExternalCardService(logger);
+		FilesystemService filesystem = new FilesystemService(logger, context, externalCardService);
+		Preferences preferences = new Preferences(context, logger);
+		NotificationService notificationService = new NotificationService();
+		StatisticsLogService statisticsLogService = new StatisticsLogService(filesystem, preferences);
+		DailySummaryService dailySummaryService = new DailySummaryService(context, notificationService, statisticsLogService);
 		
+		dailySummaryService.showSummaryNotification();
+		
+		logger.debug("Daily Summary has been ended");
 	}
 	
 }
