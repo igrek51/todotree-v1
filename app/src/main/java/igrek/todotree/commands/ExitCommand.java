@@ -13,6 +13,7 @@ import igrek.todotree.logger.Logger;
 import igrek.todotree.logger.LoggerFactory;
 import igrek.todotree.service.access.DatabaseLock;
 import igrek.todotree.service.preferences.Preferences;
+import igrek.todotree.service.preferences.PropertyDefinition;
 import igrek.todotree.service.summary.AlarmService;
 import igrek.todotree.ui.GUI;
 
@@ -75,7 +76,8 @@ public class ExitCommand {
 		appControllerService.stopKeepingScreenOn();
 		
 		new TreeCommand().navigateToRoot();
-		lock.setLocked(true);
+		boolean shouldBeLocked = preferences.getValue(PropertyDefinition.lockDB, Boolean.class);
+		lock.setLocked(shouldBeLocked);
 		new GUICommand().showItemsList();
 		
 		logger.debug("Quick exiting done");
