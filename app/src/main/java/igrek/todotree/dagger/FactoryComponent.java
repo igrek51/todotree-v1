@@ -17,6 +17,7 @@ import igrek.todotree.commands.NavigationCommand;
 import igrek.todotree.commands.PersistenceCommand;
 import igrek.todotree.commands.StatisticsCommand;
 import igrek.todotree.commands.TreeCommand;
+import igrek.todotree.commands.WhatTheFuckCommand;
 import igrek.todotree.ui.contextmenu.BackupListMenu;
 import igrek.todotree.ui.contextmenu.ItemActionsMenu;
 import igrek.todotree.ui.errorcheck.UIErrorHandler;
@@ -60,5 +61,7 @@ public interface FactoryComponent {
 	void inject(ItemActionCommand there);
 	
 	void inject(StatisticsCommand there);
+	
+	void inject(WhatTheFuckCommand there);
 	
 }

@@ -11,9 +11,6 @@ import igrek.todotree.commands.PersistenceCommand;
 import igrek.todotree.logger.Logger;
 import igrek.todotree.logger.LoggerFactory;
 
-//TODO item types: link with name, checkbox, text with date / hour, text with number, separator, separator with group name
-//TODO show changes: transaction commit, rollback, revert last change
-
 public class AppControllerService {
 	
 	public Activity activity;

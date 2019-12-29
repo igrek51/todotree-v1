@@ -18,7 +18,6 @@ public class QuickAddService {
 	private Logger logger;
 	private Activity activity;
 	private TreeManager treeManager;
-	private SoftKeyboardService softKeyboardService;
 	private Lazy<GUI> gui;
 	
 	private boolean quickAddMode = false;
@@ -27,7 +26,6 @@ public class QuickAddService {
 		this.logger = logger;
 		this.activity = activity;
 		this.treeManager = treeManager;
-		this.softKeyboardService = softKeyboardService;
 		this.gui = gui;
 	}
 	
@@ -39,7 +37,8 @@ public class QuickAddService {
 		this.quickAddMode = quickAddMode;
 	}
 	
-	public void initQuickAdd() {
+	public void enableQuickAdd() {
+		logger.debug("enabling quick add");
 		showOnLockScreen();
 		setQuickAddMode(true);
 		editNewTmpItem();

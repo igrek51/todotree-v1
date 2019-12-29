@@ -15,6 +15,7 @@ import javax.inject.Inject;
 import igrek.todotree.R;
 import igrek.todotree.app.AppControllerService;
 import igrek.todotree.commands.NavigationCommand;
+import igrek.todotree.commands.WhatTheFuckCommand;
 import igrek.todotree.dagger.DaggerIOC;
 import igrek.todotree.logger.Logger;
 import igrek.todotree.logger.LoggerFactory;
@@ -27,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
 	@Inject
 	QuickAddService quickAddService;
 	
-	private Logger logger = LoggerFactory.getLogger();
+	protected Logger logger = LoggerFactory.getLogger();
 	
 	public static final String EXTRA_ACTION_KEY = "extraAction";
 	
@@ -53,8 +54,18 @@ public class MainActivity extends AppCompatActivity {
 	
 	@Override
 	protected void onNewIntent(Intent intent) {
-		super.onNewIntent(intent);
+		stdNewIntent(intent);
 		logger.debug("new intent received");
+		
+		if (new WhatTheFuckCommand().isQuickAddModeEnabled()) {
+			quickAddService.setQuickAddMode(false);
+			logger.debug("recreating activity");
+			recreate();
+		}
+	}
+	
+	protected void stdNewIntent(Intent intent) {
+		super.onNewIntent(intent);
 	}
 	
 	@Override
