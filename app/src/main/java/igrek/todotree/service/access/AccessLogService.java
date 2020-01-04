@@ -43,8 +43,10 @@ public class AccessLogService {
 	private File getTodayLog() throws IOException {
 		File logFile = getAccessDirPath().append(ACCESS_LOG_PREFIX + filenameDateFormat.format(new Date()) + ACCESS_LOG_SUFFIX)
 				.getFile();
-		if (!logFile.exists())
+		if (!logFile.exists()) {
+			logger.debug("creating today log: " + logFile.getAbsolutePath());
 			logFile.createNewFile();
+		}
 		return logFile;
 	}
 	

@@ -1,6 +1,5 @@
 package igrek.todotree.service.filesystem;
 
-import android.app.Activity;
 import android.os.Build;
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -69,8 +68,13 @@ public class ExternalCardService {
 		if (externalMounts.size() > 1) {
 			logger.warn("multiple external mounts found, getting the first one");
 		}
-		if (!externalMounts.isEmpty())
-			return externalMounts.iterator().next();
+		if (!externalMounts.isEmpty()) {
+			String extMount = externalMounts.iterator().next();
+			if (extMount.startsWith("/mnt/media_rw/")) {
+				extMount = extMount.replaceFirst("/mnt/media_rw/", "/storage/");
+			}
+			return extMount;
+		}
 		return null;
 	}
 	
