@@ -13,17 +13,17 @@ import android.widget.ListView;
 import java.util.List;
 import java.util.Set;
 
-import igrek.todotree.commands.ItemEditorCommand;
-import igrek.todotree.commands.TreeCommand;
 import igrek.todotree.domain.treeitem.AbstractTreeItem;
-import igrek.todotree.logger.Logger;
-import igrek.todotree.logger.LoggerFactory;
+import igrek.todotree.info.logger.Logger;
+import igrek.todotree.info.logger.LoggerFactory;
+import igrek.todotree.intent.ItemEditorCommand;
+import igrek.todotree.intent.TreeCommand;
 import igrek.todotree.ui.contextmenu.ItemActionsMenu;
 import igrek.todotree.ui.errorcheck.UIErrorHandler;
 
 public class TreeListView extends ListView implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
 	
-	private Logger logger = LoggerFactory.getLogger();
+	private Logger logger = LoggerFactory.INSTANCE.getLogger();
 	private TreeItemAdapter adapter;
 	private TreeListScrollHandler scrollHandler;
 	private TreeListReorder reorder = new TreeListReorder(this);

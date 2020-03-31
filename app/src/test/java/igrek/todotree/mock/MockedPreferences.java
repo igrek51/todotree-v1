@@ -1,6 +1,5 @@
 package igrek.todotree.mock;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 

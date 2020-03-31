@@ -12,9 +12,9 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
-import igrek.todotree.commands.GUICommand;
-import igrek.todotree.commands.PersistenceCommand;
-import igrek.todotree.dagger.DaggerIOC;
+import igrek.todotree.dagger.DaggerIoc;
+import igrek.todotree.intent.GUICommand;
+import igrek.todotree.intent.PersistenceCommand;
 import igrek.todotree.service.backup.Backup;
 import igrek.todotree.service.backup.BackupManager;
 import igrek.todotree.service.resources.UserInfoService;
@@ -42,7 +42,7 @@ public class BackupListMenu {
 	private SimpleDateFormat displayDateFormat = new SimpleDateFormat("yyyy-MM-dd, HH:mm:ss", Locale.ENGLISH);
 	
 	public BackupListMenu() {
-		DaggerIOC.getFactoryComponent().inject(this);
+		DaggerIoc.factoryComponent.inject(this);
 	}
 	
 	public void show() {

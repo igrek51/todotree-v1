@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.EditText;
 
 import igrek.todotree.R;
-import igrek.todotree.commands.GUICommand;
+import igrek.todotree.intent.GUICommand;
 
 public class NumericKeyboardView extends KeyboardView implements KeyboardView.OnKeyboardActionListener {
 	

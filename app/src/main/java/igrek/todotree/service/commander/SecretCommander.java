@@ -4,7 +4,8 @@ package igrek.todotree.service.commander;
 import java.util.Arrays;
 import java.util.List;
 
-import igrek.todotree.logger.Logger;
+import igrek.todotree.info.logger.Logger;
+import igrek.todotree.info.logger.LoggerFactory;
 import igrek.todotree.service.preferences.Preferences;
 import igrek.todotree.service.preferences.PropertyDefinition;
 import igrek.todotree.service.resources.UserInfoService;
@@ -18,14 +19,12 @@ import igrek.todotree.service.resources.UserInfoService;
  */
 public class SecretCommander {
 	
-	private Logger logger;
+	private Logger logger = LoggerFactory.INSTANCE.getLogger();
 	private Preferences preferences;
 	private UserInfoService userInfo;
-	
 	private static final String CMD_PREFIX = "###";
 	
-	public SecretCommander(Logger logger, Preferences preferences, UserInfoService userInfo) {
-		this.logger = logger;
+	public SecretCommander(Preferences preferences, UserInfoService userInfo) {
 		this.preferences = preferences;
 		this.userInfo = userInfo;
 	}

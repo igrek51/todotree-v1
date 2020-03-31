@@ -1,7 +1,5 @@
 package igrek.todotree.service.backup;
 
-import android.support.annotation.NonNull;
-
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
@@ -13,7 +11,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import igrek.todotree.logger.Logger;
+import androidx.annotation.NonNull;
+import igrek.todotree.info.logger.Logger;
+import igrek.todotree.info.logger.LoggerFactory;
 import igrek.todotree.service.filesystem.FilesystemService;
 import igrek.todotree.service.filesystem.PathBuilder;
 import igrek.todotree.service.preferences.Preferences;
@@ -32,12 +32,11 @@ public class BackupManager {
 	
 	private FilesystemService filesystem;
 	private Preferences preferences;
-	private Logger logger;
+	private Logger logger = LoggerFactory.INSTANCE.getLogger();
 	
-	public BackupManager(Preferences preferences, FilesystemService filesystem, Logger logger) {
+	public BackupManager(Preferences preferences, FilesystemService filesystem) {
 		this.preferences = preferences;
 		this.filesystem = filesystem;
-		this.logger = logger;
 	}
 	
 	public void saveBackupFile() {

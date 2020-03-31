@@ -1,7 +1,7 @@
 package igrek.todotree.ui.treelist;
 
-import igrek.todotree.commands.TreeCommand;
 import igrek.todotree.domain.treeitem.AbstractTreeItem;
+import igrek.todotree.intent.TreeCommand;
 
 public class TreeListGestureHandler {
 	

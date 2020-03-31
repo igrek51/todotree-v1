@@ -2,19 +2,19 @@ package igrek.todotree.ui;
 
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageButton;
 
 import java.util.List;
 import java.util.Set;
 
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import igrek.todotree.R;
-import igrek.todotree.commands.ExitCommand;
-import igrek.todotree.commands.NavigationCommand;
 import igrek.todotree.domain.treeitem.AbstractTreeItem;
+import igrek.todotree.intent.ExitCommand;
+import igrek.todotree.intent.NavigationCommand;
 import igrek.todotree.ui.edititem.EditItemGUI;
 import igrek.todotree.ui.errorcheck.SafeClickListener;
 import igrek.todotree.ui.treelist.TreeListView;

@@ -1,6 +1,6 @@
 package igrek.todotree.service.summary;
 
-import android.app.Activity;
+import android.content.Context;
 
 import com.google.common.base.Joiner;
 
@@ -10,16 +10,15 @@ import java.util.List;
 
 import igrek.todotree.domain.stats.StatisticEvent;
 import igrek.todotree.domain.stats.StatisticEventType;
-import igrek.todotree.logger.Logger;
-import android.content.Context;
-import igrek.todotree.logger.LoggerFactory;
+import igrek.todotree.info.logger.Logger;
+import igrek.todotree.info.logger.LoggerFactory;
 import igrek.todotree.service.statistics.StatisticsLogService;
 
 public class DailySummaryService {
 	
 	public static final String DAILY_SUMMARY_ACTION = "dailySummary";
 	
-	private Logger logger = LoggerFactory.getLogger();
+	private Logger logger = LoggerFactory.INSTANCE.getLogger();
 	private Context context;
 	private NotificationService notificationService;
 	private StatisticsLogService statisticsLogService;

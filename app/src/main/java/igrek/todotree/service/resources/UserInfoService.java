@@ -2,14 +2,16 @@ package igrek.todotree.service.resources;
 
 import android.app.Activity;
 import android.graphics.Color;
-import android.support.design.widget.Snackbar;
-import android.support.v4.content.ContextCompat;
 import android.view.View;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.HashMap;
 
+import androidx.core.content.ContextCompat;
 import igrek.todotree.R;
-import igrek.todotree.logger.Logger;
+import igrek.todotree.info.logger.Logger;
+import igrek.todotree.info.logger.LoggerFactory;
 import igrek.todotree.ui.GUI;
 import igrek.todotree.ui.errorcheck.SafeClickListener;
 
@@ -22,12 +24,11 @@ public class UserInfoService {
 	
 	private HashMap<View, Snackbar> infobars = new HashMap<>();
 	
-	protected Logger logger;
+	private Logger logger = LoggerFactory.INSTANCE.getLogger();
 	
-	public UserInfoService(Activity activity, GUI gui, Logger logger) {
+	public UserInfoService(Activity activity, GUI gui) {
 		this.activity = activity;
 		this.gui = gui;
-		this.logger = logger;
 	}
 	
 	private String resString(int resourceId) {

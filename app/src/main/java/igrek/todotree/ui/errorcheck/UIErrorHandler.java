@@ -3,9 +3,9 @@ package igrek.todotree.ui.errorcheck;
 
 import javax.inject.Inject;
 
-import igrek.todotree.dagger.DaggerIOC;
+import igrek.todotree.dagger.DaggerIoc;
 import igrek.todotree.exceptions.DatabaseLockedException;
-import igrek.todotree.logger.Logger;
+import igrek.todotree.info.logger.Logger;
 import igrek.todotree.service.resources.UserInfoService;
 
 public class UIErrorHandler {
@@ -17,7 +17,7 @@ public class UIErrorHandler {
 	Logger logger;
 	
 	private void _handleError(Throwable t) {
-		DaggerIOC.getFactoryComponent().inject(this);
+		DaggerIoc.factoryComponent.inject(this);
 		// database locked
 		if (t instanceof DatabaseLockedException) {
 			logger.warn(t.getMessage());

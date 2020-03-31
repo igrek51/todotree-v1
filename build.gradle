@@ -1,20 +1,36 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
-
 buildscript {
+    ext.kotlin_version = '1.4-M1'
+
     repositories {
-        mavenLocal()
-        mavenCentral()
         google()
         jcenter()
+        mavenCentral()
+        maven {
+            url "http://dl.bintray.com/kotlin/kotlin-eap"
+        }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.4'
-
+        classpath 'com.android.tools.build:gradle:3.5.3'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlin_version"
+        classpath 'com.google.gms:google-services:4.3.3'
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.0.0-beta01'
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
-    ext.java_version = JavaVersion.VERSION_1_8
 }
-repositories {
-    google()
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+        mavenCentral()
+        maven {
+            url "http://dl.bintray.com/kotlin/kotlin-eap"
+        }
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
 }

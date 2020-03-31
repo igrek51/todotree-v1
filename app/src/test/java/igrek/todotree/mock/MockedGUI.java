@@ -1,12 +1,12 @@
 package igrek.todotree.mock;
 
 
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import java.util.List;
 import java.util.Set;
 
+import androidx.appcompat.app.AppCompatActivity;
 import igrek.todotree.domain.treeitem.AbstractTreeItem;
 import igrek.todotree.ui.GUI;
 

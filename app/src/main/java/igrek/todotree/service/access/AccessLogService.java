@@ -12,7 +12,8 @@ import java.util.List;
 import java.util.Locale;
 
 import igrek.todotree.domain.treeitem.AbstractTreeItem;
-import igrek.todotree.logger.Logger;
+import igrek.todotree.info.logger.Logger;
+import igrek.todotree.info.logger.LoggerFactory;
 import igrek.todotree.service.filesystem.FilesystemService;
 import igrek.todotree.service.filesystem.PathBuilder;
 import igrek.todotree.service.preferences.Preferences;
@@ -29,9 +30,9 @@ public class AccessLogService {
 	
 	private FilesystemService filesystem;
 	private Preferences preferences;
-	private Logger logger;
+	private Logger logger = LoggerFactory.INSTANCE.getLogger();
 	
-	public AccessLogService(FilesystemService filesystem, Preferences preferences, Logger logger) {
+	public AccessLogService(FilesystemService filesystem, Preferences preferences) {
 		this.filesystem = filesystem;
 		this.preferences = preferences;
 		this.logger = logger;

@@ -1,15 +1,13 @@
 package igrek.todotree.ui.edititem;
 
 
-import android.annotation.TargetApi;
 import android.content.Context;
-import android.os.Build;
 import android.util.AttributeSet;
-import android.widget.EditText;
 
+import androidx.appcompat.widget.AppCompatEditText;
 import igrek.todotree.ui.numkeyboard.NumKeyboardListener;
 
-public class ItemEditText extends EditText {
+public class ItemEditText extends AppCompatEditText {
 	
 	private NumKeyboardListener listener = null;
 	
@@ -23,11 +21,6 @@ public class ItemEditText extends EditText {
 	
 	public ItemEditText(Context context, AttributeSet attrs, int defStyleAttr) {
 		super(context, attrs, defStyleAttr);
-	}
-	
-	@TargetApi(Build.VERSION_CODES.LOLLIPOP)
-	public ItemEditText(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-		super(context, attrs, defStyleAttr, defStyleRes);
 	}
 	
 	@Override

@@ -2,10 +2,10 @@ package igrek.todotree.service.tree;
 
 import java.util.TreeSet;
 
-import igrek.todotree.commands.StatisticsCommand;
 import igrek.todotree.domain.treeitem.AbstractTreeItem;
 import igrek.todotree.domain.treeitem.RootTreeItem;
 import igrek.todotree.exceptions.NoSuperItemException;
+import igrek.todotree.intent.StatisticsCommand;
 import igrek.todotree.service.history.ChangesHistory;
 
 public class TreeManager {

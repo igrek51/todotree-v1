@@ -2,7 +2,6 @@ package igrek.todotree.ui.treelist;
 
 import android.content.Context;
 import android.graphics.Rect;
-import android.support.annotation.NonNull;
 import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
 import android.util.SparseArray;
@@ -21,11 +20,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import androidx.annotation.NonNull;
 import igrek.todotree.R;
-import igrek.todotree.commands.ItemEditorCommand;
-import igrek.todotree.commands.ItemSelectionCommand;
 import igrek.todotree.domain.treeitem.AbstractTreeItem;
 import igrek.todotree.domain.treeitem.LinkTreeItem;
+import igrek.todotree.intent.ItemEditorCommand;
+import igrek.todotree.intent.ItemSelectionCommand;
 import igrek.todotree.ui.errorcheck.SafeClickListener;
 
 class TreeItemAdapter extends ArrayAdapter<AbstractTreeItem> {

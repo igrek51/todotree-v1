@@ -17,8 +17,8 @@ import java.util.Locale;
 
 import igrek.todotree.domain.stats.StatisticEvent;
 import igrek.todotree.domain.stats.StatisticEventType;
-import igrek.todotree.logger.Logger;
-import igrek.todotree.logger.LoggerFactory;
+import igrek.todotree.info.logger.Logger;
+import igrek.todotree.info.logger.LoggerFactory;
 import igrek.todotree.service.filesystem.FilesystemService;
 import igrek.todotree.service.filesystem.PathBuilder;
 import igrek.todotree.service.preferences.Preferences;
@@ -35,7 +35,7 @@ public class StatisticsLogService {
 	
 	private FilesystemService filesystem;
 	private Preferences preferences;
-	private Logger logger = LoggerFactory.getLogger();
+	private Logger logger = LoggerFactory.INSTANCE.getLogger();
 	
 	public StatisticsLogService(FilesystemService filesystem, Preferences preferences) {
 		this.filesystem = filesystem;
@@ -72,7 +72,7 @@ public class StatisticsLogService {
 		try {
 			File todayLog = getTodayLog();
 			StringBuilder line = new StringBuilder();
-			line.append(type.getName()).append("\t");
+			line.append(type.getGivenName()).append("\t");
 			line.append(lineDateFormat.format(new Date())).append("\t");
 			line.append(taskName);
 			appendLine(todayLog, line.toString());
@@ -171,7 +171,7 @@ public class StatisticsLogService {
 		}
 		List<String> lines = Files.readLines(logFile, Charset.defaultCharset());
 		for (String line : lines) {
-			events.add(StatisticEvent.parse(line, lineDateFormat));
+			events.add(StatisticEvent.Companion.parse(line, lineDateFormat));
 		}
 		return events;
 		// maybe some beautiful day Java 8 would be fully available on Android :(

@@ -5,25 +5,25 @@ import android.os.Handler;
 import android.view.WindowManager;
 
 import dagger.Lazy;
-import igrek.todotree.commands.ExitCommand;
-import igrek.todotree.commands.ItemEditorCommand;
 import igrek.todotree.domain.treeitem.AbstractTreeItem;
-import igrek.todotree.logger.Logger;
+import igrek.todotree.info.logger.Logger;
+import igrek.todotree.info.logger.LoggerFactory;
+import igrek.todotree.intent.ExitCommand;
+import igrek.todotree.intent.ItemEditorCommand;
 import igrek.todotree.service.system.SoftKeyboardService;
 import igrek.todotree.service.tree.TreeManager;
 import igrek.todotree.ui.GUI;
 
 public class QuickAddService {
 	
-	private Logger logger;
+	private Logger logger = LoggerFactory.INSTANCE.getLogger();
 	private Activity activity;
 	private TreeManager treeManager;
 	private Lazy<GUI> gui;
 	
 	private boolean quickAddMode = false;
 	
-	public QuickAddService(Logger logger, Activity activity, TreeManager treeManager, SoftKeyboardService softKeyboardService, Lazy<GUI> gui) {
-		this.logger = logger;
+	public QuickAddService(Activity activity, TreeManager treeManager, SoftKeyboardService softKeyboardService, Lazy<GUI> gui) {
 		this.activity = activity;
 		this.treeManager = treeManager;
 		this.gui = gui;

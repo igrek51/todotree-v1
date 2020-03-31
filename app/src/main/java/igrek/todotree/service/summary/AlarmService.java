@@ -10,14 +10,14 @@ import android.os.Build;
 import org.joda.time.DateTime;
 
 import igrek.todotree.activity.DailyReceiver;
-import igrek.todotree.logger.Logger;
-import igrek.todotree.logger.LoggerFactory;
+import igrek.todotree.info.logger.Logger;
+import igrek.todotree.info.logger.LoggerFactory;
 
 public class AlarmService {
 	
 	private Activity activity;
 	private AlarmManager alarmManager;
-	private Logger logger = LoggerFactory.getLogger();
+	private Logger logger = LoggerFactory.INSTANCE.getLogger();
 	
 	public AlarmService(Activity activity) {
 		this.activity = activity;

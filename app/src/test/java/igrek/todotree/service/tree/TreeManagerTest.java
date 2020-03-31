@@ -6,12 +6,12 @@ import org.junit.Test;
 import java.util.Set;
 import java.util.TreeSet;
 
-import igrek.todotree.commands.ClipboardCommand;
-import igrek.todotree.commands.TreeCommand;
-import igrek.todotree.dagger.base.BaseDaggerTest;
+import igrek.todotree._dagger.base.BaseDaggerTest;
 import igrek.todotree.domain.treeitem.LinkTreeItem;
 import igrek.todotree.domain.treeitem.RootTreeItem;
 import igrek.todotree.domain.treeitem.TextTreeItem;
+import igrek.todotree.intent.ClipboardCommand;
+import igrek.todotree.intent.TreeCommand;
 
 import static org.junit.Assert.assertEquals;
 

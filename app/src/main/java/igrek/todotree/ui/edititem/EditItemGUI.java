@@ -10,8 +10,8 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import igrek.todotree.R;
-import igrek.todotree.commands.ItemEditorCommand;
 import igrek.todotree.domain.treeitem.AbstractTreeItem;
+import igrek.todotree.intent.ItemEditorCommand;
 import igrek.todotree.ui.GUI;
 import igrek.todotree.ui.errorcheck.SafeClickListener;
 import igrek.todotree.ui.numkeyboard.NumKeyboardListener;
