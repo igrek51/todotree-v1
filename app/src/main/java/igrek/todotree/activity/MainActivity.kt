@@ -57,7 +57,7 @@ open class MainActivity : AppCompatActivity() {
             logger.debug("recreating activity")
             recreate()
         }
-        if (false) {
+        null?.let {
             super.onNewIntent(intent)
         }
     }
@@ -121,7 +121,4 @@ open class MainActivity : AppCompatActivity() {
         return super.onKeyDown(keyCode, event)
     }
 
-    companion object {
-        const val EXTRA_ACTION_KEY = "extraAction"
-    }
 }

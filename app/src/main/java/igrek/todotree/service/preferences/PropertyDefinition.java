@@ -3,8 +3,6 @@ package igrek.todotree.service.preferences;
 
 public enum PropertyDefinition {
 	
-	dbFilePath("Android/data/igrek.todotree/todo.json"),
-	
 	lockDB(false);
 	
 	

@@ -9,7 +9,7 @@ import igrek.todotree.service.filesystem.FilesystemService;
 public class MockedFilesystemService extends FilesystemService {
 	
 	public MockedFilesystemService(Logger logger, Activity activity, ExternalCardService externalCardService) {
-		super(logger, activity, externalCardService);
+		super(logger, externalCardService);
 	}
 	
 }

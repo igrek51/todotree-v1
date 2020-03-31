@@ -77,8 +77,7 @@ public class SecretCommander {
 			preferences.setValue(PropertyDefinition.lockDB, valueB);
 			userInfo.showInfo("Property saved: lockdb = " + valueB);
 		} else if (property.equals("dbfilepath")) {
-			preferences.setValue(PropertyDefinition.dbFilePath, value);
-			userInfo.showInfo("Property saved: dbFilePath = " + value);
+			userInfo.showInfo("Property dbFilePath = " + value);
 		} else {
 			logger.warn("unknown property: " + property);
 		}

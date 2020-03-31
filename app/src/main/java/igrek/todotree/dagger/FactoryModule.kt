@@ -107,7 +107,7 @@ open class FactoryModule(private val activity: AppCompatActivity) {
 
     @Provides
     @Singleton
-    fun aFilesystemService(context: Context, externalCardService: ExternalCardService): FilesystemService = FilesystemService(context, externalCardService)
+    fun aFilesystemService(context: Context): FilesystemService = FilesystemService(context)
 
     @Provides
     @Singleton
@@ -119,7 +119,7 @@ open class FactoryModule(private val activity: AppCompatActivity) {
 
     @Provides
     @Singleton
-    fun aBackupManager(preferences: Preferences, filesystem: FilesystemService): BackupManager = BackupManager(preferences, filesystem)
+    fun aBackupManager(filesystem: FilesystemService): BackupManager = BackupManager(filesystem)
 
     @Provides
     @Singleton
@@ -147,7 +147,7 @@ open class FactoryModule(private val activity: AppCompatActivity) {
 
     @Provides
     @Singleton
-    fun aAccessLogService(filesystem: FilesystemService, preferences: Preferences): AccessLogService = AccessLogService(filesystem, preferences)
+    fun aAccessLogService(filesystem: FilesystemService): AccessLogService = AccessLogService(filesystem)
 
     @Provides
     @Singleton
@@ -179,7 +179,7 @@ open class FactoryModule(private val activity: AppCompatActivity) {
 
     @Provides
     @Singleton
-    fun aStatisticsLogService(filesystem: FilesystemService, preferences: Preferences): StatisticsLogService = StatisticsLogService(filesystem, preferences)
+    fun aStatisticsLogService(filesystem: FilesystemService): StatisticsLogService = StatisticsLogService(filesystem)
 
     @Provides
     @Singleton
@@ -187,7 +187,7 @@ open class FactoryModule(private val activity: AppCompatActivity) {
 
     @Provides
     @Singleton
-    fun aQuickAddService(activity: Activity, treeManager: TreeManager, softKeyboardService: SoftKeyboardService, gui: dagger.Lazy<GUI>): QuickAddService = QuickAddService(activity, treeManager, softKeyboardService, gui)
+    fun aQuickAddService(activity: Activity, treeManager: TreeManager, gui: dagger.Lazy<GUI>, userInfoService: UserInfoService, activityController: ActivityController): QuickAddService = QuickAddService(activity, treeManager, gui, userInfoService, activityController)
 
     @Provides
     @Singleton

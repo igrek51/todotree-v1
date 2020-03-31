@@ -3,41 +3,35 @@ package igrek.todotree.service.filesystem
 import android.content.Context
 import igrek.todotree.info.logger.Logger
 import igrek.todotree.info.logger.LoggerFactory
-import igrek.todotree.system.filesystem.ExternalCardService
 import java.io.*
 import java.nio.charset.Charset
-import java.util.*
 
 open class FilesystemService(
         private val context: Context,
-        private val externalCardService: ExternalCardService,
 ) {
 
     private val logger: Logger = LoggerFactory.logger
 
-    fun externalSDPath(): PathBuilder {
-        // returns internal dir but creates also /storage/extSdCard/Android/data/pkg - WTF?!
-        //		activity.getExternalFilesDir("data");
-        return PathBuilder(externalCardService.findExternalSDPath())
+    fun appDataRootDir(): File {
+        context.filesDir.takeIf { it.isDirectory }?.let { return it }
+        return File("/data/data/${context.packageName}/files").createIfMissing()
     }
 
-    fun mkdirIfNotExist(path: String?): Boolean {
-        val f = File(path)
-        return !f.exists() && f.mkdirs()
-    }
-
-    private fun listDir(path: String): List<String> {
-        val lista: MutableList<String> = ArrayList()
-        val f = File(path)
-        val file = f.listFiles()
-        for (aFile in file) {
-            lista.add(aFile.name)
+    private fun File.createIfMissing(): File {
+        return this.also {
+            it.takeIf { !it.exists() }?.let { file ->
+                file.mkdir()
+                logger.info("missing directory created: ${file.absolutePath}")
+            }
         }
-        return lista
     }
 
-    fun listDir(path: PathBuilder): List<String> {
-        return listDir(path.toString())
+    fun appDataSubDir(name: String): File {
+        return appDataRootDir().resolve(name).createIfMissing()
+    }
+
+    fun listDirFilenames(dir: File): List<String> {
+        return dir.listFiles().map { it.name }
     }
 
     @Throws(IOException::class)
@@ -67,7 +61,7 @@ open class FilesystemService(
         fos.close()
     }
 
-    fun createMissingParentDir(file: File) {
+    private fun createMissingParentDir(file: File) {
         val parentDir = file.parentFile
         if (!parentDir.exists()) {
             parentDir.mkdir()
@@ -78,20 +72,6 @@ open class FilesystemService(
     @Throws(IOException::class)
     fun saveFile(filename: String, str: String) {
         saveFile(filename, str.toByteArray())
-    }
-
-    fun exists(path: String?): Boolean {
-        val f = File(path)
-        return f.exists()
-    }
-
-    private fun delete(path: String): Boolean {
-        val file = File(path)
-        return file.delete()
-    }
-
-    fun delete(path: PathBuilder): Boolean {
-        return delete(path.toString())
     }
 
     @Throws(IOException::class)
@@ -109,21 +89,6 @@ open class FilesystemService(
         } finally {
             `is`?.close()
             os?.close()
-        }
-    }
-
-    fun ensureAppDataDirExists() {
-        val externalSD = File(externalSDPath().toString())
-        val appDataDir = File(externalSD, "Android/data/igrek.todotree")
-        if (!appDataDir.exists()) {
-            // WTF!?? getExternalFilesDir creates dir on SD card but returns Internal storage path
-            logger.info(context.getExternalFilesDir("data").absolutePath)
-            appDataDir.mkdirs()
-            if (appDataDir.exists()) {
-                logger.info("Android app data directory has been created")
-            } else {
-                logger.error("Failed to create Android app data directory")
-            }
         }
     }
 
