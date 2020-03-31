@@ -6,7 +6,7 @@ import android.os.Bundle
 class RemotePushActivity : MainActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        quickAddService.enableQuickAdd()
+        remotePushService.enableRemotePush()
     }
 
     override fun onNewIntent(intent: Intent?) {

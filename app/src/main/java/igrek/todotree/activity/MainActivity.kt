@@ -14,6 +14,7 @@ import igrek.todotree.info.logger.Logger
 import igrek.todotree.info.logger.LoggerFactory
 import igrek.todotree.intent.WhatTheFuckCommand
 import igrek.todotree.service.access.QuickAddService
+import igrek.todotree.service.remote.RemotePushService
 import igrek.todotree.system.SystemKeyDispatcher
 import javax.inject.Inject
 
@@ -27,6 +28,9 @@ open class MainActivity : AppCompatActivity() {
 
     @Inject
     lateinit var quickAddService: QuickAddService
+
+    @Inject
+    lateinit var remotePushService: RemotePushService
 
     @Inject
     lateinit var optionSelectDispatcher: Lazy<OptionSelectDispatcher>
@@ -54,6 +58,10 @@ open class MainActivity : AppCompatActivity() {
         logger.debug("new intent received")
         if (WhatTheFuckCommand().isQuickAddModeEnabled) {
             quickAddService.isQuickAddMode = false
+            logger.debug("recreating activity")
+            recreate()
+        } else if (WhatTheFuckCommand().isRemotePushEnabled) {
+            remotePushService.isRemotePushingEnabled = false
             logger.debug("recreating activity")
             recreate()
         }

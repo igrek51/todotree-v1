@@ -4,6 +4,7 @@ package igrek.todotree.dagger
 import android.app.Activity
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
+import dagger.Lazy
 import dagger.Module
 import dagger.Provides
 import igrek.todotree.activity.ActivityController
@@ -23,6 +24,8 @@ import igrek.todotree.service.filesystem.FilesystemService
 import igrek.todotree.service.history.ChangesHistory
 import igrek.todotree.service.history.LinkHistoryService
 import igrek.todotree.service.preferences.Preferences
+import igrek.todotree.service.remote.RemoteDbRequester
+import igrek.todotree.service.remote.RemotePushService
 import igrek.todotree.service.resources.UserInfoService
 import igrek.todotree.service.statistics.StatisticsLogService
 import igrek.todotree.service.summary.AlarmService
@@ -205,6 +208,13 @@ open class FactoryModule(private val activity: AppCompatActivity) {
     @Singleton
     fun aDailySummaryService(activity: Activity, notificationService: NotificationService, statisticsLogService: StatisticsLogService): DailySummaryService = DailySummaryService(activity, notificationService, statisticsLogService)
 
+    @Provides
+    @Singleton
+    fun aRemoteDbRequester(preferences: Preferences): RemoteDbRequester = RemoteDbRequester(preferences)
+
+    @Provides
+    @Singleton
+    fun aRemotePushService(activity: Activity, treeManager: TreeManager, gui: Lazy<GUI>, userInfoService: UserInfoService, remoteDbRequester: RemoteDbRequester): RemotePushService = RemotePushService(activity, treeManager, gui, userInfoService, remoteDbRequester)
     /*
 	 * Empty service pattern:
 	@Provides

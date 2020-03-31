@@ -14,6 +14,7 @@ import igrek.todotree.info.logger.LoggerFactory;
 import igrek.todotree.service.access.QuickAddService;
 import igrek.todotree.service.commander.SecretCommander;
 import igrek.todotree.service.history.ChangesHistory;
+import igrek.todotree.service.remote.RemotePushService;
 import igrek.todotree.service.resources.UserInfoService;
 import igrek.todotree.service.tree.ContentTrimmer;
 import igrek.todotree.service.tree.TreeManager;
@@ -52,6 +53,9 @@ public class ItemEditorCommand {
 	
 	@Inject
 	QuickAddService quickAddService;
+	
+	@Inject
+	RemotePushService remotePushService;
 	
 	private Logger logger = LoggerFactory.INSTANCE.getLogger();
 	
@@ -136,8 +140,11 @@ public class ItemEditorCommand {
 		secretCommander.execute(content);
 		returnFromItemEditing();
 		// exit if it's quick add mode only
-		if (quickAddService.isQuickAddMode())
+		if (quickAddService.isQuickAddMode()) {
 			quickAddService.exitApp();
+		} else if (remotePushService.isRemotePushingEnabled()) {
+			remotePushService.pushAndExit(content);
+		}
 	}
 	
 	public void saveAndAddItemClicked(AbstractTreeItem editedItem, String content) {
@@ -199,8 +206,11 @@ public class ItemEditorCommand {
 		gui.hideSoftKeyboard();
 		discardEditingItem();
 		// exit if it's quick add mode only
-		if (quickAddService.isQuickAddMode())
+		if (quickAddService.isQuickAddMode()) {
 			quickAddService.exitApp();
+		} else if (remotePushService.isRemotePushingEnabled()) {
+			remotePushService.exitApp();
+		}
 	}
 	
 	public void addItemHereClicked(int position) {

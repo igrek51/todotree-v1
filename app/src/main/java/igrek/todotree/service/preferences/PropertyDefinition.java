@@ -3,8 +3,11 @@ package igrek.todotree.service.preferences;
 
 public enum PropertyDefinition {
 	
-	lockDB(false);
+	lockDB(false),
 	
+	userAuthToken(""),
+	
+	;
 	
 	private Object defaultValue;
 	private PropertyType type;
