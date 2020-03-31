@@ -1,15 +1,15 @@
-package igrek.todotree._dagger;
+package igrek.todotree.dagger;
 
 
 import org.junit.Test;
 
-import igrek.todotree._dagger.base.BaseDaggerTest;
+import igrek.todotree.dagger.base.BaseDaggerTest;
 
 public class DaggerMockTest extends BaseDaggerTest {
 	
 	@Test
 	public void testLoggerMock() {
-		logger.info("Hello dupa");
+		getLogger().info("Hello dupa");
 	}
 	
 	@Test

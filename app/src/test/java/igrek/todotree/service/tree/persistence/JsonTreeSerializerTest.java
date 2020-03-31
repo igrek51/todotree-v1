@@ -82,7 +82,7 @@ public class JsonTreeSerializerTest {
 		AbstractTreeItem item = deserialized.getChild(0);
 		assertTrue(item.isEmpty());
 		assertTrue(item instanceof TextTreeItem);
-		assertEquals("escaping \"quote\" back\\slash", item.displayName);
+		assertEquals("escaping \"quote\" back\\slash", item.getDisplayName());
 		
 		//System.out.println(serializer.serializeTree(root));
 	}

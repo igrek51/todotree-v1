@@ -47,7 +47,7 @@ import javax.inject.Singleton
 open class FactoryModule(private val activity: AppCompatActivity) {
 
     @Provides
-    fun provideContext(): Context {
+    open fun provideContext(): Context {
         return activity.applicationContext
     }
 
@@ -57,7 +57,7 @@ open class FactoryModule(private val activity: AppCompatActivity) {
     }
 
     @Provides
-    fun provideAppCompatActivity(): AppCompatActivity {
+    open fun provideAppCompatActivity(): AppCompatActivity {
         return activity
     }
 
@@ -107,7 +107,7 @@ open class FactoryModule(private val activity: AppCompatActivity) {
 
     @Provides
     @Singleton
-    fun aFilesystemService(context: Context): FilesystemService = FilesystemService(context)
+    open fun aFilesystemService(context: Context): FilesystemService = FilesystemService(context)
 
     @Provides
     @Singleton
@@ -115,7 +115,7 @@ open class FactoryModule(private val activity: AppCompatActivity) {
 
     @Provides
     @Singleton
-    fun aPreferences(context: Context): Preferences = Preferences(context)
+    open fun aPreferences(context: Context): Preferences = Preferences(context)
 
     @Provides
     @Singleton
@@ -123,7 +123,7 @@ open class FactoryModule(private val activity: AppCompatActivity) {
 
     @Provides
     @Singleton
-    fun aUserInfoService(activity: Activity, gui: GUI): UserInfoService = UserInfoService(activity, gui)
+    open fun aUserInfoService(activity: Activity, gui: GUI): UserInfoService = UserInfoService(activity, gui)
 
     @Provides
     @Singleton
@@ -131,11 +131,11 @@ open class FactoryModule(private val activity: AppCompatActivity) {
 
     @Provides
     @Singleton
-    fun aGUI(activity: AppCompatActivity): GUI = GUI(activity)
+    open fun aGUI(activity: AppCompatActivity): GUI = GUI(activity)
 
     @Provides
     @Singleton
-    fun aSystemClipboardManager(activity: Activity): SystemClipboardManager = SystemClipboardManager(activity)
+    open fun aSystemClipboardManager(activity: Activity): SystemClipboardManager = SystemClipboardManager(activity)
 
     @Provides
     @Singleton
@@ -143,7 +143,7 @@ open class FactoryModule(private val activity: AppCompatActivity) {
 
     @Provides
     @Singleton
-    fun aDatabaseLock(preferences: Preferences, accessLogService: AccessLogService): DatabaseLock = DatabaseLock(preferences, accessLogService)
+    open fun aDatabaseLock(preferences: Preferences, accessLogService: AccessLogService): DatabaseLock = DatabaseLock(preferences, accessLogService)
 
     @Provides
     @Singleton
@@ -183,7 +183,7 @@ open class FactoryModule(private val activity: AppCompatActivity) {
 
     @Provides
     @Singleton
-    fun aExternalCardService(): ExternalCardService = ExternalCardService()
+    open fun aExternalCardService(): ExternalCardService = ExternalCardService()
 
     @Provides
     @Singleton

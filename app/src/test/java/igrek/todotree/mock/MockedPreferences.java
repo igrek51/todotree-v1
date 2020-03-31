@@ -3,14 +3,13 @@ package igrek.todotree.mock;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import igrek.todotree.logger.Logger;
 import igrek.todotree.service.preferences.Preferences;
 import igrek.todotree.service.preferences.PropertyDefinition;
 
 public class MockedPreferences extends Preferences {
 	
-	public MockedPreferences(Context context, Logger logger) {
-		super(context, logger);
+	public MockedPreferences(Context context) {
+		super(context);
 	}
 	
 	@Override
@@ -24,7 +23,7 @@ public class MockedPreferences extends Preferences {
 	
 	@Override
 	public <T> T getValue(PropertyDefinition propertyDefinition, Class<T> clazz) {
-		if(clazz.equals(Boolean.class)){
+		if (clazz.equals(Boolean.class)) {
 			return (T) Boolean.FALSE;
 		}
 		return null;

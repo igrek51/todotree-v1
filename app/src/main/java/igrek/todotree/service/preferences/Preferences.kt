@@ -23,7 +23,7 @@ open class Preferences(context: Context) {
 
     private fun loadProperty(propertyDefinition: PropertyDefinition) {
         val propertyName = propertyDefinition.name
-        var value: Any? = null
+        val value: Any?
         if (exists(propertyName)) {
             value = when (propertyDefinition.type) {
                 PropertyType.STRING -> sharedPreferences.getString(propertyName, null)

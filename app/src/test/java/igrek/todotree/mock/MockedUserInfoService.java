@@ -3,15 +3,18 @@ package igrek.todotree.mock;
 
 import android.app.Activity;
 
-import igrek.todotree.logger.Logger;
+import igrek.todotree.info.logger.Logger;
+import igrek.todotree.info.logger.LoggerFactory;
 import igrek.todotree.service.resources.InfoBarClickAction;
 import igrek.todotree.service.resources.UserInfoService;
 import igrek.todotree.ui.GUI;
 
 public class MockedUserInfoService extends UserInfoService {
 	
-	public MockedUserInfoService(Activity activity, GUI gui, Logger logger) {
-		super(activity, gui, logger);
+	private Logger logger = LoggerFactory.INSTANCE.getLogger();
+	
+	public MockedUserInfoService(Activity activity, GUI gui) {
+		super(activity, gui);
 	}
 	
 	@Override

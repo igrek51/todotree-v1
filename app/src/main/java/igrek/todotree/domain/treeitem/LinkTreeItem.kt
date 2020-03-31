@@ -3,7 +3,12 @@ package igrek.todotree.domain.treeitem
 import com.google.common.base.Joiner
 import igrek.todotree.intent.TreeCommand
 
-class LinkTreeItem(parent: AbstractTreeItem?, var targetPath: String, var customName: String?) : AbstractTreeItem(parent) {
+class LinkTreeItem(
+        parent: AbstractTreeItem?,
+        var targetPath: String,
+        var customName: String?,
+) : AbstractTreeItem(parent) {
+
     override fun clone(): LinkTreeItem {
         return LinkTreeItem(null, targetPath, customName).copyChildren(this)
     }

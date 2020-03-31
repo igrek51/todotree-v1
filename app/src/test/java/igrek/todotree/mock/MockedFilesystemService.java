@@ -1,15 +1,14 @@
 package igrek.todotree.mock;
 
 
-import android.app.Activity;
+import android.content.Context;
 
-import igrek.todotree.logger.Logger;
 import igrek.todotree.service.filesystem.FilesystemService;
 
 public class MockedFilesystemService extends FilesystemService {
 	
-	public MockedFilesystemService(Logger logger, Activity activity, ExternalCardService externalCardService) {
-		super(logger, externalCardService);
+	public MockedFilesystemService(Context context) {
+		super(context);
 	}
 	
 }

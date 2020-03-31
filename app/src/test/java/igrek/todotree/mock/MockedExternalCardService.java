@@ -1,16 +1,11 @@
 package igrek.todotree.mock;
 
 
-import igrek.todotree.logger.Logger;
+import igrek.todotree.system.filesystem.ExternalCardService;
 
 public class MockedExternalCardService extends ExternalCardService {
 	
-	public MockedExternalCardService(Logger logger) {
-		super(logger);
-	}
-	
-	@Override
-	protected String findExternalSDPath() {
-		return "/storage/extSdCard";
+	public MockedExternalCardService() {
+		super();
 	}
 }

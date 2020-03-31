@@ -10,7 +10,7 @@ import java.util.*
 /**
  * service to find external sd card location (it's not so obvious)
  */
-class ExternalCardService {
+open class ExternalCardService {
 
     private val logger = LoggerFactory.logger
     private val externalSDPath: String?
