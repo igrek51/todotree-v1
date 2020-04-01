@@ -210,7 +210,7 @@ open class FactoryModule(private val activity: AppCompatActivity) {
 
     @Provides
     @Singleton
-    fun aRemoteDbRequester(preferences: Preferences): RemoteDbRequester = RemoteDbRequester(preferences)
+    fun aRemoteDbRequester(preferences: Preferences, activity: Activity): RemoteDbRequester = RemoteDbRequester(preferences, activity)
 
     @Provides
     @Singleton

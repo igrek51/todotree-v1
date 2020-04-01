@@ -9,6 +9,7 @@ import java.util.List;
 import igrek.todotree.domain.treeitem.AbstractTreeItem;
 import igrek.todotree.domain.treeitem.CheckboxTreeItem;
 import igrek.todotree.domain.treeitem.LinkTreeItem;
+import igrek.todotree.domain.treeitem.RemoteTreeItem;
 import igrek.todotree.domain.treeitem.RootTreeItem;
 import igrek.todotree.domain.treeitem.SeparatorTreeItem;
 import igrek.todotree.domain.treeitem.TextTreeItem;
@@ -58,6 +59,13 @@ public class GsonTreeDeserializer {
 					throw new DeserializationFailedException("property 'name' not found");
 				
 				treeItem = new TextTreeItem(null, jsonItem.name);
+				break;
+			}
+			case "remote": {
+				if (jsonItem.name == null)
+					throw new DeserializationFailedException("property 'name' not found");
+				
+				treeItem = new RemoteTreeItem(null, jsonItem.name);
 				break;
 			}
 			case "separator": {

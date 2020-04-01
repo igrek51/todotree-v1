@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import igrek.todotree.dagger.DaggerIoc;
 import igrek.todotree.domain.treeitem.AbstractTreeItem;
 import igrek.todotree.domain.treeitem.LinkTreeItem;
+import igrek.todotree.domain.treeitem.RemoteTreeItem;
 import igrek.todotree.domain.treeitem.TextTreeItem;
 import igrek.todotree.exceptions.NoSuperItemException;
 import igrek.todotree.info.logger.Logger;
@@ -15,6 +16,7 @@ import igrek.todotree.info.logger.LoggerFactory;
 import igrek.todotree.service.access.DatabaseLock;
 import igrek.todotree.service.history.ChangesHistory;
 import igrek.todotree.service.history.LinkHistoryService;
+import igrek.todotree.service.remote.RemotePushService;
 import igrek.todotree.service.resources.UserInfoService;
 import igrek.todotree.service.tree.TreeManager;
 import igrek.todotree.service.tree.TreeMover;
@@ -47,6 +49,9 @@ public class TreeCommand {
 	
 	@Inject
 	UserInfoService infoService;
+	
+	@Inject
+	RemotePushService remotePushService;
 	
 	private Logger logger = LoggerFactory.INSTANCE.getLogger();
 	
@@ -94,6 +99,12 @@ public class TreeCommand {
 		lock.unlockIfLocked(item);
 		if (item instanceof LinkTreeItem) {
 			goToLinkTarget((LinkTreeItem) item);
+		} else if (item instanceof RemoteTreeItem) {
+			selectionManager.cancelSelectionMode();
+			goInto(position);
+			remotePushService.populateRemoteItem((RemoteTreeItem) item);
+			new GUICommand().updateItemsList();
+			gui.scrollToItem(0);
 		} else {
 			selectionManager.cancelSelectionMode();
 			goInto(position);
@@ -143,7 +154,9 @@ public class TreeCommand {
 			selectionManager.toggleItemSelected(position);
 			new GUICommand().updateItemsList();
 		} else {
-			if (item instanceof TextTreeItem) {
+			if (item instanceof RemoteTreeItem) {
+				itemGoIntoClicked(position, item);
+			} else if (item instanceof TextTreeItem) {
 				if (item.isEmpty()) {
 					new ItemEditorCommand().itemEditClicked(item);
 				} else {

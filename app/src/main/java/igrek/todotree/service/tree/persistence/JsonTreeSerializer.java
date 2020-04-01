@@ -3,6 +3,7 @@ package igrek.todotree.service.tree.persistence;
 import igrek.todotree.domain.treeitem.AbstractTreeItem;
 import igrek.todotree.domain.treeitem.CheckboxTreeItem;
 import igrek.todotree.domain.treeitem.LinkTreeItem;
+import igrek.todotree.domain.treeitem.RemoteTreeItem;
 import igrek.todotree.domain.treeitem.TextTreeItem;
 
 class JsonTreeSerializer {
@@ -41,7 +42,9 @@ class JsonTreeSerializer {
 	}
 	
 	private void serializeAttributes(StringBuilder output, AbstractTreeItem item) {
-		if (item instanceof TextTreeItem) {
+		if (item instanceof RemoteTreeItem) {
+			serializeAttribute(output, "name", item.getDisplayName());
+		} else if (item instanceof TextTreeItem) {
 			serializeAttribute(output, "name", item.getDisplayName());
 		} else if (item instanceof LinkTreeItem) {
 			LinkTreeItem linkItem = (LinkTreeItem) item;

@@ -1,5 +1,7 @@
 package igrek.todotree.service.remote
 
+import android.app.Activity
+import android.provider.Settings
 import igrek.todotree.info.logger.LoggerFactory.logger
 import igrek.todotree.service.preferences.Preferences
 import igrek.todotree.service.preferences.PropertyDefinition
@@ -14,6 +16,7 @@ import java.util.*
 
 class RemoteDbRequester(
         preferences: Preferences,
+        private val activity: Activity,
 ) {
 
     companion object {
@@ -50,7 +53,7 @@ class RemoteDbRequester(
 
     fun createRemoteTodo(content: String): Observable<Boolean> {
         logger.info("Creating remote todo")
-        val deviceId = "1"
+        val deviceId = Settings.Secure.getString(activity.getContentResolver(), Settings.Secure.ANDROID_ID)
         val timestampS = Date().time / 1000
         val todoDto = TodoDto(content = content, create_timestamp = timestampS, device_id = deviceId)
         val json = jsonSerializer.stringify(TodoDto.serializer(), todoDto)

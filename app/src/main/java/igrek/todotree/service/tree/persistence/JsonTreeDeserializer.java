@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 import igrek.todotree.domain.treeitem.AbstractTreeItem;
 import igrek.todotree.domain.treeitem.CheckboxTreeItem;
 import igrek.todotree.domain.treeitem.LinkTreeItem;
+import igrek.todotree.domain.treeitem.RemoteTreeItem;
 import igrek.todotree.domain.treeitem.RootTreeItem;
 import igrek.todotree.domain.treeitem.SeparatorTreeItem;
 import igrek.todotree.domain.treeitem.TextTreeItem;
@@ -131,6 +132,10 @@ class JsonTreeDeserializer {
 			case "text": {
 				String name = getAttributeValue(attributes, "name");
 				return new TextTreeItem(null, name);
+			}
+			case "remote": {
+				String name = getAttributeValue(attributes, "name");
+				return new RemoteTreeItem(null, name);
 			}
 			case "separator": {
 				return new SeparatorTreeItem(null);

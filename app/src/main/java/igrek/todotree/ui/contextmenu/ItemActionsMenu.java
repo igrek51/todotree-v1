@@ -13,6 +13,7 @@ import javax.inject.Inject;
 import igrek.todotree.dagger.DaggerIoc;
 import igrek.todotree.domain.treeitem.AbstractTreeItem;
 import igrek.todotree.domain.treeitem.LinkTreeItem;
+import igrek.todotree.domain.treeitem.RemoteTreeItem;
 import igrek.todotree.intent.ItemActionCommand;
 import igrek.todotree.service.clipboard.TreeClipboardManager;
 import igrek.todotree.service.tree.TreeManager;
@@ -166,6 +167,18 @@ public class ItemActionsMenu {
 			@Override
 			public void execute() {
 				new ItemActionCommand().actionSelectAll(position);
+			}
+		});
+		
+		actions.add(new ItemAction("Remove from remote") {
+			@Override
+			public void execute() {
+				new ItemActionCommand().actionRemoveRemote(position);
+			}
+			
+			@Override
+			public boolean isVisible() {
+				return treeManager.getCurrentItem() instanceof RemoteTreeItem;
 			}
 		});
 		

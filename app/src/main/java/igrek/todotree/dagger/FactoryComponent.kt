@@ -3,7 +3,6 @@ package igrek.todotree.dagger
 import dagger.Component
 import igrek.todotree.activity.*
 import igrek.todotree.intent.*
-import igrek.todotree.service.remote.RemoteDbRequester
 import igrek.todotree.service.system.SoftKeyboardService
 import igrek.todotree.system.PackageInfoService
 import igrek.todotree.system.PermissionService
@@ -47,6 +46,5 @@ interface FactoryComponent {
     fun inject(there: SystemKeyDispatcher)
     fun inject(there: PermissionService)
     fun inject(there: PackageInfoService)
-    fun inject(there: RemoteDbRequester)
 
 }

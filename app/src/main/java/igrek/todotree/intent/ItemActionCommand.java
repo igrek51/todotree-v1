@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import igrek.todotree.dagger.DaggerIoc;
 import igrek.todotree.domain.treeitem.AbstractTreeItem;
 import igrek.todotree.domain.treeitem.LinkTreeItem;
+import igrek.todotree.service.remote.RemotePushService;
 import igrek.todotree.service.resources.UserInfoService;
 import igrek.todotree.service.tree.TreeManager;
 import igrek.todotree.service.tree.TreeSelectionManager;
@@ -20,15 +21,14 @@ public class ItemActionCommand {
 	
 	@Inject
 	TreeManager treeManager;
-	
 	@Inject
 	GUI gui;
-	
 	@Inject
 	TreeSelectionManager selectionManager;
-	
 	@Inject
 	UserInfoService userInfoService;
+	@Inject
+	RemotePushService remotePushService;
 	
 	public ItemActionCommand() {
 		DaggerIoc.factoryComponent.inject(this);
@@ -96,5 +96,10 @@ public class ItemActionCommand {
 			AbstractTreeItem item = treeManager.getCurrentItem().getChild(position);
 			new ItemEditorCommand().itemEditClicked(item);
 		});
+	}
+	
+	public void actionRemoveRemote(int position) {
+		remotePushService.removeRemoteItem(position);
+		new ItemTrashCommand().itemRemoveClicked(position);
 	}
 }
