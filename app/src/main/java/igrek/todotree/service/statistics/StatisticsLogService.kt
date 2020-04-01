@@ -1,6 +1,5 @@
 package igrek.todotree.service.statistics
 
-import com.google.common.io.Files
 import igrek.todotree.domain.stats.StatisticEvent
 import igrek.todotree.domain.stats.StatisticEvent.Companion.parse
 import igrek.todotree.domain.stats.StatisticEventType
@@ -11,7 +10,6 @@ import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
 import java.io.IOException
-import java.nio.charset.Charset
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -130,18 +128,9 @@ class StatisticsLogService(private val filesystem: FilesystemService) {
     }
 
     private fun readEventsOfDay(date: Date): List<StatisticEvent> {
-        val events: MutableList<StatisticEvent> = ArrayList()
         val logFile = getLogFile(date)
-        if (!logFile.exists()) {
-            return events
-        }
-        val lines = Files.readLines(logFile, Charset.defaultCharset())
-        for (line in lines) {
-            events.add(parse(line!!, lineDateFormat))
-        }
-        return events
-        // maybe some beautiful day Java 8 would be fully available on Android :(
-        //		return lines.stream().map(String line -> StatisticEvent.parse(line)).collect(Collectors.toList());
+        logFile.takeUnless { it.exists() }?.let { return emptyList() }
+        return logFile.readLines().map { parse(it, lineDateFormat) }
     }
 
     companion object {
