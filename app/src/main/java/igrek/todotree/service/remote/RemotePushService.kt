@@ -46,7 +46,6 @@ class RemotePushService(
     }
 
     private fun editNewPushItem() {
-        treeManager.reset()
         // add item at the end
         ItemEditorCommand().addItemClicked()
     }
