@@ -23,7 +23,7 @@ class HttpRequester {
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: Response) {
                 if (!response.isSuccessful) {
-                    logger.error("Unexpected response code: $response")
+                    logger.error("Unexpected response code: $response, ${response.body().toString()}")
                     receiver.onError(RuntimeException(response.toString()))
                 } else {
                     try {

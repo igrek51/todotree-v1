@@ -8,7 +8,9 @@ import igrek.todotree.domain.treeitem.RemoteTreeItem
 import igrek.todotree.domain.treeitem.TextTreeItem
 import igrek.todotree.info.logger.LoggerFactory
 import igrek.todotree.intent.ExitCommand
+import igrek.todotree.intent.GUICommand
 import igrek.todotree.intent.ItemEditorCommand
+import igrek.todotree.intent.ItemTrashCommand
 import igrek.todotree.service.resources.UserInfoService
 import igrek.todotree.service.tree.TreeManager
 import igrek.todotree.ui.GUI
@@ -55,14 +57,20 @@ class RemotePushService(
     }
 
     fun pushAndExit(content: String?) {
+        if (content.isNullOrBlank()) {
+            userInfoService.showToast("Nothing to do")
+            exitApp()
+            return
+        }
         userInfoService.showToast("Pushing...")
 
-        remoteDbRequester.createRemoteTodo(content ?: "")
+        remoteDbRequester.createRemoteTodo(content)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     userInfoService.showToast("Success!")
                     exitApp()
-                }, {
+                }, { e ->
+                    logger.error(e)
                     userInfoService.showToast("Communication breakdown!")
                 })
     }
@@ -76,7 +84,8 @@ class RemotePushService(
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ todoDtos ->
                     populateFetchedRemoteItems(item, todoDtos)
-                }, {
+                }, { e ->
+                    logger.error(e)
                     userInfoService.showInfo("Communication breakdown!")
                 })
     }
@@ -88,17 +97,28 @@ class RemotePushService(
             remoteItem.add(newItem)
             todoDto.id?.let { remoteItemToId[newItem] = it }
         }
+        if (todoDtos.isEmpty()) {
+            userInfoService.showInfo("No remote items")
+        } else {
+            GUICommand().updateItemsList()
+            userInfoService.showInfo("${todoDtos.size} remote items fetched.")
+        }
     }
 
     fun removeRemoteItem(position: Int) {
-        remoteItemToId.clear()
         val item = treeManager.getChild(position)
-        remoteItemToId[item]?.let {
+        val itemId = remoteItemToId[item]
+        itemId ?: run {
+            userInfoService.showInfo("remote item ID not found")
+        }
+        itemId?.let {
             remoteDbRequester.deleteRemoteTodo(it)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
+                        ItemTrashCommand().itemRemoveClicked(position)
                         userInfoService.showInfo("Item removed remotely")
-                    }, {
+                    }, { e ->
+                        logger.error(e)
                         userInfoService.showInfo("Communication breakdown!")
                     })
         }

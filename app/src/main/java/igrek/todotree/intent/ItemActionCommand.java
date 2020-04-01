@@ -100,6 +100,5 @@ public class ItemActionCommand {
 	
 	public void actionRemoveRemote(int position) {
 		remotePushService.removeRemoteItem(position);
-		new ItemTrashCommand().itemRemoveClicked(position);
 	}
 }

@@ -1,6 +1,7 @@
 package igrek.todotree.service.commander
 
 import igrek.todotree.info.logger.LoggerFactory
+import igrek.todotree.intent.ItemEditorCommand
 import igrek.todotree.service.preferences.Preferences
 import igrek.todotree.service.preferences.PropertyDefinition
 import igrek.todotree.service.resources.UserInfoService
@@ -11,8 +12,8 @@ import java.util.*
  * ###dupa
  * ###config lockdb true
  * ###config lockdb false
- * ###config dbFilePath /storage/6D49-845B/Android/data/igrek.todotree/todo.json
- * ###config userAuthToken authToken
+ * ###config userauthtoken authToken
+ * ###remote_item
  */
 class SecretCommander(private val preferences: Preferences, private val userInfo: UserInfoService) {
 
@@ -31,12 +32,17 @@ class SecretCommander(private val preferences: Preferences, private val userInfo
         when (main) {
             "dupa" -> commandDupa(params)
             "config" -> commandConfig(params)
+            "remote_item" -> createRemoteItem()
             else -> {
                 userInfo.showInfo("Unknown command: $main")
                 return false
             }
         }
         return true
+    }
+
+    private fun createRemoteItem() {
+        ItemEditorCommand().createRemoteItem()
     }
 
     private fun commandDupa(params: List<String>) {
@@ -57,7 +63,7 @@ class SecretCommander(private val preferences: Preferences, private val userInfo
                 preferences.setValue(PropertyDefinition.lockDB, valueB)
                 userInfo.showInfo("Property saved: $property = $valueB")
             }
-            "userAuthToken" -> {
+            "userauthtoken" -> {
                 preferences.setValue(PropertyDefinition.userAuthToken, value)
                 userInfo.showInfo("Property saved: $property = $value")
             }

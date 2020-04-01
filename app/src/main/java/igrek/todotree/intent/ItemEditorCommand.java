@@ -8,6 +8,7 @@ import igrek.todotree.app.AppState;
 import igrek.todotree.dagger.DaggerIoc;
 import igrek.todotree.domain.treeitem.AbstractTreeItem;
 import igrek.todotree.domain.treeitem.LinkTreeItem;
+import igrek.todotree.domain.treeitem.RemoteTreeItem;
 import igrek.todotree.domain.treeitem.TextTreeItem;
 import igrek.todotree.info.logger.Logger;
 import igrek.todotree.info.logger.LoggerFactory;
@@ -77,6 +78,10 @@ public class ItemEditorCommand {
 			userInfo.showInfo("New item has been saved.");
 			return true;
 		}
+	}
+	
+	public void createRemoteItem() {
+		treeManager.addToCurrent(null, new RemoteTreeItem("Remote"));
 	}
 	
 	private boolean tryToSaveExistingItem(TextTreeItem editedItem, String content) {
