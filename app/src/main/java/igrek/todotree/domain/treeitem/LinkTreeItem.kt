@@ -33,7 +33,7 @@ class LinkTreeItem(
 
     val target: AbstractTreeItem?
         get() {
-            val paths = targetPath.split("\\t").toTypedArray()
+            val paths = targetPath.split("\t").toTypedArray()
             return TreeCommand().findItemByPath(paths)
         }
 
