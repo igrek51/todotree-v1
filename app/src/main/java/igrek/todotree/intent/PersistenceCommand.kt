@@ -79,6 +79,10 @@ class PersistenceCommand {
         return appDataDir.resolve("todo.json")
     }
 
+    private fun dbCopyFile(): File {
+        return filesystem.externalAppDataRootDir().resolve("todo.json")
+    }
+
     fun loadRootTreeFromBackup(backup: Backup) {
         val backupDir = filesystem.appDataSubDir("backup")
         val path = backupDir.resolve(backup.filename)
@@ -115,6 +119,7 @@ class PersistenceCommand {
             val output = persistenceService.serializeTree(treeManager.rootItem)
             //Logger.debug("Serialized data: " + output);
             filesystem.saveFile(dbFile().absolutePath, output)
+            filesystem.saveFile(dbCopyFile().absolutePath, output)
         } catch (e: IOException) {
             logger.error(e)
         }

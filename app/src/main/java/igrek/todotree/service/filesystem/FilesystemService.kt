@@ -17,6 +17,10 @@ open class FilesystemService(
         return File("/data/data/${context.packageName}/files").createIfMissing()
     }
 
+    fun externalAppDataRootDir(): File {
+        return context.getExternalFilesDir("files").createIfMissing()
+    }
+
     private fun File.createIfMissing(): File {
         return this.also {
             it.takeIf { !it.exists() }?.let { file ->
