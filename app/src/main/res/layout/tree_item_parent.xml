@@ -14,7 +14,7 @@
         android:layout_gravity="start|center_vertical"
         android:layout_marginEnd="4dp"
         android:layout_marginStart="2dp"
-        android:background="@drawable/ic_reorder_white"
+        android:background="@drawable/reorder"
         android:scaleType="fitCenter"
         />
 
