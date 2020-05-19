@@ -37,6 +37,7 @@ interface FactoryComponent {
     fun inject(there: ItemActionCommand)
     fun inject(there: StatisticsCommand)
     fun inject(there: WhatTheFuckCommand)
+    fun inject(there: RemotePushCommand)
 
     fun inject(there: AppInitializer)
     fun inject(there: ActivityController)

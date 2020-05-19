@@ -74,6 +74,23 @@ class RemotePushService(
                 })
     }
 
+    fun pushNewItem(content: String) {
+        if (content.isBlank()) {
+            userInfoService.showToast("Nothing to do")
+            return
+        }
+        userInfoService.showToast("Pushing...")
+
+        remoteDbRequester.createRemoteTodo(content)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    userInfoService.showToast("Entry created: $content")
+                }, { e ->
+                    logger.error(e)
+                    userInfoService.showToast("Communication breakdown!")
+                })
+    }
+
     fun populateRemoteItem(item: RemoteTreeItem) {
         // clear current children
         repeat(item.getChildren().size) {

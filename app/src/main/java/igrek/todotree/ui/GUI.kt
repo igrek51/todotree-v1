@@ -53,7 +53,7 @@ open class GUI(activity: AppCompatActivity?) : BaseGUI(activity) {
         updateItemsList(currentItem, currentItem.getChildren(), null)
     }
 
-    open fun showEditItemPanel(item: AbstractTreeItem?, parent: AbstractTreeItem?) {
+    open fun showEditItemPanel(item: AbstractTreeItem?, parent: AbstractTreeItem) {
         showBackButton(true)
         // TODO redirect to dedicated views
         editItemGUI = EditItemGUI(this, item, parent)

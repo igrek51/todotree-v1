@@ -23,8 +23,11 @@ abstract class AbstractTreeItem(parent: AbstractTreeItem?) {
     }
 
     abstract fun clone(): AbstractTreeItem
+
     abstract val displayName: String
+
     abstract val typeName: String?
+
     fun getChildren(): List<AbstractTreeItem> {
         return _children
     }
