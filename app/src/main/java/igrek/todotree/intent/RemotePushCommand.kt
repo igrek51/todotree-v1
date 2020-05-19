@@ -17,8 +17,6 @@ class RemotePushCommand {
     @Inject
     lateinit var treeManager: TreeManager
 
-    private val logger = LoggerFactory.logger
-
     init {
         DaggerIoc.factoryComponent.inject(this)
     }
@@ -32,7 +30,6 @@ class RemotePushCommand {
         if (itemPosistions.isEmpty()) {
             itemPosistions.add(position)
         }
-        ClipboardCommand().cutItems(itemPosistions)
 
         if (!itemPosistions.isEmpty()) {
             val currentItem: AbstractTreeItem = treeManager.currentItem

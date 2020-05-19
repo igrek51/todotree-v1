@@ -84,7 +84,7 @@ class RemotePushService(
         remoteDbRequester.createRemoteTodo(content)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    userInfoService.showToast("Entry created: $content")
+                    userInfoService.showToast("Entry pushed: $content")
                 }, { e ->
                     logger.error(e)
                     userInfoService.showToast("Communication breakdown!")
