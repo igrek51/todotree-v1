@@ -40,7 +40,7 @@
                     android:paddingTop="8dp"
                     android:paddingBottom="8dp"
                     android:scaleType="centerInside"
-                    android:src="@drawable/ic_menu_save"/>
+                    android:src="@drawable/save"/>
 
             </androidx.appcompat.widget.Toolbar>
 
