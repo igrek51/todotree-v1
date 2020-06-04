@@ -57,17 +57,20 @@ class PersistenceCommand {
     }
 
     fun optionSave() {
-        saveDatabase()
-        userInfo.showInfo("Database saved.")
+        val saved = saveDatabase()
+        if (saved)
+            userInfo.showInfo("Database saved.")
     }
 
-    fun saveDatabase() {
+    fun saveDatabase(): Boolean {
         if (!changesHistory.hasChanges()) {
             logger.info("No changes have been made - skipping saving")
-            return
+            return false
         }
         saveRootTree()
         backupManager.saveBackupFile()
+        changesHistory.clear()
+        return true
     }
 
     fun loadRootTree() {

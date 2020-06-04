@@ -40,7 +40,6 @@ public class ChangesHistory {
 	}
 	
 	public boolean hasChanges() {
-		//TODO return !changes.isEmpty();
 		return anyChange;
 	}
 }
