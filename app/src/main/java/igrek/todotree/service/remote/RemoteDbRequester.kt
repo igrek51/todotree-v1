@@ -5,7 +5,9 @@ import android.provider.Settings
 import igrek.todotree.info.logger.LoggerFactory.logger
 import igrek.todotree.service.preferences.Preferences
 import igrek.todotree.service.preferences.PropertyDefinition
-import io.reactivex.Observable
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
 import okhttp3.MediaType
@@ -39,21 +41,21 @@ class RemoteDbRequester(
         authToken = preferences.getValue(PropertyDefinition.userAuthToken, String::class.java) ?: ""
     }
 
-    fun fetchAllRemoteTodos(): Observable<List<TodoDto>> {
+    fun fetchAllRemoteTodos(): Deferred<Result<List<TodoDto>>> {
         val request: Request = Request.Builder()
                 .url(getAllTodosUrl)
                 .addHeader(authTokenHeader, authToken)
                 .build()
-        return httpRequester.httpRequest(request) { response: Response ->
+        return httpRequester.httpRequestAsync(request) { response: Response ->
             val json = response.body()?.string() ?: ""
             val allDtos: AllTodoDto = jsonSerializer.parse(AllTodoDto.serializer(), json)
             allDtos.entities
         }
     }
 
-    fun createRemoteTodo(content: String): Observable<Boolean> {
+    fun createRemoteTodo(content: String): Deferred<Result<String>> {
         logger.info("Creating remote todo")
-        val deviceId = Settings.Secure.getString(activity.getContentResolver(), Settings.Secure.ANDROID_ID)
+        val deviceId = Settings.Secure.getString(activity.contentResolver, Settings.Secure.ANDROID_ID)
         val timestampS = Date().time / 1000
         val todoDto = TodoDto(content = content, create_timestamp = timestampS, device_id = deviceId)
         val json = jsonSerializer.stringify(TodoDto.serializer(), todoDto)
@@ -62,17 +64,20 @@ class RemoteDbRequester(
                 .post(RequestBody.create(jsonType, json))
                 .addHeader(authTokenHeader, authToken)
                 .build()
-        return httpRequester.httpRequest(request) { true }
+        return httpRequester.httpRequestAsync(request) { content }
     }
 
-    fun deleteRemoteTodo(id: Long): Observable<Boolean> {
+    fun deleteRemoteTodo(id: Long): Deferred<Result<Unit>> {
         logger.info("Deleting remote todo")
         val request: Request = Request.Builder()
                 .url(deleteTodoUrl(id))
                 .delete()
                 .addHeader(authTokenHeader, authToken)
                 .build()
-        return httpRequester.httpRequest(request) { true }
+        return GlobalScope.async {
+            val dr = httpRequester.httpRequestAsync(request) { true }
+            dr.await().map { }
+        }
     }
 
 }

@@ -121,7 +121,7 @@ class ItemActionsMenu(private val position: Int) {
         })
         actions.add(object : ItemAction("Select all") {
             override fun execute() {
-                ItemActionCommand().actionSelectAll(position)
+                ItemActionCommand().actionSelectAll()
             }
         })
         actions.add(object : ItemAction("Push to remote") {

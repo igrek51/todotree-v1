@@ -1,43 +1,46 @@
 package igrek.todotree.service.remote
 
 import igrek.todotree.info.logger.LoggerFactory
-import io.reactivex.Observable
-import io.reactivex.subjects.BehaviorSubject
-import okhttp3.*
-import java.io.IOException
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
 
 class HttpRequester {
 
     private val okHttpClient: OkHttpClient = OkHttpClient()
     private val logger = LoggerFactory.logger
 
-    fun <T> httpRequest(request: Request, successor: (Response) -> T): Observable<T> {
-        val receiver = BehaviorSubject.create<T>()
+    fun <T> httpRequestAsync(request: Request, successor: (Response) -> T): Deferred<Result<T>> {
+        return GlobalScope.async {
+            httpRequestSync(request, successor)
+        }
+    }
 
-        okHttpClient.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                logger.error("Request sending error: ${e.message}", e)
-                receiver.onError(RuntimeException(e.message))
-            }
+    private fun <T> httpRequestSync(request: Request, successor: (Response) -> T): Result<T> {
+        try {
 
-            @Throws(IOException::class)
-            override fun onResponse(call: Call, response: Response) {
-                if (!response.isSuccessful) {
-                    logger.error("Unexpected response code: $response, ${response.body().toString()}")
-                    receiver.onError(RuntimeException(response.toString()))
-                } else {
-                    try {
-                        val responseData = successor(response)
-                        receiver.onNext(responseData)
-                    } catch (e: Throwable) {
-                        logger.error("onResponse error: ${e.message}", e)
-                        receiver.onError(RuntimeException(e.message))
-                    }
+            val response: Response = okHttpClient.newCall(request).execute()
+            return if (!response.isSuccessful) {
+                logger.error("Unexpected response code: $response, ${response.body().toString()}")
+                Result.failure(RuntimeException(response.toString()))
+            } else {
+                try {
+                    logger.debug("Successful http response")
+                    val responseData = successor(response)
+                    Result.success(responseData)
+                } catch (e: Throwable) {
+                    logger.error("onResponse error: ${e.message}", e)
+                    Result.failure(RuntimeException(e.message))
                 }
             }
-        })
 
-        return receiver
+        } catch (e: java.io.IOException) {
+            logger.error("Request sending error: ${e.message}", e)
+            return Result.failure(RuntimeException(e.message))
+        }
     }
 
 }

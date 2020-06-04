@@ -7,14 +7,11 @@ import dagger.Lazy
 import igrek.todotree.domain.treeitem.RemoteTreeItem
 import igrek.todotree.domain.treeitem.TextTreeItem
 import igrek.todotree.info.logger.LoggerFactory
-import igrek.todotree.intent.ExitCommand
-import igrek.todotree.intent.GUICommand
 import igrek.todotree.intent.ItemEditorCommand
-import igrek.todotree.intent.ItemTrashCommand
 import igrek.todotree.service.resources.UserInfoService
 import igrek.todotree.service.tree.TreeManager
 import igrek.todotree.ui.GUI
-import io.reactivex.android.schedulers.AndroidSchedulers
+import kotlinx.coroutines.*
 
 class RemotePushService(
         private val activity: Activity,
@@ -50,94 +47,64 @@ class RemotePushService(
         ItemEditorCommand().addItemClicked()
     }
 
-    fun exitApp() {
-        logger.debug("Exitting quick add mode...")
-        ExitCommand().optionSaveAndExit()
-    }
-
-    fun pushAndExit(content: String?) {
+    fun pushAndExitAsync(content: String?): Deferred<Result<String>> {
         if (content.isNullOrBlank()) {
             userInfoService.showToast("Nothing to do")
-            exitApp()
-            return
+            return GlobalScope.async { Result.success(content.orEmpty()) }
         }
-        userInfoService.showToast("Pushing...")
 
-        remoteDbRequester.createRemoteTodo(content)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    userInfoService.showToast("Success!")
-                    exitApp()
-                }, { e ->
-                    logger.error(e)
-                    userInfoService.showToast("Communication breakdown!")
-                })
+        GlobalScope.launch(Dispatchers.Main) {
+            userInfoService.showToast("Pushing...")
+        }
+
+        return remoteDbRequester.createRemoteTodo(content)
     }
 
-    fun pushNewItem(content: String) {
+    fun pushNewItemAsync(content: String): Deferred<Result<String>> {
         if (content.isBlank()) {
             userInfoService.showToast("Nothing to do")
-            return
+            return GlobalScope.async { Result.success(content) }
         }
-        userInfoService.showToast("Pushing...")
+        GlobalScope.launch(Dispatchers.Main) {
+            userInfoService.showToast("Pushing...")
+        }
 
-        remoteDbRequester.createRemoteTodo(content)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    userInfoService.showToast("Entry pushed: $content")
-                }, { e ->
-                    logger.error(e)
-                    userInfoService.showToast("Communication breakdown!")
-                })
+        return remoteDbRequester.createRemoteTodo(content)
     }
 
-    fun populateRemoteItem(item: RemoteTreeItem) {
+    fun populateRemoteItemAsync(item: RemoteTreeItem): Deferred<Result<List<TodoDto>>> {
         // clear current children
         repeat(item.getChildren().size) {
             item.remove(0)
         }
-        remoteDbRequester.fetchAllRemoteTodos()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ todoDtos ->
-                    populateFetchedRemoteItems(item, todoDtos)
-                }, { e ->
-                    logger.error(e)
-                    userInfoService.showInfo("Communication breakdown!")
-                })
+        return GlobalScope.async {
+            val dr = remoteDbRequester.fetchAllRemoteTodos()
+            val result = dr.await()
+            result.onSuccess { todoDtos ->
+                populateFetchedRemoteItemsId(item, todoDtos)
+            }
+            result
+        }
     }
 
-    private fun populateFetchedRemoteItems(remoteItem: RemoteTreeItem, todoDtos: List<TodoDto>) {
+    private fun populateFetchedRemoteItemsId(remoteItem: RemoteTreeItem, todoDtos: List<TodoDto>) {
         remoteItemToId.clear()
         todoDtos.forEach { todoDto ->
             val newItem = TextTreeItem(todoDto.content ?: "")
             remoteItem.add(newItem)
             todoDto.id?.let { remoteItemToId[newItem] = it }
         }
-        if (todoDtos.isEmpty()) {
-            userInfoService.showInfo("No remote items")
-        } else {
-            GUICommand().updateItemsList()
-            userInfoService.showInfo("${todoDtos.size} remote items fetched.")
-        }
     }
 
-    fun removeRemoteItem(position: Int) {
+    fun removeRemoteItem(position: Int): Deferred<Result<Unit>> {
         val item = treeManager.getChild(position)
         val itemId = remoteItemToId[item]
         itemId ?: run {
-            userInfoService.showInfo("remote item ID not found")
+            return GlobalScope.async {
+                Result.failure(RuntimeException("remote item ID not found"))
+            }
         }
-        itemId?.let {
-            remoteDbRequester.deleteRemoteTodo(it)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe({
-                        ItemTrashCommand().itemRemoveClicked(position)
-                        userInfoService.showInfo("Item removed remotely")
-                    }, { e ->
-                        logger.error(e)
-                        userInfoService.showInfo("Communication breakdown!")
-                    })
-        }
+        return remoteDbRequester.deleteRemoteTodo(itemId)
     }
 
 }
