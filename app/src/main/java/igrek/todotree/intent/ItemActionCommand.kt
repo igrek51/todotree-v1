@@ -115,9 +115,7 @@ class ItemActionCommand {
                         exceptions.forEach { logger.error(it) }
                         userInfoService.showToast("Communication breakdown!")
                     } else {
-                        sortedPositions.forEach { position ->
-                            ItemTrashCommand().itemRemoveClicked(position)
-                        }
+                        ItemTrashCommand().itemRemoveClicked(sortedPositions[0]) // will remove all selections as well
 
                         userInfoService.showToast(when (results.size) {
                             1 -> "Item removed remotely: ${results[0].getOrNull()}"

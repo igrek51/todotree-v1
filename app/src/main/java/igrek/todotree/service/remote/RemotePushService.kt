@@ -81,7 +81,9 @@ class RemotePushService(
             val dr = remoteDbRequester.fetchAllRemoteTodos()
             val result = dr.await()
             result.onSuccess { todoDtos ->
-                populateFetchedRemoteItemsId(item, todoDtos)
+                withContext(Dispatchers.Main) {
+                    populateFetchedRemoteItemsId(item, todoDtos)
+                }
             }
             result
         }

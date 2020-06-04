@@ -106,10 +106,10 @@ class TreeCommand {
                         val deferred = remotePushService.populateRemoteItemAsync((item as RemoteTreeItem?)!!)
                         val result = deferred.await()
                         result.fold(onSuccess = { todoDtos: List<TodoDto> ->
+                            GUICommand().updateItemsList()
                             if (todoDtos.isEmpty()) {
                                 userInfoService.showInfo("No remote items")
                             } else {
-                                GUICommand().updateItemsList()
                                 userInfoService.showInfo("${todoDtos.size} remote items fetched.")
                             }
                         }, onFailure = { e ->
