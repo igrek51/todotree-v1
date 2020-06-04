@@ -6,6 +6,7 @@ import android.content.res.Configuration
 import dagger.Lazy
 import igrek.todotree.dagger.DaggerIoc
 import igrek.todotree.info.logger.LoggerFactory
+import igrek.todotree.intent.PersistenceCommand
 import igrek.todotree.system.WindowManagerService
 import javax.inject.Inject
 
@@ -50,6 +51,7 @@ class ActivityController {
 
     fun onStop() {
         logger.debug("stopping activity...")
+        PersistenceCommand().optionSave()
     }
 
     fun onDestroy() {

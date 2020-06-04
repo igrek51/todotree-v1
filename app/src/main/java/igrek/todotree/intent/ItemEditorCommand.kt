@@ -62,7 +62,7 @@ class ItemEditorCommand {
     lateinit var userInfoService: UserInfoService
 
     private val logger = LoggerFactory.logger
-    private val newItemPosition: Int
+    private val newItemPosition: Int?
         get() = treeManager.newItemPosition
 
     private fun tryToSaveNewItem(_content: String): Boolean {
@@ -134,7 +134,7 @@ class ItemEditorCommand {
     private fun returnFromItemEditing() {
         GUICommand().showItemsList()
         // when new item has been added to the end
-        if (newItemPosition == treeManager.currentItem.size() - 1) {
+        if (newItemPosition != null && newItemPosition == treeManager.currentItem.size() - 1) {
             gui.scrollToBottom()
         } else {
             GUICommand().restoreScrollPosition(treeManager.currentItem)
@@ -172,7 +172,7 @@ class ItemEditorCommand {
     }
 
     fun saveAndAddItemClicked(editedItem: AbstractTreeItem?, content: String) {
-        val newItemIndex = editedItem?.indexInParent ?: newItemPosition
+        val newItemIndex = editedItem?.indexInParent ?: newItemPosition!!
         if (!tryToSaveItem(editedItem, content)) {
             returnFromItemEditing()
             return
@@ -187,9 +187,14 @@ class ItemEditorCommand {
             return
         }
         // go into
-        val editedItemIndex = newItemPosition
-        TreeCommand().goInto(editedItemIndex)
-        newItem(-1)
+        var editedItemIndex = newItemPosition
+        if (newItemPosition == null) {
+            editedItemIndex = editedItem?.indexInParent
+        }
+        editedItemIndex?.let {
+            TreeCommand().goInto(editedItemIndex)
+            newItem(-1)
+        }
     }
 
     /**

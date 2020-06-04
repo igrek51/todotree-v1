@@ -206,7 +206,7 @@ class TreeCommand {
     fun findItemByPath(paths: Array<String>): AbstractTreeItem? {
         var current = treeManager.rootItem
         for (path in paths) {
-            val found = current.findChildByName(path!!) ?: return null
+            val found = current.findChildByName(path) ?: return null
             current = found
         }
         return current
