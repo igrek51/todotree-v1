@@ -55,6 +55,15 @@ class ItemActionsMenu(private val position: Int) {
                 return treeManager.isPositionAtItem(position)
             }
         })
+        actions.add(object : ItemAction("Remove from remote") {
+            override fun execute() {
+                ItemActionCommand().actionRemoveRemote(position)
+            }
+
+            override fun isVisible(): Boolean {
+                return treeManager.currentItem is RemoteTreeItem
+            }
+        })
         actions.add(object : ItemAction("Remove link and target") {
             override fun execute() {
                 ItemActionCommand().actionRemoveLinkAndTarget(position)
@@ -71,6 +80,11 @@ class ItemActionsMenu(private val position: Int) {
 
             override fun isVisible(): Boolean {
                 return treeManager.isPositionAtItem(position)
+            }
+        })
+        actions.add(object : ItemAction("Select all") {
+            override fun execute() {
+                ItemActionCommand().actionSelectAll()
             }
         })
         actions.add(object : ItemAction("Edit") {
@@ -119,23 +133,9 @@ class ItemActionsMenu(private val position: Int) {
                 return !treeClipboardManager.isClipboardEmpty
             }
         })
-        actions.add(object : ItemAction("Select all") {
-            override fun execute() {
-                ItemActionCommand().actionSelectAll()
-            }
-        })
         actions.add(object : ItemAction("Push to remote") {
             override fun execute() {
                 RemotePushCommand().actionPushItemsToRemote(position)
-            }
-        })
-        actions.add(object : ItemAction("Remove from remote") {
-            override fun execute() {
-                ItemActionCommand().actionRemoveRemote(position)
-            }
-
-            override fun isVisible(): Boolean {
-                return treeManager.currentItem is RemoteTreeItem
             }
         })
         return actions
