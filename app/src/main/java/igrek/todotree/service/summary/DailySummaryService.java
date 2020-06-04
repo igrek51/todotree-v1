@@ -61,9 +61,7 @@ public class DailySummaryService {
 			
 			int diff = created - completed;
 			
-			message.append("You have done a lot today :) (diff: " + diff + ").\n");
-			
-			message.append("Recently completed tasks (" + completed + "):\n");
+			message.append("Recently completed tasks (" + completed + ", diff: " + diff + "):\n");
 			List<String> completedNames = new ArrayList<>();
 			for (StatisticEvent event : events) {
 				if (event.getType().equals(StatisticEventType.TASK_COMPLETED)) {
