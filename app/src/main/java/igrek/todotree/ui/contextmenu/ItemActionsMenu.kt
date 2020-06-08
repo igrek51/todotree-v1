@@ -52,7 +52,7 @@ class ItemActionsMenu(private val position: Int) {
             }
 
             override fun isVisible(): Boolean {
-                return treeManager.isPositionAtItem(position)
+                return treeManager.isPositionAtItem(position) && treeManager.currentItem !is RemoteTreeItem
             }
         })
         actions.add(object : ItemAction("Remove from remote") {
