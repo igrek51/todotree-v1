@@ -13,10 +13,10 @@ class SystemKeyDispatcher {
     }
 
     fun onVolumeUp(): Boolean {
-        return false
+        return NavigationCommand().approveClicked()
     }
 
     fun onVolumeDown(): Boolean {
-        return false
+        return NavigationCommand().approveClicked()
     }
 }

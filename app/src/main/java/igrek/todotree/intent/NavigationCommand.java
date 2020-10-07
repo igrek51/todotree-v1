@@ -108,4 +108,18 @@ public class NavigationCommand {
 		return true;
 	}
 	
+	public boolean approveClicked() {
+		if (appData.isState(AppState.EDIT_ITEM_CONTENT)) {
+			gui.requestSaveEditedItem();
+		} else if (appData.isState(AppState.ITEMS_LIST)) {
+			if (selectionManager.isAnythingSelected()) {
+				selectionManager.cancelSelectionMode();
+				new GUICommand().updateItemsList();
+			} else {
+				new TreeCommand().goBack();
+			}
+		}
+		return true;
+	}
+	
 }
