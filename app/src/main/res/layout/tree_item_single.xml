@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout
-    android:id="@+id/treeItemLayout"
+<RelativeLayout android:id="@+id/treeItemLayout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal"
+    android:descendantFocusability="blocksDescendants">
 
     <ImageButton
         android:id="@+id/buttonItemMove"
@@ -13,7 +14,9 @@
         android:layout_centerVertical="true"
         android:layout_gravity="start|center_vertical"
         android:layout_marginEnd="4dp"
+        android:layout_marginRight="4dp"
         android:layout_marginStart="2dp"
+        android:layout_marginLeft="2dp"
         android:background="@drawable/reorder"
         android:scaleType="fitCenter"
         />
@@ -24,6 +27,7 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_gravity="start|center_vertical"
+        android:layout_toRightOf="@+id/buttonItemMove"
         android:layout_toEndOf="@+id/buttonItemMove"
         android:gravity="center"
         android:padding="0dp"
@@ -40,60 +44,45 @@
         android:layout_marginLeft="0dp"
         android:layout_marginRight="0dp"
         android:layout_marginTop="7dp"
+        android:layout_toRightOf="@+id/cbItemSelected"
         android:layout_toEndOf="@+id/cbItemSelected"
-        android:layout_toStartOf="@+id/tvItemChildSize"
+        android:layout_toLeftOf="@+id/buttonItemEnter"
+        android:layout_toStartOf="@+id/buttonItemEnter"
+        android:text=""
         android:gravity="start|center_vertical"
         android:textSize="16sp" />
 
-    <TextView
-        android:id="@+id/tvItemChildSize"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <ImageButton
+        android:id="@+id/buttonItemEnter"
+        android:layout_gravity="start|center_vertical"
         android:layout_centerVertical="true"
-        android:layout_gravity="center_vertical|end"
-        android:layout_marginBottom="0dp"
-        android:layout_marginEnd="3dp"
-        android:layout_marginStart="1dp"
-        android:layout_marginTop="0dp"
-        android:layout_toStartOf="@+id/layoutButtons"
-        android:gravity="center_vertical|end"
-        android:textColor="@color/colorItemChildSize"
-        android:textSize="16sp" />
+        android:layout_toLeftOf="@+id/buttonItemAdd"
+        android:layout_toStartOf="@+id/buttonItemAdd"
+        android:layout_marginEnd="5dp"
+        android:layout_marginRight="5dp"
+        android:background="@drawable/arrow_forward"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:padding="16dp"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:scaleType="fitCenter" />
 
-    <LinearLayout
-        android:id="@+id/layoutButtons"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <ImageButton
+        android:id="@+id/buttonItemAdd"
+        android:layout_gravity="end|center_vertical"
         android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:orientation="horizontal">
-
-        <ImageButton
-            android:id="@+id/buttonItemEnter"
-            android:layout_gravity="end|center_vertical"
-            android:layout_marginEnd="5dp"
-            android:layout_marginRight="5dp"
-            android:background="@drawable/arrow_forward"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:padding="16dp"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:scaleType="fitCenter" />
-
-        <ImageButton
-            android:id="@+id/buttonItemAdd"
-            android:layout_gravity="end|center_vertical"
-            android:layout_marginEnd="5dp"
-            android:layout_marginRight="5dp"
-            android:background="@drawable/plus"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:padding="16dp"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:scaleType="fitCenter" />
-
-    </LinearLayout>
+        android:adjustViewBounds="true"
+        android:layout_marginEnd="5dp"
+        android:layout_marginRight="5dp"
+        android:background="@drawable/plus"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:padding="16dp"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:scaleType="fitCenter" />
 
 </RelativeLayout>

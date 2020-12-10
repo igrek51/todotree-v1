@@ -189,7 +189,8 @@ class TreeItemAdapter extends ArrayAdapter<AbstractTreeItem> {
 		addButton.setFocusable(false);
 		addButton.setClickable(true);
 		increaseTouchArea(addButton, 20);
-		if (selections == null && !item.isEmpty()) {
+		if (selections == null) {
+			addButton.setVisibility(View.VISIBLE);
 			addButton.setOnClickListener(new SafeClickListener() {
 				@Override
 				public void onClick() {
@@ -206,7 +207,8 @@ class TreeItemAdapter extends ArrayAdapter<AbstractTreeItem> {
 		buttonItemEnter.setFocusable(false);
 		buttonItemEnter.setClickable(true);
 		increaseTouchArea(buttonItemEnter, 20);
-		if (selections == null && !item.isEmpty()) {
+		if (selections == null) {
+			buttonItemEnter.setVisibility(View.VISIBLE);
 			buttonItemEnter.setOnClickListener(new SafeClickListener() {
 				@Override
 				public void onClick() {
@@ -256,7 +258,8 @@ class TreeItemAdapter extends ArrayAdapter<AbstractTreeItem> {
 		addButton.setFocusable(false);
 		addButton.setClickable(true);
 		increaseTouchArea(addButton, 20);
-		if (selections == null && !item.isEmpty()) {
+		if (selections == null) {
+			addButton.setVisibility(View.VISIBLE);
 			addButton.setOnClickListener(new SafeClickListener() {
 				@Override
 				public void onClick() {
