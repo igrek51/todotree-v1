@@ -26,6 +26,7 @@ import igrek.todotree.domain.treeitem.AbstractTreeItem;
 import igrek.todotree.domain.treeitem.LinkTreeItem;
 import igrek.todotree.intent.ItemEditorCommand;
 import igrek.todotree.intent.ItemSelectionCommand;
+import igrek.todotree.intent.TreeCommand;
 import igrek.todotree.ui.errorcheck.SafeClickListener;
 
 class TreeItemAdapter extends ArrayAdapter<AbstractTreeItem> {
@@ -182,6 +183,40 @@ class TreeItemAdapter extends ArrayAdapter<AbstractTreeItem> {
 		
 		itemView.setOnTouchListener(new TreeItemTouchListener(listView, position));
 		
+		//add new item above
+		ImageButton addButton = itemView.findViewById(R.id.buttonItemAdd);
+		addButton.setFocusableInTouchMode(false);
+		addButton.setFocusable(false);
+		addButton.setClickable(true);
+		increaseTouchArea(addButton, 20);
+		if (selections == null && !item.isEmpty()) {
+			addButton.setOnClickListener(new SafeClickListener() {
+				@Override
+				public void onClick() {
+					new ItemEditorCommand().addItemHereClicked(position);
+				}
+			});
+		} else {
+			addButton.setVisibility(View.GONE);
+		}
+		
+		// button: enter item
+		ImageButton buttonItemEnter = itemView.findViewById(R.id.buttonItemEnter);
+		buttonItemEnter.setFocusableInTouchMode(false);
+		buttonItemEnter.setFocusable(false);
+		buttonItemEnter.setClickable(true);
+		increaseTouchArea(buttonItemEnter, 20);
+		if (selections == null && !item.isEmpty()) {
+			buttonItemEnter.setOnClickListener(new SafeClickListener() {
+				@Override
+				public void onClick() {
+					new TreeCommand().itemGoIntoClicked(position, item);
+				}
+			});
+		} else {
+			buttonItemEnter.setVisibility(View.GONE);
+		}
+		
 		return itemView;
 	}
 	
@@ -213,6 +248,23 @@ class TreeItemAdapter extends ArrayAdapter<AbstractTreeItem> {
 			});
 		} else {
 			editButton.setVisibility(View.GONE);
+		}
+		
+		//add new item above
+		ImageButton addButton = itemView.findViewById(R.id.buttonItemAdd);
+		addButton.setFocusableInTouchMode(false);
+		addButton.setFocusable(false);
+		addButton.setClickable(true);
+		increaseTouchArea(addButton, 20);
+		if (selections == null && !item.isEmpty()) {
+			addButton.setOnClickListener(new SafeClickListener() {
+				@Override
+				public void onClick() {
+					new ItemEditorCommand().addItemHereClicked(position);
+				}
+			});
+		} else {
+			addButton.setVisibility(View.GONE);
 		}
 		
 		//przesuwanie

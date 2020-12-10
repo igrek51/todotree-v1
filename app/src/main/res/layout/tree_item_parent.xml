@@ -74,13 +74,27 @@
             android:id="@+id/buttonItemEdit"
             android:layout_gravity="end|center_vertical"
             android:layout_marginEnd="5dp"
+            android:layout_marginRight="5dp"
             android:background="@android:drawable/ic_menu_edit"
             android:focusable="false"
             android:focusableInTouchMode="false"
             android:padding="16dp"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:scaleType="fitCenter"/>
+            android:scaleType="fitCenter" />
+
+        <ImageButton
+            android:id="@+id/buttonItemAdd"
+            android:layout_gravity="end|center_vertical"
+            android:layout_marginEnd="5dp"
+            android:layout_marginRight="5dp"
+            android:background="@android:drawable/ic_menu_add"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:padding="16dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:scaleType="fitCenter" />
 
     </LinearLayout>
 
