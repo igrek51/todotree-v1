@@ -54,7 +54,7 @@ class RemotePushService(
         }
 
         GlobalScope.launch(Dispatchers.Main) {
-            userInfoService.showToast("Pushing...")
+            userInfoService.showInfo("Pushing...")
         }
 
         return remoteDbRequester.createRemoteTodo(content)
@@ -66,10 +66,22 @@ class RemotePushService(
             return GlobalScope.async { Result.success(content) }
         }
         GlobalScope.launch(Dispatchers.Main) {
-            userInfoService.showToast("Pushing...")
+            userInfoService.showInfo("Pushing...")
         }
 
         return remoteDbRequester.createRemoteTodo(content)
+    }
+
+    fun pushNewItemsAsync(contents: List<String>): Deferred<Result<Unit>> {
+        if (contents.isEmpty()) {
+            userInfoService.showToast("Nothing to do")
+            return GlobalScope.async { Result.success(Unit) }
+        }
+        GlobalScope.launch(Dispatchers.Main) {
+            userInfoService.showInfo("Pushing...")
+        }
+
+        return remoteDbRequester.createManyRemoteTodos(contents)
     }
 
     fun populateRemoteItemAsync(item: RemoteTreeItem): Deferred<Result<List<TodoDto>>> {

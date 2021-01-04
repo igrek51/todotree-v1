@@ -41,28 +41,36 @@ class RemotePushCommand {
 
             runBlocking {
                 GlobalScope.launch(Dispatchers.Main) {
-                    val deferredResults = mutableListOf<Deferred<Result<String>>>()
-                    for (selectedItemId in itemPosistions) {
+                    val contents = itemPosistions.map { selectedItemId ->
                         val selectedItem = currentItem.getChild(selectedItemId)
                         selectedItem.displayName
-                        deferredResults.add(remotePushService.pushNewItemAsync(selectedItem.displayName))
                     }
 
-                    val results = deferredResults.map { it.await() }
-                    if (results.any { it.isFailure }) {
-                        val exceptions = results.filter { it.isFailure }.mapNotNull { it.exceptionOrNull() }
-                        exceptions.forEach { logger.error(it) }
+                    val deferredResult: Deferred<Result<*>> = when (contents.size) {
+                        1 -> {
+                            remotePushService.pushNewItemAsync(contents[0])
+                        }
+                        else -> {
+                            remotePushService.pushNewItemsAsync(contents)
+                        }
+                    }
+
+                    val result = deferredResult.await()
+                    if (result.isFailure) {
+                        result.exceptionOrNull()?.let { exception ->
+                            logger.error(exception)
+                        }
                         userInfoService.showToast("Communication breakdown!")
                     } else {
-                        userInfoService.showToast(when (results.size) {
-                            1 -> "Entry pushed: ${results[0].getOrNull()}"
-                            else -> "${results.size} Entries pushed"
+                        userInfoService.showToast(when (contents.size) {
+                            1 -> "Entry pushed: ${contents[0]}"
+                            else -> "${contents.size} Entries pushed"
                         })
                     }
+
                 }
             }
         }
     }
-
 
 }

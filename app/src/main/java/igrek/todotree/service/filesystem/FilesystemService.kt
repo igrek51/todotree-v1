@@ -18,7 +18,7 @@ open class FilesystemService(
     }
 
     fun externalAppDataRootDir(): File {
-        return context.getExternalFilesDir("files").createIfMissing()
+        return context.getExternalFilesDir("files")!!.createIfMissing()
     }
 
     private fun File.createIfMissing(): File {

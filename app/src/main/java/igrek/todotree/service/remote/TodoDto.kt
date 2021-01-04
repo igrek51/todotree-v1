@@ -14,3 +14,8 @@ data class TodoDto(
 data class AllTodoDto(
         var entities: List<TodoDto> = emptyList()
 )
+
+@Serializable
+data class CreateTodosDto(
+        var todos: MutableList<TodoDto> = mutableListOf()
+)
