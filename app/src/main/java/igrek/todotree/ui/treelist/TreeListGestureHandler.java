@@ -42,12 +42,14 @@ public class TreeListGestureHandler {
 					float dscroll = scrollOffset - gestureStartScroll;
 					dy -= dscroll;
 					int itemH = listView.getItemHeight(gestureStartPos);
-					if (dx >= listView.getWidth() * GESTURE_MIN_DX) { // warunek przesunięcia w prawo
-						if (Math.abs(dy) <= itemH * GESTURE_MAX_DY) { //zachowanie braku przesunięcia w pionie
-							//wejście wgłąb elementu smyraniem w prawo
-							//Logger.debug("gesture: go into intercepted, dx: " + (dx / getWidth()) + " , dy: " + (Math.abs(dy) / itemH));
+					if (Math.abs(dy) <= itemH * GESTURE_MAX_DY) { // no swiping vertically
+						if (dx >= listView.getWidth() * GESTURE_MIN_DX) { // swipe right
 							AbstractTreeItem item = listView.getAdapter().getItem(gestureStartPos);
 							new TreeCommand().itemGoIntoClicked(gestureStartPos, item);
+							gestureStartPos = null; //reset
+							return true;
+						} else if (dx <= -listView.getWidth() * GESTURE_MIN_DX) { // swipe left
+							new TreeCommand().goBack();
 							gestureStartPos = null; //reset
 							return true;
 						}

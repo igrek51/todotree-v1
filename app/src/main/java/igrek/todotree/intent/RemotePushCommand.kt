@@ -62,10 +62,12 @@ class RemotePushCommand {
                         }
                         userInfoService.showToast("Communication breakdown!")
                     } else {
-                        userInfoService.showToast(when (contents.size) {
+                        val message = when (contents.size) {
                             1 -> "Entry pushed: ${contents[0]}"
                             else -> "${contents.size} Entries pushed"
-                        })
+                        }
+                        userInfoService.showInfo(message)
+                        userInfoService.showToast(message)
                     }
 
                 }
