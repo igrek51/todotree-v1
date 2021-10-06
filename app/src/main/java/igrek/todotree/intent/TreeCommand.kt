@@ -1,10 +1,7 @@
 package igrek.todotree.intent
 
 import igrek.todotree.dagger.DaggerIoc
-import igrek.todotree.domain.treeitem.AbstractTreeItem
-import igrek.todotree.domain.treeitem.LinkTreeItem
-import igrek.todotree.domain.treeitem.RemoteTreeItem
-import igrek.todotree.domain.treeitem.TextTreeItem
+import igrek.todotree.domain.treeitem.*
 import igrek.todotree.exceptions.NoSuperItemException
 import igrek.todotree.info.logger.LoggerFactory.logger
 import igrek.todotree.service.access.DatabaseLock
@@ -175,10 +172,16 @@ class TreeCommand {
             if (item is RemoteTreeItem) {
                 itemGoIntoClicked(position, item)
             } else if (item is TextTreeItem) {
-                if (item.isEmpty) {
-                    ItemEditorCommand().itemEditClicked(item)
-                } else {
-                    itemGoIntoClicked(position, item)
+                when {
+                    !item.isEmpty -> {
+                        itemGoIntoClicked(position, item)
+                    }
+                    item.displayName == "Tmp" && (item.getParent() == null || item.getParent() is RootTreeItem) -> {
+                        itemGoIntoClicked(position, item)
+                    }
+                    else -> {
+                        ItemEditorCommand().itemEditClicked(item)
+                    }
                 }
             } else if (item is LinkTreeItem) {
                 goToLinkTarget(item)
