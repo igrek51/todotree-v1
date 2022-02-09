@@ -46,7 +46,7 @@ class ItemActionsMenu(private val position: Int) {
 
     private fun buildActionsList(): List<ItemAction> {
         val actions: MutableList<ItemAction> = ArrayList()
-        actions.add(object : ItemAction("Remove") {
+        actions.add(object : ItemAction("❌ Remove") {
             override fun execute() {
                 ItemActionCommand().actionRemove(position)
             }
@@ -55,7 +55,7 @@ class ItemActionsMenu(private val position: Int) {
                 return treeManager.isPositionAtItem(position) && treeManager.currentItem !is RemoteTreeItem
             }
         })
-        actions.add(object : ItemAction("Remove from remote") {
+        actions.add(object : ItemAction("❌ Remove from remote") {
             override fun execute() {
                 ItemActionCommand().actionRemoveRemote(position)
             }
@@ -64,7 +64,7 @@ class ItemActionsMenu(private val position: Int) {
                 return treeManager.currentItem is RemoteTreeItem
             }
         })
-        actions.add(object : ItemAction("Remove link and target") {
+        actions.add(object : ItemAction("\uD83D\uDDD1️ Remove link and target") {
             override fun execute() {
                 ItemActionCommand().actionRemoveLinkAndTarget(position)
             }
@@ -73,7 +73,7 @@ class ItemActionsMenu(private val position: Int) {
                 return isItemLink(position)
             }
         })
-        actions.add(object : ItemAction("Select") {
+        actions.add(object : ItemAction("✔️ Select") {
             override fun execute() {
                 ItemActionCommand().actionSelect(position)
             }
@@ -82,12 +82,12 @@ class ItemActionsMenu(private val position: Int) {
                 return treeManager.isPositionAtItem(position)
             }
         })
-        actions.add(object : ItemAction("Select all") {
+        actions.add(object : ItemAction("☑️ Select all") {
             override fun execute() {
                 ItemActionCommand().actionSelectAll()
             }
         })
-        actions.add(object : ItemAction("Edit") {
+        actions.add(object : ItemAction("✏️ Edit") {
             override fun execute() {
                 ItemActionCommand().actionEdit(position)
             }
@@ -96,12 +96,12 @@ class ItemActionsMenu(private val position: Int) {
                 return treeManager.isPositionAtItem(position)
             }
         })
-        actions.add(object : ItemAction("Add above") {
+        actions.add(object : ItemAction("➕ Add above") {
             override fun execute() {
                 ItemActionCommand().actionAddAbove(position)
             }
         })
-        actions.add(object : ItemAction("Cut") {
+        actions.add(object : ItemAction("✂️ Cut") {
             override fun execute() {
                 ItemActionCommand().actionCut(position)
             }
@@ -110,7 +110,7 @@ class ItemActionsMenu(private val position: Int) {
                 return treeManager.isPositionAtItem(position)
             }
         })
-        actions.add(object : ItemAction("Copy") {
+        actions.add(object : ItemAction("\uD83D\uDCC4 Copy") {
             override fun execute() {
                 ItemActionCommand().actionCopy(position)
             }
@@ -119,12 +119,12 @@ class ItemActionsMenu(private val position: Int) {
                 return treeManager.isPositionAtItem(position)
             }
         })
-        actions.add(object : ItemAction("Paste above") {
+        actions.add(object : ItemAction("\uD83D\uDCCB Paste above") {
             override fun execute() {
                 ItemActionCommand().actionPasteAbove(position)
             }
         })
-        actions.add(object : ItemAction("Paste as link") {
+        actions.add(object : ItemAction("\uD83D\uDD17 Paste as link") {
             override fun execute() {
                 ItemActionCommand().actionPasteAboveAsLink(position)
             }
@@ -133,7 +133,7 @@ class ItemActionsMenu(private val position: Int) {
                 return !treeClipboardManager.isClipboardEmpty
             }
         })
-        actions.add(object : ItemAction("Push to remote") {
+        actions.add(object : ItemAction("\uD83D\uDCE4 Push to remote") {
             override fun execute() {
                 RemotePushCommand().actionPushItemsToRemote(position)
             }

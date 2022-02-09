@@ -15,10 +15,10 @@
     <string name="button_save">Save</string>
     <string name="buttonEditCancel">Cancel</string>
 
-    <string name="action_copy">Copy</string>
-    <string name="action_cut">Cut</string>
-    <string name="action_paste">Paste</string>
-    <string name="action_select_all">Select all</string>
+    <string name="action_copy">📄 Copy</string>
+    <string name="action_cut">✂️ Cut</string>
+    <string name="action_paste">📋 Paste</string>
+    <string name="action_select_all">☑️ Select all</string>
     <string name="button_save_and_add">+ add</string>
     <string name="button_save_and_go_into">+ go into</string>
     <string name="buttonEditInsertTime">HH:mm</string>
