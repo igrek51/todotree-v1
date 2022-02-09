@@ -1,6 +1,7 @@
 package igrek.todotree.service.filesystem
 
 import android.content.Context
+import android.os.Environment
 import igrek.todotree.info.logger.Logger
 import igrek.todotree.info.logger.LoggerFactory
 import java.io.*
@@ -19,6 +20,13 @@ open class FilesystemService(
 
     fun externalAppDataRootDir(): File {
         return context.getExternalFilesDir("files")!!.createIfMissing()
+    }
+
+    fun internalStorageAppDir(): File {
+        val internalStorageDir = Environment.getExternalStorageDirectory()
+        val dir = internalStorageDir.resolve(".todotree")
+        dir.mkdirs()
+        return dir
     }
 
     private fun File.createIfMissing(): File {

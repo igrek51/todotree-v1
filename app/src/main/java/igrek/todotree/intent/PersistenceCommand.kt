@@ -83,7 +83,7 @@ class PersistenceCommand {
     }
 
     private fun dbCopyFile(): File {
-        return filesystem.externalAppDataRootDir().resolve("todo.json")
+        return filesystem.internalStorageAppDir().resolve("todo.json")
     }
 
     fun loadRootTreeFromBackup(backup: Backup) {
