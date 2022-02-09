@@ -242,7 +242,7 @@ class EditItemGUI(
         val before = edited.substring(0, selStart)
         val after = edited.substring(selEnd)
 
-        if (before.length > 0 && before[before.length - 1] == ' ') {
+        if (before.isNotEmpty() && before[before.length - 1] == ' ') {
             edited = "$before- $after"
             selStart += 2
         } else {
@@ -258,7 +258,7 @@ class EditItemGUI(
         val selStart = etEditItem!!.selectionStart
         numericKeyboard!!.isVisible = false
         gui.showSoftKeyboard(etEditItem)
-        etEditItem!!.inputType = InputType.TYPE_CLASS_TEXT
+        etEditItem!!.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE
         etEditItem!!.imeOptions = EditorInfo.IME_FLAG_NO_EXTRACT_UI or EditorInfo.IME_ACTION_DONE
         etEditItem!!.setSelection(selStart, selEnd)
     }
@@ -276,7 +276,7 @@ class EditItemGUI(
         val selStart = etEditItem!!.selectionStart
         gui.hideSoftKeyboard(etEditItem)
         numericKeyboard!!.isVisible = false
-        etEditItem!!.inputType = InputType.TYPE_CLASS_TEXT
+        etEditItem!!.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE
         etEditItem!!.imeOptions = EditorInfo.IME_FLAG_NO_EXTRACT_UI or EditorInfo.IME_ACTION_DONE
         etEditItem!!.setSelection(selStart, selEnd)
     }
@@ -307,6 +307,7 @@ class EditItemGUI(
     }
 
     override fun onSelectionChanged(selStart: Int, selEnd: Int) {}
+
     fun editItemBackClicked(): Boolean {
         hideKeyboards()
         return numericKeyboard!!.isVisible
