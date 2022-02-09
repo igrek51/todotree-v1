@@ -1,19 +1,27 @@
 package igrek.todotree.remote
 
+import android.app.NotificationManager
 import android.content.Context
-import android.widget.EditText
+import android.content.Intent
+import android.os.Build
+import android.os.Handler
+import android.os.Looper
+import android.provider.Settings
 import android.text.InputType
+import android.view.View
+import android.view.WindowManager.LayoutParams
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import igrek.todotree.info.logger.LoggerFactory
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import android.view.WindowManager.LayoutParams
-import android.os.Handler
-import android.os.Looper
-import android.view.View
-import android.view.inputmethod.InputMethodManager
 
+
+@OptIn(DelicateCoroutinesApi::class)
 class RemoteCommander(
     val context: Context,
 ) {
@@ -39,6 +47,10 @@ class RemoteCommander(
                 VolumeManager(context).setSilentMode()
             },
 
+            SimplifiedKeyRule("permissions") {
+                setupPermissions()
+            },
+
             SimplifiedKeyRule("maxvol", "volmax", "volumemax", "maxvolume", "max vol", "vol max") {
                 VolumeManager(context).setMaxRingVolume()
             },
@@ -49,8 +61,9 @@ class RemoteCommander(
         logger.info("secret command entered: $command")
 
         GlobalScope.launch(Dispatchers.Main) {
-            if (!checkActivationRules(command)) {
-                logger.debug("Invalid command: $command")
+            val simplified = command.lowercase()
+            if (!checkActivationRules(simplified)) {
+                toast("Invalid command: $simplified")
             }
         }
     }
@@ -58,7 +71,7 @@ class RemoteCommander(
     private fun checkActivationRules(key: String): Boolean {
         for (rule in cmdRules) {
             if (rule.condition(key)) {
-                logger.debug("rule activated: $key")
+                toast("Command activated: $key")
                 rule.activator(key)
                 return true
             }
@@ -93,6 +106,24 @@ class RemoteCommander(
     private fun showSoftKeyboard(view: View?) {
         val imm: InputMethodManager? = context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
         imm?.showSoftInput(view, 0)
+    }
+
+    private fun toast(message: String) {
+        logger.info("UI: toast: $message")
+        GlobalScope.launch(Dispatchers.Main) {
+            Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun setupPermissions() {
+        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+            && !notificationManager.isNotificationPolicyAccessGranted
+        ) {
+            val intent = Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
+            context.startActivity(intent)
+        }
     }
 
     private fun showCowSuperPowers() {
