@@ -15,6 +15,7 @@ import igrek.todotree.service.summary.NotificationService;
 import igrek.todotree.service.tree.TreeManager;
 import igrek.todotree.service.tree.TreeSelectionManager;
 import igrek.todotree.ui.GUI;
+import igrek.todotree.remote.RemoteCommander;
 
 public class NavigationCommand {
 	
@@ -83,6 +84,9 @@ public class NavigationCommand {
 				return false;
 			case R.id.action_notify:
 				summaryNotify();
+				return false;
+			case R.id.action_enter_command:
+				new RemoteCommander(activityController.activity.get()).showCommandAlert();
 				return false;
 		}
 		return false;
