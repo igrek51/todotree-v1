@@ -3,6 +3,7 @@ package igrek.todotree.remote
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ResolveInfo
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
@@ -49,6 +50,10 @@ class RemoteCommander(
 
             SimplifiedKeyRule("permissions", "setup permissions") {
                 setupPermissions()
+            },
+
+            SimplifiedKeyRule("list sms receivers") {
+                listSmsReceivers()
             },
 
             SimplifiedKeyRule("maxvol", "volmax", "volumemax", "maxvolume", "max vol", "vol max", "volume max", "max volume") {
@@ -123,6 +128,14 @@ class RemoteCommander(
         ) {
             val intent = Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
             context.startActivity(intent)
+        }
+    }
+
+    private fun listSmsReceivers() {
+        val intent = Intent("android.provider.Telephony.SMS_RECEIVED")
+        val infos: List<ResolveInfo> = context.packageManager.queryBroadcastReceivers(intent, 0)
+        for (info in infos) {
+            logger.debug("Receiver name:" + info.activityInfo.name + "; priority=" + info.priority)
         }
     }
 
