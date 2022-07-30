@@ -2,6 +2,7 @@ package igrek.todotree.ui.contextmenu
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.view.View
 import igrek.todotree.dagger.DaggerIoc
 import igrek.todotree.domain.treeitem.LinkTreeItem
 import igrek.todotree.domain.treeitem.RemoteTreeItem
@@ -10,6 +11,7 @@ import igrek.todotree.intent.RemotePushCommand
 import igrek.todotree.service.clipboard.TreeClipboardManager
 import igrek.todotree.service.tree.TreeManager
 import igrek.todotree.service.tree.TreeSelectionManager
+import igrek.todotree.ui.ExplosionService
 import igrek.todotree.ui.errorcheck.UIErrorHandler
 import java.util.*
 import javax.inject.Inject
@@ -28,8 +30,11 @@ class ItemActionsMenu(private val position: Int) {
     @Inject
     lateinit var treeClipboardManager: TreeClipboardManager
 
-    fun show() {
-        val actions = filterVisibleOnly(buildActionsList())
+    @Inject
+    lateinit var explosionService: ExplosionService
+
+    fun show(view: View) {
+        val actions = filterVisibleOnly(buildActionsList(view))
         val actionNames = convertToNamesArray(actions)
         val builder = AlertDialog.Builder(activity)
         builder.setTitle("Choose action")
@@ -44,10 +49,11 @@ class ItemActionsMenu(private val position: Int) {
         alert.show()
     }
 
-    private fun buildActionsList(): List<ItemAction> {
+    private fun buildActionsList(view: View): List<ItemAction> {
         val actions: MutableList<ItemAction> = ArrayList()
         actions.add(object : ItemAction("❌ Remove") {
             override fun execute() {
+                explosionService.explode(view)
                 ItemActionCommand().actionRemove(position)
             }
 
@@ -57,6 +63,7 @@ class ItemActionsMenu(private val position: Int) {
         })
         actions.add(object : ItemAction("❌ Remove from remote") {
             override fun execute() {
+                explosionService.explode(view)
                 ItemActionCommand().actionRemoveRemote(position)
             }
 
@@ -66,6 +73,7 @@ class ItemActionsMenu(private val position: Int) {
         })
         actions.add(object : ItemAction("\uD83D\uDDD1️ Remove link and target") {
             override fun execute() {
+                explosionService.explode(view)
                 ItemActionCommand().actionRemoveLinkAndTarget(position)
             }
 

@@ -39,6 +39,7 @@ import igrek.todotree.system.PermissionService
 import igrek.todotree.system.SystemKeyDispatcher
 import igrek.todotree.system.WindowManagerService
 import igrek.todotree.system.filesystem.ExternalCardService
+import igrek.todotree.ui.ExplosionService
 import igrek.todotree.ui.GUI
 import okhttp3.OkHttpClient
 import javax.inject.Singleton
@@ -215,6 +216,11 @@ open class FactoryModule(private val activity: AppCompatActivity) {
     @Provides
     @Singleton
     fun aRemotePushService(activity: Activity, treeManager: TreeManager, gui: Lazy<GUI>, userInfoService: UserInfoService, remoteDbRequester: RemoteDbRequester): RemotePushService = RemotePushService(activity, treeManager, gui, userInfoService, remoteDbRequester)
+
+    @Provides
+    @Singleton
+    fun aExplosionService(activity: Activity): ExplosionService = ExplosionService(activity)
+
     /*
 	 * Empty service pattern:
 	@Provides

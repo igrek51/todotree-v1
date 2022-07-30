@@ -121,6 +121,7 @@ dependencies {
     testImplementation 'org.assertj:assertj-core:3.16.1'
     // Joda Time
     implementation 'joda-time:joda-time:2.9.9'
+    implementation 'tyrantgit:explosionfield:1.0.1@aar'
     // Android instumentation tests
     androidTestImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'

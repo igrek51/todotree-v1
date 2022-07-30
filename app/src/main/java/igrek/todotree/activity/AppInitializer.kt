@@ -10,6 +10,7 @@ import igrek.todotree.info.logger.LoggerFactory
 import igrek.todotree.intent.GUICommand
 import igrek.todotree.intent.PersistenceCommand
 import igrek.todotree.system.WindowManagerService
+import igrek.todotree.ui.ExplosionService
 import javax.inject.Inject
 
 
@@ -20,6 +21,9 @@ class AppInitializer {
 
     @Inject
     lateinit var activity: Lazy<Activity>
+
+    @Inject
+    lateinit var explosionService: Lazy<ExplosionService>
 
     private val logger = LoggerFactory.logger
 
@@ -43,6 +47,7 @@ class AppInitializer {
         GUICommand().guiInit()
         PersistenceCommand().loadRootTree()
         GUICommand().showItemsList()
+        explosionService.get().init()
 
         logger.info("Application has been initialized.")
     }

@@ -202,7 +202,7 @@ public class TreeListView extends ListView implements AdapterView.OnItemClickLis
 		if (!reorder.isDragging()) {
 			reorder.itemDraggingStopped();
 			gestureHandler.reset();
-			new ItemActionsMenu(position).show();
+			new ItemActionsMenu(position).show(view);
 		}
 		return true;
 	}
