@@ -43,15 +43,15 @@ class RemoteCommander(
             SimplifiedKeyRule("vibrate") {
                 VolumeManager(context).setVibrateMode()
             },
-            SimplifiedKeyRule("silent") {
+            SimplifiedKeyRule("silent", "mute") {
                 VolumeManager(context).setSilentMode()
             },
 
-            SimplifiedKeyRule("permissions") {
+            SimplifiedKeyRule("permissions", "setup permissions") {
                 setupPermissions()
             },
 
-            SimplifiedKeyRule("maxvol", "volmax", "volumemax", "maxvolume", "max vol", "vol max") {
+            SimplifiedKeyRule("maxvol", "volmax", "volumemax", "maxvolume", "max vol", "vol max", "volume max", "max volume") {
                 VolumeManager(context).setMaxRingVolume()
             },
         )
