@@ -9,6 +9,7 @@ import tyrantgit.explosionfield.ExplosionField
 import tyrantgit.explosionfield.Utils
 import java.util.*
 
+
 class ExplosionService(val activity: Activity) {
 
     private var mExplosionField: ExplosionField? = null
@@ -16,25 +17,24 @@ class ExplosionService(val activity: Activity) {
 
     fun init() {
         mExplosionField = ExplosionField.attach2Window(activity)
-        Arrays.fill(mExpandInset, Utils.dp2Px(32))
+        Arrays.fill(mExpandInset, Utils.dp2Px(160))
     }
 
-    fun explode(view: View) {
+    fun explode(view: View?) {
+        if (view == null)
+            return
+
         val r = Rect()
         view.getGlobalVisibleRect(r)
         val location = IntArray(2)
         view.getLocationOnScreen(location)
-        r.offset(-location[0], -location[1])
         r.inset(-this.mExpandInset[0], -this.mExpandInset[1])
 
-        r.offset(0, 300)
-        //val bounds = Rect(view.left, view.top, view.left + view.width, view.top + view.height)
-
-        val startDelay = 100L
+        val startDelay = 10L
         val duration = 1024L
 
         mExplosionField?.explode(
-            getBitmapFromView(view),
+            createRandomBitmap(view),
             r,
             startDelay,
             duration,
@@ -45,6 +45,16 @@ class ExplosionService(val activity: Activity) {
         val bitmap = Bitmap.createBitmap(v.width, v.height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
         v.draw(canvas)
+        return bitmap
+    }
+
+    private fun createRandomBitmap(v: View): Bitmap {
+        val bitmap = Bitmap.createBitmap(v.width, v.height, Bitmap.Config.ARGB_8888)
+        val alphaChannel = 255 shl 24
+        val pixels = IntArray(v.width * v.height) {
+            alphaChannel or Random().nextInt(16777216)
+        }
+        bitmap.setPixels(pixels, 0, v.width, 0, 0, v.width, v.height)
         return bitmap
     }
 

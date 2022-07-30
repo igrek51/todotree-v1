@@ -33,7 +33,7 @@ class ItemActionsMenu(private val position: Int) {
     @Inject
     lateinit var explosionService: ExplosionService
 
-    fun show(view: View) {
+    fun show(view: View?) {
         val actions = filterVisibleOnly(buildActionsList(view))
         val actionNames = convertToNamesArray(actions)
         val builder = AlertDialog.Builder(activity)
@@ -49,7 +49,7 @@ class ItemActionsMenu(private val position: Int) {
         alert.show()
     }
 
-    private fun buildActionsList(view: View): List<ItemAction> {
+    private fun buildActionsList(view: View?): List<ItemAction> {
         val actions: MutableList<ItemAction> = ArrayList()
         actions.add(object : ItemAction("❌ Remove") {
             override fun execute() {

@@ -337,7 +337,7 @@ class TreeItemAdapter extends ArrayAdapter<AbstractTreeItem> {
 		});
 		// redirect long click to tree list view
 		plusButton.setLongClickable(true);
-		plusButton.setOnLongClickListener(v -> listView.onItemLongClick(null, null, position, 0));
+		plusButton.setOnLongClickListener(v -> listView.onItemLongClick(null, itemPlus, position, 0));
 		
 		return itemPlus;
 	}
