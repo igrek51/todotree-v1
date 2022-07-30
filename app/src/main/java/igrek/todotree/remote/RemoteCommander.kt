@@ -1,13 +1,8 @@
 package igrek.todotree.remote
 
-import android.app.NotificationManager
 import android.content.Context
-import android.content.Intent
-import android.content.pm.ResolveInfo
-import android.os.Build
 import android.os.Handler
 import android.os.Looper
-import android.provider.Settings
 import android.text.InputType
 import android.view.View
 import android.view.WindowManager.LayoutParams
@@ -37,36 +32,14 @@ class RemoteCommander(
             SimplifiedKeyRule("dupa") {
                 showCowSuperPowers()
             },
-
-            SimplifiedKeyRule("unmute") {
-                VolumeManager(context).unmute()
-            },
-            SimplifiedKeyRule("vibrate") {
-                VolumeManager(context).setVibrateMode()
-            },
-            SimplifiedKeyRule("silent", "mute") {
-                VolumeManager(context).setSilentMode()
-            },
-
-            SimplifiedKeyRule("permissions", "setup permissions") {
-                setupPermissions()
-            },
-
-            SimplifiedKeyRule("list sms receivers") {
-                listSmsReceivers()
-            },
-
-            SimplifiedKeyRule("maxvol", "volmax", "volumemax", "maxvolume", "max vol", "vol max", "volume max", "max volume") {
-                VolumeManager(context).setMaxRingVolume()
-            },
         )
     }
 
-    fun commandAttempt(command: String) {
+    private fun commandAttempt(command: String) {
         logger.info("secret command entered: $command")
 
         GlobalScope.launch(Dispatchers.Main) {
-            val simplified = command.lowercase()
+            val simplified = command.trim().lowercase()
             if (!checkActivationRules(simplified)) {
                 toast("Invalid command: $simplified")
             }
@@ -117,25 +90,6 @@ class RemoteCommander(
         logger.info("UI: toast: $message")
         GlobalScope.launch(Dispatchers.Main) {
             Toast.makeText(context, message, Toast.LENGTH_LONG).show()
-        }
-    }
-
-    private fun setupPermissions() {
-        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-            && !notificationManager.isNotificationPolicyAccessGranted
-        ) {
-            val intent = Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
-            context.startActivity(intent)
-        }
-    }
-
-    private fun listSmsReceivers() {
-        val intent = Intent("android.provider.Telephony.SMS_RECEIVED")
-        val infos: List<ResolveInfo> = context.packageManager.queryBroadcastReceivers(intent, 0)
-        for (info in infos) {
-            logger.debug("Receiver name:" + info.activityInfo.name + "; priority=" + info.priority)
         }
     }
 
