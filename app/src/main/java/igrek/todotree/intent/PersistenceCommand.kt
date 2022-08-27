@@ -121,12 +121,13 @@ class PersistenceCommand {
         try {
             val output = persistenceService.serializeTree(treeManager.rootItem)
             //Logger.debug("Serialized data: " + output);
-            filesystem.saveFile(dbFile().absolutePath, output)
+            val dbFilePath = dbFile().absolutePath
+            filesystem.saveFile(dbFilePath, output)
             filesystem.saveFile(dbCopyFile().absolutePath, output)
+            logger.debug("Database saved successfully to $dbFilePath")
         } catch (e: IOException) {
             logger.error(e)
         }
-        logger.debug("Database saved successfully.")
     }
 
     fun optionRestoreBackup() {
