@@ -15,7 +15,9 @@ import igrek.todotree.info.errorcheck.SafeClickListener
 import igrek.todotree.intent.ItemEditorCommand
 import igrek.todotree.intent.ItemSelectionCommand
 import igrek.todotree.intent.TreeCommand
+import kotlinx.coroutines.*
 
+@OptIn(DelicateCoroutinesApi::class)
 class TreeItemAdapter(
     context: Context,
     _dataSource: List<AbstractTreeItem>?,
@@ -40,7 +42,11 @@ class TreeItemAdapter(
     fun setDataSource(dataSource: List<AbstractTreeItem>?) {
         this.dataSource = dataSource
         storedViews.clear()
-        notifyDataSetChanged()
+        GlobalScope.launch {
+            withContext(Dispatchers.Main) {
+                notifyDataSetChanged()
+            }
+        }
     }
 
     override fun getItem(position: Int): AbstractTreeItem {

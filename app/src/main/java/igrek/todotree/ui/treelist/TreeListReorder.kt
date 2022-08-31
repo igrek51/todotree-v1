@@ -144,7 +144,7 @@ class TreeListReorder(private val listView: TreeListView) {
                 }
                 listView.putItemHeight(targetPosition, draggedItemHeight)
             }
-            listView.adapter!!.setDataSource(items)
+            listView.adapter?.setDataSource(items)
             startTouchY += deltaH.toFloat()
             draggedItemViewTop = draggedItemViewTop!! +  deltaH
             draggedItemPos = targetPosition
