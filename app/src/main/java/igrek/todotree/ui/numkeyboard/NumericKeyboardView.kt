@@ -12,15 +12,11 @@ import igrek.todotree.intent.GUICommand
 class NumericKeyboardView : KeyboardView, OnKeyboardActionListener {
 
     private var _context: Context
-
     private var editText: EditText? = null
-
-    var listener: NumKeyboardListener? = null
-
+    private var listener: NumKeyboardListener? = null
     private var input = StringBuffer()
 
-    var typingMode //1 - godzina, 2 - data, 3 - liczba (waluta)
-            = 0
+    var typingMode = 0 //1 - hour, 2 - date, 3 - number
         private set
 
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
@@ -84,26 +80,37 @@ class NumericKeyboardView : KeyboardView, OnKeyboardActionListener {
     }
 
     override fun onText(text: CharSequence) {}
+
     override fun onKey(primaryCode: Int, keyCodes: IntArray) {
-        if (primaryCode >= 48 && primaryCode <= 57) {
-            typedNumber(primaryCode.toChar())
-        } else if (primaryCode == 45) {
-            typedMinus()
-        } else if (primaryCode == 44) {
-            typedComma()
-        } else if (primaryCode == -6) {
-            typedOK()
-        } else if (primaryCode == -3) {
-            typedBackspace()
-        } else if (primaryCode == -4) { // _-_
-            typedHyphen()
-        } else if (primaryCode == -5) { //spacja
-            typedSpace()
+        when (primaryCode) {
+            in 48..57 -> {
+                typedNumber(primaryCode.toChar())
+            }
+            45 -> {
+                typedMinus()
+            }
+            44 -> {
+                typedComma()
+            }
+            -6 -> {
+                typedOK()
+            }
+            -3 -> {
+                typedBackspace()
+            }
+            -4 -> { // _-_
+                typedHyphen()
+            }
+            -5 -> { //spacja
+                typedSpace()
+            }
         }
     }
 
     override fun onPress(primaryCode: Int) {}
+
     override fun onRelease(primaryCode: Int) {}
+
     private fun typedNumber(c: Char) {
         input.append(c)
         insertString("" + c)
@@ -145,7 +152,7 @@ class NumericKeyboardView : KeyboardView, OnKeyboardActionListener {
     }
 
     private fun typedBackspace() {
-        if (input.length > 0) {
+        if (input.isNotEmpty()) {
             input.delete(input.length - 1, input.length)
         }
         val selStart = editText!!.selectionStart
@@ -166,8 +173,8 @@ class NumericKeyboardView : KeyboardView, OnKeyboardActionListener {
         }
     }
 
-    private fun insertAt(str: String, c: String, offset: Int): String {
-        var offset = offset
+    private fun insertAt(str: String, c: String, _offset: Int): String {
+        var offset = _offset
         if (offset < 0) offset = 0
         if (offset > str.length) offset = str.length
         val before = str.substring(0, offset)
@@ -199,13 +206,13 @@ class NumericKeyboardView : KeyboardView, OnKeyboardActionListener {
             input = StringBuffer()
             return
         }
-        if (typingMode == 1) { //godzina
+        if (typingMode == 1) { //hour
             if (input.length >= 3) { // 01:02, 1:02
                 edited = insertAt(edited, ":", cursorStart - 2)
                 cursorStart++
                 editText!!.setText(edited)
             }
-        } else if (typingMode == 2) { //data
+        } else if (typingMode == 2) { //date
             if (input.length >= 5) { // 01.02.93, 1.02.93
                 edited = insertAt(edited, ".", cursorStart - 4)
                 cursorStart++
@@ -217,7 +224,7 @@ class NumericKeyboardView : KeyboardView, OnKeyboardActionListener {
                 cursorStart++
                 editText!!.setText(edited)
             }
-        } //liczba lub waluta - brak akcji
+        } //number
         editText!!.setSelection(cursorStart, cursorStart)
         input = StringBuffer()
     }

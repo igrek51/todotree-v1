@@ -223,14 +223,6 @@ class SettingsFragment(
         return (progress * resolution).roundToInt()
     }
 
-    private fun decimal3(value: Float): String {
-        return decimalFormat3.format(value.toDouble())
-    }
-
-    private fun decimal1(value: Float): String {
-        return decimalFormat1.format(value.toDouble())
-    }
-
     companion object {
         const val SEEKBAR_RESOLUTION = 10000
     }

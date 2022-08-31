@@ -37,20 +37,11 @@ class LinkTreeItem(
             return TreeCommand().findItemByPath(paths)
         }
 
-    fun setTarget(target: AbstractTreeItem) {
-        val joiner = Joiner.on("\t")
-        val names = target.namesPaths
-        targetPath = joiner.join(names)
-    }
-
     fun setTarget(targetParent: AbstractTreeItem, targetName: String?) {
         val joiner = Joiner.on("\t")
         val names = targetParent.namesPaths
         names.add(targetName)
         targetPath = joiner.join(names)
     }
-
-    val isBroken: Boolean
-        get() = target == null
 
 }

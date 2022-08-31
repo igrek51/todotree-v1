@@ -24,9 +24,9 @@ class TreeListReorder(private val listView: TreeListView) {
     private var hoverBitmapAnimation: BitmapDrawable? = null
     var hoverBitmapBounds: Rect? = null
         private set
-    private val ITEMS_REPLACE_COVER = 0.65f
-    private val HOVER_BORDER_THICKNESS = 5
-    private val HOVER_BORDER_COLOR = -0x334f4f50
+    private val itemsReplaceCover = 0.65f
+    private val hoverBorderThickness = 5
+    private val hoverBorderColor = -0x334f4f50
 
     private fun updateHoverBitmap() {
         if (draggedItemViewTop != null && draggedItemPos != null) {
@@ -52,8 +52,8 @@ class TreeListReorder(private val listView: TreeListView) {
         val rect = Rect(0, 0, bitmap.width, bitmap.height)
         val paint = Paint()
         paint.style = Paint.Style.STROKE
-        paint.strokeWidth = HOVER_BORDER_THICKNESS.toFloat()
-        paint.color = HOVER_BORDER_COLOR
+        paint.strokeWidth = hoverBorderThickness.toFloat()
+        paint.color = hoverBorderColor
         can.drawBitmap(bitmap, 0f, 0f, null)
         can.drawRect(rect, paint)
         return bitmap
@@ -97,7 +97,7 @@ class TreeListReorder(private val listView: TreeListView) {
                 if (draggedItemPos!! + step + 1 >= listView.items!!.size) break
                 val downHeight = listView.getItemHeight(draggedItemPos!! + step + 1)
                 if (downHeight == 0) break
-                deltaH += if (dyTotal - deltaH > downHeight * ITEMS_REPLACE_COVER) {
+                deltaH += if (dyTotal - deltaH > downHeight * itemsReplaceCover) {
                     step++
                     downHeight
                 } else {
@@ -109,7 +109,7 @@ class TreeListReorder(private val listView: TreeListView) {
                 if (draggedItemPos!! + step - 1 < 0) break
                 val upHeight = listView.getItemHeight(draggedItemPos!! + step - 1)
                 if (upHeight == 0) break
-                deltaH -= if (-dyTotal + deltaH > upHeight * ITEMS_REPLACE_COVER) {
+                deltaH -= if (-dyTotal + deltaH > upHeight * itemsReplaceCover) {
                     step--
                     upHeight
                 } else {

@@ -23,19 +23,18 @@ class TreeListView : ListView, AdapterView.OnItemClickListener, AdapterView.OnIt
     private var adapter: TreeItemAdapter? = null
     var scrollHandler: TreeListScrollHandler? = null
         private set
-    val reorder: TreeListReorder? = TreeListReorder(this)
-    val gestureHandler = TreeListGestureHandler(this)
+    val reorder: TreeListReorder = TreeListReorder(this)
+    private val gestureHandler = TreeListGestureHandler(this)
 
     /** view index -> view height  */
     private val itemHeights: SparseArray<Int> = SparseArray<Int>()
 
-    constructor(context: Context?) : super(context) {}
+    constructor(context: Context?) : super(context)
     constructor(context: Context?, attrs: AttributeSet?, defStyle: Int) : super(
         context,
         attrs,
         defStyle
-    ) {
-    }
+    )
 
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs) {}
 
@@ -61,28 +60,26 @@ class TreeListView : ListView, AdapterView.OnItemClickListener, AdapterView.OnIt
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        reorder?.let {
-            when (event.action and MotionEvent.ACTION_MASK) {
-                MotionEvent.ACTION_DOWN -> gestureHandler.gestureStart(event.x, event.y)
-                MotionEvent.ACTION_MOVE -> if (reorder.isDragging) {
-                    reorder.setLastTouchY(event.y)
-                    reorder.handleItemDragging()
-                    return false
-                }
-                MotionEvent.ACTION_UP -> {
-                    if (gestureHandler.handleItemGesture(
-                            event.x,
-                            event.y,
-                            scrollHandler!!.scrollOffset
-                        )
-                    ) return super.onTouchEvent(event)
-                    reorder.itemDraggingStopped()
-                    gestureHandler.reset()
-                }
-                MotionEvent.ACTION_CANCEL -> {
-                    reorder.itemDraggingStopped()
-                    gestureHandler.reset()
-                }
+        when (event.action and MotionEvent.ACTION_MASK) {
+            MotionEvent.ACTION_DOWN -> gestureHandler.gestureStart(event.x, event.y)
+            MotionEvent.ACTION_MOVE -> if (reorder.isDragging) {
+                reorder.setLastTouchY(event.y)
+                reorder.handleItemDragging()
+                return false
+            }
+            MotionEvent.ACTION_UP -> {
+                if (gestureHandler.handleItemGesture(
+                        event.x,
+                        event.y,
+                        scrollHandler!!.scrollOffset
+                    )
+                ) return super.onTouchEvent(event)
+                reorder.itemDraggingStopped()
+                gestureHandler.reset()
+            }
+            MotionEvent.ACTION_CANCEL -> {
+                reorder.itemDraggingStopped()
+                gestureHandler.reset()
             }
         }
         return super.onTouchEvent(event)
@@ -94,16 +91,14 @@ class TreeListView : ListView, AdapterView.OnItemClickListener, AdapterView.OnIt
 
     override fun invalidate() {
         super.invalidate()
-        reorder?.let {
-            if (reorder.isDragging) {
-                reorder.setDraggedItemView()
-            }
+        if (reorder.isDragging) {
+            reorder.setDraggedItemView()
         }
     }
 
     override fun dispatchDraw(canvas: Canvas) {
         super.dispatchDraw(canvas)
-        reorder?.dispatchDraw(canvas)
+        reorder.dispatchDraw(canvas)
     }
 
     fun setItemsAndSelected(items: List<AbstractTreeItem>, selectedPositions: Set<Int>?) {
@@ -180,12 +175,10 @@ class TreeListView : ListView, AdapterView.OnItemClickListener, AdapterView.OnIt
         position: Int,
         id: Long
     ): Boolean {
-        reorder?.let {
-            if (!reorder.isDragging) {
-                reorder.itemDraggingStopped()
-                gestureHandler.reset()
-                ItemActionsMenu(position).show(view)
-            }
+        if (!reorder.isDragging) {
+            reorder.itemDraggingStopped()
+            gestureHandler.reset()
+            ItemActionsMenu(position).show(view)
         }
         return true
     }

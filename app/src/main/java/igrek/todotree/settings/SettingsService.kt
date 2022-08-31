@@ -105,8 +105,4 @@ open class SettingsService(
         loadAll()
     }
 
-    fun reload() {
-        loadAll()
-    }
-
 }

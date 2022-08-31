@@ -23,7 +23,7 @@ internal class JsonTreeSerializer {
             output.append(" },\n")
         } else {
             output.append(", \"items\": [\n")
-            for (child in item.getChildren()) {
+            for (child in item.children) {
                 serializeItem(output, child, indentLevel + 1)
             }
             // end of children list
@@ -42,10 +42,9 @@ internal class JsonTreeSerializer {
         } else if (item is TextTreeItem) {
             serializeAttribute(output, "name", item.displayName)
         } else if (item is LinkTreeItem) {
-            val linkItem = item
-            serializeAttribute(output, "target", linkItem.targetPath)
-            if (linkItem.hasCustomName()) {
-                serializeAttribute(output, "name", linkItem.customName)
+            serializeAttribute(output, "target", item.targetPath)
+            if (item.hasCustomName()) {
+                serializeAttribute(output, "name", item.customName)
             }
         } else if (item is CheckboxTreeItem) {
             serializeAttribute(output, "checked", if (item.isChecked) "true" else "false")

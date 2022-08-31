@@ -22,10 +22,6 @@ open class FilesystemService(
         return File("/data/data/${context.packageName}/files").createIfMissing()
     }
 
-    fun externalAppDataRootDir(): File {
-        return context.getExternalFilesDir("files")!!.createIfMissing()
-    }
-
     fun internalStorageAppDir(): File {
         val internalStorageDir = Environment.getExternalStorageDirectory()
         val dir = internalStorageDir.resolve(".todotree")

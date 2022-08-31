@@ -54,7 +54,7 @@ class RemoteDbRequester (
         authToken = settingsState.get().userAuthToken
     }
 
-    fun fetchAllRemoteTodos(): Deferred<Result<List<TodoDto>>> {
+    fun fetchAllRemoteTodosAsync(): Deferred<Result<List<TodoDto>>> {
         val request: Request = Request.Builder()
                 .url(getAllTodosUrl)
                 .addHeader(authTokenHeader, authToken)
@@ -67,7 +67,7 @@ class RemoteDbRequester (
     }
 
     @SuppressLint("HardwareIds")
-    fun createRemoteTodo(content: String): Deferred<Result<String>> {
+    fun createRemoteTodoAsync(content: String): Deferred<Result<String>> {
         logger.info("Creating remote todo")
         val deviceId = Settings.Secure.getString(activity.contentResolver, Settings.Secure.ANDROID_ID)
         val timestampS = Date().time / 1000
@@ -82,7 +82,7 @@ class RemoteDbRequester (
     }
 
     @SuppressLint("HardwareIds")
-    fun createManyRemoteTodos(contents: List<String>): Deferred<Result<Unit>> {
+    fun createManyRemoteTodosAsync(contents: List<String>): Deferred<Result<Unit>> {
         logger.info("Creating remote todos")
         val deviceId = Settings.Secure.getString(activity.contentResolver, Settings.Secure.ANDROID_ID)
         val timestampS = Date().time / 1000
@@ -102,7 +102,7 @@ class RemoteDbRequester (
         return httpRequester.httpRequestAsync(request) { }
     }
 
-    fun deleteRemoteTodo(id: Long): Deferred<Result<Unit>> {
+    fun deleteRemoteTodoAsync(id: Long): Deferred<Result<Unit>> {
         logger.info("Deleting remote todo")
         val request: Request = Request.Builder()
                 .url(deleteTodoUrl(id))

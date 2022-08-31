@@ -21,7 +21,7 @@ open class InflatedLayout(
     navigationMenuController: LazyInject<NavigationMenuController> = appFactory.navigationMenuController,
 ) : MainLayout {
     protected val context by LazyExtractor(context)
-    protected val layoutController by LazyExtractor(layoutController)
+    private val layoutController by LazyExtractor(layoutController)
     private val navigationMenuController by LazyExtractor(navigationMenuController)
 
     protected val logger: Logger = LoggerFactory.logger

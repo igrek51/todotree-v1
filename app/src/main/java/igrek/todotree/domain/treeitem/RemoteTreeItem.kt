@@ -11,8 +11,4 @@ class RemoteTreeItem(parent: AbstractTreeItem?, override var displayName: String
     override val typeName: String
         get() = "remote"
 
-    fun setName(name: String) {
-        displayName = name
-    }
-
 }

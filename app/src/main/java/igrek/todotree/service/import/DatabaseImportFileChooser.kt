@@ -7,7 +7,6 @@ import android.content.Intent
 import android.net.Uri
 import android.provider.OpenableColumns
 import androidx.activity.result.ActivityResultLauncher
-import com.google.common.io.CharStreams
 import igrek.todotree.R
 import igrek.todotree.activity.ActivityResultDispatcher
 import igrek.todotree.info.UiInfoService
@@ -18,11 +17,7 @@ import igrek.todotree.inject.LazyExtractor
 import igrek.todotree.inject.LazyInject
 import igrek.todotree.inject.appFactory
 import igrek.todotree.intent.PersistenceCommand
-import java.io.File
-import java.io.IOException
 import java.io.InputStream
-import java.io.InputStreamReader
-import java.nio.charset.Charset
 
 class DatabaseImportFileChooser (
     activity: LazyInject<Activity> = appFactory.activityMust,

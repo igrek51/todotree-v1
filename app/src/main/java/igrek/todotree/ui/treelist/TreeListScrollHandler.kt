@@ -14,10 +14,21 @@ class TreeListScrollHandler(private val listView: TreeListView, context: Context
         private set
 
     private var scrollState = AbsListView.OnScrollListener.SCROLL_STATE_IDLE
-    private val SMOOTH_SCROLL_EDGE_DP = 200
-    private val SMOOTH_SCROLL_EDGE_PX: Int
-    private val SMOOTH_SCROLL_FACTOR = 0.34f
-    private val SMOOTH_SCROLL_DURATION = 10
+    private val smoothScrollEdgePx: Int
+
+    val currentScrollPosition: Int
+        get() = realScrollPosition
+
+    init {
+        val metrics = context.resources.displayMetrics
+        smoothScrollEdgePx = (SMOOTH_SCROLL_EDGE_DP / metrics.density).toInt()
+    }
+
+    companion object {
+        private const val SMOOTH_SCROLL_EDGE_DP = 200
+        private const val SMOOTH_SCROLL_FACTOR = 0.34f
+        private const val SMOOTH_SCROLL_DURATION = 10
+    }
 
     fun handleScrolling(): Boolean {
         if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE || scrollState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
@@ -29,15 +40,15 @@ class TreeListScrollHandler(private val listView: TreeListView, context: Context
             ) {
                 val hoverViewTop = listView.reorder.hoverBitmapBounds!!.top
                 val hoverHeight = listView.reorder.hoverBitmapBounds!!.height()
-                if (hoverViewTop <= SMOOTH_SCROLL_EDGE_PX && offset > 0) {
+                if (hoverViewTop <= smoothScrollEdgePx && offset > 0) {
                     val scrollDistance =
-                        ((hoverViewTop - SMOOTH_SCROLL_EDGE_PX) * SMOOTH_SCROLL_FACTOR).toInt()
+                        ((hoverViewTop - smoothScrollEdgePx) * SMOOTH_SCROLL_FACTOR).toInt()
                     listView.smoothScrollBy(scrollDistance, SMOOTH_SCROLL_DURATION)
                     return true
                 }
-                if (hoverViewTop + hoverHeight >= height - SMOOTH_SCROLL_EDGE_PX && offset + extent < range) {
+                if (hoverViewTop + hoverHeight >= height - smoothScrollEdgePx && offset + extent < range) {
                     val scrollDistance =
-                        ((hoverViewTop + hoverHeight - height + SMOOTH_SCROLL_EDGE_PX) * SMOOTH_SCROLL_FACTOR).toInt()
+                        ((hoverViewTop + hoverHeight - height + smoothScrollEdgePx) * SMOOTH_SCROLL_FACTOR).toInt()
                     listView.smoothScrollBy(scrollDistance, SMOOTH_SCROLL_DURATION)
                     return true
                 }
@@ -109,13 +120,5 @@ class TreeListScrollHandler(private val listView: TreeListView, context: Context
 
     fun scrollToBottom() {
         listView.setSelection(listView.items!!.size)
-    }
-
-    val currentScrollPosition: Int
-        get() = realScrollPosition
-
-    init {
-        val metrics = context.resources.displayMetrics
-        SMOOTH_SCROLL_EDGE_PX = (SMOOTH_SCROLL_EDGE_DP / metrics.density).toInt()
     }
 }

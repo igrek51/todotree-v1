@@ -16,7 +16,7 @@ class SoftKeyboardService(
     private val imm: InputMethodManager? = appCompatActivity.get()!!.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
     private val logger = LoggerFactory.logger
 
-    fun hideSoftKeyboard(view: View?) {
+    private fun hideSoftKeyboard(view: View?) {
         if (imm == null) {
             logger.error("no input method manager")
             return

@@ -8,13 +8,12 @@ import igrek.todotree.inject.LazyInject
 import igrek.todotree.inject.appFactory
 import igrek.todotree.intent.StatisticsCommand
 import igrek.todotree.service.history.ChangesHistory
-import java.util.*
 
 class TreeManager(
     changesHistory: LazyInject<ChangesHistory> = appFactory.changesHistory,
 ) {
     private val changesHistory by LazyExtractor(changesHistory)
-
+    
     var rootItem: AbstractTreeItem? = null
         set(value) {
             field = value
@@ -25,6 +24,10 @@ class TreeManager(
         private set
 
     var newItemPosition: Int? = null
+
+    init {
+        reset()
+    }
 
     fun reset() {
         rootItem = RootTreeItem()
@@ -38,19 +41,6 @@ class TreeManager(
     fun isPositionAtItem(position: Int): Boolean {
         return position >= 0 && position < currentItem!!.size()
     }
-
-    fun positionAfterEnd(): Int {
-        return currentItem!!.size()
-    }
-
-    val allChildrenIds: TreeSet<Int>
-        get() {
-            val ids = TreeSet<Int>()
-            for (id in currentItem!!.getChildren().indices) {
-                ids.add(id)
-            }
-            return ids
-        }
 
     fun getChild(position: Int): AbstractTreeItem {
         return currentItem!!.getChild(position)
@@ -98,9 +88,5 @@ class TreeManager(
 
     fun goTo(child: AbstractTreeItem?) {
         currentItem = child
-    }
-
-    init {
-        reset()
     }
 }

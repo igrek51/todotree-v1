@@ -32,11 +32,6 @@ class PreferencesDao(
                 .toMutableSet()
     }
 
-    fun setPrimitiveEntry(preferenceName: String, value: Any) {
-        preferencesDb.entries.removeAll { entry -> entry.name == preferenceName }
-        preferencesDb.entries.add(buildEntryValue(preferenceName, value))
-    }
-
     private fun readEntryValue(entry: PreferenceEntry): Any {
         val value = entry.value
         return when {

@@ -2,12 +2,14 @@ package igrek.todotree.service.tree
 
 class ContentTrimmer {
 
-    val WHITE_CHARS = " "
-    val INVALID_CHARS = "{}[]\n\t"
+    companion object {
+        private const val WHITE_CHARS = " "
+        private const val INVALID_CHARS = "{}[]\n\t"
+    }
 
-    fun trimContent(content: String): String {
+    fun trimContent(_content: String): String {
         // remove unallowed characteres
-        var content = content
+        var content = _content
         var i = 0
         while (i < content.length) {
             if (isCharInSet(content[i], INVALID_CHARS)) {
@@ -17,19 +19,19 @@ class ContentTrimmer {
             i++
         }
         // trim whitespaces from beginning
-        while (content.length > 0 && isCharInSet(content[0], WHITE_CHARS)) {
+        while (content.isNotEmpty() && isCharInSet(content[0], WHITE_CHARS)) {
             content = content.substring(1)
         }
         // trim whitespaces from the end
-        while (content.length > 0 && isCharInSet(content[content.length - 1], WHITE_CHARS)) {
+        while (content.isNotEmpty() && isCharInSet(content[content.length - 1], WHITE_CHARS)) {
             content = content.substring(0, content.length - 1)
         }
         return content
     }
 
     private fun isCharInSet(c: Char, set: String): Boolean {
-        for (i in 0 until set.length) {
-            if (set[i] == c) return true
+        for (element in set) {
+            if (element == c) return true
         }
         return false
     }

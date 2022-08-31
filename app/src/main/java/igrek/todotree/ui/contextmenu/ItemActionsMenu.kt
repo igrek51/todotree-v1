@@ -19,13 +19,11 @@ import igrek.todotree.ui.ExplosionService
 class ItemActionsMenu(
     private val position: Int,
     activity: LazyInject<Activity> = appFactory.activityMust,
-    treeSelectionManager: LazyInject<TreeSelectionManager> = appFactory.treeSelectionManager,
     treeManager: LazyInject<TreeManager> = appFactory.treeManager,
     treeClipboardManager: LazyInject<TreeClipboardManager> = appFactory.treeClipboardManager,
     explosionService: LazyInject<ExplosionService> = appFactory.explosionService,
 ) {
     private val activity by LazyExtractor(activity)
-    private val treeSelectionManager by LazyExtractor(treeSelectionManager)
     private val treeManager by LazyExtractor(treeManager)
     private val treeClipboardManager by LazyExtractor(treeClipboardManager)
     private val explosionService by LazyExtractor(explosionService)

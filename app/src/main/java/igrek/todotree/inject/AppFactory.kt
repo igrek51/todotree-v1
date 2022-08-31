@@ -32,14 +32,10 @@ import igrek.todotree.service.tree.persistence.TreePersistenceService
 import igrek.todotree.settings.SettingsLayoutController
 import igrek.todotree.settings.SettingsService
 import igrek.todotree.settings.SettingsState
-import igrek.todotree.system.PackageInfoService
-import igrek.todotree.system.PermissionService
 import igrek.todotree.system.SystemKeyDispatcher
 import igrek.todotree.system.WindowManagerService
-import igrek.todotree.system.filesystem.ExternalCardService
 import igrek.todotree.ui.ExplosionService
 import igrek.todotree.ui.GUI
-import okhttp3.OkHttpClient
 
 
 class AppFactory(
@@ -80,9 +76,6 @@ class AppFactory(
     val userDataDao = SingletonInject { UserDataDao() }
     val appData = SingletonInject { AppData() }
     val optionSelectDispatcher = SingletonInject { OptionSelectDispatcher() }
-    val permissionService = SingletonInject { PermissionService() }
-    val packageInfoService = SingletonInject { PackageInfoService() }
-    val okHttpClient = SingletonInject { OkHttpClient() }
     val filesystemService = SingletonInject { FilesystemService() }
     var treeManager = SingletonInject { TreeManager() }
     val backupManager = SingletonInject { BackupManager() }
@@ -98,7 +91,6 @@ class AppFactory(
     val treeSelectionManager = SingletonInject { TreeSelectionManager() }
     val treeMover = SingletonInject { TreeMover() }
     val statisticsLogService = SingletonInject { StatisticsLogService() }
-    val externalCardService = SingletonInject { ExternalCardService() }
     val quickAddService = SingletonInject { QuickAddService() }
     val linkHistoryService = SingletonInject { LinkHistoryService() }
     val remoteDbRequester = SingletonInject { RemoteDbRequester() }

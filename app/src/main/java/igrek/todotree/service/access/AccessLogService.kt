@@ -6,7 +6,7 @@ import igrek.todotree.inject.LazyExtractor
 import igrek.todotree.inject.LazyInject
 import igrek.todotree.inject.appFactory
 import igrek.todotree.service.filesystem.FilesystemService
-import igrek.todotree.service.filesystem.PathBuilder
+import igrek.todotree.service.filesystem.removeExtension
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
@@ -81,7 +81,7 @@ class AccessLogService(
         val minDate = c.time
         for (filename in logs) {
             if (filename.startsWith(ACCESS_LOG_PREFIX)) {
-                val datePart = PathBuilder.removeExtension(filename)
+                val datePart = removeExtension(filename)
                         .substring(ACCESS_LOG_PREFIX.length)
                 try {
                     val date = filenameDateFormat.parse(datePart)

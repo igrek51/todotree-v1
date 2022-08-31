@@ -103,7 +103,7 @@ class ItemActionCommand(
                 GlobalScope.launch(Dispatchers.Main) {
                     val deferredResults: List<Deferred<Result<Unit>>> =
                             sortedPositions.map { position ->
-                                remotePushService.removeRemoteItem(position)
+                                remotePushService.removeRemoteItemAsync(position)
                             }
 
                     val results = deferredResults.map { it.await() }

@@ -54,11 +54,10 @@ open class Logger internal constructor() {
         printCurrentStackTrace(Thread.currentThread().stackTrace)
     }
 
-    protected fun log(message: String?, level: LogLevel, logPrefix: String) {
+    private fun log(message: String?, level: LogLevel, logPrefix: String) {
         if (level.moreOrEqualImportant(LoggerFactory.CONSOLE_LEVEL)) {
 
-            val consoleMessage: String
-            consoleMessage = if (level.lessOrEqualImportant(LoggerFactory.SHOW_TRACE_DETAILS_LEVEL)) {
+            val consoleMessage: String = if (level.lessOrEqualImportant(LoggerFactory.SHOW_TRACE_DETAILS_LEVEL)) {
                 val externalTrace = getFirstExternalTrace(Thread.currentThread()
                     .stackTrace)
 

@@ -5,15 +5,14 @@ import java.math.BigDecimal
 import java.util.regex.Pattern
 
 class NumericAdder {
+
     @Throws(NumberFormatException::class)
     fun calculateSum(selectedPositions: Set<Int>, currentItem: AbstractTreeItem): BigDecimal {
         var sum = BigDecimal(0)
         for (selectedPos in selectedPositions) {
-            val selectedItem = currentItem.getChild(selectedPos!!)
+            val selectedItem = currentItem.getChild(selectedPos)
             val itemValue = getItemNumericValue(selectedItem.displayName)
-            if (itemValue != null) {
-                sum = sum.add(itemValue)
-            }
+            sum = sum.add(itemValue)
         }
         return sum
     }

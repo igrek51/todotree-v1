@@ -196,7 +196,7 @@ class TreeCommand(
     fun itemMoved(position: Int, step: Int): List<AbstractTreeItem> {
         treeMover.move(treeManager.currentItem!!, position, step)
         changesHistory.registerChange()
-        return treeManager.currentItem!!.getChildren()
+        return treeManager.currentItem!!.children
     }
 
     fun findItemByPath(paths: Array<String>): AbstractTreeItem? {

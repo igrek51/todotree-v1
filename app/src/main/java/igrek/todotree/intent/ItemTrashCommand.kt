@@ -54,7 +54,7 @@ class ItemTrashCommand(
         uiInfoService.showInfo("Removed item restored.")
     }
 
-    fun removeSelectedItems(info: Boolean) {
+    private fun removeSelectedItems(info: Boolean) {
         removeItems(treeSelectionManager.selectedItems!!, info)
     }
 

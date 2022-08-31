@@ -2,32 +2,22 @@ package igrek.todotree.ui.contextmenu
 
 import android.app.Activity
 import android.app.AlertDialog
-import igrek.todotree.info.UiInfoService
 import igrek.todotree.info.errorcheck.UiErrorHandler
 import igrek.todotree.inject.LazyExtractor
 import igrek.todotree.inject.LazyInject
 import igrek.todotree.inject.appFactory
-import igrek.todotree.intent.GUICommand
 import igrek.todotree.intent.PersistenceCommand
 import igrek.todotree.service.backup.Backup
 import igrek.todotree.service.backup.BackupManager
-import igrek.todotree.service.tree.TreeManager
-import igrek.todotree.service.tree.TreeScrollCache
 import java.text.SimpleDateFormat
 import java.util.*
 
 class BackupListMenu(
     activity: LazyInject<Activity> = appFactory.activityMust,
     backupManager: LazyInject<BackupManager> = appFactory.backupManager,
-    uiInfoService: LazyInject<UiInfoService> = appFactory.uiInfoService,
-    treeScrollCache: LazyInject<TreeScrollCache> = appFactory.treeScrollCache,
-    treeManager: LazyInject<TreeManager> = appFactory.treeManager,
 ) {
     private val activity by LazyExtractor(activity)
     private val backupManager by LazyExtractor(backupManager)
-    private val uiInfoService by LazyExtractor(uiInfoService)
-    private val treeScrollCache by LazyExtractor(treeScrollCache)
-    private val treeManager by LazyExtractor(treeManager)
 
     private val displayDateFormat: SimpleDateFormat =
         SimpleDateFormat("yyyy-MM-dd, HH:mm:ss", Locale.ENGLISH)

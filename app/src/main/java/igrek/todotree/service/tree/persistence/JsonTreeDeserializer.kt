@@ -6,10 +6,10 @@ import java.util.regex.Pattern
 
 internal class JsonTreeDeserializer {
 
-    private val singleItemPattern: Pattern = Pattern.compile("^\\{ \"type\": \"([\\w/]+)\"(, \"(\\w+)\": \"((?:[^\"\\\\]|\\\\.)*)\")* \\},$")
+    private val singleItemPattern: Pattern = Pattern.compile("^\\{ \"type\": \"([\\w/]+)\"(, \"(\\w+)\": \"((?:[^\"\\\\]|\\\\.)*)\")* },$")
     private val multiItemPattern: Pattern = Pattern.compile("^\\{ \"type\": \"([\\w/]+)\"(, \"(\\w+)\": \"((?:[^\"\\\\]|\\\\.)*)\")*, \"items\": \\[$")
     private val nameValuePattern: Pattern = Pattern.compile("\"(\\w+)\": \"((?:[^\"\\\\]|\\\\.)*)\"")
-    private val BLOCK_CLOSING_BRACKET = "]},"
+    private val blockClosingBracket = "]},"
 
     @Throws(DeserializationFailedException::class)
     fun deserializeTree(data: String): AbstractTreeItem {
@@ -43,7 +43,7 @@ internal class JsonTreeDeserializer {
             if (lines.size <= 2) throw DeserializationFailedException("Insufficient children lines")
 
             // last line of part must be closing bracket
-            if (lines[lines.size - 1].indentedLine != BLOCK_CLOSING_BRACKET) throw DeserializationFailedException(
+            if (lines[lines.size - 1].indentedLine != blockClosingBracket) throw DeserializationFailedException(
                 "No matching closing bracket found"
             )
 
@@ -96,8 +96,7 @@ internal class JsonTreeDeserializer {
         if (typeAttr.name != "type") throw DeserializationFailedException("first attr not a type attribute")
 
         // build item based on type and attrs
-        val type = typeAttr.value
-        return when (type) {
+        return when (val type = typeAttr.value) {
             "/" -> {
                 RootTreeItem()
             }
@@ -176,7 +175,7 @@ internal class JsonTreeDeserializer {
         for (j in startIndex + 1 until lines.size) {
             val line = lines[j]
             if (line.indentation == headerIndentation && (line.indentedLine
-                        == BLOCK_CLOSING_BRACKET)
+                        == blockClosingBracket)
             ) {
                 return j
             }

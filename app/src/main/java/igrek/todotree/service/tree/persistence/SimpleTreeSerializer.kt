@@ -10,14 +10,12 @@ object SimpleTreeSerializer {
     @Throws(ParseException::class)
     fun loadTree(data: String): AbstractTreeItem {
         val rootItem = RootTreeItem()
-        if (!data.isEmpty()) {
-            //wyłuskanie wierszy
+        if (data.isNotEmpty()) {
             val lines = data.split("\n").toTypedArray()
             val linesList: MutableList<String> = ArrayList()
-            //obcięcie białych znaków
             for (line in lines) {
                 val trimmed = line.trim { it <= ' ' }
-                if (!trimmed.isEmpty()) {
+                if (trimmed.isNotEmpty()) {
                     linesList.add(trimmed)
                 }
             }
@@ -30,18 +28,15 @@ object SimpleTreeSerializer {
     private fun loadTreeItems(parent: AbstractTreeItem, lines: List<String>) {
         var i = 0
         while (i < lines.size) {
-            val line = lines[i]
-            when (line) {
+            when (val line = lines[i]) {
                 "{" -> i = try {
                     val closingBracketIndex = findClosingBracket(lines, i)
-                    //jeśli cokolwiek jest w środku bloku
                     if (closingBracketIndex - i >= 2) {
                         val subLines = lines.subList(i + 1, closingBracketIndex)
                         val lastChild = parent.lastChild
                             ?: throw ParseException("No matching element before opening bracket", i)
                         loadTreeItems(lastChild, subLines)
                     }
-                    //przeskoczenie już przeanalizowanych wierszy
                     closingBracketIndex
                 } catch (ex: RuntimeException) {
                     throw ParseException("No matching closing bracket", i)

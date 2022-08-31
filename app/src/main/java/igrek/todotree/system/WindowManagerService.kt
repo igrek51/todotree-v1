@@ -26,9 +26,7 @@ class WindowManagerService(
     }
 
     fun hideTaskbar() {
-        appCompatActivity.get()?.supportActionBar?.let { supportActionBar ->
-            supportActionBar.hide()
-        }
+        appCompatActivity.get()?.supportActionBar?.hide()
     }
 
     fun setFullscreen(set: Boolean) {

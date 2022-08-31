@@ -15,6 +15,7 @@ import igrek.todotree.service.tree.TreeManager
 import igrek.todotree.ui.GUI
 import kotlinx.coroutines.*
 
+@OptIn(DelicateCoroutinesApi::class)
 class RemotePushService(
     private val activity: LazyInject<Activity> = appFactory.activityMust,
     private val treeManager: LazyInject<TreeManager> = appFactory.treeManager,
@@ -59,7 +60,7 @@ class RemotePushService(
             uiInfoService.get().showSnackbar("Pushing...")
         }
 
-        return remoteDbRequester.get().createRemoteTodo(content)
+        return remoteDbRequester.get().createRemoteTodoAsync(content)
     }
 
     fun pushNewItemAsync(content: String): Deferred<Result<String>> {
@@ -71,7 +72,7 @@ class RemotePushService(
             uiInfoService.get().showSnackbar("Pushing...")
         }
 
-        return remoteDbRequester.get().createRemoteTodo(content)
+        return remoteDbRequester.get().createRemoteTodoAsync(content)
     }
 
     fun pushNewItemsAsync(contents: List<String>): Deferred<Result<Unit>> {
@@ -83,16 +84,16 @@ class RemotePushService(
             uiInfoService.get().showSnackbar("Pushing...")
         }
 
-        return remoteDbRequester.get().createManyRemoteTodos(contents)
+        return remoteDbRequester.get().createManyRemoteTodosAsync(contents)
     }
 
     fun populateRemoteItemAsync(item: RemoteTreeItem): Deferred<Result<List<TodoDto>>> {
         // clear current children
-        repeat(item.getChildren().size) {
+        repeat(item.children.size) {
             item.remove(0)
         }
         return GlobalScope.async {
-            val dr = remoteDbRequester.get().fetchAllRemoteTodos()
+            val dr = remoteDbRequester.get().fetchAllRemoteTodosAsync()
             val result = dr.await()
             result.onSuccess { todoDtos ->
                 withContext(Dispatchers.Main) {
@@ -112,7 +113,7 @@ class RemotePushService(
         }
     }
 
-    fun removeRemoteItem(position: Int): Deferred<Result<Unit>> {
+    fun removeRemoteItemAsync(position: Int): Deferred<Result<Unit>> {
         val item = treeManager.get().getChild(position)
         val itemId = remoteItemToId[item]
         itemId ?: run {
@@ -120,7 +121,7 @@ class RemotePushService(
                 Result.failure(RuntimeException("remote item ID not found"))
             }
         }
-        return remoteDbRequester.get().deleteRemoteTodo(itemId)
+        return remoteDbRequester.get().deleteRemoteTodoAsync(itemId)
     }
 
 }

@@ -30,7 +30,7 @@ class TreeItemAdapter(
 
     init {
         var dataSource: List<AbstractTreeItem>? = _dataSource
-        if (dataSource == null) dataSource = ArrayList<AbstractTreeItem>()
+        if (dataSource == null) dataSource = ArrayList()
         this.dataSource = dataSource
         this.listView = listView
         storedViews = SparseArray<View>()
@@ -98,7 +98,7 @@ class TreeItemAdapter(
     private fun getSingleItemView(item: AbstractTreeItem, position: Int, parent: ViewGroup): View {
         val itemView: View = inflater.inflate(R.layout.tree_item_single, parent, false)
 
-        val textView: TextView = itemView.findViewById<TextView>(R.id.tvItemContent)
+        val textView: TextView = itemView.findViewById(R.id.tvItemContent)
         textView.text = item.displayName
 
         // link
@@ -140,7 +140,7 @@ class TreeItemAdapter(
             moveButton.layoutParams = RelativeLayout.LayoutParams(0, 0)
         }
 
-        val cbItemSelected: CheckBox = itemView.findViewById<CheckBox>(R.id.cbItemSelected)
+        val cbItemSelected: CheckBox = itemView.findViewById(R.id.cbItemSelected)
         cbItemSelected.isFocusableInTouchMode = false
         cbItemSelected.isFocusable = false
         if (selections != null) {
@@ -154,7 +154,7 @@ class TreeItemAdapter(
         itemView.setOnTouchListener(TreeItemTouchListener(listView, position))
 
         //add new item above
-        val addButton: ImageButton = itemView.findViewById<ImageButton>(R.id.buttonItemAdd)
+        val addButton: ImageButton = itemView.findViewById(R.id.buttonItemAdd)
         addButton.isFocusableInTouchMode = false
         addButton.isFocusable = false
         addButton.isClickable = true
@@ -169,7 +169,7 @@ class TreeItemAdapter(
         }
 
         // button: enter item
-        val buttonItemEnter: ImageButton = itemView.findViewById<ImageButton>(R.id.buttonItemEnter)
+        val buttonItemEnter: ImageButton = itemView.findViewById(R.id.buttonItemEnter)
         buttonItemEnter.isFocusableInTouchMode = false
         buttonItemEnter.isFocusable = false
         buttonItemEnter.isClickable = true
@@ -189,14 +189,14 @@ class TreeItemAdapter(
     private fun getParentItemView(item: AbstractTreeItem, position: Int, parent: ViewGroup): View {
         val itemView: View = inflater.inflate(R.layout.tree_item_parent, parent, false)
 
-        val textView: TextView = itemView.findViewById<TextView>(R.id.tvItemContent)
+        val textView: TextView = itemView.findViewById(R.id.tvItemContent)
         textView.text = item.displayName
 
-        val tvItemChildSize: TextView = itemView.findViewById<TextView>(R.id.tvItemChildSize)
+        val tvItemChildSize: TextView = itemView.findViewById(R.id.tvItemChildSize)
         val contentBuilder = "[" + item.size() + "]"
         tvItemChildSize.text = contentBuilder
 
-        val editButton: ImageButton = itemView.findViewById<ImageButton>(R.id.buttonItemEdit)
+        val editButton: ImageButton = itemView.findViewById(R.id.buttonItemEdit)
         editButton.isFocusableInTouchMode = false
         editButton.isFocusable = false
         editButton.isClickable = true
@@ -210,7 +210,7 @@ class TreeItemAdapter(
         }
 
         //add new item above
-        val addButton: ImageButton = itemView.findViewById<ImageButton>(R.id.buttonItemAdd)
+        val addButton: ImageButton = itemView.findViewById(R.id.buttonItemAdd)
         addButton.isFocusableInTouchMode = false
         addButton.isFocusable = false
         addButton.isClickable = true
@@ -224,7 +224,7 @@ class TreeItemAdapter(
             addButton.visibility = View.GONE
         }
 
-        val moveButton: ImageButton = itemView.findViewById<ImageButton>(R.id.buttonItemMove)
+        val moveButton: ImageButton = itemView.findViewById(R.id.buttonItemMove)
         moveButton.isFocusableInTouchMode = false
         moveButton.isFocusable = false
         moveButton.isClickable = false
@@ -256,7 +256,7 @@ class TreeItemAdapter(
             moveButton.layoutParams = RelativeLayout.LayoutParams(0, 0)
         }
 
-        val cbItemSelected: CheckBox = itemView.findViewById<CheckBox>(R.id.cbItemSelected)
+        val cbItemSelected: CheckBox = itemView.findViewById(R.id.cbItemSelected)
         cbItemSelected.isFocusableInTouchMode = false
         cbItemSelected.isFocusable = false
         if (selections != null) {
@@ -274,7 +274,7 @@ class TreeItemAdapter(
     private fun getAddItemView(position: Int, parent: ViewGroup): View {
         // plus
         val itemPlus: View = inflater.inflate(R.layout.item_plus, parent, false)
-        val plusButton: ImageButton = itemPlus.findViewById<ImageButton>(R.id.buttonAddNewItem)
+        val plusButton: ImageButton = itemPlus.findViewById(R.id.buttonAddNewItem)
         plusButton.isFocusableInTouchMode = false
         plusButton.isFocusable = false
         plusButton.setOnClickListener(SafeClickListener {

@@ -20,21 +20,11 @@ class ActivityResultDispatcher(
     fun registerActivityResultLauncher(onResult: (resultCode: Int, data: Intent?) -> Unit): ActivityResultLauncher<Intent> {
         val activityResultLauncher: ActivityResultLauncher<Intent> =
             appCompatActivity.get()!!.registerForActivityResult(
-                ActivityResultContracts.StartActivityForResult(),
-                ActivityResultCallback<ActivityResult> { result ->
-                    onResult(result.resultCode, result.data)
-                })
+                ActivityResultContracts.StartActivityForResult()
+            ) { result ->
+                onResult(result.resultCode, result.data)
+            }
         return activityResultLauncher
-    }
-
-    fun startRegisteredActivityForResult(intent: Intent, onResult: (resultCode: Int, data: Intent?) -> Unit) {
-        val activityResultLauncher: ActivityResultLauncher<Intent> =
-            appCompatActivity.get()!!.registerForActivityResult(
-                ActivityResultContracts.StartActivityForResult(),
-                ActivityResultCallback<ActivityResult> { result ->
-                    onResult(result.resultCode, result.data)
-                })
-        activityResultLauncher.launch(intent)
     }
 
     @Suppress("DEPRECATION")

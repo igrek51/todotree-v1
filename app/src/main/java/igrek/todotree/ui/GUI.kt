@@ -53,9 +53,9 @@ open class GUI(
     open fun showItemsList(currentItem: AbstractTreeItem) {
         setOrientationPortrait()
         val itemsListLayout = setMainContentLayout(R.layout.items_list)
-        itemsListView = itemsListLayout.findViewById<TreeListView>(R.id.treeItemsList) as TreeListView
+        itemsListView = itemsListLayout.findViewById(R.id.treeItemsList) as TreeListView
         itemsListView?.init(activity)
-        updateItemsList(currentItem, currentItem.getChildren(), null)
+        updateItemsList(currentItem, currentItem.children, null)
     }
 
     open fun showEditItemPanel(item: AbstractTreeItem?, parent: AbstractTreeItem) {
@@ -63,13 +63,9 @@ open class GUI(
         editItemGUI = EditItemGUI(this, item, parent)
     }
 
-    open fun showExitScreen(): View? {
-        return setMainContentLayout(R.layout.exit_screen)
-    }
-
     open fun updateItemsList(currentItem: AbstractTreeItem, _items: List<AbstractTreeItem>?, selectedPositions: Set<Int>?) {
         var items = _items
-        if (items == null) items = currentItem.getChildren()
+        if (items == null) items = currentItem.children
 
         val sb = StringBuilder(currentItem.displayName)
         if (!currentItem.isEmpty) {
@@ -86,11 +82,6 @@ open class GUI(
 
     open fun scrollToItem(itemIndex: Int) {
         itemsListView?.scrollToItem(itemIndex)
-    }
-
-    open fun scrollToItem(y: Int?, itemIndex: Int) {
-        if (y != null) itemsListView!!.scrollToPosition(y)
-        itemsListView!!.scrollToItem(itemIndex)
     }
 
     open fun scrollToPosition(y: Int) {

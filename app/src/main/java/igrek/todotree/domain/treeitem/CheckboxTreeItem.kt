@@ -8,8 +8,4 @@ class CheckboxTreeItem(parent: AbstractTreeItem?, override var displayName: Stri
     override val typeName: String
         get() = "checkbox"
 
-    fun setName(name: String) {
-        displayName = name
-    }
-
 }

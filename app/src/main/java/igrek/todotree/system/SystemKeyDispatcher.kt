@@ -1,9 +1,16 @@
 package igrek.todotree.system
 
 import android.view.KeyEvent
+import igrek.todotree.inject.LazyExtractor
+import igrek.todotree.inject.LazyInject
+import igrek.todotree.inject.appFactory
 import igrek.todotree.intent.NavigationCommand
+import igrek.todotree.layout.LayoutController
 
-class SystemKeyDispatcher {
+class SystemKeyDispatcher(
+    layoutController: LazyInject<LayoutController> = appFactory.layoutController,
+) {
+    private val layoutController by LazyExtractor(layoutController)
 
     fun onKeyDown(keyCode: Int): Boolean {
         when (keyCode) {
@@ -49,8 +56,9 @@ class SystemKeyDispatcher {
         return false
     }
 
-    fun onKeyBack(): Boolean {
-        return NavigationCommand().backClicked()
+    private fun onKeyBack(): Boolean {
+        layoutController.onBackClicked()
+        return true
     }
 
     private fun onKeyMenu(): Boolean {

@@ -5,7 +5,7 @@ import igrek.todotree.inject.LazyExtractor
 import igrek.todotree.inject.LazyInject
 import igrek.todotree.inject.appFactory
 import igrek.todotree.service.filesystem.FilesystemService
-import igrek.todotree.service.filesystem.PathBuilder
+import igrek.todotree.service.filesystem.removeExtension
 import java.io.File
 import java.io.IOException
 import java.text.ParseException
@@ -80,7 +80,7 @@ class BackupManager(
         // recognize bbackup files and read date from name
         for (filename in children) {
             if (filename.startsWith(BACKUP_FILE_PREFIX)) {
-                val dateStr = PathBuilder.removeExtension(filename)
+                val dateStr = removeExtension(filename)
                         .substring(BACKUP_FILE_PREFIX.length)
                 var date: Date?
                 try {

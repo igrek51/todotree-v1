@@ -49,12 +49,7 @@ class ExitCommand(
         activityController.quit()
     }
 
-    private fun saveAndExit() {
-        PersistenceCommand().saveDatabase()
-        exitDiscardingChanges()
-    }
-
-    fun quickSaveAndExit() {
+    private fun quickSaveAndExit() {
         Handler(Looper.getMainLooper()).post { postQuickSave() }
         activityController.minimize()
         logger.info("Quick exiting...")

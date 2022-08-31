@@ -66,7 +66,7 @@ class Commander(
         )
     }
 
-    fun commandAttempt(command: String) {
+    private fun commandAttempt(command: String) {
         logger.debug("command entered: $command")
 
         GlobalScope.launch(Dispatchers.Main) {

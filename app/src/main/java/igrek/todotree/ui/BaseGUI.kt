@@ -11,7 +11,7 @@ abstract class BaseGUI internal constructor(
     protected var activity: AppCompatActivity?,
 ) {
 
-    private val imm: InputMethodManager?
+    private val imm: InputMethodManager? = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
     var mainContent: RelativeLayout? = null
 
     fun setMainContentLayout(layoutResource: Int): View {
@@ -34,7 +34,4 @@ abstract class BaseGUI internal constructor(
         imm?.showSoftInput(window, 0)
     }
 
-    init {
-        imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-    }
 }

@@ -1,19 +1,17 @@
 package igrek.todotree.service.filesystem
 
-import igrek.todotree.service.filesystem.FirstFinder.Provider
 import java.util.*
 
 class FirstFinder<T> {
-    // remembers inserting order
     private val rules: MutableList<Rule> = LinkedList<Rule>()
 
-    fun addRule(`when`: BooleanCondition, then: Provider<T>): FirstFinder<T> {
-        rules.add(Rule(`when`, then))
+    fun addRule(whenn: BooleanCondition, then: Provider<T>): FirstFinder<T> {
+        rules.add(Rule(whenn, then))
         return this
     }
 
-    fun addRule(`when`: BooleanCondition, then: T): FirstFinder<T> {
-        rules.add(Rule(`when`, Provider<T> { then }))
+    fun addRule(whenn: BooleanCondition, then: T): FirstFinder<T> {
+        rules.add(Rule(whenn) { then })
         return this
     }
 
@@ -27,20 +25,19 @@ class FirstFinder<T> {
 
     fun find(): T? {
         for (rule in rules) {
-            val `when`: BooleanCondition = rule.`when`
-            if (`when`.test()) {
+            val whenn: BooleanCondition = rule.`when`
+            if (whenn.test()) {
                 val then: Provider<T> = rule.then
-                if (then != null) {
-                    val value: T? = then.get()
-                    if (value != null) // accept only not null values
-                        return value
-                }
+                val value: T? = then.get()
+                if (value != null) // accept only not null values
+                    return value
             }
         }
         return null
     }
 
     private inner class Rule(var `when`: BooleanCondition, var then: Provider<T>)
+
     fun interface BooleanCondition {
         fun test(): Boolean
     }
