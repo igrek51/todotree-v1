@@ -49,11 +49,7 @@ class TreeListView : ListView, AdapterView.OnItemClickListener, AdapterView.OnIt
         choiceMode = CHOICE_MODE_SINGLE
 
         val observer: ViewTreeObserver = this.viewTreeObserver
-        observer.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
-            override fun onGlobalLayout() {
-                onCalculateViewHeights()
-            }
-        })
+        observer.addOnGlobalLayoutListener { onCalculateViewHeights() }
 
         setAdapter(adapter!!)
     }

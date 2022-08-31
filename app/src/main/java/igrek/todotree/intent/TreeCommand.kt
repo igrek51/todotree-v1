@@ -4,7 +4,6 @@ import igrek.todotree.domain.treeitem.*
 import igrek.todotree.exceptions.NoSuperItemException
 import igrek.todotree.info.Toaster
 import igrek.todotree.info.UiInfoService
-import igrek.todotree.info.logger.LoggerFactory.logger
 import igrek.todotree.inject.LazyExtractor
 import igrek.todotree.inject.LazyInject
 import igrek.todotree.inject.appFactory

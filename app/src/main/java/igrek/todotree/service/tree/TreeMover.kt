@@ -3,6 +3,7 @@ package igrek.todotree.service.tree
 import igrek.todotree.domain.treeitem.AbstractTreeItem
 
 class TreeMover {
+
     private fun replace(parent: AbstractTreeItem, pos1: Int, pos2: Int) {
         if (pos1 == pos2) return
         require(!(pos1 < 0 || pos2 < 0)) { "position < 0" }
@@ -25,8 +26,8 @@ class TreeMover {
         replace(parent, position, position + 1)
     }
 
-    fun move(parent: AbstractTreeItem, position: Int, step: Int): Int {
-        var position = position
+    fun move(parent: AbstractTreeItem, _postition: Int, step: Int): Int {
+        var position = _postition
         var targetPosition = position + step
         if (targetPosition < 0) targetPosition = 0
         if (targetPosition >= parent.size()) targetPosition = parent.size() - 1
@@ -40,4 +41,5 @@ class TreeMover {
         }
         return targetPosition
     }
+
 }

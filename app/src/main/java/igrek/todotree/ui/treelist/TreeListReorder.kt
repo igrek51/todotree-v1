@@ -1,17 +1,16 @@
 package igrek.todotree.ui.treelist
 
 import android.animation.*
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.Rect
+import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.view.View
 import igrek.todotree.domain.treeitem.AbstractTreeItem
 import igrek.todotree.info.logger.LoggerFactory
 import igrek.todotree.intent.TreeCommand
 
+
 class TreeListReorder(private val listView: TreeListView) {
+
     private val logger = LoggerFactory.logger
 
     private var startTouchY = 0f
@@ -25,8 +24,10 @@ class TreeListReorder(private val listView: TreeListView) {
     var hoverBitmapBounds: Rect? = null
         private set
     private val itemsReplaceCover = 0.65f
-    private val hoverBorderThickness = 5
+    private val hoverBorderThickness = 8
     private val hoverBorderColor = -0x334f4f50
+    private val hoverTintColor: Long = 0x44aaaaaa
+    private val treeCommand = TreeCommand()
 
     private fun updateHoverBitmap() {
         if (draggedItemViewTop != null && draggedItemPos != null) {
@@ -48,14 +49,19 @@ class TreeListReorder(private val listView: TreeListView) {
 
     private fun getBitmapWithBorder(v: View?): Bitmap {
         val bitmap = getBitmapFromView(v)
-        val can = Canvas(bitmap)
-        val rect = Rect(0, 0, bitmap.width, bitmap.height)
+        val canvas = Canvas(bitmap)
+
+        val paint2 = Paint()
+        paint2.colorFilter = PorterDuffColorFilter(getColor(hoverTintColor), PorterDuff.Mode.ADD)
+        canvas.drawBitmap(bitmap, 0f, 0f, paint2)
+
         val paint = Paint()
         paint.style = Paint.Style.STROKE
         paint.strokeWidth = hoverBorderThickness.toFloat()
         paint.color = hoverBorderColor
-        can.drawBitmap(bitmap, 0f, 0f, null)
-        can.drawRect(rect, paint)
+        val rect = Rect(0, 0, bitmap.width, bitmap.height)
+        canvas.drawRect(rect, paint)
+
         return bitmap
     }
 
@@ -119,7 +125,7 @@ class TreeListReorder(private val listView: TreeListView) {
         }
         if (step != 0) {
             val targetPosition = draggedItemPos!! + step
-            val items = TreeCommand().itemMoved(
+            val items = treeCommand.itemMoved(
                 draggedItemPos!!, step
             )
 
@@ -257,4 +263,11 @@ class TreeListReorder(private val listView: TreeListView) {
             }
         }
     }
+}
+
+fun getColor(color: Long): Int {
+    // if alpha channel is not set - set it to max (opaque)
+    if (color and -0x1000000 == 0L)
+        return (color or -0x1000000).toInt()
+    return color.toInt()
 }
