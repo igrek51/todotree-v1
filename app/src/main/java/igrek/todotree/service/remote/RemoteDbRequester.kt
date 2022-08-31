@@ -92,7 +92,7 @@ class RemoteDbRequester (
         return httpRequester.httpRequestAsync(request) { }
     }
 
-    fun deleteRemoteTodoAsync(id: Long): Deferred<Result<Unit>> {
+    fun deleteRemoteTodoAsync(id: String): Deferred<Result<Unit>> {
         logger.info("Deleting remote todo")
         val request: Request = Request.Builder()
                 .url("$todoApiBase/todo/$id")

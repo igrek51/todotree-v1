@@ -25,7 +25,7 @@ class RemotePushService(
 ) {
     private val logger = LoggerFactory.logger
     var isRemotePushEnabled = false
-    private val remoteItemToId = hashMapOf<TextTreeItem, Long>()
+    private val remoteItemToId = hashMapOf<TextTreeItem, String>()
 
     fun enableRemotePush() {
         logger.debug("enabling remote push")
@@ -106,10 +106,11 @@ class RemotePushService(
 
     private fun populateFetchedRemoteItemsId(remoteItem: RemoteTreeItem, todoDtos: List<TodoDto>) {
         remoteItemToId.clear()
-        todoDtos.forEach { todoDto ->
-            val newItem = TextTreeItem(todoDto.content ?: "")
+        val orderedTasks = todoDtos.sortedBy { it.create_timestamp }
+        orderedTasks.forEach { todoTaskDto ->
+            val newItem = TextTreeItem(todoTaskDto.content ?: "")
             remoteItem.add(newItem)
-            todoDto.id?.let { remoteItemToId[newItem] = it }
+            todoTaskDto.id?.let { remoteItemToId[newItem] = it }
         }
     }
 

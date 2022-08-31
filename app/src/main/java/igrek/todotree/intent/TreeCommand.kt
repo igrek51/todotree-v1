@@ -18,6 +18,7 @@ import igrek.todotree.service.tree.TreeScrollCache
 import igrek.todotree.service.tree.TreeSelectionManager
 import igrek.todotree.ui.GUI
 import kotlinx.coroutines.*
+import org.joda.time.DateTime
 
 @OptIn(DelicateCoroutinesApi::class)
 class TreeCommand(
@@ -96,7 +97,9 @@ class TreeCommand(
                             if (todoDtos.isEmpty()) {
                                 uiInfoService.showInfo("No remote items")
                             } else {
-                                uiInfoService.showInfo("${todoDtos.size} remote items fetched.")
+                                val lastTimestamp = todoDtos.last().create_timestamp
+                                val lastDate = lastTimestamp?.timestampSToString().orEmpty()
+                                uiInfoService.showInfo("${todoDtos.size} remote items fetched.\nLast on $lastDate")
                             }
                         }, onFailure = { e ->
                             Toaster().error(e, "Communication breakdown!")
@@ -205,5 +208,10 @@ class TreeCommand(
             current = found
         }
         return current
+    }
+
+    private fun Long.timestampSToString(): String {
+        val datetime = DateTime(this * 1000)
+        return datetime.toString("yyyy-MM-dd HH:mm:ss")
     }
 }
