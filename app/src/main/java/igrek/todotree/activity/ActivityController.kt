@@ -3,25 +3,26 @@ package igrek.todotree.activity
 import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
-import dagger.Lazy
-import igrek.todotree.dagger.DaggerIoc
 import igrek.todotree.info.logger.LoggerFactory
-import igrek.todotree.intent.PersistenceCommand
+import igrek.todotree.inject.LazyExtractor
+import igrek.todotree.inject.LazyInject
+import igrek.todotree.inject.appFactory
+import igrek.todotree.persistence.user.UserDataDao
+import igrek.todotree.settings.SettingsService
 import igrek.todotree.system.WindowManagerService
-import javax.inject.Inject
 
-class ActivityController {
-    @Inject
-    lateinit var windowManagerService: Lazy<WindowManagerService>
-
-    @Inject
-    lateinit var activity: Lazy<Activity>
+class ActivityController(
+    windowManagerService: LazyInject<WindowManagerService> = appFactory.windowManagerService,
+    settingsService: LazyInject<SettingsService> = appFactory.settingsService,
+    userDataDao: LazyInject<UserDataDao> = appFactory.userDataDao,
+    private val activity: LazyInject<Activity?> = appFactory.activity,
+) {
+    private val windowManagerService by LazyExtractor(windowManagerService)
+    private val preferencesService by LazyExtractor(settingsService)
+    private val userDataDao by LazyExtractor(userDataDao)
 
     private val logger = LoggerFactory.logger
-
-    init {
-        DaggerIoc.factoryComponent.inject(this)
-    }
+    var initialized = false
 
     fun onConfigurationChanged(newConfig: Configuration) {
         // resize event
@@ -41,28 +42,38 @@ class ActivityController {
     }
 
     fun quit() {
-        windowManagerService.get().keepScreenOn(false)
-        activity.get().finish()
+        windowManagerService.keepScreenOn(false)
+        activity.get()?.finish()
     }
 
     fun onStart() {
-        logger.debug("starting activity...")
+        if (initialized) {
+            logger.debug("starting activity...")
+            userDataDao.requestSave(false)
+        }
     }
 
     fun onStop() {
-        logger.debug("stopping activity...")
-        PersistenceCommand().optionSave()
+        if (initialized) {
+            logger.debug("stopping activity...")
+            preferencesService.saveAll()
+            userDataDao.requestSave(true)
+        }
     }
 
     fun onDestroy() {
-        logger.info("activity has been destroyed")
+        if (initialized) {
+            preferencesService.saveAll()
+            userDataDao.saveNow()
+            logger.info("activity has been destroyed")
+        }
     }
 
     fun minimize() {
         val startMain = Intent(Intent.ACTION_MAIN)
         startMain.addCategory(Intent.CATEGORY_HOME)
         startMain.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        activity.get().startActivity(startMain)
+        activity.get()?.startActivity(startMain)
     }
 
 }

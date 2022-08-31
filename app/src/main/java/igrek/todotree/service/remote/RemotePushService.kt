@@ -3,31 +3,32 @@ package igrek.todotree.service.remote
 import android.app.Activity
 import android.os.Handler
 import android.view.WindowManager
-import dagger.Lazy
 import igrek.todotree.domain.treeitem.RemoteTreeItem
 import igrek.todotree.domain.treeitem.TextTreeItem
+import igrek.todotree.info.UiInfoService
 import igrek.todotree.info.logger.LoggerFactory
+import igrek.todotree.inject.LazyInject
+import igrek.todotree.inject.appFactory
 import igrek.todotree.intent.ItemEditorCommand
-import igrek.todotree.service.resources.UserInfoService
 import igrek.todotree.service.tree.TreeManager
 import igrek.todotree.ui.GUI
 import kotlinx.coroutines.*
 
 class RemotePushService(
-        private val activity: Activity,
-        private val treeManager: TreeManager,
-        private val gui: Lazy<GUI>,
-        private val userInfoService: UserInfoService,
-        private val remoteDbRequester: RemoteDbRequester,
+    private val activity: LazyInject<Activity> = appFactory.activityMust,
+    private val treeManager: LazyInject<TreeManager> = appFactory.treeManager,
+    private val gui: LazyInject<GUI> = appFactory.gui,
+    private val uiInfoService: LazyInject<UiInfoService> = appFactory.uiInfoService,
+    private val remoteDbRequester: LazyInject<RemoteDbRequester> = appFactory.remoteDbRequester,
 ) {
     private val logger = LoggerFactory.logger
-    var isRemotePushingEnabled = false
+    var isRemotePushEnabled = false
     private val remoteItemToId = hashMapOf<TextTreeItem, Long>()
 
     fun enableRemotePush() {
         logger.debug("enabling remote push")
         showOnLockScreen()
-        isRemotePushingEnabled = true
+        isRemotePushEnabled = true
         editNewPushItem()
         showKeyboard()
     }
@@ -38,7 +39,7 @@ class RemotePushService(
     }
 
     private fun showOnLockScreen() {
-        activity.window
+        activity.get().window
                 .addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON)
     }
 
@@ -49,39 +50,39 @@ class RemotePushService(
 
     fun pushAndExitAsync(content: String?): Deferred<Result<String>> {
         if (content.isNullOrBlank()) {
-            userInfoService.showToast("Nothing to do")
+            uiInfoService.get().showToast("Nothing to do")
             return GlobalScope.async { Result.success(content.orEmpty()) }
         }
 
         GlobalScope.launch(Dispatchers.Main) {
-            userInfoService.showInfo("Pushing...")
+            uiInfoService.get().showSnackbar("Pushing...")
         }
 
-        return remoteDbRequester.createRemoteTodo(content)
+        return remoteDbRequester.get().createRemoteTodo(content)
     }
 
     fun pushNewItemAsync(content: String): Deferred<Result<String>> {
         if (content.isBlank()) {
-            userInfoService.showToast("Nothing to do")
+            uiInfoService.get().showToast("Nothing to do")
             return GlobalScope.async { Result.success(content) }
         }
         GlobalScope.launch(Dispatchers.Main) {
-            userInfoService.showInfo("Pushing...")
+            uiInfoService.get().showSnackbar("Pushing...")
         }
 
-        return remoteDbRequester.createRemoteTodo(content)
+        return remoteDbRequester.get().createRemoteTodo(content)
     }
 
     fun pushNewItemsAsync(contents: List<String>): Deferred<Result<Unit>> {
         if (contents.isEmpty()) {
-            userInfoService.showToast("Nothing to do")
+            uiInfoService.get().showToast("Nothing to do")
             return GlobalScope.async { Result.success(Unit) }
         }
         GlobalScope.launch(Dispatchers.Main) {
-            userInfoService.showInfo("Pushing...")
+            uiInfoService.get().showSnackbar("Pushing...")
         }
 
-        return remoteDbRequester.createManyRemoteTodos(contents)
+        return remoteDbRequester.get().createManyRemoteTodos(contents)
     }
 
     fun populateRemoteItemAsync(item: RemoteTreeItem): Deferred<Result<List<TodoDto>>> {
@@ -90,7 +91,7 @@ class RemotePushService(
             item.remove(0)
         }
         return GlobalScope.async {
-            val dr = remoteDbRequester.fetchAllRemoteTodos()
+            val dr = remoteDbRequester.get().fetchAllRemoteTodos()
             val result = dr.await()
             result.onSuccess { todoDtos ->
                 withContext(Dispatchers.Main) {
@@ -111,14 +112,14 @@ class RemotePushService(
     }
 
     fun removeRemoteItem(position: Int): Deferred<Result<Unit>> {
-        val item = treeManager.getChild(position)
+        val item = treeManager.get().getChild(position)
         val itemId = remoteItemToId[item]
         itemId ?: run {
             return GlobalScope.async {
                 Result.failure(RuntimeException("remote item ID not found"))
             }
         }
-        return remoteDbRequester.deleteRemoteTodo(itemId)
+        return remoteDbRequester.get().deleteRemoteTodo(itemId)
     }
 
 }

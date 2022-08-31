@@ -3,50 +3,36 @@ package igrek.todotree.activity
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import dagger.Lazy
 import igrek.todotree.R
-import igrek.todotree.dagger.DaggerIoc
 import igrek.todotree.info.logger.Logger
 import igrek.todotree.info.logger.LoggerFactory
-import igrek.todotree.intent.WhatTheFuckCommand
-import igrek.todotree.service.access.QuickAddService
-import igrek.todotree.service.remote.RemotePushService
-import igrek.todotree.system.SystemKeyDispatcher
-import javax.inject.Inject
+import igrek.todotree.inject.AppContextFactory
+import igrek.todotree.inject.LazyExtractor
+import igrek.todotree.inject.LazyInject
+import igrek.todotree.inject.appFactory
+import igrek.todotree.util.RetryDelayed
 
-open class MainActivity : AppCompatActivity() {
 
-    @Inject
-    lateinit var appInitializer: Lazy<AppInitializer>
+open class MainActivity(
+    mainActivityData: LazyInject<MainActivityData> = appFactory.activityData,
+) : AppCompatActivity() {
+    protected var activityData by LazyExtractor(mainActivityData)
 
-    @Inject
-    lateinit var activityController: Lazy<ActivityController>
-
-    @Inject
-    lateinit var quickAddService: QuickAddService
-
-    @Inject
-    lateinit var remotePushService: RemotePushService
-
-    @Inject
-    lateinit var optionSelectDispatcher: Lazy<OptionSelectDispatcher>
-
-    @Inject
-    lateinit var systemKeyDispatcher: Lazy<SystemKeyDispatcher>
-
-    protected var logger: Logger = LoggerFactory.logger
+    protected val logger: Logger = LoggerFactory.logger
 
     override fun onCreate(savedInstanceState: Bundle?) {
         try {
-            // Dagger Container init
-            DaggerIoc.init(this)
+            logger.info("Creating Dependencies container...")
+            AppContextFactory.createAppContext(this)
+            recreateFields() // Workaround for reusing finished activities by Android
             super.onCreate(savedInstanceState)
-            DaggerIoc.factoryComponent.inject(this)
-            appInitializer.get().init()
+            activityData.appInitializer.init()
         } catch (t: Throwable) {
             logger.fatal(t)
             throw t
@@ -56,12 +42,12 @@ open class MainActivity : AppCompatActivity() {
     override fun onNewIntent(intent: Intent?) {
         stdNewIntent(intent)
         logger.debug("new intent received")
-        if (WhatTheFuckCommand().isQuickAddModeEnabled) {
-            quickAddService.isQuickAddMode = false
+        if (activityData.quickAddService.isQuickAddModeEnabled) {
+            activityData.quickAddService.isQuickAddModeEnabled = false
             logger.debug("recreating activity")
             recreate()
-        } else if (WhatTheFuckCommand().isRemotePushEnabled) {
-            remotePushService.isRemotePushingEnabled = false
+        } else if (activityData.remotePushService.isRemotePushEnabled) {
+            activityData.remotePushService.isRemotePushEnabled = false
             logger.debug("recreating activity")
             recreate()
         }
@@ -70,28 +56,42 @@ open class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun recreateFields() {
+        activityData = appFactory.activityData.get()
+    }
+
     protected fun stdNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        activityController.get().onConfigurationChanged(newConfig)
-    }
-
-    override fun onStart() {
-        super.onStart()
-        activityController.get().onStart()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        activityController.get().onStop()
+        activityData.activityController.onConfigurationChanged(newConfig)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        activityController.get().onDestroy()
+        activityData.activityController.onDestroy()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Handler(Looper.getMainLooper()).post {
+            RetryDelayed(10, 500, UninitializedPropertyAccessException::class.java) {
+                activityData.activityController.onStart()
+            }
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        activityData.activityController.onStop()
+    }
+
+    @Suppress("DEPRECATION")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        activityData.activityResultDispatcher.onActivityResult(requestCode, resultCode, data)
+        super.onActivityResult(requestCode, resultCode, data)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -100,25 +100,25 @@ open class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return optionSelectDispatcher.get().optionsSelect(item.itemId) || super.onOptionsItemSelected(item)
+        return activityData.optionSelectDispatcher.optionsSelect(item.itemId) || super.onOptionsItemSelected(item)
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
         when (keyCode) {
             KeyEvent.KEYCODE_BACK -> {
-                if (systemKeyDispatcher.get().onKeyBack())
+                if (activityData.systemKeyDispatcher.onKeyBack())
                     return true
             }
             KeyEvent.KEYCODE_MENU -> {
-                if (systemKeyDispatcher.get().onKeyMenu())
+                if (activityData.systemKeyDispatcher.onKeyMenu())
                     return true
             }
             KeyEvent.KEYCODE_VOLUME_UP -> {
-                if (systemKeyDispatcher.get().onVolumeUp())
+                if (activityData.systemKeyDispatcher.onVolumeUp())
                     return true
             }
             KeyEvent.KEYCODE_VOLUME_DOWN -> {
-                if (systemKeyDispatcher.get().onVolumeDown())
+                if (activityData.systemKeyDispatcher.onVolumeDown())
                     return true
             }
         }

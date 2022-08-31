@@ -6,7 +6,7 @@ import android.os.Bundle
 class QuickAddActivity : MainActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        quickAddService.enableQuickAdd()
+        activityData.quickAddService.enableQuickAdd()
     }
 
     override fun onNewIntent(intent: Intent?) {

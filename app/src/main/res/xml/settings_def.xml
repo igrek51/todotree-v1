@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory android:title="General">
+        <SwitchPreference
+            android:key="lockDB"
+            android:title="lockDB"
+            android:summary="lockDB"
+            app:iconSpaceReserved="false" />
+        <EditTextPreference
+            android:key="userAuthToken"
+            android:title="userAuthToken"
+            android:summary="Set userAuthToken"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

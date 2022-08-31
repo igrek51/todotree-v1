@@ -1,0 +1,109 @@
+package igrek.todotree.inject
+
+import android.app.Activity
+import android.content.Context
+import androidx.appcompat.app.AppCompatActivity
+import igrek.todotree.MainApplication
+import igrek.todotree.activity.*
+import igrek.todotree.app.AppData
+import igrek.todotree.info.UiInfoService
+import igrek.todotree.info.logger.Logger
+import igrek.todotree.info.logger.LoggerFactory
+import igrek.todotree.layout.LayoutController
+import igrek.todotree.layout.navigation.NavigationMenuController
+import igrek.todotree.persistence.LocalDataService
+import igrek.todotree.persistence.user.UserDataDao
+import igrek.todotree.service.access.AccessLogService
+import igrek.todotree.service.access.DatabaseLock
+import igrek.todotree.service.access.QuickAddService
+import igrek.todotree.service.backup.BackupManager
+import igrek.todotree.service.clipboard.SystemClipboardManager
+import igrek.todotree.service.clipboard.TreeClipboardManager
+import igrek.todotree.service.commander.SecretCommander
+import igrek.todotree.service.filesystem.FilesystemService
+import igrek.todotree.service.history.ChangesHistory
+import igrek.todotree.service.history.LinkHistoryService
+import igrek.todotree.service.remote.RemoteDbRequester
+import igrek.todotree.service.remote.RemotePushService
+import igrek.todotree.service.statistics.StatisticsLogService
+import igrek.todotree.service.summary.DailySummaryService
+import igrek.todotree.service.summary.NotificationService
+import igrek.todotree.service.system.SoftKeyboardService
+import igrek.todotree.service.tree.*
+import igrek.todotree.service.tree.persistence.TreePersistenceService
+import igrek.todotree.settings.PreferencesState
+import igrek.todotree.settings.SettingsLayoutController
+import igrek.todotree.settings.SettingsService
+import igrek.todotree.system.*
+import igrek.todotree.system.filesystem.ExternalCardService
+import igrek.todotree.ui.ExplosionService
+import igrek.todotree.ui.GUI
+import okhttp3.OkHttpClient
+
+
+class AppFactory(
+    private var _context: Context?,
+) {
+
+    val context: LazyInject<Context> = SingletonInject { _context!! }
+    val activity: LazyInject<Activity?> = SingletonInject {
+        val mainApp = _context?.applicationContext as? MainApplication?
+        mainApp?.currentActivityListener?.currentActivity
+    }
+    val activityMust: LazyInject<Activity> = SingletonInject {
+        val mainApp: MainApplication = _context!!.applicationContext as MainApplication
+        mainApp.currentActivityListener.currentActivity!!
+    }
+    val appCompatActivity: LazyInject<AppCompatActivity?> = SingletonInject {
+        val mainApp = _context?.applicationContext as? MainApplication?
+        mainApp?.currentActivityListener?.currentActivity as AppCompatActivity?
+    }
+
+    val logger: LazyInject<Logger> = PrototypeInject { LoggerFactory.logger }
+
+    /* Services */
+    val activityData = SingletonInject { MainActivityData() }
+    val activityController = SingletonInject { ActivityController() }
+    val appInitializer = SingletonInject { AppInitializer() }
+    val systemKeyDispatcher = SingletonInject { SystemKeyDispatcher() }
+    val windowManagerService = SingletonInject { WindowManagerService() }
+    val uiInfoService = SingletonInject { UiInfoService() }
+    val settingsService = SingletonInject { SettingsService() }
+    val layoutController = SingletonInject { LayoutController() }
+    val softKeyboardService = SingletonInject { SoftKeyboardService() }
+    val navigationMenuController = SingletonInject { NavigationMenuController() }
+    val localDataService = SingletonInject { LocalDataService() }
+    val settingsLayoutController = SingletonInject { SettingsLayoutController() }
+    val preferencesState = SingletonInject { PreferencesState() }
+    val activityResultDispatcher = SingletonInject { ActivityResultDispatcher() }
+    val userDataDao = SingletonInject { UserDataDao() }
+    val appData = SingletonInject { AppData() }
+    val optionSelectDispatcher = SingletonInject { OptionSelectDispatcher() }
+    val permissionService = SingletonInject { PermissionService() }
+    val packageInfoService = SingletonInject { PackageInfoService() }
+    val okHttpClient = SingletonInject { OkHttpClient() }
+    val filesystemService = SingletonInject { FilesystemService() }
+    val treeManager = SingletonInject { TreeManager() }
+    val backupManager = SingletonInject { BackupManager() }
+    val treePersistenceService = SingletonInject { TreePersistenceService() }
+    val gui = SingletonInject { GUI() }
+    val systemClipboardManager = SingletonInject { SystemClipboardManager() }
+    val databaseLock = SingletonInject { DatabaseLock() }
+    val accessLogService = SingletonInject { AccessLogService() }
+    val changesHistory = SingletonInject { ChangesHistory() }
+    val contentTrimmer = SingletonInject { ContentTrimmer() }
+    val treeScrollCache = SingletonInject { TreeScrollCache() }
+    val treeClipboardManager = SingletonInject { TreeClipboardManager() }
+    val treeSelectionManager = SingletonInject { TreeSelectionManager() }
+    val treeMover = SingletonInject { TreeMover() }
+    val secretCommander = SingletonInject { SecretCommander() }
+    val statisticsLogService = SingletonInject { StatisticsLogService() }
+    val externalCardService = SingletonInject { ExternalCardService() }
+    val quickAddService = SingletonInject { QuickAddService() }
+    val linkHistoryService = SingletonInject { LinkHistoryService() }
+    val notificationService = SingletonInject { NotificationService() }
+    val dailySummaryService = SingletonInject { DailySummaryService() }
+    val remoteDbRequester = SingletonInject { RemoteDbRequester() }
+    val remotePushService = SingletonInject { RemotePushService() }
+    val explosionService = SingletonInject { ExplosionService() }
+}

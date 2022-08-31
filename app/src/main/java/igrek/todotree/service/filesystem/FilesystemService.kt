@@ -4,12 +4,16 @@ import android.content.Context
 import android.os.Environment
 import igrek.todotree.info.logger.Logger
 import igrek.todotree.info.logger.LoggerFactory
+import igrek.todotree.inject.LazyExtractor
+import igrek.todotree.inject.LazyInject
+import igrek.todotree.inject.appFactory
 import java.io.*
 import java.nio.charset.Charset
 
 open class FilesystemService(
-        private val context: Context,
+    context: LazyInject<Context> = appFactory.context,
 ) {
+    val context by LazyExtractor(context)
 
     private val logger: Logger = LoggerFactory.logger
 

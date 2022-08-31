@@ -1,6 +1,9 @@
 package igrek.todotree.service.backup
 
 import igrek.todotree.info.logger.LoggerFactory
+import igrek.todotree.inject.LazyExtractor
+import igrek.todotree.inject.LazyInject
+import igrek.todotree.inject.appFactory
 import igrek.todotree.service.filesystem.FilesystemService
 import igrek.todotree.service.filesystem.PathBuilder
 import java.io.File
@@ -9,7 +12,11 @@ import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
-class BackupManager(private val filesystem: FilesystemService) {
+class BackupManager(
+    filesystemService: LazyInject<FilesystemService> = appFactory.filesystemService,
+) {
+    private val filesystem by LazyExtractor(filesystemService)
+
     private val dateFormat = SimpleDateFormat("yyyy_MM_dd-HH_mm_ss", Locale.ENGLISH)
     private val logger = LoggerFactory.logger
 

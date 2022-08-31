@@ -10,7 +10,7 @@ import igrek.todotree.info.logger.LoggerFactory
 class MainApplication : Application() {
 
     private val logger = LoggerFactory.logger
-    private val currentActivityListener = CurrentActivityListener()
+    val currentActivityListener = CurrentActivityListener()
 
     override fun onCreate() {
         super.onCreate()

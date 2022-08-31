@@ -9,13 +9,18 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import igrek.todotree.R
 import igrek.todotree.domain.treeitem.AbstractTreeItem
+import igrek.todotree.inject.LazyInject
+import igrek.todotree.inject.appFactory
 import igrek.todotree.intent.ExitCommand
 import igrek.todotree.intent.NavigationCommand
 import igrek.todotree.ui.edititem.EditItemGUI
 import igrek.todotree.ui.errorcheck.SafeClickListener
 import igrek.todotree.ui.treelist.TreeListView
 
-open class GUI(activity: AppCompatActivity?) : BaseGUI(activity) {
+open class GUI(
+    appCompatActivity: LazyInject<AppCompatActivity?> = appFactory.appCompatActivity,
+) : BaseGUI(appCompatActivity.get()!!) {
+
     private var actionBar: ActionBar? = null
     private var itemsListView: TreeListView? = null
     private var editItemGUI: EditItemGUI? = null

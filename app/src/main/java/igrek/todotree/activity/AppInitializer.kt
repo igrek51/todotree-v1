@@ -2,59 +2,78 @@ package igrek.todotree.activity
 
 import android.app.Activity
 import android.view.WindowManager
-import androidx.appcompat.app.AppCompatActivity
-import dagger.Lazy
 import igrek.todotree.BuildConfig
-import igrek.todotree.dagger.DaggerIoc
 import igrek.todotree.info.logger.LoggerFactory
+import igrek.todotree.inject.LazyExtractor
+import igrek.todotree.inject.LazyInject
+import igrek.todotree.inject.appFactory
 import igrek.todotree.intent.GUICommand
 import igrek.todotree.intent.PersistenceCommand
+import igrek.todotree.layout.LayoutController
+import igrek.todotree.layout.MainLayout
+import igrek.todotree.layout.screen.HomeLayoutController
+import igrek.todotree.persistence.user.UserDataDao
 import igrek.todotree.system.WindowManagerService
 import igrek.todotree.ui.ExplosionService
-import javax.inject.Inject
+import kotlinx.coroutines.*
+import kotlin.reflect.KClass
 
 
-class AppInitializer {
-
-    @Inject
-    lateinit var windowManagerService: Lazy<WindowManagerService>
-
-    @Inject
-    lateinit var activity: Lazy<Activity>
-
-    @Inject
-    lateinit var explosionService: Lazy<ExplosionService>
+class AppInitializer(
+    windowManagerService: LazyInject<WindowManagerService> = appFactory.windowManagerService,
+    layoutController: LazyInject<LayoutController> = appFactory.layoutController,
+    activityController: LazyInject<ActivityController> = appFactory.activityController,
+    userDataDao: LazyInject<UserDataDao> = appFactory.userDataDao,
+    explosionService: LazyInject<ExplosionService> = appFactory.explosionService,
+    private val activity: LazyInject<Activity?> = appFactory.activity,
+) {
+    private val windowManagerService by LazyExtractor(windowManagerService)
+    private val layoutController by LazyExtractor(layoutController)
+    private val activityController by LazyExtractor(activityController)
+    private val userDataDao by LazyExtractor(userDataDao)
+    private val explosionService by LazyExtractor(explosionService)
 
     private val logger = LoggerFactory.logger
+    private val startingScreen: KClass<out MainLayout> = HomeLayoutController::class
+    private val debugInitEnabled = false
 
-    init {
-        DaggerIoc.factoryComponent.inject(this)
-    }
-
+    @OptIn(DelicateCoroutinesApi::class)
     fun init() {
-        if (BuildConfig.DEBUG) {
+        if (debugInitEnabled && BuildConfig.DEBUG) {
             debugInit()
         }
 
-        activity.get().window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
+        logger.info("Initializing application...")
 
-        //hide task bar
-        if (activity is AppCompatActivity) {
-            val appCompatActivity: AppCompatActivity = activity as AppCompatActivity
-            appCompatActivity.supportActionBar?.hide()
+
+        GlobalScope.launch {
+            withContext(Dispatchers.Main) {
+
+                userDataDao // load
+                layoutController.init()
+                windowManagerService.hideTaskbar()
+
+                layoutController.showLayout(startingScreen).join()
+
+                activity.get()?.window?.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
+
+                GUICommand().guiInit()
+                PersistenceCommand().loadRootTree()
+                GUICommand().showItemsList()
+                explosionService.init()
+
+                activityController.initialized = true
+            }
+
+            logger.info("Application has been initialized.")
         }
 
-        GUICommand().guiInit()
-        PersistenceCommand().loadRootTree()
-        GUICommand().showItemsList()
-        explosionService.get().init()
 
-        logger.info("Application has been initialized.")
     }
 
     private fun debugInit() {
         // Allow showing the activity even if the device is locked
-        windowManagerService.get().showAppWhenLocked()
+        windowManagerService.showAppWhenLocked()
     }
 
 }

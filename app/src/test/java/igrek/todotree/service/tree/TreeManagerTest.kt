@@ -1,19 +1,24 @@
 package igrek.todotree.service.tree
 
-import igrek.todotree.dagger.base.BaseDaggerTest
 import igrek.todotree.domain.treeitem.LinkTreeItem
 import igrek.todotree.domain.treeitem.RootTreeItem
 import igrek.todotree.domain.treeitem.TextTreeItem
 import igrek.todotree.intent.ClipboardCommand
 import igrek.todotree.intent.TreeCommand
+import igrek.todotree.service.access.DatabaseLock
+import igrek.todotree.service.tree.persistence.TreePersistenceService
 import org.junit.Assert
 import org.junit.Test
 import java.util.*
 
-class TreeManagerTest : BaseDaggerTest() {
+class TreeManagerTest {
 
     @Test
     fun testLinkPasting() {
+        val treeManager = TreeManager()
+        val persistenceService = TreePersistenceService()
+        val dbLock = DatabaseLock()
+
         // build db tree
         val itemR = RootTreeItem()
         val itemRa = TextTreeItem(null, "a")

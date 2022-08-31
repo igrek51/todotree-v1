@@ -8,14 +8,14 @@ open class Logger internal constructor() {
         log(message, LogLevel.ERROR, "[ERROR] ")
     }
 
-    fun error(ex: Throwable) {
-        log("[${ex.javaClass.name}] ${ex.message}", LogLevel.ERROR, "[ERROR] ")
-        printExceptionStackTrace(ex)
+    fun error(t: Throwable) {
+        log("[${t.javaClass.name}] ${t.message}", LogLevel.ERROR, "[ERROR] ")
+        printExceptionStackTrace(t)
     }
 
     fun error(message: String?, t: Throwable) {
-        val msg = "$message: ${t.message}"
-        log(msg, LogLevel.ERROR, "[ERROR] ")
+        log("$message: ${t.message}", LogLevel.ERROR, "[ERROR] ")
+        printExceptionStackTrace(t)
     }
 
     open fun fatal(ex: Throwable) {
@@ -60,7 +60,7 @@ open class Logger internal constructor() {
             val consoleMessage: String
             consoleMessage = if (level.lessOrEqualImportant(LoggerFactory.SHOW_TRACE_DETAILS_LEVEL)) {
                 val externalTrace = getFirstExternalTrace(Thread.currentThread()
-                        .stackTrace)
+                    .stackTrace)
 
                 val fileName = externalTrace.fileName
                 val lineNumber = externalTrace.lineNumber
@@ -76,7 +76,6 @@ open class Logger internal constructor() {
                 level.moreOrEqualImportant(LogLevel.INFO) -> printInfo(consoleMessage)
                 else -> printDebug(consoleMessage)
             }
-
         }
     }
 
@@ -143,7 +142,6 @@ open class Logger internal constructor() {
     }
 
     companion object {
-
         private var lastTagKey = 0
 
         /**
@@ -152,7 +150,7 @@ open class Logger internal constructor() {
          */
         @Synchronized
         private fun incrementTagKey(): Int {
-            lastTagKey = (lastTagKey + 1) % 5
+            lastTagKey = (lastTagKey + 1) % 4
             return lastTagKey
         }
 
