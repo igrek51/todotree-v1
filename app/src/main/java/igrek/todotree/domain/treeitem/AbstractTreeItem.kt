@@ -42,7 +42,7 @@ abstract class AbstractTreeItem(parent: AbstractTreeItem?) {
 
     fun getChild(index: Int): AbstractTreeItem {
         if (index < 0) throw IndexOutOfBoundsException("index < 0")
-        if (index >= _children.size) throw IndexOutOfBoundsException("index > size = " + _children.size)
+        if (index >= _children.size) throw IndexOutOfBoundsException("index > items size (${_children.size})")
         return _children[index]
     }
 

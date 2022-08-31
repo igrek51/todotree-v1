@@ -7,18 +7,22 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.RelativeLayout
 import androidx.appcompat.app.AppCompatActivity
 
-abstract class BaseGUI internal constructor(protected var activity: AppCompatActivity) {
+abstract class BaseGUI internal constructor(
+    protected var activity: AppCompatActivity?,
+) {
+
     private val imm: InputMethodManager?
     var mainContent: RelativeLayout? = null
+
     fun setMainContentLayout(layoutResource: Int): View {
-        mainContent!!.removeAllViews()
-        val inflater = activity.layoutInflater
+        mainContent?.removeAllViews()
+        val inflater = activity!!.layoutInflater
         val layout = inflater.inflate(layoutResource, null)
         layout.layoutParams = ViewGroup.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.MATCH_PARENT
         )
-        mainContent!!.addView(layout)
+        mainContent?.addView(layout)
         return layout
     }
 
@@ -31,6 +35,6 @@ abstract class BaseGUI internal constructor(protected var activity: AppCompatAct
     }
 
     init {
-        imm = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
     }
 }

@@ -1,13 +1,10 @@
 package igrek.todotree.service.filesystem
 
-import igrek.todotree.service.filesystem.FirstFinder.find
-import igrek.todotree.service.filesystem.FirstFinder.addRule
 import org.assertj.core.api.Java6Assertions
-import igrek.todotree.service.filesystem.FirstFinder
-import igrek.todotree.service.filesystem.FirstFinder.BooleanCondition
 import org.junit.Test
 
 class FirstFinderTest {
+
     @Test
     fun testEmptyRules() {
         Java6Assertions.assertThat(FirstFinder<Any?>().find()).isNull()

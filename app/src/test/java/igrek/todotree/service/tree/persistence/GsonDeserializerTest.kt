@@ -1,15 +1,13 @@
 package igrek.todotree.service.tree.persistence
 
-import igrek.todotree.service.tree.persistence.GsonTreeDeserializer.deserializeTree
-import igrek.todotree.domain.treeitem.AbstractTreeItem.toString
-import igrek.todotree.service.tree.persistence.GsonTreeDeserializer
-import org.junit.Before
-import igrek.todotree.domain.treeitem.AbstractTreeItem
 import org.junit.Assert
+import org.junit.Before
 import org.junit.Test
 
 class GsonDeserializerTest {
+
     private var deserializer: GsonTreeDeserializer? = null
+
     @Before
     fun init() {
         deserializer = GsonTreeDeserializer()
@@ -39,12 +37,6 @@ class GsonDeserializerTest {
 	{ "type": "text", "name": "dupa" },
 ]},"""
         assertValidDeserialize(input)
-    }
-
-    @Test
-    fun testOptionalLinkName() {
-        // TODO throw away TreeCommand from LinkTreeItem
-        //assertValidDeserialize("{ \"type\": \"link\", \"target\": \"Quests\tDupa\" },");
     }
 
     private fun assertValidDeserialize(input: String) {

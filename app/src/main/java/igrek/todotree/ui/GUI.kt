@@ -20,24 +20,27 @@ import igrek.todotree.ui.treelist.TreeListView
 
 open class GUI(
     appCompatActivity: LazyInject<AppCompatActivity?> = appFactory.appCompatActivity,
-) : BaseGUI(appCompatActivity.get()!!) {
+) : BaseGUI(appCompatActivity.get()) {
 
     private var actionBar: ActionBar? = null
     private var itemsListView: TreeListView? = null
     private var editItemGUI: EditItemGUI? = null
 
     fun lazyInit() {
-        //toolbar
-        val toolbar1 = activity.findViewById<Toolbar>(R.id.toolbar1)
-        activity.setSupportActionBar(toolbar1)
-        actionBar = activity.supportActionBar
-        showBackButton(true)
-        toolbar1.setNavigationOnClickListener(SafeClickListener {
-            NavigationCommand().backClicked()
-        })
-        val save2Button = activity.findViewById<ImageButton>(R.id.save2Button)
-        save2Button.setOnClickListener { ExitCommand().optionSaveAndExit() }
-        mainContent = activity.findViewById(R.id.mainContent)
+        activity?.let { activity ->
+            activity.findViewById<Toolbar>(R.id.toolbar1)?.let { toolbar ->
+                activity.setSupportActionBar(toolbar)
+                actionBar = activity.supportActionBar
+                showBackButton(true)
+                toolbar.setNavigationOnClickListener(SafeClickListener {
+                    NavigationCommand().backClicked()
+                })
+            }
+            activity.findViewById<ImageButton>(R.id.save2Button)?.let { save2Button ->
+                save2Button.setOnClickListener { ExitCommand().optionSaveAndExit() }
+            }
+            mainContent = activity.findViewById(R.id.mainContent)
+        }
     }
 
     private fun showBackButton(show: Boolean) {
@@ -57,7 +60,6 @@ open class GUI(
 
     open fun showEditItemPanel(item: AbstractTreeItem?, parent: AbstractTreeItem) {
         showBackButton(true)
-        // TODO redirect to dedicated views
         editItemGUI = EditItemGUI(this, item, parent)
     }
 
@@ -69,7 +71,6 @@ open class GUI(
         var items = _items
         if (items == null) items = currentItem.getChildren()
 
-        //tytuł gałęzi
         val sb = StringBuilder(currentItem.displayName)
         if (!currentItem.isEmpty) {
             sb.append(" [")
@@ -78,15 +79,13 @@ open class GUI(
         }
         setTitle(sb.toString())
 
-        // back button visiblity
         showBackButton(currentItem.getParent() != null)
 
-        //lista elementów
-        itemsListView!!.setItemsAndSelected(items, selectedPositions)
+        itemsListView?.setItemsAndSelected(items, selectedPositions)
     }
 
     open fun scrollToItem(itemIndex: Int) {
-        itemsListView!!.scrollToItem(itemIndex)
+        itemsListView?.scrollToItem(itemIndex)
     }
 
     open fun scrollToItem(y: Int?, itemIndex: Int) {
@@ -111,11 +110,11 @@ open class GUI(
     }
 
     open fun setTitle(title: String?) {
-        actionBar!!.title = title
+        actionBar?.title = title
     }
 
     open val currentScrollPos: Int?
-        get() = itemsListView!!.currentScrollPosition
+        get() = itemsListView?.currentScrollPosition
 
     open fun requestSaveEditedItem() {
         editItemGUI!!.requestSaveEditedItem()
@@ -123,19 +122,19 @@ open class GUI(
 
     @SuppressLint("SourceLockedOrientationActivity")
     open fun rotateScreen() {
-        val orientation = activity.resources.configuration.orientation
+        val orientation = activity?.resources?.configuration?.orientation
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+            activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         } else if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-            activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+            activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
         }
     }
 
     @SuppressLint("SourceLockedOrientationActivity")
     private fun setOrientationPortrait() {
-        val orientation = activity.resources.configuration.orientation
+        val orientation = activity?.resources?.configuration?.orientation
         if (orientation != Configuration.ORIENTATION_PORTRAIT) {
-            activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+            activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
     }
 

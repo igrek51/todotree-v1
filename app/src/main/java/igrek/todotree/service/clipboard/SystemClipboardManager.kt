@@ -8,12 +8,12 @@ import igrek.todotree.inject.LazyExtractor
 import igrek.todotree.inject.LazyInject
 import igrek.todotree.inject.appFactory
 
-class SystemClipboardManager (
+open class SystemClipboardManager (
     activity: LazyInject<Activity> = appFactory.activityMust,
 ) {
     private val activity by LazyExtractor(activity)
 
-    fun copyToSystemClipboard(text: String?) {
+    open fun copyToSystemClipboard(text: String?) {
         val clipboard = activity.getSystemService(Activity.CLIPBOARD_SERVICE) as ClipboardManager
         val clip = ClipData.newPlainText("Copied Text", text)
         clipboard.setPrimaryClip(clip)

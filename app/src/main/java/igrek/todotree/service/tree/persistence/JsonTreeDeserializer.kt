@@ -6,21 +6,21 @@ import java.util.regex.Pattern
 
 internal class JsonTreeDeserializer {
 
-    private val singleItemPattern: Pattern
-    private val multiItemPattern: Pattern
-    private val nameValuePattern: Pattern
+    private val singleItemPattern: Pattern = Pattern.compile("^\\{ \"type\": \"([\\w/]+)\"(, \"(\\w+)\": \"((?:[^\"\\\\]|\\\\.)*)\")* \\},$")
+    private val multiItemPattern: Pattern = Pattern.compile("^\\{ \"type\": \"([\\w/]+)\"(, \"(\\w+)\": \"((?:[^\"\\\\]|\\\\.)*)\")*, \"items\": \\[$")
+    private val nameValuePattern: Pattern = Pattern.compile("\"(\\w+)\": \"((?:[^\"\\\\]|\\\\.)*)\"")
     private val BLOCK_CLOSING_BRACKET = "]},"
 
     @Throws(DeserializationFailedException::class)
     fun deserializeTree(data: String): AbstractTreeItem {
         val rootItem = RootTreeItem()
         if (data.isEmpty()) throw DeserializationFailedException("empty data")
-        val lines = data.split("\\n").toTypedArray()
+        val lines = data.split("\n").toTypedArray()
         val linesList: MutableList<IndentedLine> = ArrayList()
         //trim whitespaces and indents
         for (unindentedLine in lines) {
             val line = IndentedLine(unindentedLine)
-            if (!line.indentedLine.isEmpty()) {
+            if (line.indentedLine.isNotEmpty()) {
                 linesList.add(line)
             }
         }
@@ -184,11 +184,4 @@ internal class JsonTreeDeserializer {
         throw DeserializationFailedException("No matching closing bracket found")
     }
 
-    init {
-        singleItemPattern =
-            Pattern.compile("^\\{ \"type\": \"([\\w/]+)\"(, \"(\\w+)\": \"((?:[^\"\\\\]|\\\\.)*)\")* \\},$")
-        multiItemPattern =
-            Pattern.compile("^\\{ \"type\": \"([\\w/]+)\"(, \"(\\w+)\": \"((?:[^\"\\\\]|\\\\.)*)\")*, \"items\": \\[$")
-        nameValuePattern = Pattern.compile("\"(\\w+)\": \"((?:[^\"\\\\]|\\\\.)*)\"")
-    }
 }

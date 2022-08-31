@@ -15,12 +15,12 @@ import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
 @SuppressLint("CheckResult")
-class UserDataDao(
+open class UserDataDao(
     localDataService: LazyInject<LocalDataService> = appFactory.localDataService,
 ) {
     internal val localDataService by LazyExtractor(localDataService)
 
-    var preferencesDao: PreferencesDao by LazyDaoLoader { path -> PreferencesDao(path) }
+    open var preferencesDao: PreferencesDao by LazyDaoLoader { path -> PreferencesDao(path) }
 
     private var saveRequestSubject: PublishSubject<Boolean> = PublishSubject.create()
     private val logger = LoggerFactory.logger
@@ -36,7 +36,7 @@ class UserDataDao(
         load()
     }
 
-    private fun load() {
+    protected open fun load() {
         val path = localDataService.appFilesDir.absolutePath
 
         preferencesDao = PreferencesDao(path)
@@ -45,7 +45,7 @@ class UserDataDao(
     }
 
     @Synchronized
-    fun save() {
+    protected open fun save() {
         preferencesDao.save()
         logger.info("user data saved")
     }

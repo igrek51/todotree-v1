@@ -7,7 +7,7 @@ import igrek.todotree.inject.appFactory
 import igrek.todotree.persistence.user.UserDataDao
 import kotlin.collections.set
 
-class SettingsService(
+open class SettingsService(
     userDataDao: LazyInject<UserDataDao> = appFactory.userDataDao,
 ) {
     private val userDataDao by LazyExtractor(userDataDao)
@@ -19,7 +19,7 @@ class SettingsService(
         loadAll()
     }
 
-    private fun loadAll() {
+    protected open fun loadAll() {
         entityValues = HashMap(readEntities())
         applyDefaults()
     }
