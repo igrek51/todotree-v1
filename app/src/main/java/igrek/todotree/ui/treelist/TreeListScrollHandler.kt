@@ -5,6 +5,7 @@ import android.os.Handler
 import android.os.Looper
 import android.widget.AbsListView
 import igrek.todotree.info.logger.LoggerFactory
+import kotlin.math.pow
 
 class TreeListScrollHandler(
     private val listView: TreeListView,
@@ -21,8 +22,8 @@ class TreeListScrollHandler(
         get() = realScrollPosition
 
     companion object {
-        private const val SMOOTH_SCROLL_EDGE_DP = 0.25f
-        private const val SMOOTH_SCROLL_DISTANCE = 110f
+        private const val SMOOTH_SCROLL_EDGE_DP = 0.15f
+        private const val SMOOTH_SCROLL_SPEED = 90f
         private const val SMOOTH_SCROLL_DURATION = 10
     }
 
@@ -38,14 +39,14 @@ class TreeListScrollHandler(
                     val hoverViewTop = reorder.hoverBitmapBounds!!.top
                     val hoverHeight = reorder.hoverBitmapBounds!!.height()
                     if (hoverViewTop <= smoothScrollEdgePx && offset > 0) {
-                        val edgeCoverage = (hoverViewTop - smoothScrollEdgePx) / smoothScrollEdgePx
-                        val scrollDistance = (edgeCoverage * SMOOTH_SCROLL_DISTANCE).toInt()
-                        listView.smoothScrollBy(scrollDistance, SMOOTH_SCROLL_DURATION)
+                        val edgeCoverage = (smoothScrollEdgePx - hoverViewTop) / smoothScrollEdgePx
+                        val scrollDistance = (edgeCoverage.pow(3) * SMOOTH_SCROLL_SPEED).toInt()
+                        listView.smoothScrollBy(-scrollDistance, SMOOTH_SCROLL_DURATION)
                         return true
                     }
                     if (hoverViewTop + hoverHeight >= height - smoothScrollEdgePx && offset + extent < range) {
                         val edgeCoverage = (hoverViewTop + hoverHeight - height + smoothScrollEdgePx) / smoothScrollEdgePx
-                        val scrollDistance = (edgeCoverage * SMOOTH_SCROLL_DISTANCE).toInt()
+                        val scrollDistance = (edgeCoverage.pow(3) * SMOOTH_SCROLL_SPEED).toInt()
                         listView.smoothScrollBy(scrollDistance, SMOOTH_SCROLL_DURATION)
                         return true
                     }
