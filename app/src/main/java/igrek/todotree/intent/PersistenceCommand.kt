@@ -2,6 +2,7 @@ package igrek.todotree.intent
 
 import igrek.todotree.exceptions.DeserializationFailedException
 import igrek.todotree.info.UiInfoService
+import igrek.todotree.info.errorcheck.SafeExecutor
 import igrek.todotree.info.logger.LoggerFactory
 import igrek.todotree.inject.LazyExtractor
 import igrek.todotree.inject.LazyInject
@@ -37,14 +38,16 @@ class PersistenceCommand(
     private val logger = LoggerFactory.logger
 
     fun optionReload() {
-        treeManager.reset()
-        treeScrollCache.clear()
-        loadRootTree()
+        SafeExecutor {
+            treeManager.reset()
+            treeScrollCache.clear()
+            loadDbFromFile(dbFile())
+            uiInfoService.showInfo("Database loaded.")
+        }
         GUICommand().updateItemsList()
-        uiInfoService.showInfo("Database loaded.")
     }
 
-    fun optionSave() {
+    fun saveDatabaseUi() {
         val saved = saveDatabase()
         if (saved)
             uiInfoService.showInfo("Database saved.")
@@ -62,7 +65,9 @@ class PersistenceCommand(
     }
 
     fun loadRootTree() {
-        loadDbFromFile(dbFile())
+        SafeExecutor {
+            loadDbFromFile(dbFile())
+        }
     }
 
     private fun dbFile(): File {
@@ -75,44 +80,60 @@ class PersistenceCommand(
     }
 
     fun loadRootTreeFromBackup(backup: Backup) {
-        treeManager.reset()
-        treeScrollCache.clear()
-        val backupDir = filesystemService.appDataSubDir("backup")
-        val path = backupDir.resolve(backup.filename)
-        loadDbFromFile(path)
-        changesHistory.registerChange()
+        SafeExecutor {
+            treeManager.reset()
+            treeScrollCache.clear()
+            val backupDir = filesystemService.appDataSubDir("backup")
+            val path = backupDir.resolve(backup.filename)
+            loadDbFromFile(path)
+            changesHistory.registerChange()
+            uiInfoService.showInfo("Database backup loaded: " + backup.filename)
+        }
         GUICommand().updateItemsList()
     }
 
-    fun loadRootTreeFromImportedFile(dbFile: File) {
-        treeManager.reset()
-        treeScrollCache.clear()
-        loadDbFromFile(dbFile)
-        changesHistory.registerChange()
+    fun loadRootTreeFromImportedFile(fileContent: String, filename: String) {
+        SafeExecutor {
+            treeManager.reset()
+            treeScrollCache.clear()
+            loadDbFromFileContent(fileContent)
+            changesHistory.registerChange()
+            uiInfoService.showInfo("Database imported from $filename")
+        }
         GUICommand().updateItemsList()
-        uiInfoService.showInfo("Database imported from $dbFile")
     }
 
     private fun loadDbFromFile(dbFile: File) {
         changesHistory.clear()
-        logger.info("Loading database from file: $dbFile")
+        logger.debug("Loading database from file: $dbFile")
         if (!dbFile.exists()) {
-            uiInfoService.showInfo("Database file does not exist. Default empty database loaded.")
-            return
+            throw RuntimeException("Database file does not exist: $dbFile. Default empty database loaded.")
         }
         try {
             val fileContent = filesystemService.openFileString(dbFile.absolutePath)
             val rootItem = treePersistenceService.deserializeTree(fileContent)
             treeManager.rootItem = rootItem
-            logger.info("Database loaded.")
+            logger.info("Database loaded from file: $dbFile")
         } catch (e: IOException) {
             changesHistory.registerChange()
-            logger.error(e)
-            uiInfoService.showInfo("Failed to load database: " + e.message)
+            throw RuntimeException("Failed to load database: " + e.message)
         } catch (e: DeserializationFailedException) {
             changesHistory.registerChange()
-            logger.error(e)
-            uiInfoService.showInfo("Failed to load database: " + e.message)
+            throw RuntimeException("Failed to load database: " + e.message)
+        }
+    }
+
+    private fun loadDbFromFileContent(fileContent: String) {
+        changesHistory.clear()
+        try {
+            val rootItem = treePersistenceService.deserializeTree(fileContent)
+            treeManager.rootItem = rootItem
+        } catch (e: IOException) {
+            changesHistory.registerChange()
+            throw RuntimeException("Failed to load database: " + e.message)
+        } catch (e: DeserializationFailedException) {
+            changesHistory.registerChange()
+            throw RuntimeException("Failed to load database: " + e.message)
         }
     }
 
@@ -120,9 +141,11 @@ class PersistenceCommand(
         try {
             val output = treePersistenceService.serializeTree(treeManager.rootItem)
             val dbFilePath = dbFile().absolutePath
+            val dbCopyFilePath = dbCopyFile().absolutePath
             filesystemService.saveFile(dbFilePath, output)
-            filesystemService.saveFile(dbCopyFile().absolutePath, output)
-            logger.debug("Database saved successfully to $dbFilePath")
+            logger.info("Database saved to $dbFilePath")
+            filesystemService.saveFile(dbCopyFilePath, output)
+            logger.debug("Database copy saved to $dbCopyFilePath")
         } catch (e: IOException) {
             logger.error(e)
         }

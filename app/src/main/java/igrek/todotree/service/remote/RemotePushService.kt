@@ -2,6 +2,7 @@ package igrek.todotree.service.remote
 
 import android.app.Activity
 import android.os.Handler
+import android.os.Looper
 import android.view.WindowManager
 import igrek.todotree.domain.treeitem.RemoteTreeItem
 import igrek.todotree.domain.treeitem.TextTreeItem
@@ -35,7 +36,7 @@ class RemotePushService(
 
     private fun showKeyboard() {
         gui.get().forceKeyboardShow()
-        Handler().postDelayed({ gui.get().forceKeyboardShow() }, 300)
+        Handler(Looper.getMainLooper()).postDelayed({ gui.get().forceKeyboardShow() }, 300)
     }
 
     private fun showOnLockScreen() {

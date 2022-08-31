@@ -1,6 +1,7 @@
 package igrek.todotree.ui.edititem
 
 import android.os.Handler
+import android.os.Looper
 import android.text.InputType
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -158,7 +159,7 @@ class EditItemGUI(
     }
 
     fun forceKeyboardShow() {
-        Handler().post { showAlphanumKeyboard() }
+        Handler(Looper.getMainLooper()).post { showAlphanumKeyboard() }
     }
 
     private fun quickCursorMove(direction: Int) {
@@ -166,7 +167,7 @@ class EditItemGUI(
             etEditItem!!.requestFocus()
             etEditItem!!.selectAll()
             etEditItem!!.setSelection(0)
-            Handler().post { etEditItem!!.setSelection(0) }
+            Handler(Looper.getMainLooper()).post { etEditItem!!.setSelection(0) }
         } else if (direction == +2) {
             etEditItem!!.setSelection(etEditItem!!.text!!.length)
         } else if (direction == -1 || direction == +1) {
@@ -193,7 +194,7 @@ class EditItemGUI(
     private fun quickEditSelectAll() {
         etEditItem!!.requestFocus()
         etEditItem!!.selectAll()
-        Handler().post { etEditItem!!.selectAll() }
+        Handler(Looper.getMainLooper()).post { etEditItem!!.selectAll() }
     }
 
     fun quickInsertRange() {

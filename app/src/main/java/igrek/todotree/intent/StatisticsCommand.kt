@@ -23,13 +23,23 @@ class StatisticsCommand(
     private val activity by LazyExtractor(activity)
 
     private val logger = LoggerFactory.logger
+
+    companion object {
+        private const val keepStatisticsRegistry = false
+        private val displayDateFormat = SimpleDateFormat("HH:mm:ss, dd.MM.yyyy", Locale.ENGLISH)
+    }
+
     fun onTaskCreated(item: AbstractTreeItem) {
+        if (!keepStatisticsRegistry)
+            return
         if (item is TextTreeItem) {
             statisticsLogService.logTaskCreate(item.displayName)
         }
     }
 
     fun onTaskRemoved(item: AbstractTreeItem) {
+        if (!keepStatisticsRegistry)
+            return
         if (item is TextTreeItem) {
             // log item and its children
             statisticsLogService.logTaskComplete(item.displayName)
@@ -102,7 +112,4 @@ class StatisticsCommand(
         }
     }
 
-    companion object {
-        private val displayDateFormat = SimpleDateFormat("HH:mm:ss, dd.MM.yyyy", Locale.ENGLISH)
-    }
 }

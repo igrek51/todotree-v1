@@ -1,6 +1,7 @@
 package igrek.todotree.intent
 
 import android.os.Handler
+import android.os.Looper
 import igrek.todotree.activity.ActivityController
 import igrek.todotree.app.AppData
 import igrek.todotree.app.AppState
@@ -32,8 +33,8 @@ class ExitCommand(
 
     fun saveAndExitRequested() {
         // show exit screen and wait for rendered
-        gui.showExitScreen()
-        Handler().post { quickSaveAndExit() }
+//        gui.showExitScreen()
+        Handler(Looper.getMainLooper()).post { quickSaveAndExit() }
     }
 
     fun optionSaveAndExit() {
@@ -43,17 +44,18 @@ class ExitCommand(
         saveAndExitRequested()
     }
 
-    fun exitApp() {
+    fun exitDiscardingChanges() {
+        activityController.exitingDiscardingChanges = true
         activityController.quit()
     }
 
     private fun saveAndExit() {
         PersistenceCommand().saveDatabase()
-        exitApp()
+        exitDiscardingChanges()
     }
 
     fun quickSaveAndExit() {
-        Handler().post { postQuickSave() }
+        Handler(Looper.getMainLooper()).post { postQuickSave() }
         activityController.minimize()
         logger.info("Quick exiting...")
     }
@@ -65,6 +67,6 @@ class ExitCommand(
         val shouldBeLocked = settingsState.lockDB
         lock.isLocked = shouldBeLocked
         GUICommand().showItemsList()
-        logger.debug("Quick exiting done")
+        logger.debug("Quick exit done")
     }
 }

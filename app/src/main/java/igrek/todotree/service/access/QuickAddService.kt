@@ -2,6 +2,7 @@ package igrek.todotree.service.access
 
 import android.app.Activity
 import android.os.Handler
+import android.os.Looper
 import android.view.WindowManager
 import igrek.todotree.activity.ActivityController
 import igrek.todotree.info.UiInfoService
@@ -33,7 +34,7 @@ class QuickAddService(
 
     private fun showKeyboard() {
         gui.get().forceKeyboardShow()
-        Handler().postDelayed({ gui.get().forceKeyboardShow() }, 300)
+        Handler(Looper.getMainLooper()).postDelayed({ gui.get().forceKeyboardShow() }, 300)
     }
 
     private fun showOnLockScreen() {

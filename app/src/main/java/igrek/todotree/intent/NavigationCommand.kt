@@ -33,7 +33,7 @@ class NavigationCommand(
                 return true
             }
             R.id.action_exit_without_saving -> {
-                ExitCommand().exitApp()
+                ExitCommand().exitDiscardingChanges()
                 return true
             }
             R.id.action_save_exit -> {
@@ -41,7 +41,7 @@ class NavigationCommand(
                 return true
             }
             R.id.action_save -> {
-                PersistenceCommand().optionSave()
+                PersistenceCommand().saveDatabaseUi()
                 return true
             }
             R.id.action_reload -> {

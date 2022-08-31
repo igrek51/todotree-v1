@@ -41,7 +41,7 @@ open class MainActivity(
 
     override fun onNewIntent(intent: Intent?) {
         stdNewIntent(intent)
-        logger.debug("new intent received")
+        logger.debug("new intent received: ${intent?.data}")
         if (activityData.quickAddService.isQuickAddModeEnabled) {
             activityData.quickAddService.isQuickAddModeEnabled = false
             logger.debug("recreating activity")

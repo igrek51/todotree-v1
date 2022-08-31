@@ -13,6 +13,7 @@ import igrek.todotree.activity.ActivityResultDispatcher
 import igrek.todotree.info.UiInfoService
 import igrek.todotree.info.errorcheck.SafeExecutor
 import igrek.todotree.info.errorcheck.UiErrorHandler
+import igrek.todotree.info.logger.LoggerFactory.logger
 import igrek.todotree.inject.LazyExtractor
 import igrek.todotree.inject.LazyInject
 import igrek.todotree.inject.appFactory
@@ -102,16 +103,14 @@ class DatabaseImportFileChooser (
                         return@SafeExecutor
                     }
 
-                    val file = File(filename)
-                    PersistenceCommand().loadRootTreeFromImportedFile(file)
+                    val fileContent: String = inputStream.bufferedReader().use { it.readText() }
+
+                    logger.info("Loading database from file: ${selectedUri.path}")
+
+                    PersistenceCommand().loadRootTreeFromImportedFile(fileContent, filename)
                 }
             }
         }
-    }
-
-    @Throws(IOException::class)
-    private fun convert(inputStream: InputStream, charset: Charset): String {
-        return CharStreams.toString(InputStreamReader(inputStream, charset))
     }
 
     @SuppressLint("Range")

@@ -75,7 +75,7 @@ class StatisticsLogService(
     /**
      * removes old logs
      */
-    fun cleanUpLogs() {
+    private fun cleanUpLogs() {
         val logsDirPath = getLogsDir()
         val logs: List<String> = filesystemService.listDirFilenames(logsDirPath)
         // minimal keeping date = today minus keepDays

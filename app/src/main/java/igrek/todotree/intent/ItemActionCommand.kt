@@ -1,6 +1,7 @@
 package igrek.todotree.intent
 
 import android.os.Handler
+import android.os.Looper
 import igrek.todotree.domain.treeitem.LinkTreeItem
 import igrek.todotree.info.UiInfoService
 import igrek.todotree.info.logger.LoggerFactory.logger
@@ -35,7 +36,7 @@ class ItemActionCommand(
 
     fun actionAddAbove(position: Int) {
         //delayed execution due to not showing keyboard
-        Handler().post { ItemEditorCommand().addItemHereClicked(position) }
+        Handler(Looper.getMainLooper()).post { ItemEditorCommand().addItemHereClicked(position) }
     }
 
     fun actionCopy(position: Int) {
@@ -48,11 +49,11 @@ class ItemActionCommand(
     }
 
     fun actionPasteAbove(position: Int) {
-        Handler().post { ClipboardCommand().pasteItems(position) }
+        Handler(Looper.getMainLooper()).post { ClipboardCommand().pasteItems(position) }
     }
 
     fun actionPasteAboveAsLink(position: Int) {
-        Handler().post { ClipboardCommand().pasteItemsAsLink(position) }
+        Handler(Looper.getMainLooper()).post { ClipboardCommand().pasteItemsAsLink(position) }
     }
 
     fun actionCut(position: Int) {
@@ -83,7 +84,7 @@ class ItemActionCommand(
 
     fun actionEdit(position: Int) {
         //delayed execution due to not showing keyboard
-        Handler().post {
+        Handler(Looper.getMainLooper()).post {
             treeManager.currentItem?.getChild(position)?.let { item ->
                 ItemEditorCommand().itemEditClicked(item)
             }

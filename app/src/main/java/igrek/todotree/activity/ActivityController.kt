@@ -7,6 +7,7 @@ import igrek.todotree.info.logger.LoggerFactory
 import igrek.todotree.inject.LazyExtractor
 import igrek.todotree.inject.LazyInject
 import igrek.todotree.inject.appFactory
+import igrek.todotree.intent.PersistenceCommand
 import igrek.todotree.persistence.user.UserDataDao
 import igrek.todotree.settings.SettingsService
 import igrek.todotree.system.WindowManagerService
@@ -23,6 +24,7 @@ class ActivityController(
 
     private val logger = LoggerFactory.logger
     var initialized = false
+    var exitingDiscardingChanges = false
 
     fun onConfigurationChanged(newConfig: Configuration) {
         // resize event
@@ -56,6 +58,11 @@ class ActivityController(
     fun onStop() {
         if (initialized) {
             logger.debug("stopping activity...")
+            if (exitingDiscardingChanges) {
+                exitingDiscardingChanges = false
+            } else {
+                PersistenceCommand().saveDatabase()
+            }
             preferencesService.saveAll()
             userDataDao.requestSave(true)
         }

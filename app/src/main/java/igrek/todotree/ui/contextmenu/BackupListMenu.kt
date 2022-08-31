@@ -55,7 +55,6 @@ class BackupListMenu(
             actions.add(object : RestoreBackupAction(displayDateFormat.format(backup.date)) {
                 override fun execute() {
                     PersistenceCommand().loadRootTreeFromBackup(backup)
-                    uiInfoService.showInfo("Database backup loaded: " + backup.filename)
                 }
             })
         }

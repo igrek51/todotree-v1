@@ -2,6 +2,7 @@ package igrek.todotree.ui.treelist
 
 import android.content.Context
 import android.os.Handler
+import android.os.Looper
 import android.widget.AbsListView
 import igrek.todotree.info.logger.LoggerFactory
 
@@ -100,7 +101,7 @@ class TreeListScrollHandler(private val listView: TreeListView, context: Context
             listView.smoothScrollBy(y, 50)
         } catch (e: RuntimeException) {
             val move = y
-            Handler().post { listView.smoothScrollBy(move, 50) }
+            Handler(Looper.getMainLooper()).post { listView.smoothScrollBy(move, 50) }
             logger.warn(e.message)
         }
         listView.invalidate()
