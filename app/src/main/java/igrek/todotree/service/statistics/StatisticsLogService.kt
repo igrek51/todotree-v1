@@ -4,6 +4,9 @@ import igrek.todotree.domain.stats.StatisticEvent
 import igrek.todotree.domain.stats.StatisticEvent.Companion.parse
 import igrek.todotree.domain.stats.StatisticEventType
 import igrek.todotree.info.logger.LoggerFactory
+import igrek.todotree.inject.LazyExtractor
+import igrek.todotree.inject.LazyInject
+import igrek.todotree.inject.appFactory
 import igrek.todotree.service.filesystem.FilesystemService
 import igrek.todotree.service.filesystem.PathBuilder
 import java.io.BufferedWriter
@@ -14,7 +17,11 @@ import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
-class StatisticsLogService(private val filesystem: FilesystemService) {
+class StatisticsLogService(
+    filesystemService: LazyInject<FilesystemService> = appFactory.filesystemService,
+) {
+    private val filesystemService by LazyExtractor(filesystemService)
+
     private val logger = LoggerFactory.logger
 
     private fun getTodayLog(): File {
@@ -70,7 +77,7 @@ class StatisticsLogService(private val filesystem: FilesystemService) {
      */
     fun cleanUpLogs() {
         val logsDirPath = getLogsDir()
-        val logs: List<String> = filesystem.listDirFilenames(logsDirPath)
+        val logs: List<String> = filesystemService.listDirFilenames(logsDirPath)
         // minimal keeping date = today minus keepDays
         val c = Calendar.getInstance()
         c.time = Date()
@@ -99,7 +106,7 @@ class StatisticsLogService(private val filesystem: FilesystemService) {
     }
 
     private fun getLogsDir(): File {
-        return filesystem.appDataSubDir(LOGS_SUBDIR)
+        return filesystemService.appDataSubDir(LOGS_SUBDIR)
     }
 
     // is in 24h range from now

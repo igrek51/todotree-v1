@@ -1,44 +1,34 @@
 package igrek.todotree.intent
 
-import igrek.todotree.dagger.FactoryComponent.inject
-import igrek.todotree.domain.treeitem.AbstractTreeItem.size
-import igrek.todotree.intent.GUICommand.updateItemsList
-import igrek.todotree.service.resources.UserInfoService.showInfo
-import javax.inject.Inject
-import igrek.todotree.service.tree.TreeManager
-import igrek.todotree.service.resources.UserInfoService
-import igrek.todotree.service.clipboard.SystemClipboardManager
-import igrek.todotree.service.tree.TreeSelectionManager
-import igrek.todotree.intent.GUICommand
+import igrek.todotree.info.UiInfoService
+import igrek.todotree.inject.LazyExtractor
+import igrek.todotree.inject.LazyInject
+import igrek.todotree.inject.appFactory
 import igrek.todotree.service.calc.NumericAdder
-import java.lang.NumberFormatException
-import igrek.todotree.dagger.DaggerIoc
+import igrek.todotree.service.clipboard.SystemClipboardManager
+import igrek.todotree.service.tree.TreeManager
+import igrek.todotree.service.tree.TreeSelectionManager
 
-class ItemSelectionCommand {
-    @JvmField
-	@Inject
-    var treeManager: TreeManager? = null
+class ItemSelectionCommand (
+    treeManager: LazyInject<TreeManager> = appFactory.treeManager,
+    uiInfoService: LazyInject<UiInfoService> = appFactory.uiInfoService,
+    systemClipboardManager: LazyInject<SystemClipboardManager> = appFactory.systemClipboardManager,
+    treeSelectionManager: LazyInject<TreeSelectionManager> = appFactory.treeSelectionManager,
+) {
+    private val treeManager by LazyExtractor(treeManager)
+    private val uiInfoService by LazyExtractor(uiInfoService)
+    private val systemClipboardManager by LazyExtractor(systemClipboardManager)
+    private val treeSelectionManager by LazyExtractor(treeSelectionManager)
 
-    @JvmField
-	@Inject
-    var userInfo: UserInfoService? = null
-
-    @JvmField
-	@Inject
-    var clipboardManager: SystemClipboardManager? = null
-
-    @JvmField
-	@Inject
-    var selectionManager: TreeSelectionManager? = null
     private fun selectAllItems(selectedState: Boolean) {
-        for (i in 0 until treeManager!!.currentItem.size()) {
-            selectionManager!!.setItemSelected(i, selectedState)
+        for (i in 0 until treeManager.currentItem!!.size()) {
+            treeSelectionManager.setItemSelected(i, selectedState)
         }
         GUICommand().updateItemsList()
     }
 
     fun toggleSelectAll() {
-        if (selectionManager!!.selectedItemsCount == treeManager!!.currentItem.size()) {
+        if (treeSelectionManager.selectedItemsCount == treeManager.currentItem!!.size()) {
             deselectAll()
         } else {
             selectAllItems(true)
@@ -46,34 +36,29 @@ class ItemSelectionCommand {
     }
 
     fun deselectAll() {
-        selectionManager!!.cancelSelectionMode()
+        treeSelectionManager.cancelSelectionMode()
         GUICommand().updateItemsList()
     }
 
     fun sumItems() {
-        val itemIds: Set<Int>
-        itemIds = if (selectionManager!!.isAnythingSelected) {
-            selectionManager!!.selectedItems
+        val itemIds: Set<Int> = if (treeSelectionManager.isAnythingSelected) {
+            treeSelectionManager.selectedItems!!
         } else {
-            treeManager!!.allChildrenIds
+            treeManager.allChildrenIds
         }
         try {
-            val sum = NumericAdder().calculateSum(itemIds, treeManager!!.currentItem)
+            val sum = NumericAdder().calculateSum(itemIds, treeManager.currentItem!!)
             var clipboardStr = sum.toPlainString()
             clipboardStr = clipboardStr.replace('.', ',')
-            clipboardManager!!.copyToSystemClipboard(clipboardStr)
-            userInfo!!.showInfo("Sum copied to clipboard: $clipboardStr")
+            systemClipboardManager.copyToSystemClipboard(clipboardStr)
+            uiInfoService.showInfo("Sum copied to clipboard: $clipboardStr")
         } catch (e: NumberFormatException) {
-            userInfo!!.showInfo(e.message!!)
+            uiInfoService.showInfo(e.message!!)
         }
     }
 
     fun selectedItemClicked(position: Int, checked: Boolean) {
-        selectionManager!!.setItemSelected(position, checked)
+        treeSelectionManager.setItemSelected(position, checked)
         GUICommand().updateItemsList()
-    }
-
-    init {
-        DaggerIoc.factoryComponent.inject(this)
     }
 }

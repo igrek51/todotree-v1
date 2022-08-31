@@ -1,15 +1,12 @@
 package igrek.todotree.service.clipboard
 
-import igrek.todotree.domain.treeitem.AbstractTreeItem.clone
 import igrek.todotree.domain.treeitem.AbstractTreeItem
-import java.util.ArrayList
 
 class TreeClipboardManager {
-    private var clipboard: MutableList<AbstractTreeItem>? = null
+
+    var clipboard: MutableList<AbstractTreeItem>? = null
+
     var copiedFrom: AbstractTreeItem? = null
-    fun getClipboard(): List<AbstractTreeItem>? {
-        return clipboard
-    }
 
     val clipboardSize: Int
         get() = if (clipboard == null) 0 else clipboard!!.size

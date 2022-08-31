@@ -68,7 +68,7 @@ open class GUI(
         return setMainContentLayout(R.layout.exit_screen)
     }
 
-    open fun updateItemsList(currentItem: AbstractTreeItem, _items: List<AbstractTreeItem?>?, selectedPositions: Set<Int?>?) {
+    open fun updateItemsList(currentItem: AbstractTreeItem, _items: List<AbstractTreeItem?>?, selectedPositions: Set<Int>?) {
         var items = _items
         if (items == null) items = currentItem.getChildren()
 

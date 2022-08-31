@@ -3,7 +3,11 @@ package igrek.todotree.intent
 import igrek.todotree.dagger.DaggerIoc
 import igrek.todotree.domain.treeitem.*
 import igrek.todotree.exceptions.NoSuperItemException
+import igrek.todotree.info.UiInfoService
 import igrek.todotree.info.logger.LoggerFactory.logger
+import igrek.todotree.inject.LazyExtractor
+import igrek.todotree.inject.LazyInject
+import igrek.todotree.inject.appFactory
 import igrek.todotree.service.access.DatabaseLock
 import igrek.todotree.service.history.ChangesHistory
 import igrek.todotree.service.history.LinkHistoryService
@@ -21,39 +25,28 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
-class TreeCommand {
-    @Inject
-    lateinit var treeManager: TreeManager
-
-    @Inject
-    lateinit var gui: GUI
-
-    @Inject
-    lateinit var lock: DatabaseLock
-
-    @Inject
-    lateinit var scrollCache: TreeScrollCache
-
-    @Inject
-    lateinit var selectionManager: TreeSelectionManager
-
-    @Inject
-    lateinit var treeMover: TreeMover
-
-    @Inject
-    lateinit var changesHistory: ChangesHistory
-
-    @Inject
-    lateinit var infoService: UserInfoService
-
-    @Inject
-    lateinit var remotePushService: RemotePushService
-
-    @Inject
-    lateinit var linkHistoryService: LinkHistoryService
-
-    @Inject
-    lateinit var userInfoService: UserInfoService
+class TreeCommand(
+    treeManager: LazyInject<TreeManager> = appFactory.treeManager,
+    gui: LazyInject<GUI> = appFactory.gui,
+    uiInfoService: LazyInject<UiInfoService> = appFactory.uiInfoService,
+    databaseLock: LazyInject<DatabaseLock> = appFactory.databaseLock,
+    treeScrollCache: LazyInject<TreeScrollCache> = appFactory.treeScrollCache,
+    treeSelectionManager: LazyInject<TreeSelectionManager> = appFactory.treeSelectionManager,
+    treeMover: LazyInject<TreeMover> = appFactory.treeMover,
+    changesHistory: LazyInject<ChangesHistory> = appFactory.changesHistory,
+    remotePushService: LazyInject<RemotePushService> = appFactory.remotePushService,
+    linkHistoryService: LazyInject<LinkHistoryService> = appFactory.linkHistoryService,
+) {
+    private val treeManager by LazyExtractor(treeManager)
+    private val gui by LazyExtractor(gui)
+    private val uiInfoService by LazyExtractor(uiInfoService)
+    private val databaseLock by LazyExtractor(databaseLock)
+    private val treeScrollCache by LazyExtractor(treeScrollCache)
+    private val treeSelectionManager by LazyExtractor(treeSelectionManager)
+    private val treeMover by LazyExtractor(treeMover)
+    private val changesHistory by LazyExtractor(changesHistory)
+    private val remotePushService by LazyExtractor(remotePushService)
+    private val linkHistoryService by LazyExtractor(linkHistoryService)
 
     fun goBack() {
         try {

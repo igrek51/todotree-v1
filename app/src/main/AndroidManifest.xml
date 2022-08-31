@@ -70,11 +70,5 @@
             </intent-filter>
         </activity>
 
-        <receiver
-            android:name=".activity.DailyReceiver"
-            android:exported="true"
-            >
-        </receiver>
-
     </application>
 </manifest>

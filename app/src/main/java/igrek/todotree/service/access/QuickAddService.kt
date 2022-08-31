@@ -43,7 +43,7 @@ class QuickAddService(
 
     private fun editNewTmpItem() {
         // go to Tmp
-        val tmpItem = treeManager.get().currentItem.findChildByName("Tmp")
+        val tmpItem = treeManager.get().currentItem?.findChildByName("Tmp")
         if (tmpItem == null) {
             logger.error("Tmp item was not found")
             uiInfoService.get().showToast("Nowhere to push. Bye!")

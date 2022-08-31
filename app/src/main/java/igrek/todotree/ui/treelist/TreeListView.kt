@@ -89,7 +89,7 @@ class TreeListView : ListView, OnItemClickListener, OnItemLongClickListener {
         reorder!!.dispatchDraw(canvas)
     }
 
-    fun setItemsAndSelected(items: List<AbstractTreeItem>, selectedPositions: Set<Int?>?) {
+    fun setItemsAndSelected(items: List<AbstractTreeItem>, selectedPositions: Set<Int>?) {
         adapter!!.setSelections(selectedPositions)
         setItems(items)
     }

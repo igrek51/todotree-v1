@@ -1,54 +1,38 @@
 package igrek.todotree.intent
 
-import igrek.todotree.info.logger.LoggerFactory.logger
-import igrek.todotree.dagger.FactoryComponent.inject
-import igrek.todotree.service.statistics.StatisticsLogService.logTaskCreate
-import igrek.todotree.domain.treeitem.AbstractTreeItem.displayName
-import igrek.todotree.service.statistics.StatisticsLogService.logTaskComplete
-import igrek.todotree.domain.treeitem.AbstractTreeItem.getChildren
-import igrek.todotree.service.statistics.StatisticsLogService.getLast24hEvents
-import igrek.todotree.domain.stats.StatisticEvent.datetime
-import igrek.todotree.domain.stats.StatisticEvent.type
-import igrek.todotree.domain.stats.StatisticEvent.taskName
-import igrek.todotree.info.logger.Logger.error
-import javax.inject.Inject
-import igrek.todotree.service.statistics.StatisticsLogService
 import android.app.Activity
 import android.app.AlertDialog
-import igrek.todotree.info.logger.LoggerFactory
+import android.content.DialogInterface
+import igrek.todotree.domain.stats.StatisticEvent
+import igrek.todotree.domain.stats.StatisticEventType
 import igrek.todotree.domain.treeitem.AbstractTreeItem
 import igrek.todotree.domain.treeitem.TextTreeItem
-import igrek.todotree.domain.stats.StatisticEvent
-import java.lang.StringBuilder
-import java.util.Collections
-import java.util.Comparator
-import igrek.todotree.domain.stats.StatisticEventType
-import igrek.todotree.intent.StatisticsCommand
-import android.content.DialogInterface
-import java.lang.Exception
-import java.util.Locale
-import igrek.todotree.dagger.DaggerIoc
+import igrek.todotree.info.logger.LoggerFactory
+import igrek.todotree.inject.LazyExtractor
+import igrek.todotree.inject.LazyInject
+import igrek.todotree.inject.appFactory
+import igrek.todotree.service.statistics.StatisticsLogService
 import java.text.SimpleDateFormat
+import java.util.*
 
-class StatisticsCommand {
-    @JvmField
-	@Inject
-    var statisticsLogService: StatisticsLogService? = null
+class StatisticsCommand(
+    statisticsLogService: LazyInject<StatisticsLogService> = appFactory.statisticsLogService,
+    activity: LazyInject<Activity> = appFactory.activityMust,
+) {
+    private val statisticsLogService by LazyExtractor(statisticsLogService)
+    private val activity by LazyExtractor(activity)
 
-    @JvmField
-	@Inject
-    var activity: Activity? = null
     private val logger = LoggerFactory.logger
     fun onTaskCreated(item: AbstractTreeItem) {
         if (item is TextTreeItem) {
-            statisticsLogService!!.logTaskCreate(item.displayName)
+            statisticsLogService.logTaskCreate(item.displayName)
         }
     }
 
     fun onTaskRemoved(item: AbstractTreeItem) {
         if (item is TextTreeItem) {
             // log item and its children
-            statisticsLogService!!.logTaskComplete(item.displayName)
+            statisticsLogService.logTaskComplete(item.displayName)
             for (child in item.getChildren()) {
                 onTaskRemoved(child)
             }
@@ -58,7 +42,7 @@ class StatisticsCommand {
     fun showStatisticsInfo() {
         try {
             val dlgAlert = AlertDialog.Builder(activity)
-            val events = statisticsLogService!!.getLast24hEvents()
+            val events = statisticsLogService.getLast24hEvents()
             // build statistics info
             val message = StringBuilder()
             var completed = 0
@@ -120,9 +104,5 @@ class StatisticsCommand {
 
     companion object {
         private val displayDateFormat = SimpleDateFormat("HH:mm:ss, dd.MM.yyyy", Locale.ENGLISH)
-    }
-
-    init {
-        DaggerIoc.factoryComponent.inject(this)
     }
 }

@@ -2,7 +2,11 @@ package igrek.todotree.intent
 
 import igrek.todotree.dagger.DaggerIoc
 import igrek.todotree.exceptions.DeserializationFailedException
+import igrek.todotree.info.UiInfoService
 import igrek.todotree.info.logger.LoggerFactory
+import igrek.todotree.inject.LazyExtractor
+import igrek.todotree.inject.LazyInject
+import igrek.todotree.inject.appFactory
 import igrek.todotree.service.backup.Backup
 import igrek.todotree.service.backup.BackupManager
 import igrek.todotree.service.filesystem.FilesystemService
@@ -17,36 +21,26 @@ import java.io.File
 import java.io.IOException
 import javax.inject.Inject
 
-class PersistenceCommand {
-    @Inject
-    lateinit var treeManager: TreeManager
-
-    @Inject
-    lateinit var userInfo: UserInfoService
-
-    @Inject
-    lateinit var backupManager: BackupManager
-
-    @Inject
-    lateinit var scrollCache: TreeScrollCache
-
-    @Inject
-    lateinit var filesystem: FilesystemService
-
-    @Inject
-    lateinit var preferences: Preferences
-
-    @Inject
-    lateinit var persistenceService: TreePersistenceService
-
-    @Inject
-    lateinit var changesHistory: ChangesHistory
+class PersistenceCommand(
+    treeManager: LazyInject<TreeManager> = appFactory.treeManager,
+    uiInfoService: LazyInject<UiInfoService> = appFactory.uiInfoService,
+    backupManager: LazyInject<BackupManager> = appFactory.backupManager,
+    treeScrollCache: LazyInject<TreeScrollCache> = appFactory.treeScrollCache,
+    filesystemService: LazyInject<FilesystemService> = appFactory.filesystemService,
+    preferences: LazyInject<Preferences> = appFactory.preferences,
+    treePersistenceService: LazyInject<TreePersistenceService> = appFactory.treePersistenceService,
+    changesHistory: LazyInject<ChangesHistory> = appFactory.changesHistory,
+) {
+    private val treeManager by LazyExtractor(treeManager)
+    private val uiInfoService by LazyExtractor(uiInfoService)
+    private val backupManager by LazyExtractor(backupManager)
+    private val treeScrollCache by LazyExtractor(treeScrollCache)
+    private val filesystemService by LazyExtractor(filesystemService)
+    private val preferences by LazyExtractor(preferences)
+    private val treePersistenceService by LazyExtractor(treePersistenceService)
+    private val changesHistory by LazyExtractor(changesHistory)
 
     private val logger = LoggerFactory.logger
-
-    init {
-        DaggerIoc.factoryComponent.inject(this)
-    }
 
     fun optionReload() {
         treeManager.reset()

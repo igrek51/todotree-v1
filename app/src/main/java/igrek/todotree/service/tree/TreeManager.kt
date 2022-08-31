@@ -16,9 +16,12 @@ class TreeManager(
     private val changesHistory by LazyExtractor(changesHistory)
 
     private var rootItem: AbstractTreeItem? = null
+
     var currentItem: AbstractTreeItem? = null
         private set
+
     var newItemPosition: Int? = null
+
     fun reset() {
         rootItem = RootTreeItem()
         currentItem = rootItem
@@ -82,7 +85,6 @@ class TreeManager(
         currentItem!!.remove(item)
     }
 
-    //  Navigation
     @Throws(NoSuperItemException::class)
     fun goUp() {
         currentItem = if (currentItem === rootItem) {

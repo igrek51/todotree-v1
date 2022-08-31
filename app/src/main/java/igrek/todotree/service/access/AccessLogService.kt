@@ -2,6 +2,9 @@ package igrek.todotree.service.access
 
 import igrek.todotree.domain.treeitem.AbstractTreeItem
 import igrek.todotree.info.logger.LoggerFactory
+import igrek.todotree.inject.LazyExtractor
+import igrek.todotree.inject.LazyInject
+import igrek.todotree.inject.appFactory
 import igrek.todotree.service.filesystem.FilesystemService
 import igrek.todotree.service.filesystem.PathBuilder
 import java.io.BufferedWriter
@@ -13,8 +16,10 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class AccessLogService(
-        private val filesystem: FilesystemService,
+    filesystemService: LazyInject<FilesystemService> = appFactory.filesystemService,
 ) {
+    private val filesystemService by LazyExtractor(filesystemService)
+
     private val filenameDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
     private val lineDateFormat = SimpleDateFormat("yyyy-MM-dd_HH:mm:ss", Locale.ENGLISH)
     private val logger = LoggerFactory.logger
@@ -68,7 +73,7 @@ class AccessLogService(
      */
     private fun cleanUpLogs() {
         val accessDir = accessLogDir
-        val logs = filesystem.listDirFilenames(accessDir)
+        val logs = filesystemService.listDirFilenames(accessDir)
         // minimal keeping date = today minus keepDays
         val c = Calendar.getInstance()
         c.time = Date()
@@ -96,7 +101,7 @@ class AccessLogService(
     }
 
     private val accessLogDir: File
-        get() = filesystem.appDataSubDir(ACCESS_LOGS_SUBDIR)
+        get() = filesystemService.appDataSubDir(ACCESS_LOGS_SUBDIR)
 
     companion object {
         private const val ACCESS_LOGS_DAYS = 14

@@ -6,7 +6,7 @@ import igrek.todotree.inject.appFactory
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-class PreferencesState(
+class SettingsState(
     settingsService: LazyInject<SettingsService> = appFactory.settingsService,
 ) {
     internal val preferencesService by LazyExtractor(settingsService)
@@ -18,13 +18,13 @@ class PreferencesState(
 
 class PreferenceDelegate<T : Any>(
         private val field: SettingsField
-) : ReadWriteProperty<PreferencesState, T> {
+) : ReadWriteProperty<SettingsState, T> {
 
-    override fun getValue(thisRef: PreferencesState, property: KProperty<*>): T {
+    override fun getValue(thisRef: SettingsState, property: KProperty<*>): T {
         return thisRef.preferencesService.getValue(field)
     }
 
-    override fun setValue(thisRef: PreferencesState, property: KProperty<*>, value: T) {
+    override fun setValue(thisRef: SettingsState, property: KProperty<*>, value: T) {
         thisRef.preferencesService.setValue(field, value)
     }
 }

@@ -2,7 +2,11 @@ package igrek.todotree.intent
 
 import igrek.todotree.dagger.DaggerIoc
 import igrek.todotree.domain.treeitem.AbstractTreeItem
+import igrek.todotree.info.UiInfoService
 import igrek.todotree.info.logger.LoggerFactory.logger
+import igrek.todotree.inject.LazyExtractor
+import igrek.todotree.inject.LazyInject
+import igrek.todotree.inject.appFactory
 import igrek.todotree.service.remote.RemotePushService
 import igrek.todotree.service.resources.UserInfoService
 import igrek.todotree.service.tree.TreeManager
@@ -11,20 +15,16 @@ import kotlinx.coroutines.*
 import java.util.*
 import javax.inject.Inject
 
-class RemotePushCommand {
-    @Inject
-    lateinit var remotePushService: RemotePushService
-    @Inject
-    lateinit var selectionManager: TreeSelectionManager
-    @Inject
-    lateinit var treeManager: TreeManager
-
-    @Inject
-    lateinit var userInfoService: UserInfoService
-
-    init {
-        DaggerIoc.factoryComponent.inject(this)
-    }
+class RemotePushCommand(
+    treeManager: LazyInject<TreeManager> = appFactory.treeManager,
+    uiInfoService: LazyInject<UiInfoService> = appFactory.uiInfoService,
+    remotePushService: LazyInject<RemotePushService> = appFactory.remotePushService,
+    treeSelectionManager: LazyInject<TreeSelectionManager> = appFactory.treeSelectionManager,
+) {
+    private val treeManager by LazyExtractor(treeManager)
+    private val uiInfoService by LazyExtractor(uiInfoService)
+    private val remotePushService by LazyExtractor(remotePushService)
+    private val treeSelectionManager by LazyExtractor(treeSelectionManager)
 
     fun isRemotePushingEnabled(): Boolean {
         return remotePushService.isRemotePushingEnabled

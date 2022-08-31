@@ -4,9 +4,12 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.provider.Settings
 import igrek.todotree.info.logger.LoggerFactory.logger
-import igrek.todotree.service.preferences.Preferences
-import igrek.todotree.service.preferences.PropertyDefinition
+import igrek.todotree.inject.LazyExtractor
+import igrek.todotree.inject.LazyInject
+import igrek.todotree.inject.appFactory
+import igrek.todotree.settings.SettingsState
 import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.serialization.json.Json
@@ -16,10 +19,12 @@ import okhttp3.RequestBody
 import okhttp3.Response
 import java.util.*
 
-class RemoteDbRequester(
-        preferences: Preferences,
-        private val activity: Activity,
+@OptIn(DelicateCoroutinesApi::class)
+class RemoteDbRequester (
+    activity: LazyInject<Activity> = appFactory.activityMust,
+    settingsState: LazyInject<SettingsState> = appFactory.settingsState,
 ) {
+    private val activity by LazyExtractor(activity)
 
     companion object {
         private const val todoApiBase = "https://todo.igrek.dev/api/v1"
@@ -46,7 +51,7 @@ class RemoteDbRequester(
     private var authToken = ""
 
     init {
-        authToken = preferences.getValue(PropertyDefinition.userAuthToken, String::class.java) ?: ""
+        authToken = settingsState.get().userAuthToken
     }
 
     fun fetchAllRemoteTodos(): Deferred<Result<List<TodoDto>>> {

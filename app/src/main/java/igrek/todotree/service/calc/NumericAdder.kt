@@ -1,16 +1,12 @@
 package igrek.todotree.service.calc
 
-import igrek.todotree.domain.treeitem.AbstractTreeItem.getChild
-import igrek.todotree.domain.treeitem.AbstractTreeItem.displayName
-import kotlin.Throws
-import java.lang.NumberFormatException
 import igrek.todotree.domain.treeitem.AbstractTreeItem
 import java.math.BigDecimal
 import java.util.regex.Pattern
 
 class NumericAdder {
     @Throws(NumberFormatException::class)
-    fun calculateSum(selectedPositions: Set<Int?>, currentItem: AbstractTreeItem): BigDecimal {
+    fun calculateSum(selectedPositions: Set<Int>, currentItem: AbstractTreeItem): BigDecimal {
         var sum = BigDecimal(0)
         for (selectedPos in selectedPositions) {
             val selectedItem = currentItem.getChild(selectedPos!!)

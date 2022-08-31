@@ -2,64 +2,51 @@ package igrek.todotree.intent
 
 import igrek.todotree.app.AppData
 import igrek.todotree.app.AppState
-import igrek.todotree.dagger.DaggerIoc
 import igrek.todotree.domain.treeitem.AbstractTreeItem
 import igrek.todotree.domain.treeitem.LinkTreeItem
 import igrek.todotree.domain.treeitem.RemoteTreeItem
 import igrek.todotree.domain.treeitem.TextTreeItem
+import igrek.todotree.info.UiInfoService
 import igrek.todotree.info.logger.LoggerFactory
+import igrek.todotree.inject.LazyExtractor
+import igrek.todotree.inject.LazyInject
+import igrek.todotree.inject.appFactory
 import igrek.todotree.service.access.QuickAddService
 import igrek.todotree.service.commander.SecretCommander
 import igrek.todotree.service.history.ChangesHistory
 import igrek.todotree.service.remote.RemotePushService
-import igrek.todotree.service.resources.UserInfoService
 import igrek.todotree.service.tree.ContentTrimmer
 import igrek.todotree.service.tree.TreeManager
 import igrek.todotree.service.tree.TreeScrollCache
 import igrek.todotree.service.tree.TreeSelectionManager
 import igrek.todotree.ui.GUI
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import javax.inject.Inject
+import kotlinx.coroutines.*
 
-class ItemEditorCommand {
-    @Inject
-    lateinit var treeManager: TreeManager
-
-    @Inject
-    lateinit var gui: GUI
-
-    @Inject
-    lateinit var userInfo: UserInfoService
-
-    @Inject
-    lateinit var contentTrimmer: ContentTrimmer
-
-    @Inject
-    lateinit var appData: AppData
-
-    @Inject
-    lateinit var scrollCache: TreeScrollCache
-
-    @Inject
-    lateinit var selectionManager: TreeSelectionManager
-
-    @Inject
-    lateinit var changesHistory: ChangesHistory
-
-    @Inject
-    lateinit var secretCommander: SecretCommander
-
-    @Inject
-    lateinit var quickAddService: QuickAddService
-
-    @Inject
-    lateinit var remotePushService: RemotePushService
-
-    @Inject
-    lateinit var userInfoService: UserInfoService
+@OptIn(DelicateCoroutinesApi::class)
+class ItemEditorCommand(
+    treeManager: LazyInject<TreeManager> = appFactory.treeManager,
+    gui: LazyInject<GUI> = appFactory.gui,
+    uiInfoService: LazyInject<UiInfoService> = appFactory.uiInfoService,
+    appData: LazyInject<AppData> = appFactory.appData,
+    contentTrimmer: LazyInject<ContentTrimmer> = appFactory.contentTrimmer,
+    treeScrollCache: LazyInject<TreeScrollCache> = appFactory.treeScrollCache,
+    treeSelectionManager: LazyInject<TreeSelectionManager> = appFactory.treeSelectionManager,
+    changesHistory: LazyInject<ChangesHistory> = appFactory.changesHistory,
+    secretCommander: LazyInject<SecretCommander> = appFactory.secretCommander,
+    quickAddService: LazyInject<QuickAddService> = appFactory.quickAddService,
+    remotePushService: LazyInject<RemotePushService> = appFactory.remotePushService,
+) {
+    private val treeManager by LazyExtractor(treeManager)
+    private val gui by LazyExtractor(gui)
+    private val uiInfoService by LazyExtractor(uiInfoService)
+    private val appData by LazyExtractor(appData)
+    private val contentTrimmer by LazyExtractor(contentTrimmer)
+    private val treeScrollCache by LazyExtractor(treeScrollCache)
+    private val treeSelectionManager by LazyExtractor(treeSelectionManager)
+    private val changesHistory by LazyExtractor(changesHistory)
+    private val secretCommander by LazyExtractor(secretCommander)
+    private val quickAddService by LazyExtractor(quickAddService)
+    private val remotePushService by LazyExtractor(remotePushService)
 
     private val logger = LoggerFactory.logger
     private val newItemPosition: Int?
@@ -69,11 +56,11 @@ class ItemEditorCommand {
         var content = _content
         content = contentTrimmer.trimContent(content)
         return if (content.isEmpty()) {
-            userInfo.showInfo("Empty item has been removed.")
+            uiInfoService.showInfo("Empty item has been removed.")
             false
         } else {
             treeManager.addToCurrent(newItemPosition, TextTreeItem(content))
-            userInfo.showInfo("New item has been saved.")
+            uiInfoService.showInfo("New item has been saved.")
             true
         }
     }
@@ -87,12 +74,12 @@ class ItemEditorCommand {
         content = contentTrimmer.trimContent(content)
         return if (content.isEmpty()) {
             treeManager.removeFromCurrent(editedItem)
-            userInfo.showInfo("Empty item has been removed.")
+            uiInfoService.showInfo("Empty item has been removed.")
             false
         } else {
             editedItem.setName(content)
             changesHistory.registerChange()
-            userInfo.showInfo("Item has been saved.")
+            uiInfoService.showInfo("Item has been saved.")
             true
         }
     }
@@ -102,12 +89,12 @@ class ItemEditorCommand {
         content = contentTrimmer.trimContent(content)
         return if (content.isEmpty()) {
             treeManager.removeFromCurrent(editedLinkItem)
-            userInfo.showInfo("Empty link has been removed.")
+            uiInfoService.showInfo("Empty link has been removed.")
             false
         } else {
             editedLinkItem.customName = content
             changesHistory.registerChange()
-            userInfo.showInfo("Link name has been saved.")
+            uiInfoService.showInfo("Link name has been saved.")
             true
         }
     }
@@ -134,7 +121,9 @@ class ItemEditorCommand {
     private fun returnFromItemEditing() {
         GUICommand().showItemsList()
         // when new item has been added to the end
-        if (newItemPosition != null && newItemPosition == treeManager.currentItem.size() - 1) {
+        if (newItemPosition != null
+            && newItemPosition == (treeManager.currentItem?.size() ?: 0) - 1
+        ) {
             gui.scrollToBottom()
         } else {
             GUICommand().restoreScrollPosition(treeManager.currentItem)
@@ -148,18 +137,18 @@ class ItemEditorCommand {
         secretCommander.execute(content)
         returnFromItemEditing()
         // exit if it's quick add mode only
-        if (quickAddService.isQuickAddMode) {
+        if (quickAddService.isQuickAddModeEnabled) {
             quickAddService.exitApp()
-        } else if (remotePushService.isRemotePushingEnabled) {
+        } else if (remotePushService.isRemotePushEnabled) {
             runBlocking {
                 GlobalScope.launch(Dispatchers.Main) {
                     val result = remotePushService.pushAndExitAsync(content).await()
                     result.fold(onSuccess = {
-                        userInfoService.showToast("Success!")
+                        uiInfoService.showToast("Success!")
                         exitApp()
                     }, onFailure = { e ->
                         logger.error(e)
-                        userInfoService.showToast("Communication breakdown!")
+                        uiInfoService.showToast("Communication breakdown!")
                     })
                 }
             }
@@ -202,16 +191,19 @@ class ItemEditorCommand {
      */
     private fun newItem(_position: Int) {
         var position = _position
-        if (position < 0) position = treeManager.currentItem.size()
-        if (position > treeManager.currentItem.size()) position = treeManager.currentItem.size()
-        scrollCache.storeScrollPosition(treeManager.currentItem, gui.currentScrollPos)
+        if (position < 0) position = treeManager.currentItem?.size() ?: 0
+        if (position > (treeManager.currentItem?.size() ?: 0))
+            position = treeManager.currentItem?.size() ?: 0
+        treeScrollCache.storeScrollPosition(treeManager.currentItem, gui.currentScrollPos)
         treeManager.newItemPosition = position
-        gui.showEditItemPanel(null, treeManager.currentItem)
+        treeManager.currentItem?.let { currentItem ->
+            gui.showEditItemPanel(null, currentItem)
+        }
         appData.state = AppState.EDIT_ITEM_CONTENT
     }
 
     private fun editItem(item: AbstractTreeItem, parent: AbstractTreeItem) {
-        scrollCache.storeScrollPosition(treeManager.currentItem, gui.currentScrollPos)
+        treeScrollCache.storeScrollPosition(treeManager.currentItem, gui.currentScrollPos)
         treeManager.newItemPosition = null
         gui.showEditItemPanel(item, parent)
         appData.state = AppState.EDIT_ITEM_CONTENT
@@ -219,35 +211,33 @@ class ItemEditorCommand {
 
     private fun discardEditingItem() {
         returnFromItemEditing()
-        userInfo.showInfo("Editing item cancelled.")
+        uiInfoService.showInfo("Editing item cancelled.")
     }
 
     fun itemEditClicked(item: AbstractTreeItem) {
-        selectionManager.cancelSelectionMode()
-        editItem(item, treeManager.currentItem)
+        treeSelectionManager.cancelSelectionMode()
+        treeManager.currentItem?.let { currentItem ->
+            editItem(item, currentItem)
+        }
     }
 
     fun cancelEditedItem() {
         gui.hideSoftKeyboard()
         discardEditingItem()
         // exit if it's quick add mode only
-        if (quickAddService.isQuickAddMode) {
+        if (quickAddService.isQuickAddModeEnabled) {
             quickAddService.exitApp()
-        } else if (remotePushService.isRemotePushingEnabled) {
+        } else if (remotePushService.isRemotePushEnabled) {
             exitApp()
         }
     }
 
     fun addItemHereClicked(position: Int) {
-        selectionManager.cancelSelectionMode()
+        treeSelectionManager.cancelSelectionMode()
         newItem(position)
     }
 
     fun addItemClicked() {
         addItemHereClicked(-1)
-    }
-
-    init {
-        DaggerIoc.factoryComponent.inject(this)
     }
 }

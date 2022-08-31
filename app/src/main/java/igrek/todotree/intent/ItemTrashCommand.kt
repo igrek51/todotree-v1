@@ -26,27 +26,24 @@ import java.util.TreeSet
 import igrek.todotree.domain.treeitem.LinkTreeItem
 import java.lang.Runnable
 import igrek.todotree.dagger.DaggerIoc
+import igrek.todotree.info.UiInfoService
+import igrek.todotree.inject.LazyExtractor
+import igrek.todotree.inject.LazyInject
+import igrek.todotree.inject.appFactory
 
-class ItemTrashCommand {
-    @JvmField
-	@Inject
-    var treeManager: TreeManager? = null
+class ItemTrashCommand(
+    treeManager: LazyInject<TreeManager> = appFactory.treeManager,
+    gui: LazyInject<GUI> = appFactory.gui,
+    uiInfoService: LazyInject<UiInfoService> = appFactory.uiInfoService,
+    databaseLock: LazyInject<DatabaseLock> = appFactory.databaseLock,
+    treeSelectionManager: LazyInject<TreeSelectionManager> = appFactory.treeSelectionManager,
+) {
+    private val treeManager by LazyExtractor(treeManager)
+    private val gui by LazyExtractor(gui)
+    private val uiInfoService by LazyExtractor(uiInfoService)
+    private val databaseLock by LazyExtractor(databaseLock)
+    private val treeSelectionManager by LazyExtractor(treeSelectionManager)
 
-    @JvmField
-	@Inject
-    var gui: GUI? = null
-
-    @JvmField
-	@Inject
-    var userInfo: UserInfoService? = null
-
-    @JvmField
-	@Inject
-    var lock: DatabaseLock? = null
-
-    @JvmField
-	@Inject
-    var selectionManager: TreeSelectionManager? = null
     fun itemRemoveClicked(position: Int) { // removing locked before going into first element
         lock!!.assertUnlocked()
         if (selectionManager!!.isAnythingSelected) {
@@ -79,7 +76,7 @@ class ItemTrashCommand {
         removeItems(selectionManager!!.selectedItems, info)
     }
 
-    fun removeItems(selectedIds: TreeSet<Int?>, info: Boolean) {
+    fun removeItems(selectedIds: TreeSet<Int>, info: Boolean) {
         //descending order in order to not overwriting indices when removing
         val iterator = selectedIds.descendingIterator()
         while (iterator.hasNext()) {

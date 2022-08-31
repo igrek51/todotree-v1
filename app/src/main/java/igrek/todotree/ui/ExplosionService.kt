@@ -5,12 +5,18 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Rect
 import android.view.View
+import igrek.todotree.inject.LazyExtractor
+import igrek.todotree.inject.LazyInject
+import igrek.todotree.inject.appFactory
 import tyrantgit.explosionfield.ExplosionField
 import tyrantgit.explosionfield.Utils
 import java.util.*
 
 
-class ExplosionService(val activity: Activity) {
+class ExplosionService (
+    activity: LazyInject<Activity> = appFactory.activityMust,
+) {
+    private val activity by LazyExtractor(activity)
 
     private var mExplosionField: ExplosionField? = null
     private val mExpandInset = IntArray(2)

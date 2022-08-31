@@ -5,6 +5,7 @@ import android.graphics.Rect
 import android.text.SpannableString
 import android.text.style.UnderlineSpan
 import android.view.View
+import igrek.todotree.intent.ItemSelectionCommand
 import igrek.todotree.ui.errorcheck.SafeClickListener
 
 class TreeItemAdapter(
@@ -77,7 +78,6 @@ class TreeItemAdapter(
     private fun getSingleItemView(item: AbstractTreeItem, position: Int, parent: ViewGroup): View {
         val itemView: View = inflater.inflate(R.layout.tree_item_single, parent, false)
 
-        //zawartość tekstowa elementu
         val textView: TextView = itemView.findViewById<TextView>(R.id.tvItemContent)
         textView.setText(item.displayName)
 
@@ -88,7 +88,6 @@ class TreeItemAdapter(
             textView.setText(content)
         }
 
-        //przesuwanie
         val moveButton: ImageButton = itemView.findViewById<ImageButton>(R.id.buttonItemMove)
         moveButton.setFocusableInTouchMode(false)
         moveButton.setFocusable(false)
@@ -123,7 +122,6 @@ class TreeItemAdapter(
             moveButton.setLayoutParams(RelativeLayout.LayoutParams(0, 0))
         }
 
-        //checkbox do zaznaczania wielu elementów
         val cbItemSelected: CheckBox = itemView.findViewById<CheckBox>(R.id.cbItemSelected)
         cbItemSelected.setFocusableInTouchMode(false)
         cbItemSelected.setFocusable(false)
@@ -180,16 +178,13 @@ class TreeItemAdapter(
     private fun getParentItemView(item: AbstractTreeItem, position: Int, parent: ViewGroup): View {
         val itemView: View = inflater.inflate(R.layout.tree_item_parent, parent, false)
 
-        //zawartość tekstowa elementu
         val textView: TextView = itemView.findViewById<TextView>(R.id.tvItemContent)
         textView.setText(item.displayName)
 
-        // ilość potomków
         val tvItemChildSize: TextView = itemView.findViewById<TextView>(R.id.tvItemChildSize)
         val contentBuilder = "[" + item.size() + "]"
         tvItemChildSize.setText(contentBuilder)
 
-        //edycja elementu
         val editButton: ImageButton = itemView.findViewById<ImageButton>(R.id.buttonItemEdit)
         editButton.setFocusableInTouchMode(false)
         editButton.setFocusable(false)
@@ -222,7 +217,6 @@ class TreeItemAdapter(
             addButton.setVisibility(View.GONE)
         }
 
-        //przesuwanie
         val moveButton: ImageButton = itemView.findViewById<ImageButton>(R.id.buttonItemMove)
         moveButton.setFocusableInTouchMode(false)
         moveButton.setFocusable(false)
@@ -257,7 +251,6 @@ class TreeItemAdapter(
             moveButton.setLayoutParams(RelativeLayout.LayoutParams(0, 0))
         }
 
-        //checkbox do zaznaczania wielu elementów
         val cbItemSelected: CheckBox = itemView.findViewById<CheckBox>(R.id.cbItemSelected)
         cbItemSelected.setFocusableInTouchMode(false)
         cbItemSelected.setFocusable(false)

@@ -1,10 +1,12 @@
 package igrek.todotree.service.commander
 
+import igrek.todotree.info.UiInfoService
 import igrek.todotree.info.logger.LoggerFactory
+import igrek.todotree.inject.LazyExtractor
+import igrek.todotree.inject.LazyInject
+import igrek.todotree.inject.appFactory
 import igrek.todotree.intent.ItemEditorCommand
-import igrek.todotree.service.preferences.Preferences
-import igrek.todotree.service.preferences.PropertyDefinition
-import igrek.todotree.service.resources.UserInfoService
+import igrek.todotree.settings.SettingsState
 import java.util.*
 
 /**
@@ -15,7 +17,12 @@ import java.util.*
  * ###config userauthtoken authToken
  * ###remote_item
  */
-class SecretCommander(private val preferences: Preferences, private val userInfo: UserInfoService) {
+class SecretCommander(
+    settingsState: LazyInject<SettingsState> = appFactory.settingsState,
+    uiInfoService: LazyInject<UiInfoService> = appFactory.uiInfoService,
+) {
+    private val settingsState by LazyExtractor(settingsState)
+    private val uiInfoService by LazyExtractor(uiInfoService)
 
     private val logger = LoggerFactory.logger
 
@@ -34,7 +41,7 @@ class SecretCommander(private val preferences: Preferences, private val userInfo
             "config" -> commandConfig(params)
             "remote_item" -> createRemoteItem()
             else -> {
-                userInfo.showInfo("Unknown command: $main")
+                uiInfoService.showSnackbar("Unknown command: $main")
                 return false
             }
         }
@@ -46,7 +53,7 @@ class SecretCommander(private val preferences: Preferences, private val userInfo
     }
 
     private fun commandDupa(params: List<String>) {
-        userInfo.showInfo("Congratulations! You have discovered an Easter Egg.")
+        uiInfoService.showSnackbar("Congratulations! You have discovered an Easter Egg.")
     }
 
     private fun commandConfig(params: List<String>) {
@@ -60,12 +67,12 @@ class SecretCommander(private val preferences: Preferences, private val userInfo
             "lockdb" -> {
                 value = value.toLowerCase()
                 val valueB = value == "true" || value == "on" || value == "1"
-                preferences.setValue(PropertyDefinition.lockDB, valueB)
-                userInfo.showInfo("Property saved: $property = $valueB")
+                settingsState.lockDB = valueB
+                uiInfoService.showSnackbar("Property saved: $property = $valueB")
             }
             "userauthtoken" -> {
-                preferences.setValue(PropertyDefinition.userAuthToken, value)
-                userInfo.showInfo("Property saved: $property = $value")
+                settingsState.userAuthToken = value
+                uiInfoService.showSnackbar("Property saved: $property = $value")
             }
             else -> {
                 logger.warn("unknown property: $property")

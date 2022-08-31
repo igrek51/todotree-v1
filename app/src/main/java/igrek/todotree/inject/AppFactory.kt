@@ -26,15 +26,16 @@ import igrek.todotree.service.history.LinkHistoryService
 import igrek.todotree.service.remote.RemoteDbRequester
 import igrek.todotree.service.remote.RemotePushService
 import igrek.todotree.service.statistics.StatisticsLogService
-import igrek.todotree.service.summary.DailySummaryService
-import igrek.todotree.service.summary.NotificationService
 import igrek.todotree.service.system.SoftKeyboardService
 import igrek.todotree.service.tree.*
 import igrek.todotree.service.tree.persistence.TreePersistenceService
-import igrek.todotree.settings.PreferencesState
 import igrek.todotree.settings.SettingsLayoutController
 import igrek.todotree.settings.SettingsService
-import igrek.todotree.system.*
+import igrek.todotree.settings.SettingsState
+import igrek.todotree.system.PackageInfoService
+import igrek.todotree.system.PermissionService
+import igrek.todotree.system.SystemKeyDispatcher
+import igrek.todotree.system.WindowManagerService
 import igrek.todotree.system.filesystem.ExternalCardService
 import igrek.todotree.ui.ExplosionService
 import igrek.todotree.ui.GUI
@@ -74,7 +75,7 @@ class AppFactory(
     val navigationMenuController = SingletonInject { NavigationMenuController() }
     val localDataService = SingletonInject { LocalDataService() }
     val settingsLayoutController = SingletonInject { SettingsLayoutController() }
-    val preferencesState = SingletonInject { PreferencesState() }
+    val settingsState = SingletonInject { SettingsState() }
     val activityResultDispatcher = SingletonInject { ActivityResultDispatcher() }
     val userDataDao = SingletonInject { UserDataDao() }
     val appData = SingletonInject { AppData() }
@@ -101,8 +102,6 @@ class AppFactory(
     val externalCardService = SingletonInject { ExternalCardService() }
     val quickAddService = SingletonInject { QuickAddService() }
     val linkHistoryService = SingletonInject { LinkHistoryService() }
-    val notificationService = SingletonInject { NotificationService() }
-    val dailySummaryService = SingletonInject { DailySummaryService() }
     val remoteDbRequester = SingletonInject { RemoteDbRequester() }
     val remotePushService = SingletonInject { RemotePushService() }
     val explosionService = SingletonInject { ExplosionService() }
