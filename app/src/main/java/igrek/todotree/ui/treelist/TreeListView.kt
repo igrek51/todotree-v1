@@ -47,6 +47,14 @@ class TreeListView : ListView, AdapterView.OnItemClickListener, AdapterView.OnIt
         reorder = TreeListReorder(this)
         setOnScrollListener(scrollHandler)
         choiceMode = CHOICE_MODE_SINGLE
+
+        val observer: ViewTreeObserver = this.viewTreeObserver
+        observer.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                onCalculateViewHeights()
+            }
+        })
+
         setAdapter(adapter!!)
     }
 
@@ -114,36 +122,30 @@ class TreeListView : ListView, AdapterView.OnItemClickListener, AdapterView.OnIt
     private fun setItems(items: List<AbstractTreeItem>) {
         adapter!!.setDataSource(items)
         invalidate()
-        calculateViewHeights()
     }
 
     val items: List<Any>?
         get() = adapter!!.items
 
-    private fun calculateViewHeights() {
-        // WARNING: for a moment - there's invalidated item heights map
-        val observer: ViewTreeObserver = this.viewTreeObserver
-        observer.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
-            override fun onGlobalLayout() {
-                itemHeights.clear()
-                this@TreeListView.viewTreeObserver.removeGlobalOnLayoutListener(this)
-                // now view width should be available at last
-                val viewWidth: Int = this@TreeListView.width
-                if (viewWidth == 0) logger.warn("List view width == 0")
-                val measureSpecW: Int = MeasureSpec.makeMeasureSpec(viewWidth, MeasureSpec.EXACTLY)
-                for (i in 0 until adapter!!.count) {
-                    val itemView = adapter!!.getView(i, null, this@TreeListView)
-                    itemView.measure(measureSpecW, MeasureSpec.UNSPECIFIED)
-                    itemHeights.put(i, itemView.measuredHeight)
-                }
-            }
-        })
+    private fun onCalculateViewHeights() {
+        // now view width should be available at last
+        val viewWidth: Int = this@TreeListView.width
+        if (viewWidth == 0)
+            logger.warn("List view width == 0")
+        val measureSpecW: Int = MeasureSpec.makeMeasureSpec(viewWidth, MeasureSpec.EXACTLY)
+        for (i in 0 until adapter!!.count) {
+            val itemView = adapter!!.getView(i, null, this@TreeListView)
+            itemView.measure(measureSpecW, MeasureSpec.UNSPECIFIED)
+            if (itemView.measuredHeight == 0)
+                logger.warn("Measured item view height == 0")
+            itemHeights.put(i, itemView.measuredHeight)
+        }
     }
 
     fun getItemHeight(position: Int): Int {
         val h: Int? = itemHeights.get(position)
         if (h == null) {
-            logger.warn("Item View ($position) = null")
+            logger.warn("Item View ($position) height unknown")
             return 0
         }
         return h

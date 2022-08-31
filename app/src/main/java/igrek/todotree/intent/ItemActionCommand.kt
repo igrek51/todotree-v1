@@ -117,7 +117,7 @@ class ItemActionCommand(
                         ItemTrashCommand().itemRemoveClicked(sortedPositions[0]) // will remove all selections as well
 
                         uiInfoService.showToast(when (results.size) {
-                            1 -> "Item removed remotely: ${results[0].getOrNull()}"
+                            1 -> "Item removed remotely"
                             else -> "${results.size} items removed remotely"
                         })
                     }

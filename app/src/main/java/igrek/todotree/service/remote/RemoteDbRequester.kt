@@ -52,7 +52,6 @@ class RemoteDbRequester (
         get() = settingsState.get().userAuthToken
 
     fun fetchAllRemoteTodosAsync(): Deferred<Result<List<TodoDto>>> {
-        logger.debug(authToken)
         val request: Request = Request.Builder()
                 .url(getAllTodosUrl)
                 .addHeader(authTokenHeader, authToken)

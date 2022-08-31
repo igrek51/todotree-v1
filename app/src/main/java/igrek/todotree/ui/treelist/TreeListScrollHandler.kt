@@ -6,8 +6,10 @@ import android.os.Looper
 import android.widget.AbsListView
 import igrek.todotree.info.logger.LoggerFactory
 
-class TreeListScrollHandler(private val listView: TreeListView, context: Context) :
-    AbsListView.OnScrollListener {
+class TreeListScrollHandler(
+    private val listView: TreeListView,
+    context: Context,
+) : AbsListView.OnScrollListener {
     private val logger = LoggerFactory.logger
 
     var scrollOffset = 0
