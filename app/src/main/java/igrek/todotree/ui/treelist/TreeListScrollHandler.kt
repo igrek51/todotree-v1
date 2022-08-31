@@ -16,19 +16,13 @@ class TreeListScrollHandler(
         private set
 
     private var scrollState = AbsListView.OnScrollListener.SCROLL_STATE_IDLE
-    private val smoothScrollEdgePx: Int
 
     val currentScrollPosition: Int
         get() = realScrollPosition
 
-    init {
-        val metrics = context.resources.displayMetrics
-        smoothScrollEdgePx = (SMOOTH_SCROLL_EDGE_DP / metrics.density).toInt()
-    }
-
     companion object {
-        private const val SMOOTH_SCROLL_EDGE_DP = 200
-        private const val SMOOTH_SCROLL_FACTOR = 0.34f
+        private const val SMOOTH_SCROLL_EDGE_DP = 0.25f
+        private const val SMOOTH_SCROLL_DISTANCE = 110f
         private const val SMOOTH_SCROLL_DURATION = 10
     }
 
@@ -38,19 +32,20 @@ class TreeListScrollHandler(
             val height = listView.height
             val extent = listView.computeVerticalScrollExtent()
             val range = listView.computeVerticalScrollRange()
+            val smoothScrollEdgePx = height * SMOOTH_SCROLL_EDGE_DP
             listView.reorder?.let { reorder ->
                 if (reorder.isDragging && reorder.hoverBitmapBounds != null) {
                     val hoverViewTop = reorder.hoverBitmapBounds!!.top
                     val hoverHeight = reorder.hoverBitmapBounds!!.height()
                     if (hoverViewTop <= smoothScrollEdgePx && offset > 0) {
-                        val scrollDistance =
-                            ((hoverViewTop - smoothScrollEdgePx) * SMOOTH_SCROLL_FACTOR).toInt()
+                        val edgeCoverage = (hoverViewTop - smoothScrollEdgePx) / smoothScrollEdgePx
+                        val scrollDistance = (edgeCoverage * SMOOTH_SCROLL_DISTANCE).toInt()
                         listView.smoothScrollBy(scrollDistance, SMOOTH_SCROLL_DURATION)
                         return true
                     }
                     if (hoverViewTop + hoverHeight >= height - smoothScrollEdgePx && offset + extent < range) {
-                        val scrollDistance =
-                            ((hoverViewTop + hoverHeight - height + smoothScrollEdgePx) * SMOOTH_SCROLL_FACTOR).toInt()
+                        val edgeCoverage = (hoverViewTop + hoverHeight - height + smoothScrollEdgePx) / smoothScrollEdgePx
+                        val scrollDistance = (edgeCoverage * SMOOTH_SCROLL_DISTANCE).toInt()
                         listView.smoothScrollBy(scrollDistance, SMOOTH_SCROLL_DURATION)
                         return true
                     }

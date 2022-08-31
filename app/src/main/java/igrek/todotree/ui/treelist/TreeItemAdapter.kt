@@ -42,11 +42,7 @@ class TreeItemAdapter(
     fun setDataSource(dataSource: List<AbstractTreeItem>?) {
         this.dataSource = dataSource
         storedViews.clear()
-        GlobalScope.launch {
-            withContext(Dispatchers.Main) {
-                notifyDataSetChanged()
-            }
-        }
+        notifyDataSetChanged()
     }
 
     override fun getItem(position: Int): AbstractTreeItem {
