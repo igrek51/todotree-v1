@@ -42,9 +42,6 @@ class StatisticsLogService(
         logTaskChange(taskName, StatisticEventType.TASK_COMPLETED)
     }
 
-    /**
-     * logs task event
-     */
     private fun logTaskChange(taskName: String?, type: StatisticEventType) {
         try {
             val todayLog = getTodayLog()
@@ -72,9 +69,6 @@ class StatisticsLogService(
         logger.debug("stats log line appended: $line")
     }
 
-    /**
-     * removes old logs
-     */
     private fun cleanUpLogs() {
         val logsDirPath = getLogsDir()
         val logs: List<String> = filesystemService.listDirFilenames(logsDirPath)
@@ -107,37 +101,6 @@ class StatisticsLogService(
 
     private fun getLogsDir(): File {
         return filesystemService.appDataSubDir(LOGS_SUBDIR)
-    }
-
-    // is in 24h range from now
-    fun getLast24hEvents(): List<StatisticEvent> {
-        val today = Date()
-        val c = Calendar.getInstance()
-        c.time = today
-        c.add(Calendar.DATE, -1)
-        val yesterday = c.time
-        val todayEvents = readEventsOfDay(today)
-        val yesterdayEvents = readEventsOfDay(yesterday)
-        val events: MutableList<StatisticEvent> = ArrayList()
-        for (event in yesterdayEvents) {
-            // is in 24h range from now
-            if (event.datetime.after(yesterday)) {
-                events.add(event)
-            }
-        }
-        for (event in todayEvents) {
-            // is in 24h range from now
-            if (event.datetime.after(yesterday)) {
-                events.add(event)
-            }
-        }
-        return events
-    }
-
-    private fun readEventsOfDay(date: Date): List<StatisticEvent> {
-        val logFile = getLogFile(date)
-        logFile.takeUnless { it.exists() }?.let { return emptyList() }
-        return logFile.readLines().map { parse(it, lineDateFormat) }
     }
 
     companion object {

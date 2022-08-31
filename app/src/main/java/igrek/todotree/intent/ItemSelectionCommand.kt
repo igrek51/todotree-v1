@@ -1,11 +1,8 @@
 package igrek.todotree.intent
 
-import igrek.todotree.info.UiInfoService
 import igrek.todotree.inject.LazyExtractor
 import igrek.todotree.inject.LazyInject
 import igrek.todotree.inject.appFactory
-import igrek.todotree.service.calc.NumericAdder
-import igrek.todotree.service.clipboard.SystemClipboardManager
 import igrek.todotree.service.tree.TreeManager
 import igrek.todotree.service.tree.TreeSelectionManager
 

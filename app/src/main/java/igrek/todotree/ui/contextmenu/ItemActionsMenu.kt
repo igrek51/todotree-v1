@@ -13,7 +13,6 @@ import igrek.todotree.intent.ItemActionCommand
 import igrek.todotree.intent.RemotePushCommand
 import igrek.todotree.service.clipboard.TreeClipboardManager
 import igrek.todotree.service.tree.TreeManager
-import igrek.todotree.service.tree.TreeSelectionManager
 import igrek.todotree.ui.ExplosionService
 
 class ItemActionsMenu(

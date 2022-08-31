@@ -98,11 +98,4 @@ open class SettingsService(
         entityValues[propertyName] = value
     }
 
-    fun clear() {
-        userDataDao.preferencesDao.factoryReset()
-        entityValues.clear()
-        saveAll()
-        loadAll()
-    }
-
 }

@@ -1,5 +1,6 @@
 package igrek.todotree.ui.treelist
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
 import android.util.AttributeSet
@@ -27,16 +28,16 @@ class TreeListView : ListView, AdapterView.OnItemClickListener, AdapterView.OnIt
     private val gestureHandler = TreeListGestureHandler(this)
 
     /** view index -> view height  */
+    @SuppressLint("UseSparseArrays")
     private val itemHeights: SparseArray<Int> = SparseArray<Int>()
 
     constructor(context: Context?) : super(context)
+    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
     constructor(context: Context?, attrs: AttributeSet?, defStyle: Int) : super(
         context,
         attrs,
         defStyle
     )
-
-    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs) {}
 
     fun init(context: Context?) {
         adapter = TreeItemAdapter(context!!, null, this)
@@ -59,6 +60,7 @@ class TreeListView : ListView, AdapterView.OnItemClickListener, AdapterView.OnIt
         return super.onInterceptTouchEvent(ev)
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
         when (event.action and MotionEvent.ACTION_MASK) {
             MotionEvent.ACTION_DOWN -> gestureHandler.gestureStart(event.x, event.y)
