@@ -24,7 +24,7 @@ class TreeListView : ListView, AdapterView.OnItemClickListener, AdapterView.OnIt
     private var adapter: TreeItemAdapter? = null
     var scrollHandler: TreeListScrollHandler? = null
         private set
-    val reorder: TreeListReorder = TreeListReorder(this)
+    var reorder: TreeListReorder? = null
     private val gestureHandler = TreeListGestureHandler(this)
 
     /** view index -> view height  */
@@ -44,6 +44,7 @@ class TreeListView : ListView, AdapterView.OnItemClickListener, AdapterView.OnIt
         scrollHandler = TreeListScrollHandler(this, context)
         onItemClickListener = this
         onItemLongClickListener = this
+        reorder = TreeListReorder(this)
         setOnScrollListener(scrollHandler)
         choiceMode = CHOICE_MODE_SINGLE
         setAdapter(adapter!!)
@@ -62,26 +63,28 @@ class TreeListView : ListView, AdapterView.OnItemClickListener, AdapterView.OnIt
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        when (event.action and MotionEvent.ACTION_MASK) {
-            MotionEvent.ACTION_DOWN -> gestureHandler.gestureStart(event.x, event.y)
-            MotionEvent.ACTION_MOVE -> if (reorder.isDragging) {
-                reorder.setLastTouchY(event.y)
-                reorder.handleItemDragging()
-                return false
-            }
-            MotionEvent.ACTION_UP -> {
-                if (gestureHandler.handleItemGesture(
-                        event.x,
-                        event.y,
-                        scrollHandler!!.scrollOffset
-                    )
-                ) return super.onTouchEvent(event)
-                reorder.itemDraggingStopped()
-                gestureHandler.reset()
-            }
-            MotionEvent.ACTION_CANCEL -> {
-                reorder.itemDraggingStopped()
-                gestureHandler.reset()
+        reorder?.let { reorder ->
+            when (event.action and MotionEvent.ACTION_MASK) {
+                MotionEvent.ACTION_DOWN -> gestureHandler.gestureStart(event.x, event.y)
+                MotionEvent.ACTION_MOVE -> if (reorder.isDragging) {
+                    reorder.setLastTouchY(event.y)
+                    reorder.handleItemDragging()
+                    return false
+                }
+                MotionEvent.ACTION_UP -> {
+                    if (gestureHandler.handleItemGesture(
+                            event.x,
+                            event.y,
+                            scrollHandler!!.scrollOffset
+                        )
+                    ) return super.onTouchEvent(event)
+                    reorder.itemDraggingStopped()
+                    gestureHandler.reset()
+                }
+                MotionEvent.ACTION_CANCEL -> {
+                    reorder.itemDraggingStopped()
+                    gestureHandler.reset()
+                }
             }
         }
         return super.onTouchEvent(event)
@@ -93,14 +96,14 @@ class TreeListView : ListView, AdapterView.OnItemClickListener, AdapterView.OnIt
 
     override fun invalidate() {
         super.invalidate()
-        if (reorder.isDragging) {
-            reorder.setDraggedItemView()
+        if (reorder?.isDragging == true) {
+            reorder?.setDraggedItemView()
         }
     }
 
     override fun dispatchDraw(canvas: Canvas) {
         super.dispatchDraw(canvas)
-        reorder.dispatchDraw(canvas)
+        reorder?.dispatchDraw(canvas)
     }
 
     fun setItemsAndSelected(items: List<AbstractTreeItem>, selectedPositions: Set<Int>?) {
@@ -177,8 +180,8 @@ class TreeListView : ListView, AdapterView.OnItemClickListener, AdapterView.OnIt
         position: Int,
         id: Long
     ): Boolean {
-        if (!reorder.isDragging) {
-            reorder.itemDraggingStopped()
+        if (reorder?.isDragging == false) {
+            reorder?.itemDraggingStopped()
             gestureHandler.reset()
             ItemActionsMenu(position).show(view)
         }

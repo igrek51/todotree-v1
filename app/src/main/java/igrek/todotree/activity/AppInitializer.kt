@@ -23,6 +23,7 @@ import kotlinx.coroutines.*
 import kotlin.reflect.KClass
 
 
+@OptIn(DelicateCoroutinesApi::class)
 class AppInitializer(
     windowManagerService: LazyInject<WindowManagerService> = appFactory.windowManagerService,
     layoutController: LazyInject<LayoutController> = appFactory.layoutController,
@@ -45,8 +46,7 @@ class AppInitializer(
     private val startingScreen: KClass<out MainLayout> = HomeLayoutController::class
     private val debugInitEnabled = false
 
-    @OptIn(DelicateCoroutinesApi::class)
-    fun init() {
+    fun init(postInit: () -> Unit = {}) {
         logger.info("Initializing application...")
 
         if (debugInitEnabled && BuildConfig.DEBUG)
@@ -58,6 +58,7 @@ class AppInitializer(
             withContext(Dispatchers.Main) {
                 actualInit()
                 handleFirstRun()
+                postInit()
                 activityController.initialized = true
             }
             logger.info("Application has been initialized.")

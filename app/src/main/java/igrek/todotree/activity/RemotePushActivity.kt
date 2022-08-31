@@ -4,9 +4,12 @@ import android.content.Intent
 import android.os.Bundle
 
 class RemotePushActivity : MainActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        postInit = {
+            activityData.remotePushService.enableRemotePush()
+        }
         super.onCreate(savedInstanceState)
-        activityData.remotePushService.enableRemotePush()
     }
 
     override fun onNewIntent(intent: Intent?) {

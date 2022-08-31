@@ -1,11 +1,13 @@
 package igrek.todotree.intent
 
+import android.content.Context
 import igrek.todotree.app.AppData
 import igrek.todotree.app.AppState
 import igrek.todotree.domain.treeitem.AbstractTreeItem
 import igrek.todotree.domain.treeitem.LinkTreeItem
 import igrek.todotree.domain.treeitem.RemoteTreeItem
 import igrek.todotree.domain.treeitem.TextTreeItem
+import igrek.todotree.info.Toaster
 import igrek.todotree.info.UiInfoService
 import igrek.todotree.info.logger.LoggerFactory
 import igrek.todotree.inject.LazyExtractor
@@ -143,8 +145,7 @@ class ItemEditorCommand(
                         uiInfoService.showToast("Success!")
                         exitApp()
                     }, onFailure = { e ->
-                        logger.error(e)
-                        uiInfoService.showToast("Communication breakdown!")
+                        Toaster().error(e, "Communication breakdown!")
                     })
                 }
             }

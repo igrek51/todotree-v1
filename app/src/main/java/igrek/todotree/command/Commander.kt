@@ -27,7 +27,7 @@ class Commander(
     val context: Context,
 ) {
     private val logger = LoggerFactory.logger
-    private val toaster = Toaster(context)
+    private val toaster = Toaster()
 
     private val cmdRules: List<CommandRule> by lazy {
         listOf(

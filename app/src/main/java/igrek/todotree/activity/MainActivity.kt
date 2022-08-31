@@ -20,19 +20,22 @@ import igrek.todotree.util.RetryDelayed
 
 
 open class MainActivity(
-    mainActivityData: LazyInject<MainActivityData> = appFactory.activityData,
+    activityData: LazyInject<MainActivityData> = appFactory.activityData,
 ) : AppCompatActivity() {
-    protected var activityData by LazyExtractor(mainActivityData)
+    protected var activityData by LazyExtractor(activityData)
+
+    protected var postInit: () -> Unit = {}
 
     protected val logger: Logger = LoggerFactory.logger
 
     override fun onCreate(savedInstanceState: Bundle?) {
         try {
-            logger.info("Creating Dependencies container...")
+            val activityName = this::class.simpleName
+            logger.info("Creating Dependencies container ($activityName)...")
             AppContextFactory.createAppContext(this)
             recreateFields() // Workaround for reusing finished activities by Android
             super.onCreate(savedInstanceState)
-            activityData.appInitializer.init()
+            activityData.appInitializer.init(postInit)
         } catch (t: Throwable) {
             logger.fatal(t)
             throw t
@@ -41,14 +44,11 @@ open class MainActivity(
 
     override fun onNewIntent(intent: Intent?) {
         stdNewIntent(intent)
-        logger.debug("new intent received: ${intent?.data}")
-        if (activityData.quickAddService.isQuickAddModeEnabled) {
-            activityData.quickAddService.isQuickAddModeEnabled = false
-            logger.debug("recreating activity")
-            recreate()
-        } else if (activityData.remotePushService.isRemotePushEnabled) {
-            activityData.remotePushService.isRemotePushEnabled = false
-            logger.debug("recreating activity")
+        logger.debug("new intent received: action=${intent?.action}")
+        val lastActivityName = appFactory.activity.get()?.javaClass?.simpleName
+        val currentActivityName = this::class.simpleName
+        if (lastActivityName != currentActivityName) {
+            logger.info("recreating $currentActivityName due to different last activity class ($lastActivityName)")
             recreate()
         }
         null?.let {

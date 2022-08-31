@@ -50,14 +50,16 @@ class ActivityController(
 
     fun onStart() {
         if (initialized) {
-            logger.debug("starting activity...")
+            val activityName = activity.get()!!::class.simpleName
+            logger.debug("starting activity $activityName...")
             userDataDao.requestSave(false)
         }
     }
 
     fun onStop() {
         if (initialized) {
-            logger.debug("stopping activity...")
+            val activityName = activity.get()!!::class.simpleName
+            logger.debug("stopping activity $activityName...")
             if (exitingDiscardingChanges) {
                 exitingDiscardingChanges = false
             } else {

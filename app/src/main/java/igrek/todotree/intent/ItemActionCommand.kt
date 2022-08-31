@@ -3,6 +3,7 @@ package igrek.todotree.intent
 import android.os.Handler
 import android.os.Looper
 import igrek.todotree.domain.treeitem.LinkTreeItem
+import igrek.todotree.info.Toaster
 import igrek.todotree.info.UiInfoService
 import igrek.todotree.info.logger.LoggerFactory.logger
 import igrek.todotree.inject.LazyExtractor
@@ -111,7 +112,7 @@ class ItemActionCommand(
                     if (results.any { it.isFailure }) {
                         val exceptions = results.filter { it.isFailure }.mapNotNull { it.exceptionOrNull() }
                         exceptions.forEach { logger.error(it) }
-                        uiInfoService.showToast("Communication breakdown!")
+                        Toaster().error(exceptions[0], "Communication breakdown!")
                     } else {
                         ItemTrashCommand().itemRemoveClicked(sortedPositions[0]) // will remove all selections as well
 

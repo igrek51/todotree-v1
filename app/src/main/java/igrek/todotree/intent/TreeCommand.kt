@@ -2,6 +2,7 @@ package igrek.todotree.intent
 
 import igrek.todotree.domain.treeitem.*
 import igrek.todotree.exceptions.NoSuperItemException
+import igrek.todotree.info.Toaster
 import igrek.todotree.info.UiInfoService
 import igrek.todotree.info.logger.LoggerFactory.logger
 import igrek.todotree.inject.LazyExtractor
@@ -99,8 +100,7 @@ class TreeCommand(
                                 uiInfoService.showInfo("${todoDtos.size} remote items fetched.")
                             }
                         }, onFailure = { e ->
-                            logger.error(e)
-                            uiInfoService.showInfo("Communication breakdown!")
+                            Toaster().error(e, "Communication breakdown!")
                         })
                     }
                 }

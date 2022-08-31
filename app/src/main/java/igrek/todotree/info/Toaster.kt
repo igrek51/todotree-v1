@@ -11,6 +11,9 @@ import igrek.todotree.MainApplication
 import igrek.todotree.R
 import igrek.todotree.info.errorcheck.SafeClickListener
 import igrek.todotree.info.logger.LoggerFactory
+import igrek.todotree.inject.LazyExtractor
+import igrek.todotree.inject.LazyInject
+import igrek.todotree.inject.appFactory
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -18,8 +21,10 @@ import kotlinx.coroutines.launch
 
 @OptIn(DelicateCoroutinesApi::class)
 class Toaster(
-    val context: Context,
+    context: LazyInject<Context> = appFactory.context,
 ) {
+    private val context by LazyExtractor(context)
+
     private val logger = LoggerFactory.logger
     private val infobars = HashMap<View?, Snackbar>()
 

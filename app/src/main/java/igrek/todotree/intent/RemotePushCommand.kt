@@ -1,6 +1,7 @@
 package igrek.todotree.intent
 
 import igrek.todotree.domain.treeitem.AbstractTreeItem
+import igrek.todotree.info.Toaster
 import igrek.todotree.info.UiInfoService
 import igrek.todotree.info.logger.LoggerFactory.logger
 import igrek.todotree.inject.LazyExtractor
@@ -39,9 +40,9 @@ class RemotePushCommand(
 
             runBlocking {
                 GlobalScope.launch(Dispatchers.Main) {
-                    val contents = itemPosistions.map { selectedItemId ->
-                        val selectedItem = currentItem.getChild(selectedItemId)
-                        selectedItem.displayName
+                    val contents = itemPosistions.mapNotNull { selectedItemId ->
+                        val selectedItem = currentItem.getChildOrNull(selectedItemId)
+                        selectedItem?.displayName
                     }
 
                     val deferredResult: Deferred<Result<*>> = when (contents.size) {
@@ -56,9 +57,8 @@ class RemotePushCommand(
                     val result = deferredResult.await()
                     if (result.isFailure) {
                         result.exceptionOrNull()?.let { exception ->
-                            logger.error(exception)
+                            Toaster().error(exception, "Communication breakdown!")
                         }
-                        uiInfoService.showToast("Communication breakdown!")
                     } else {
                         val message = when (contents.size) {
                             1 -> "Entry pushed: ${contents[0]}"

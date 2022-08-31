@@ -43,6 +43,12 @@ abstract class AbstractTreeItem(parent: AbstractTreeItem?) {
         return children[index]
     }
 
+    fun getChildOrNull(index: Int): AbstractTreeItem? {
+        if (index < 0) return null
+        if (index >= children.size) return null
+        return children[index]
+    }
+
     private fun getChildIndex(child: AbstractTreeItem): Int {
         for (i in children.indices) {
             if (children[i] === child) {

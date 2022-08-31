@@ -118,14 +118,14 @@ class TreeItemAdapter(
                 event.source = 777 // from moveButton
                 when (event.action) {
                     MotionEvent.ACTION_DOWN -> {
-                        listView.reorder.onItemMoveButtonPressed(
+                        listView.reorder?.onItemMoveButtonPressed(
                             position, item, itemView, event.x, event.y + moveButton.top
                         )
                         return@OnTouchListener false
                     }
                     MotionEvent.ACTION_MOVE -> return@OnTouchListener false
                     MotionEvent.ACTION_UP -> {
-                        listView.reorder.onItemMoveButtonReleased(
+                        listView.reorder?.onItemMoveButtonReleased(
                             position, item, itemView, event.x, event.y + moveButton.top
                         )
                         return@OnTouchListener true
@@ -232,14 +232,14 @@ class TreeItemAdapter(
                 event.source = 777 // from moveButton
                 when (event.action) {
                     MotionEvent.ACTION_DOWN -> {
-                        listView.reorder.onItemMoveButtonPressed(
+                        listView.reorder?.onItemMoveButtonPressed(
                             position, item, itemView, event.x, event.y + moveButton.top
                         )
                         return@OnTouchListener false
                     }
                     MotionEvent.ACTION_MOVE -> return@OnTouchListener false
                     MotionEvent.ACTION_UP -> {
-                        listView.reorder.onItemMoveButtonReleased(
+                        listView.reorder?.onItemMoveButtonReleased(
                             position, item, itemView, event.x, event.y + moveButton.top
                         )
                         return@OnTouchListener true

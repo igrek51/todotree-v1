@@ -19,7 +19,7 @@
     <PreferenceCategory android:title="Maintenance">
         <Preference
             android:key="initFilesystemPermissions"
-            android:title="Configure filesystem permissions"
+            android:title="Initialize filesystem permissions"
             app:iconSpaceReserved="false" />
     </PreferenceCategory>
 
