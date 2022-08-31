@@ -5,6 +5,7 @@ import android.os.Handler
 import android.os.Looper
 import android.widget.AbsListView
 import igrek.todotree.info.logger.LoggerFactory
+import kotlin.math.absoluteValue
 import kotlin.math.pow
 
 class TreeListScrollHandler(
@@ -39,13 +40,13 @@ class TreeListScrollHandler(
                     val hoverViewTop = reorder.hoverBitmapBounds!!.top
                     val hoverHeight = reorder.hoverBitmapBounds!!.height()
                     if (hoverViewTop <= smoothScrollEdgePx && offset > 0) {
-                        val edgeCoverage = (smoothScrollEdgePx - hoverViewTop) / smoothScrollEdgePx
+                        val edgeCoverage = (smoothScrollEdgePx - hoverViewTop).absoluteValue / smoothScrollEdgePx
                         val scrollDistance = (edgeCoverage.pow(3) * SMOOTH_SCROLL_SPEED).toInt()
                         listView.smoothScrollBy(-scrollDistance, SMOOTH_SCROLL_DURATION)
                         return true
                     }
                     if (hoverViewTop + hoverHeight >= height - smoothScrollEdgePx && offset + extent < range) {
-                        val edgeCoverage = (hoverViewTop + hoverHeight - height + smoothScrollEdgePx) / smoothScrollEdgePx
+                        val edgeCoverage = (hoverViewTop + hoverHeight - height + smoothScrollEdgePx).absoluteValue / smoothScrollEdgePx
                         val scrollDistance = (edgeCoverage.pow(3) * SMOOTH_SCROLL_SPEED).toInt()
                         listView.smoothScrollBy(scrollDistance, SMOOTH_SCROLL_DURATION)
                         return true
