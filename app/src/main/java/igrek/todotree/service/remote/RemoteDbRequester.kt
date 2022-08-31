@@ -12,6 +12,7 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
+import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType
 import okhttp3.Request
@@ -28,12 +29,6 @@ class RemoteDbRequester (
 
     companion object {
         private const val todoApiBase = "https://todo.igrek.dev/api/v1"
-
-        private const val getAllTodosUrl = "$todoApiBase/todo"
-        private const val postNewTodoUrl = "$todoApiBase/todo"
-        private const val postNewTodosUrl = "$todoApiBase/todos"
-        private val deleteTodoUrl = { id: Long -> "$todoApiBase/todo/$id" }
-
         private const val authTokenHeader = "X-Auth-Token"
     }
 
@@ -53,13 +48,13 @@ class RemoteDbRequester (
 
     fun fetchAllRemoteTodosAsync(): Deferred<Result<List<TodoDto>>> {
         val request: Request = Request.Builder()
-                .url(getAllTodosUrl)
+                .url("$todoApiBase/todo")
                 .addHeader(authTokenHeader, authToken)
                 .build()
         return httpRequester.httpRequestAsync(request) { response: Response ->
             val json = response.body()?.string() ?: ""
-            val allDtos: AllTodoDto = jsonSerializer.decodeFromString(AllTodoDto.serializer(), json)
-            allDtos.entities
+            val allDtos: List<TodoDto> = jsonSerializer.decodeFromString(ListSerializer(TodoDto.serializer()), json)
+            allDtos
         }
     }
 
@@ -71,7 +66,7 @@ class RemoteDbRequester (
         val todoDto = TodoDto(content = content, create_timestamp = timestampS, device_id = deviceId)
         val json = jsonSerializer.encodeToString(TodoDto.serializer(), todoDto)
         val request: Request = Request.Builder()
-                .url(postNewTodoUrl)
+                .url("$todoApiBase/todo")
                 .post(RequestBody.create(jsonType, json))
                 .addHeader(authTokenHeader, authToken)
                 .build()
@@ -84,15 +79,13 @@ class RemoteDbRequester (
         val deviceId = Settings.Secure.getString(activity.contentResolver, Settings.Secure.ANDROID_ID)
         val timestampS = Date().time / 1000
 
-        val todosDto = CreateTodosDto()
-        contents.forEach { content ->
-            val todoDto = TodoDto(content = content, create_timestamp = timestampS, device_id = deviceId)
-            todosDto.todos.add(todoDto)
+        val tasks = contents.map { content ->
+            TodoDto(content = content, create_timestamp = timestampS, device_id = deviceId)
         }
 
-        val json = jsonSerializer.encodeToString(CreateTodosDto.serializer(), todosDto)
+        val json = jsonSerializer.encodeToString(ListSerializer(TodoDto.serializer()), tasks)
         val request: Request = Request.Builder()
-                .url(postNewTodosUrl)
+                .url("$todoApiBase/todo/many")
                 .post(RequestBody.create(jsonType, json))
                 .addHeader(authTokenHeader, authToken)
                 .build()
@@ -102,7 +95,7 @@ class RemoteDbRequester (
     fun deleteRemoteTodoAsync(id: Long): Deferred<Result<Unit>> {
         logger.info("Deleting remote todo")
         val request: Request = Request.Builder()
-                .url(deleteTodoUrl(id))
+                .url("$todoApiBase/todo/$id")
                 .delete()
                 .addHeader(authTokenHeader, authToken)
                 .build()
