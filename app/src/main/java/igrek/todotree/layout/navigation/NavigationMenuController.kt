@@ -41,6 +41,8 @@ class NavigationMenuController(
     private val actionsMap = HashMap<Int, () -> Unit>()
     private val logger = LoggerFactory.logger
 
+    private val swipeDrawerEnabled = false
+
     init {
         initOptionActionsMap()
     }
@@ -55,6 +57,9 @@ class NavigationMenuController(
     fun init() {
         drawerLayout = activity.get()?.findViewById(R.id.drawer_layout)
         navigationView = activity.get()?.findViewById(R.id.nav_view)
+
+        if (!swipeDrawerEnabled)
+            drawerLayout?.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
 
         navigationView?.setNavigationItemSelectedListener { menuItem ->
             GlobalScope.launch(Dispatchers.Main) {

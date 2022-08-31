@@ -48,4 +48,5 @@
     <string name="file_manager_not_found">File manager not found</string>
     <string name="selected_file_is_too_big">Selected file is too big</string>
     <string name="action_import_db">📂 Import database</string>
+    <string name="action_open_drawer">🗄️ Open drawer</string>
 </resources>

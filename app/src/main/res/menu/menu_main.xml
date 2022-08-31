@@ -53,6 +53,11 @@
         android:title="@string/action_copy"
         appControllerService:showAsAction="never"/>
     <item
+        android:id="@+id/action_open_drawer"
+        android:orderInCategory="100"
+        android:title="@string/action_open_drawer"
+        appControllerService:showAsAction="never"/>
+    <item
         android:id="@+id/action_enter_command"
         android:orderInCategory="100"
         android:title="@string/action_enter_command"

@@ -9,6 +9,7 @@ import igrek.todotree.inject.LazyExtractor
 import igrek.todotree.inject.LazyInject
 import igrek.todotree.inject.appFactory
 import igrek.todotree.command.Commander
+import igrek.todotree.layout.navigation.NavigationMenuController
 import igrek.todotree.service.import.DatabaseImportFileChooser
 import igrek.todotree.service.tree.TreeSelectionManager
 import igrek.todotree.ui.GUI
@@ -19,12 +20,14 @@ class NavigationCommand(
     appData: LazyInject<AppData> = appFactory.appData,
     activityController: LazyInject<ActivityController> = appFactory.activityController,
     treeSelectionManager: LazyInject<TreeSelectionManager> = appFactory.treeSelectionManager,
+    navigationMenuController: LazyInject<NavigationMenuController> = appFactory.navigationMenuController,
 ) {
     private val context by LazyExtractor(context)
     private val gui by LazyExtractor(gui)
     private val appData by LazyExtractor(appData)
     private val activityController by LazyExtractor(activityController)
     private val treeSelectionManager by LazyExtractor(treeSelectionManager)
+    private val navigationMenuController by LazyExtractor(navigationMenuController)
 
     fun optionsSelect(id: Int): Boolean {
         when (id) {
@@ -82,6 +85,10 @@ class NavigationCommand(
             }
             R.id.action_enter_command -> {
                 Commander(context).showCommandAlert()
+                return false
+            }
+            R.id.action_open_drawer -> {
+                navigationMenuController.navDrawerShow()
                 return false
             }
         }
