@@ -1,6 +1,7 @@
 package igrek.todotree.layout.navigation
 
 import android.app.Activity
+import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import androidx.core.view.GravityCompat
@@ -15,6 +16,7 @@ import igrek.todotree.inject.LazyInject
 import igrek.todotree.inject.appFactory
 import igrek.todotree.layout.LayoutController
 import igrek.todotree.layout.screen.HomeLayoutController
+import igrek.todotree.command.Commander
 import igrek.todotree.service.system.SoftKeyboardService
 import igrek.todotree.settings.SettingsLayoutController
 import kotlinx.coroutines.Dispatchers
@@ -24,10 +26,12 @@ import java.util.*
 
 class NavigationMenuController(
     private val activity: LazyInject<Activity?> = appFactory.activity,
+    context: LazyInject<Context> = appFactory.context,
     activityController: LazyInject<ActivityController> = appFactory.activityController,
     layoutController: LazyInject<LayoutController> = appFactory.layoutController,
     softKeyboardService: LazyInject<SoftKeyboardService> = appFactory.softKeyboardService,
 ) {
+    private val context by LazyExtractor(context)
     private val activityController by LazyExtractor(activityController)
     private val layoutController by LazyExtractor(layoutController)
     private val softKeyboardService by LazyExtractor(softKeyboardService)
@@ -44,6 +48,7 @@ class NavigationMenuController(
     private fun initOptionActionsMap() {
         actionsMap[R.id.nav_home] = { layoutController.showLayout(HomeLayoutController::class) }
         actionsMap[R.id.nav_settings] = { layoutController.showLayout(SettingsLayoutController::class) }
+        actionsMap[R.id.nav_enter_command] = { Commander(context).showCommandAlert() }
         actionsMap[R.id.nav_exit] = { activityController.quit() }
     }
 

@@ -20,7 +20,6 @@ import igrek.todotree.service.access.QuickAddService
 import igrek.todotree.service.backup.BackupManager
 import igrek.todotree.service.clipboard.SystemClipboardManager
 import igrek.todotree.service.clipboard.TreeClipboardManager
-import igrek.todotree.service.commander.SecretCommander
 import igrek.todotree.service.filesystem.FilesystemService
 import igrek.todotree.service.history.ChangesHistory
 import igrek.todotree.service.history.LinkHistoryService
@@ -98,7 +97,6 @@ class AppFactory(
     val treeClipboardManager = SingletonInject { TreeClipboardManager() }
     val treeSelectionManager = SingletonInject { TreeSelectionManager() }
     val treeMover = SingletonInject { TreeMover() }
-    val secretCommander = SingletonInject { SecretCommander() }
     val statisticsLogService = SingletonInject { StatisticsLogService() }
     val externalCardService = SingletonInject { ExternalCardService() }
     val quickAddService = SingletonInject { QuickAddService() }

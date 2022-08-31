@@ -8,7 +8,7 @@ import igrek.todotree.app.AppState
 import igrek.todotree.inject.LazyExtractor
 import igrek.todotree.inject.LazyInject
 import igrek.todotree.inject.appFactory
-import igrek.todotree.remote.RemoteCommander
+import igrek.todotree.command.Commander
 import igrek.todotree.service.tree.TreeSelectionManager
 import igrek.todotree.ui.GUI
 
@@ -76,7 +76,7 @@ class NavigationCommand(
                 return false
             }
             R.id.action_enter_command -> {
-                RemoteCommander(context).showCommandAlert()
+                Commander(context).showCommandAlert()
                 return false
             }
         }

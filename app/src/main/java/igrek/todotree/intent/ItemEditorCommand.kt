@@ -12,7 +12,6 @@ import igrek.todotree.inject.LazyExtractor
 import igrek.todotree.inject.LazyInject
 import igrek.todotree.inject.appFactory
 import igrek.todotree.service.access.QuickAddService
-import igrek.todotree.service.commander.SecretCommander
 import igrek.todotree.service.history.ChangesHistory
 import igrek.todotree.service.remote.RemotePushService
 import igrek.todotree.service.tree.ContentTrimmer
@@ -32,7 +31,6 @@ class ItemEditorCommand(
     treeScrollCache: LazyInject<TreeScrollCache> = appFactory.treeScrollCache,
     treeSelectionManager: LazyInject<TreeSelectionManager> = appFactory.treeSelectionManager,
     changesHistory: LazyInject<ChangesHistory> = appFactory.changesHistory,
-    secretCommander: LazyInject<SecretCommander> = appFactory.secretCommander,
     quickAddService: LazyInject<QuickAddService> = appFactory.quickAddService,
     remotePushService: LazyInject<RemotePushService> = appFactory.remotePushService,
 ) {
@@ -44,7 +42,6 @@ class ItemEditorCommand(
     private val treeScrollCache by LazyExtractor(treeScrollCache)
     private val treeSelectionManager by LazyExtractor(treeSelectionManager)
     private val changesHistory by LazyExtractor(changesHistory)
-    private val secretCommander by LazyExtractor(secretCommander)
     private val quickAddService by LazyExtractor(quickAddService)
     private val remotePushService by LazyExtractor(remotePushService)
 
@@ -134,7 +131,6 @@ class ItemEditorCommand(
     fun saveItem(editedItem: AbstractTreeItem?, content: String) {
         tryToSaveItem(editedItem, content)
         // try to execute secret command
-        secretCommander.execute(content)
         returnFromItemEditing()
         // exit if it's quick add mode only
         if (quickAddService.isQuickAddModeEnabled) {

@@ -1,4 +1,4 @@
-package igrek.todotree.remote
+package igrek.todotree.util
 
 import java.util.*
 

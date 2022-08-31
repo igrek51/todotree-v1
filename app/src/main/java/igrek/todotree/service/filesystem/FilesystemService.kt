@@ -70,8 +70,7 @@ open class FilesystemService(
     private fun saveFile(filename: String, data: ByteArray) {
         val file = File(filename)
         createMissingParentDir(file)
-        val fos: FileOutputStream
-        fos = FileOutputStream(file)
+        val fos = FileOutputStream(file)
         fos.write(data)
         fos.flush()
         fos.close()
