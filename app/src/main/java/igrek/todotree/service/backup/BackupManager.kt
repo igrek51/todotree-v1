@@ -82,13 +82,13 @@ class BackupManager(
             if (filename.startsWith(BACKUP_FILE_PREFIX)) {
                 val dateStr = PathBuilder.removeExtension(filename)
                         .substring(BACKUP_FILE_PREFIX.length)
-                var date: Date? = null
+                var date: Date?
                 try {
                     date = dateFormat.parse(dateStr)
+                    backups.add(Backup(filename, date))
                 } catch (e: ParseException) {
                     logger.warn("Invalid date format in file name: $filename")
                 }
-                backups.add(Backup(filename, date))
             }
         }
         backups.sort()

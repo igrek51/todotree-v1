@@ -22,7 +22,7 @@ class TreeListView : ListView, AdapterView.OnItemClickListener, AdapterView.OnIt
     private var adapter: TreeItemAdapter? = null
     var scrollHandler: TreeListScrollHandler? = null
         private set
-    val reorder: TreeListReorder? = TreeListReorder(this)
+    val reorder: TreeListReorder = TreeListReorder(this)
     val gestureHandler = TreeListGestureHandler(this)
 
     /** view index -> view height  */
@@ -41,10 +41,10 @@ class TreeListView : ListView, AdapterView.OnItemClickListener, AdapterView.OnIt
     fun init(context: Context?) {
         adapter = TreeItemAdapter(context!!, null, this)
         scrollHandler = TreeListScrollHandler(this, context)
-        setOnItemClickListener(this)
-        setOnItemLongClickListener(this)
+        onItemClickListener = this
+        onItemLongClickListener = this
         setOnScrollListener(scrollHandler)
-        setChoiceMode(ListView.CHOICE_MODE_SINGLE)
+        choiceMode = CHOICE_MODE_SINGLE
         setAdapter(adapter!!)
     }
 
@@ -53,32 +53,32 @@ class TreeListView : ListView, AdapterView.OnItemClickListener, AdapterView.OnIt
     }
 
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
-        if (ev.getSource() == 777) { // from moveButton
-            if (ev.getAction() == MotionEvent.ACTION_MOVE) return true
+        if (ev.source == 777) { // from moveButton
+            if (ev.action == MotionEvent.ACTION_MOVE) return true
         }
         return super.onInterceptTouchEvent(ev)
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        when (event.getAction() and MotionEvent.ACTION_MASK) {
-            MotionEvent.ACTION_DOWN -> gestureHandler.gestureStart(event.getX(), event.getY())
-            MotionEvent.ACTION_MOVE -> if (reorder!!.isDragging) {
-                reorder.setLastTouchY(event.getY())
+        when (event.action and MotionEvent.ACTION_MASK) {
+            MotionEvent.ACTION_DOWN -> gestureHandler.gestureStart(event.x, event.y)
+            MotionEvent.ACTION_MOVE -> if (reorder.isDragging) {
+                reorder.setLastTouchY(event.y)
                 reorder.handleItemDragging()
                 return false
             }
             MotionEvent.ACTION_UP -> {
                 if (gestureHandler.handleItemGesture(
-                        event.getX(),
-                        event.getY(),
+                        event.x,
+                        event.y,
                         scrollHandler!!.scrollOffset
                     )
                 ) return super.onTouchEvent(event)
-                reorder!!.itemDraggingStopped()
+                reorder.itemDraggingStopped()
                 gestureHandler.reset()
             }
             MotionEvent.ACTION_CANCEL -> {
-                reorder!!.itemDraggingStopped()
+                reorder.itemDraggingStopped()
                 gestureHandler.reset()
             }
         }
@@ -91,14 +91,14 @@ class TreeListView : ListView, AdapterView.OnItemClickListener, AdapterView.OnIt
 
     override fun invalidate() {
         super.invalidate()
-        if (reorder != null && reorder.isDragging) {
+        if (reorder.isDragging) {
             reorder.setDraggedItemView()
         }
     }
 
-    protected override fun dispatchDraw(canvas: Canvas) {
+    override fun dispatchDraw(canvas: Canvas) {
         super.dispatchDraw(canvas)
-        reorder!!.dispatchDraw(canvas)
+        reorder.dispatchDraw(canvas)
     }
 
     fun setItemsAndSelected(items: List<AbstractTreeItem>, selectedPositions: Set<Int>?) {
@@ -117,13 +117,13 @@ class TreeListView : ListView, AdapterView.OnItemClickListener, AdapterView.OnIt
 
     private fun calculateViewHeights() {
         // WARNING: for a moment - there's invalidated item heights map
-        val observer: ViewTreeObserver = this.getViewTreeObserver()
+        val observer: ViewTreeObserver = this.viewTreeObserver
         observer.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 itemHeights.clear()
-                this@TreeListView.getViewTreeObserver().removeGlobalOnLayoutListener(this)
+                this@TreeListView.viewTreeObserver.removeGlobalOnLayoutListener(this)
                 // now view width should be available at last
-                val viewWidth: Int = this@TreeListView.getWidth()
+                val viewWidth: Int = this@TreeListView.width
                 if (viewWidth == 0) logger.warn("List view width == 0")
                 val measureSpecW: Int = MeasureSpec.makeMeasureSpec(viewWidth, MeasureSpec.EXACTLY)
                 for (i in 0 until adapter!!.count) {
@@ -136,7 +136,7 @@ class TreeListView : ListView, AdapterView.OnItemClickListener, AdapterView.OnIt
     }
 
     fun getItemHeight(position: Int): Int {
-        val h: Int = itemHeights.get(position)
+        val h: Int? = itemHeights.get(position)
         if (h == null) {
             logger.warn("Item View ($position) = null")
             return 0
@@ -145,7 +145,7 @@ class TreeListView : ListView, AdapterView.OnItemClickListener, AdapterView.OnIt
     }
 
     fun putItemHeight(position: Int?, height: Int?) {
-        position?.let { position ->
+        position?.let {
             itemHeights.put(position, height)
         }
     }
@@ -161,7 +161,7 @@ class TreeListView : ListView, AdapterView.OnItemClickListener, AdapterView.OnIt
                 ItemEditorCommand().addItemClicked()
             } else {
                 //istniejący element
-                val item: AbstractTreeItem? = adapter!!.getItem(position)
+                val item: AbstractTreeItem = adapter!!.getItem(position)
                 TreeCommand().itemClicked(position, item)
             }
         } catch (t: Throwable) {
@@ -175,7 +175,7 @@ class TreeListView : ListView, AdapterView.OnItemClickListener, AdapterView.OnIt
         position: Int,
         id: Long
     ): Boolean {
-        if (!reorder!!.isDragging) {
+        if (!reorder.isDragging) {
             reorder.itemDraggingStopped()
             gestureHandler.reset()
             ItemActionsMenu(position).show(view)
@@ -183,15 +183,15 @@ class TreeListView : ListView, AdapterView.OnItemClickListener, AdapterView.OnIt
         return true
     }
 
-    override fun computeVerticalScrollOffset(): Int {
+    public override fun computeVerticalScrollOffset(): Int {
         return super.computeVerticalScrollOffset()
     }
 
-    override fun computeVerticalScrollExtent(): Int {
+    public override fun computeVerticalScrollExtent(): Int {
         return super.computeVerticalScrollExtent()
     }
 
-    override fun computeVerticalScrollRange(): Int {
+    public override fun computeVerticalScrollRange(): Int {
         return super.computeVerticalScrollRange()
     }
 

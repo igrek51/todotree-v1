@@ -1,26 +1,15 @@
 package igrek.todotree.ui.treelist
 
-import igrek.todotree.info.logger.LoggerFactory.logger
-import igrek.todotree.info.logger.Logger.error
-import igrek.todotree.intent.TreeCommand.itemMoved
-import igrek.todotree.ui.treelist.TreeItemAdapter.setDataSource
-import igrek.todotree.ui.treelist.TreeListView
-import igrek.todotree.info.logger.LoggerFactory
-import android.graphics.drawable.BitmapDrawable
+import android.animation.*
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
-import igrek.todotree.domain.treeitem.AbstractTreeItem
-import igrek.todotree.intent.TreeCommand
-import android.animation.ObjectAnimator
-import igrek.todotree.ui.treelist.TreeListReorder
-import android.animation.ValueAnimator.AnimatorUpdateListener
-import android.animation.ValueAnimator
-import android.animation.AnimatorListenerAdapter
-import android.animation.Animator
-import android.animation.TypeEvaluator
 import android.graphics.Rect
+import android.graphics.drawable.BitmapDrawable
 import android.view.View
+import igrek.todotree.domain.treeitem.AbstractTreeItem
+import igrek.todotree.info.logger.LoggerFactory
+import igrek.todotree.intent.TreeCommand
 
 class TreeListReorder(private val listView: TreeListView) {
     private val logger = LoggerFactory.logger
@@ -81,7 +70,7 @@ class TreeListReorder(private val listView: TreeListView) {
         draggedItemPos = position
         draggedItemView = itemView
         draggedItemViewTop = itemView.top
-        scrollStart = listView.scrollHandler.scrollOffset
+        scrollStart = listView.scrollHandler!!.scrollOffset
         hoverBitmap = getAndAddHoverView(draggedItemView)
         draggedItemView!!.visibility = View.INVISIBLE
         listView.invalidate()
@@ -92,8 +81,7 @@ class TreeListReorder(private val listView: TreeListView) {
     }
 
     fun handleItemDragging() {
-        val dyTotal = lastTouchY - startTouchY + (listView.scrollHandler
-            .scrollOffset - scrollStart)
+        val dyTotal = lastTouchY - startTouchY + (listView.scrollHandler!!.scrollOffset - scrollStart)
         if (draggedItemViewTop == null) {
             logger.error("draggedItemViewTop = null")
             return
@@ -104,9 +92,9 @@ class TreeListReorder(private val listView: TreeListView) {
         }
         var step = 0
         var deltaH = 0
-        if (dyTotal > 0) { //przesuwanie w dół
+        if (dyTotal > 0) {
             while (true) {
-                if (draggedItemPos!! + step + 1 >= listView.items.size) break
+                if (draggedItemPos!! + step + 1 >= listView.items!!.size) break
                 val downHeight = listView.getItemHeight(draggedItemPos!! + step + 1)
                 if (downHeight == 0) break
                 deltaH += if (dyTotal - deltaH > downHeight * ITEMS_REPLACE_COVER) {
@@ -116,7 +104,7 @@ class TreeListReorder(private val listView: TreeListView) {
                     break
                 }
             }
-        } else if (dyTotal < 0) { //przesuwanie w górę
+        } else if (dyTotal < 0) {
             while (true) {
                 if (draggedItemPos!! + step - 1 < 0) break
                 val upHeight = listView.getItemHeight(draggedItemPos!! + step - 1)
@@ -135,7 +123,6 @@ class TreeListReorder(private val listView: TreeListView) {
                 draggedItemPos!!, step
             )
 
-            //update mapy wysokości
             if (step > 0) {
                 val draggedItemHeight = listView.getItemHeight(draggedItemPos!!)
                 for (i in draggedItemPos!! until targetPosition) {
@@ -153,7 +140,7 @@ class TreeListReorder(private val listView: TreeListView) {
             }
             listView.adapter.setDataSource(items)
             startTouchY += deltaH.toFloat()
-            draggedItemViewTop!! += deltaH
+            draggedItemViewTop = draggedItemViewTop!! +  deltaH
             draggedItemPos = targetPosition
             if (draggedItemView != null) {
                 draggedItemView!!.visibility = View.VISIBLE
@@ -163,19 +150,16 @@ class TreeListReorder(private val listView: TreeListView) {
                 draggedItemView!!.visibility = View.INVISIBLE
             }
         }
-        listView.scrollHandler.handleScrolling()
+        listView.scrollHandler?.handleScrolling()
         listView.invalidate()
     }
 
     fun itemDraggingStopped() {
         if (draggedItemPos != null && draggedItemViewTop != null) {
-            //wyłączenie automatycznego ustawiania pozycji hover bitmapy
             draggedItemPos = null
 
-            //animacja powrotu do aktualnego połozenia elementu
-            // kopia referencji na czas trwania animacji
             hoverBitmapAnimation = hoverBitmap
-            val scrollOffset = listView.scrollHandler.scrollOffset
+            val scrollOffset = listView.scrollHandler!!.scrollOffset
             hoverBitmapBounds!!.offsetTo(0, draggedItemViewTop!! - (scrollOffset - scrollStart))
             val hoverBitmapBoundsCopy = Rect(hoverBitmapBounds)
             val draggedItemViewCopy = draggedItemView
@@ -269,7 +253,7 @@ class TreeListReorder(private val listView: TreeListView) {
             }
 
             fun interpolate(start: Int, end: Int, fraction: Float): Int {
-                return (igrek.todotree.ui.treelist.start + igrek.todotree.ui.treelist.fraction * (igrek.todotree.ui.treelist.end - igrek.todotree.ui.treelist.start)).toInt()
+                return (start + fraction * (end - start)).toInt()
             }
         }
     }

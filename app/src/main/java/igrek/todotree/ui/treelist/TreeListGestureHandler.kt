@@ -2,6 +2,7 @@ package igrek.todotree.ui.treelist
 
 import igrek.todotree.domain.treeitem.AbstractTreeItem
 import igrek.todotree.intent.TreeCommand
+import kotlin.math.abs
 
 class TreeListGestureHandler(private val listView: TreeListView) {
 
@@ -10,13 +11,13 @@ class TreeListGestureHandler(private val listView: TreeListView) {
     private var gestureStartScroll: Int? = null
 
     private var gestureStartPos: Int? = null
-    private val GESTURE_MIN_DX = 0.27f
-    private val GESTURE_MAX_DY = 0.8f
+    private val gestureMinDx = 0.27f
+    private val gestureMaxDy = 0.8f
 
     fun gestureStart(startX: Float, startY: Float) {
         gestureStartX = startX
         gestureStartY = startY
-        gestureStartScroll = listView.scrollHandler.scrollOffset
+        gestureStartScroll = listView.scrollHandler!!.scrollOffset
     }
 
     fun gestureStartPos(gestureStartPos: Int?) {
@@ -24,23 +25,23 @@ class TreeListGestureHandler(private val listView: TreeListView) {
     }
 
     fun handleItemGesture(gestureX: Float, gestureY: Float, scrollOffset: Int): Boolean {
-        if (!listView.reorder.isDragging) {
+        if (!listView.reorder!!.isDragging) {
             if (gestureStartPos != null && gestureStartX != null && gestureStartY != null) {
-                if (gestureStartPos!! < listView.items.size) {
+                if (gestureStartPos!! < listView.items!!.size) {
                     val dx = gestureX - gestureStartX!!
                     var dy = gestureY - gestureStartY!!
                     val dscroll = (scrollOffset - gestureStartScroll!!).toFloat()
                     dy -= dscroll
                     val itemH = listView.getItemHeight(gestureStartPos!!)
-                    if (Math.abs(dy) <= itemH * GESTURE_MAX_DY) { // no swiping vertically
-                        if (dx >= listView.width * GESTURE_MIN_DX) { // swipe right
-                            val item: AbstractTreeItem? = listView.adapter.getItem(
+                    if (abs(dy) <= itemH * gestureMaxDy) { // no swiping vertically
+                        if (dx >= listView.width * gestureMinDx) { // swipe right
+                            val item: AbstractTreeItem = listView.adapter.getItem(
                                 gestureStartPos!!
                             )
                             TreeCommand().itemGoIntoClicked(gestureStartPos!!, item)
                             gestureStartPos = null //reset
                             return true
-                        } else if (dx <= -listView.width * GESTURE_MIN_DX) { // swipe left
+                        } else if (dx <= -listView.width * gestureMinDx) { // swipe left
                             TreeCommand().goBack()
                             gestureStartPos = null //reset
                             return true

@@ -1,5 +1,6 @@
 package igrek.todotree.ui
 
+import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.view.View
@@ -66,7 +67,7 @@ open class GUI(
         return setMainContentLayout(R.layout.exit_screen)
     }
 
-    open fun updateItemsList(currentItem: AbstractTreeItem, _items: List<AbstractTreeItem?>?, selectedPositions: Set<Int>?) {
+    open fun updateItemsList(currentItem: AbstractTreeItem, _items: List<AbstractTreeItem>?, selectedPositions: Set<Int>?) {
         var items = _items
         if (items == null) items = currentItem.getChildren()
 
@@ -122,6 +123,7 @@ open class GUI(
         editItemGUI!!.requestSaveEditedItem()
     }
 
+    @SuppressLint("SourceLockedOrientationActivity")
     open fun rotateScreen() {
         val orientation = activity.resources.configuration.orientation
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -131,6 +133,7 @@ open class GUI(
         }
     }
 
+    @SuppressLint("SourceLockedOrientationActivity")
     private fun setOrientationPortrait() {
         val orientation = activity.resources.configuration.orientation
         if (orientation != Configuration.ORIENTATION_PORTRAIT) {

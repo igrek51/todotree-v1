@@ -2,7 +2,6 @@ package igrek.todotree.ui.contextmenu
 
 import android.app.Activity
 import android.app.AlertDialog
-import android.content.DialogInterface
 import igrek.todotree.info.UiInfoService
 import igrek.todotree.info.errorcheck.UiErrorHandler
 import igrek.todotree.inject.LazyExtractor
@@ -38,15 +37,13 @@ class BackupListMenu(
         val actionNames = convertToNamesArray(actions)
         val builder = AlertDialog.Builder(activity)
         builder.setTitle("Choose backup")
-        builder.setItems(actionNames, object : DialogInterface.OnClickListener {
-            override fun onClick(dialog: DialogInterface, item: Int) {
-                try {
-                    actions[item].execute()
-                } catch (t: Throwable) {
-                    UiErrorHandler.handleError(t)
-                }
+        builder.setItems(actionNames) { _, item ->
+            try {
+                actions[item].execute()
+            } catch (t: Throwable) {
+                UiErrorHandler.handleError(t)
             }
-        })
+        }
         val alert = builder.create()
         alert.show()
     }
@@ -55,7 +52,7 @@ class BackupListMenu(
         val actions: MutableList<RestoreBackupAction> = ArrayList()
         val backups: List<Backup> = backupManager.getBackups()
         for (backup in backups) {
-            actions.add(object : RestoreBackupAction(displayDateFormat.format(backup.getDate())) {
+            actions.add(object : RestoreBackupAction(displayDateFormat.format(backup.date)) {
                 override fun execute() {
                     treeManager.reset()
                     treeScrollCache.clear()

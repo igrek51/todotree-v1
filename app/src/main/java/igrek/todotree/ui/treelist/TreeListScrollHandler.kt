@@ -60,43 +60,33 @@ class TreeListScrollHandler(private val listView: TreeListView, context: Context
         if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
             if (listView.reorder.isDragging) {
                 val scrollingResult = handleScrolling()
-                // nie da się scrollować - dojechano do końca zakresu
                 if (!scrollingResult) {
-                    listView.reorder
-                        .handleItemDragging() // sprawdzenie, czy elementy powinny zostać przemieszczone
+                    listView.reorder.handleItemDragging()
                 }
             }
         }
     }
 
-    //separatory
-    //sumh += getFirstVisiblePosition() * getDividerHeight();
     private val realScrollPosition: Int
-        private get() {
+        get() {
             if (listView.getChildAt(0) == null) return 0
             var sumh = 0
             for (i in 0 until listView.firstVisiblePosition) {
                 sumh += listView.getItemHeight(i)
             }
-            //separatory
-            //sumh += getFirstVisiblePosition() * getDividerHeight();
             return sumh - listView.getChildAt(0).top
         }
 
-    /**
-     * @param itemIndex pozycja elementu do przescrollowania (-1 - ostatni element)
-     */
-    fun scrollToItem(itemIndex: Int) {
-        var itemIndex = itemIndex
-        if (itemIndex == -1) itemIndex = listView.items.size - 1
+    fun scrollToItem(_itemIndex: Int) {
+        var itemIndex = _itemIndex
+        if (itemIndex == -1) itemIndex = listView.items!!.size - 1
         if (itemIndex < 0) itemIndex = 0
         listView.setSelection(itemIndex)
         listView.invalidate()
     }
 
-    fun scrollToPosition(y: Int) {
-        //wyznaczenie najbliższego elementu i przesunięcie względem niego
-        var y = y
+    fun scrollToPosition(_y: Int) {
+        var y = _y
         try {
             var position = 0
             while (y > listView.getItemHeight(position)) {
@@ -118,7 +108,7 @@ class TreeListScrollHandler(private val listView: TreeListView, context: Context
     }
 
     fun scrollToBottom() {
-        listView.setSelection(listView.items.size)
+        listView.setSelection(listView.items!!.size)
     }
 
     val currentScrollPosition: Int

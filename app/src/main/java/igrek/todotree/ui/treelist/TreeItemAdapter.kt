@@ -1,25 +1,24 @@
 package igrek.todotree.ui.treelist
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Rect
 import android.text.SpannableString
 import android.text.style.UnderlineSpan
 import android.util.SparseArray
-import android.view.LayoutInflater
-import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.ImageButton
-import android.widget.TextView
+import android.view.*
+import android.widget.*
 import igrek.todotree.R
 import igrek.todotree.domain.treeitem.AbstractTreeItem
 import igrek.todotree.domain.treeitem.LinkTreeItem
+import igrek.todotree.info.errorcheck.SafeClickListener
+import igrek.todotree.intent.ItemEditorCommand
 import igrek.todotree.intent.ItemSelectionCommand
+import igrek.todotree.intent.TreeCommand
 
 class TreeItemAdapter(
     context: Context,
-    dataSource: List<AbstractTreeItem>?,
+    _dataSource: List<AbstractTreeItem>?,
     listView: TreeListView
 ) : ArrayAdapter<AbstractTreeItem>(context, 0, ArrayList<AbstractTreeItem>()) {
 
@@ -29,13 +28,22 @@ class TreeItemAdapter(
     private val storedViews: SparseArray<View>
     private val inflater: LayoutInflater
 
+    init {
+        var dataSource: List<AbstractTreeItem>? = _dataSource
+        if (dataSource == null) dataSource = ArrayList<AbstractTreeItem>()
+        this.dataSource = dataSource
+        this.listView = listView
+        storedViews = SparseArray<View>()
+        inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+    }
+
     fun setDataSource(dataSource: List<AbstractTreeItem>?) {
         this.dataSource = dataSource
         storedViews.clear()
         notifyDataSetChanged()
     }
 
-    override fun getItem(position: Int): AbstractTreeItem? {
+    override fun getItem(position: Int): AbstractTreeItem {
         return dataSource!![position]
     }
 
@@ -50,8 +58,9 @@ class TreeItemAdapter(
         return if (position >= dataSource!!.size) null else storedViews.get(position)
     }
 
-    val count: Int
-        get() = dataSource!!.size + 1
+    override fun getCount(): Int {
+        return dataSource!!.size + 1
+    }
 
     override fun hasStableIds(): Boolean {
         return true
@@ -74,8 +83,7 @@ class TreeItemAdapter(
         // get from cache
         if (storedViews.get(position) != null) return storedViews.get(position)
         val item: AbstractTreeItem = dataSource!![position]
-        val itemView: View
-        itemView = if (!item.isEmpty) {
+        val itemView: View = if (!item.isEmpty) {
             getParentItemView(item, position, parent)
         } else {
             getSingleItemView(item, position, parent)
@@ -86,196 +94,178 @@ class TreeItemAdapter(
         return itemView
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun getSingleItemView(item: AbstractTreeItem, position: Int, parent: ViewGroup): View {
         val itemView: View = inflater.inflate(R.layout.tree_item_single, parent, false)
 
         val textView: TextView = itemView.findViewById<TextView>(R.id.tvItemContent)
-        textView.setText(item.displayName)
+        textView.text = item.displayName
 
         // link
         if (item is LinkTreeItem) {
             val content = SpannableString(item.displayName)
             content.setSpan(UnderlineSpan(), 0, content.length, 0)
-            textView.setText(content)
+            textView.text = content
         }
 
-        val moveButton: ImageButton = itemView.findViewById<ImageButton>(R.id.buttonItemMove)
-        moveButton.setFocusableInTouchMode(false)
-        moveButton.setFocusable(false)
-        moveButton.setClickable(false)
+        val moveButton: ImageButton = itemView.findViewById(R.id.buttonItemMove)
+        moveButton.isFocusableInTouchMode = false
+        moveButton.isFocusable = false
+        moveButton.isClickable = false
         increaseTouchArea(moveButton, 20)
         if (selections == null) {
             moveButton.setOnTouchListener(View.OnTouchListener { v: View?, event: MotionEvent ->
-                event.setSource(777) // from moveButton
-                when (event.getAction()) {
+                event.source = 777 // from moveButton
+                when (event.action) {
                     MotionEvent.ACTION_DOWN -> {
-                        listView.reorder
+                        listView.reorder!!
                             .onItemMoveButtonPressed(
-                                position, item, itemView, event.getX(), event
-                                    .getY() + moveButton.getTop()
+                                position, item, itemView, event.x, event.y + moveButton.top
                             )
-                        return@setOnTouchListener false
+                        return@OnTouchListener false
                     }
-                    MotionEvent.ACTION_MOVE -> return@setOnTouchListener false
+                    MotionEvent.ACTION_MOVE -> return@OnTouchListener false
                     MotionEvent.ACTION_UP -> {
-                        listView.reorder
+                        listView.reorder!!
                             .onItemMoveButtonReleased(
-                                position, item, itemView, event.getX(), event
-                                    .getY() + moveButton.getTop()
+                                position, item, itemView, event.x, event.y + moveButton.top
                             )
-                        return@setOnTouchListener true
+                        return@OnTouchListener true
                     }
                 }
                 false
             })
         } else {
-            moveButton.setVisibility(View.INVISIBLE)
-            moveButton.setLayoutParams(RelativeLayout.LayoutParams(0, 0))
+            moveButton.visibility = View.INVISIBLE
+            moveButton.layoutParams = RelativeLayout.LayoutParams(0, 0)
         }
 
         val cbItemSelected: CheckBox = itemView.findViewById<CheckBox>(R.id.cbItemSelected)
-        cbItemSelected.setFocusableInTouchMode(false)
-        cbItemSelected.setFocusable(false)
+        cbItemSelected.isFocusableInTouchMode = false
+        cbItemSelected.isFocusable = false
         if (selections != null) {
-            cbItemSelected.setVisibility(View.VISIBLE)
-            if (selections!!.contains(position)) {
-                cbItemSelected.setChecked(true)
-            } else {
-                cbItemSelected.setChecked(false)
-            }
-            cbItemSelected.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { buttonView: CompoundButton?, isChecked: Boolean ->
+            cbItemSelected.visibility = View.VISIBLE
+            cbItemSelected.isChecked = selections!!.contains(position)
+            cbItemSelected.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
                 ItemSelectionCommand()
                     .selectedItemClicked(position, isChecked)
-            })
+            }
         }
         itemView.setOnTouchListener(TreeItemTouchListener(listView, position))
 
         //add new item above
         val addButton: ImageButton = itemView.findViewById<ImageButton>(R.id.buttonItemAdd)
-        addButton.setFocusableInTouchMode(false)
-        addButton.setFocusable(false)
-        addButton.setClickable(true)
+        addButton.isFocusableInTouchMode = false
+        addButton.isFocusable = false
+        addButton.isClickable = true
         increaseTouchArea(addButton, 20)
         if (selections == null) {
-            addButton.setVisibility(View.VISIBLE)
-            addButton.setOnClickListener(object : SafeClickListener() {
-                fun onClick() {
-                    ItemEditorCommand().addItemHereClicked(position)
-                }
+            addButton.visibility = View.VISIBLE
+            addButton.setOnClickListener(SafeClickListener {
+                ItemEditorCommand().addItemHereClicked(position)
             })
         } else {
-            addButton.setVisibility(View.GONE)
+            addButton.visibility = View.GONE
         }
 
         // button: enter item
         val buttonItemEnter: ImageButton = itemView.findViewById<ImageButton>(R.id.buttonItemEnter)
-        buttonItemEnter.setFocusableInTouchMode(false)
-        buttonItemEnter.setFocusable(false)
-        buttonItemEnter.setClickable(true)
+        buttonItemEnter.isFocusableInTouchMode = false
+        buttonItemEnter.isFocusable = false
+        buttonItemEnter.isClickable = true
         increaseTouchArea(buttonItemEnter, 20)
         if (selections == null) {
-            buttonItemEnter.setVisibility(View.VISIBLE)
-            buttonItemEnter.setOnClickListener(object : SafeClickListener() {
-                fun onClick() {
-                    TreeCommand().itemGoIntoClicked(position, item)
-                }
+            buttonItemEnter.visibility = View.VISIBLE
+            buttonItemEnter.setOnClickListener(SafeClickListener {
+                TreeCommand().itemGoIntoClicked(position, item)
             })
         } else {
-            buttonItemEnter.setVisibility(View.GONE)
+            buttonItemEnter.visibility = View.GONE
         }
         return itemView
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun getParentItemView(item: AbstractTreeItem, position: Int, parent: ViewGroup): View {
         val itemView: View = inflater.inflate(R.layout.tree_item_parent, parent, false)
 
         val textView: TextView = itemView.findViewById<TextView>(R.id.tvItemContent)
-        textView.setText(item.displayName)
+        textView.text = item.displayName
 
         val tvItemChildSize: TextView = itemView.findViewById<TextView>(R.id.tvItemChildSize)
         val contentBuilder = "[" + item.size() + "]"
-        tvItemChildSize.setText(contentBuilder)
+        tvItemChildSize.text = contentBuilder
 
         val editButton: ImageButton = itemView.findViewById<ImageButton>(R.id.buttonItemEdit)
-        editButton.setFocusableInTouchMode(false)
-        editButton.setFocusable(false)
-        editButton.setClickable(true)
+        editButton.isFocusableInTouchMode = false
+        editButton.isFocusable = false
+        editButton.isClickable = true
         increaseTouchArea(editButton, 20)
         if (selections == null && !item.isEmpty) {
-            editButton.setOnClickListener(object : SafeClickListener() {
-                fun onClick() {
-                    ItemEditorCommand().itemEditClicked(item)
-                }
+            editButton.setOnClickListener(SafeClickListener {
+                ItemEditorCommand().itemEditClicked(item)
             })
         } else {
-            editButton.setVisibility(View.GONE)
+            editButton.visibility = View.GONE
         }
 
         //add new item above
         val addButton: ImageButton = itemView.findViewById<ImageButton>(R.id.buttonItemAdd)
-        addButton.setFocusableInTouchMode(false)
-        addButton.setFocusable(false)
-        addButton.setClickable(true)
+        addButton.isFocusableInTouchMode = false
+        addButton.isFocusable = false
+        addButton.isClickable = true
         increaseTouchArea(addButton, 20)
         if (selections == null) {
-            addButton.setVisibility(View.VISIBLE)
-            addButton.setOnClickListener(object : SafeClickListener() {
-                fun onClick() {
-                    ItemEditorCommand().addItemHereClicked(position)
-                }
+            addButton.visibility = View.VISIBLE
+            addButton.setOnClickListener(SafeClickListener {
+                ItemEditorCommand().addItemHereClicked(position)
             })
         } else {
-            addButton.setVisibility(View.GONE)
+            addButton.visibility = View.GONE
         }
 
         val moveButton: ImageButton = itemView.findViewById<ImageButton>(R.id.buttonItemMove)
-        moveButton.setFocusableInTouchMode(false)
-        moveButton.setFocusable(false)
-        moveButton.setClickable(false)
+        moveButton.isFocusableInTouchMode = false
+        moveButton.isFocusable = false
+        moveButton.isClickable = false
         increaseTouchArea(moveButton, 20)
         if (selections == null) {
-            moveButton.setOnTouchListener(OnTouchListener { v: View?, event: MotionEvent ->
-                event.setSource(777) // from moveButton
-                when (event.getAction()) {
+            moveButton.setOnTouchListener(View.OnTouchListener { v: View?, event: MotionEvent ->
+                event.source = 777 // from moveButton
+                when (event.action) {
                     MotionEvent.ACTION_DOWN -> {
-                        listView.reorder
+                        listView.reorder!!
                             .onItemMoveButtonPressed(
-                                position, item, itemView, event.getX(), event
-                                    .getY() + moveButton.getTop()
+                                position, item, itemView, event.x, event.y + moveButton.top
                             )
-                        return@setOnTouchListener false
+                        return@OnTouchListener false
                     }
-                    MotionEvent.ACTION_MOVE -> return@setOnTouchListener false
+                    MotionEvent.ACTION_MOVE -> return@OnTouchListener false
                     MotionEvent.ACTION_UP -> {
-                        listView.reorder
+                        listView.reorder!!
                             .onItemMoveButtonReleased(
-                                position, item, itemView, event.getX(), event
-                                    .getY() + moveButton.getTop()
+                                position, item, itemView, event.x, event.y + moveButton.top
                             )
-                        return@setOnTouchListener true
+                        return@OnTouchListener true
                     }
                 }
                 false
             })
         } else {
-            moveButton.setVisibility(View.INVISIBLE)
-            moveButton.setLayoutParams(RelativeLayout.LayoutParams(0, 0))
+            moveButton.visibility = View.INVISIBLE
+            moveButton.layoutParams = RelativeLayout.LayoutParams(0, 0)
         }
 
         val cbItemSelected: CheckBox = itemView.findViewById<CheckBox>(R.id.cbItemSelected)
-        cbItemSelected.setFocusableInTouchMode(false)
-        cbItemSelected.setFocusable(false)
+        cbItemSelected.isFocusableInTouchMode = false
+        cbItemSelected.isFocusable = false
         if (selections != null) {
-            cbItemSelected.setVisibility(View.VISIBLE)
-            if (selections!!.contains(position)) {
-                cbItemSelected.setChecked(true)
-            } else {
-                cbItemSelected.setChecked(false)
-            }
-            cbItemSelected.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { buttonView: CompoundButton?, isChecked: Boolean ->
+            cbItemSelected.visibility = View.VISIBLE
+            cbItemSelected.isChecked = selections!!.contains(position)
+            cbItemSelected.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
                 ItemSelectionCommand()
                     .selectedItemClicked(position, isChecked)
-            })
+            }
         }
         itemView.setOnTouchListener(TreeItemTouchListener(listView, position))
         return itemView
@@ -285,23 +275,21 @@ class TreeItemAdapter(
         // plus
         val itemPlus: View = inflater.inflate(R.layout.item_plus, parent, false)
         val plusButton: ImageButton = itemPlus.findViewById<ImageButton>(R.id.buttonAddNewItem)
-        plusButton.setFocusableInTouchMode(false)
-        plusButton.setFocusable(false)
-        plusButton.setOnClickListener(object : SafeClickListener() {
-            fun onClick() {
-                ItemEditorCommand().addItemClicked()
-            }
+        plusButton.isFocusableInTouchMode = false
+        plusButton.isFocusable = false
+        plusButton.setOnClickListener(SafeClickListener {
+            ItemEditorCommand().addItemClicked()
         })
         // redirect long click to tree list view
-        plusButton.setLongClickable(true)
-        plusButton.setOnLongClickListener(OnLongClickListener { v: View? ->
+        plusButton.isLongClickable = true
+        plusButton.setOnLongClickListener { v: View? ->
             listView.onItemLongClick(
                 null,
                 itemPlus,
                 position,
                 0
             )
-        })
+        }
         return itemPlus
     }
 
@@ -316,14 +304,5 @@ class TreeItemAdapter(
             rect.right += sidePx // increase right hit area
             parent.touchDelegate = TouchDelegate(rect, component)
         }
-    }
-
-    init {
-        var dataSource: List<AbstractTreeItem>? = dataSource
-        if (dataSource == null) dataSource = ArrayList<AbstractTreeItem>()
-        this.dataSource = dataSource
-        this.listView = listView
-        storedViews = SparseArray<View>()
-        inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
     }
 }
