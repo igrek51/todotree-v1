@@ -22,7 +22,7 @@ import java.util.*
 @OptIn(DelicateCoroutinesApi::class)
 class RemoteDbRequester (
     activity: LazyInject<Activity> = appFactory.activityMust,
-    settingsState: LazyInject<SettingsState> = appFactory.settingsState,
+    private val settingsState: LazyInject<SettingsState> = appFactory.settingsState,
 ) {
     private val activity by LazyExtractor(activity)
 
@@ -48,13 +48,11 @@ class RemoteDbRequester (
         useArrayPolymorphism = false
     }
 
-    private var authToken = ""
-
-    init {
-        authToken = settingsState.get().userAuthToken
-    }
+    private val authToken
+        get() = settingsState.get().userAuthToken
 
     fun fetchAllRemoteTodosAsync(): Deferred<Result<List<TodoDto>>> {
+        logger.debug(authToken)
         val request: Request = Request.Builder()
                 .url(getAllTodosUrl)
                 .addHeader(authTokenHeader, authToken)
