@@ -75,10 +75,22 @@ class PersistenceCommand(
     }
 
     fun loadRootTreeFromBackup(backup: Backup) {
+        treeManager.reset()
+        treeScrollCache.clear()
         val backupDir = filesystemService.appDataSubDir("backup")
         val path = backupDir.resolve(backup.filename)
         loadDbFromFile(path)
         changesHistory.registerChange()
+        GUICommand().updateItemsList()
+    }
+
+    fun loadRootTreeFromImportedFile(dbFile: File) {
+        treeManager.reset()
+        treeScrollCache.clear()
+        loadDbFromFile(dbFile)
+        changesHistory.registerChange()
+        GUICommand().updateItemsList()
+        uiInfoService.showInfo("Database imported from $dbFile")
     }
 
     private fun loadDbFromFile(dbFile: File) {
@@ -90,7 +102,6 @@ class PersistenceCommand(
         }
         try {
             val fileContent = filesystemService.openFileString(dbFile.absolutePath)
-            // AbstractTreeItem rootItem = SimpleTreeSerializer.loadTree(fileContent); // porting db to JSON
             val rootItem = treePersistenceService.deserializeTree(fileContent)
             treeManager.rootItem = rootItem
             logger.info("Database loaded.")
@@ -108,7 +119,6 @@ class PersistenceCommand(
     private fun saveRootTree() {
         try {
             val output = treePersistenceService.serializeTree(treeManager.rootItem)
-            //Logger.debug("Serialized data: " + output);
             val dbFilePath = dbFile().absolutePath
             filesystemService.saveFile(dbFilePath, output)
             filesystemService.saveFile(dbCopyFile().absolutePath, output)

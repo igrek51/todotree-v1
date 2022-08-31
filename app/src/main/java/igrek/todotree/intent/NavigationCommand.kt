@@ -9,6 +9,7 @@ import igrek.todotree.inject.LazyExtractor
 import igrek.todotree.inject.LazyInject
 import igrek.todotree.inject.appFactory
 import igrek.todotree.command.Commander
+import igrek.todotree.service.import.DatabaseImportFileChooser
 import igrek.todotree.service.tree.TreeSelectionManager
 import igrek.todotree.ui.GUI
 
@@ -51,6 +52,10 @@ class NavigationCommand(
                 PersistenceCommand().optionRestoreBackup()
                 return true
             }
+            R.id.action_import_db -> {
+                DatabaseImportFileChooser().showFileChooser()
+                return true
+            }
             R.id.action_select_all -> {
                 ItemSelectionCommand().toggleSelectAll()
                 return false
@@ -63,14 +68,14 @@ class NavigationCommand(
                 ClipboardCommand().copySelectedItems()
                 return false
             }
-            R.id.action_sum_selected -> {
-                ItemSelectionCommand().sumItems()
-                return false
-            }
-            R.id.action_show_statistics -> {
-                StatisticsCommand().showStatisticsInfo()
-                return false
-            }
+//            R.id.action_sum_selected -> {
+//                ItemSelectionCommand().sumItems()
+//                return false
+//            }
+//            R.id.action_show_statistics -> {
+//                StatisticsCommand().showStatisticsInfo()
+//                return false
+//            }
             R.id.action_go_up -> {
                 TreeCommand().goUp()
                 return false

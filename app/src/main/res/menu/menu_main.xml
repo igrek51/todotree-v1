@@ -18,6 +18,11 @@
         android:title="@string/action_restore_backup"
         appControllerService:showAsAction="never"/>
     <item
+        android:id="@+id/action_import_db"
+        android:orderInCategory="100"
+        android:title="@string/action_import_db"
+        appControllerService:showAsAction="never"/>
+    <item
         android:id="@+id/action_save"
         android:orderInCategory="100"
         android:title="@string/action_save"
@@ -27,13 +32,11 @@
         android:orderInCategory="100"
         android:title="@string/action_exit_without_saving"
         appControllerService:showAsAction="never"/>
-
     <item
         android:id="@+id/action_go_up"
         android:orderInCategory="100"
         android:title="@string/action_go_up"
         appControllerService:showAsAction="never"/>
-
     <item
         android:id="@+id/action_select_all"
         android:orderInCategory="100"
@@ -49,17 +52,6 @@
         android:orderInCategory="100"
         android:title="@string/action_copy"
         appControllerService:showAsAction="never"/>
-    <item
-        android:id="@+id/action_sum_selected"
-        android:orderInCategory="100"
-        android:title="@string/action_sum_selected"
-        appControllerService:showAsAction="never"/>
-    <item
-        android:id="@+id/action_show_statistics"
-        android:orderInCategory="100"
-        android:title="@string/action_show_statistics"
-        appControllerService:showAsAction="never"/>
-
     <item
         android:id="@+id/action_enter_command"
         android:orderInCategory="100"

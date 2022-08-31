@@ -1,5 +1,6 @@
 package igrek.todotree.settings
 
+import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -11,21 +12,20 @@ import igrek.todotree.inject.LazyExtractor
 import igrek.todotree.inject.LazyInject
 import igrek.todotree.inject.appFactory
 import igrek.todotree.R
+import igrek.todotree.service.permissions.PermissionsManager
 import java.math.RoundingMode
 import java.text.DecimalFormat
 import kotlin.math.roundToInt
 
 class SettingsFragment(
     settingsState: LazyInject<SettingsState> = appFactory.settingsState,
+    context: LazyInject<Context> = appFactory.context,
 ) : PreferenceFragmentCompat() {
     private val preferencesState by LazyExtractor(settingsState)
+    private val _context by LazyExtractor(context)
 
     private var decimalFormat1: DecimalFormat = DecimalFormat("#.#")
     private var decimalFormat3: DecimalFormat = DecimalFormat("#.###")
-
-    companion object {
-        const val SEEKBAR_RESOLUTION = 10000
-    }
 
     init {
         decimalFormat1.roundingMode = RoundingMode.HALF_UP
@@ -60,6 +60,11 @@ class SettingsFragment(
                 preferencesState.userAuthToken = value
             }
         )
+
+        setupClickPreference("initFilesystemPermissions") {
+            PermissionsManager(_context).setupFiles()
+        }
+
     }
 
     @Suppress("DEPRECATION")
@@ -224,6 +229,10 @@ class SettingsFragment(
 
     private fun decimal1(value: Float): String {
         return decimalFormat1.format(value.toDouble())
+    }
+
+    companion object {
+        const val SEEKBAR_RESOLUTION = 10000
     }
 
 }

@@ -46,7 +46,6 @@ class Commander(
                 appFactory.userDataDao.get().factoryReset()
             },
 
-
             NestedSubcommandRule("config", rules=listOf(
                 SubCommandRule("lockdb") { subcommand ->
                     ConfigCommander().setDbLock(subcommand)

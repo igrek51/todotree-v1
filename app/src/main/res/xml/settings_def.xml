@@ -7,12 +7,19 @@
         <SwitchPreference
             android:key="lockDB"
             android:title="lockDB"
-            android:summary="lockDB"
+            android:summary="Lock database at startup"
             app:iconSpaceReserved="false" />
         <EditTextPreference
             android:key="userAuthToken"
             android:title="userAuthToken"
-            android:summary="Set userAuthToken"
+            android:summary="Set user auth token"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Maintenance">
+        <Preference
+            android:key="initFilesystemPermissions"
+            android:title="Configure filesystem permissions"
             app:iconSpaceReserved="false" />
     </PreferenceCategory>
 
