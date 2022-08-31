@@ -40,6 +40,7 @@ open class UiInfoService(
             action: (() -> Unit)? = null, // dissmiss by default
             indefinite: Boolean = false,
     ) {
+        logger.info("UI: snackbar: $info")
         GlobalScope.launch(Dispatchers.Main) {
             val snackbarLength = if (indefinite) Snackbar.LENGTH_INDEFINITE else Snackbar.LENGTH_LONG
             val infoV = info.takeIf { it.isNotEmpty() } ?: resString(infoResId)
@@ -47,7 +48,12 @@ open class UiInfoService(
             val activity = activity.get() ?: return@launch
 
             // dont create new snackbars if one is already shown
-            val view: View = activity.findViewById(R.id.main_content)
+            val view: View? = activity.findViewById(R.id.main_content)
+            if (view == null) {
+                logger.error("Cannot find main content view")
+                return@launch
+            }
+
             var snackbar: Snackbar? = infobars[view]
             if (snackbar == null || !snackbar.isShown) { // a new one
                 snackbar = Snackbar.make(view, infoV, snackbarLength)
@@ -69,7 +75,6 @@ open class UiInfoService(
             snackbar.show()
             infobars[view] = snackbar
         }
-        logger.info("UI: snackbar: $info")
     }
 
     fun showInfo(infoResId: Int, vararg args: String?,

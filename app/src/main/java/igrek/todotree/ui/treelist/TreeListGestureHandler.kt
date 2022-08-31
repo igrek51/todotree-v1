@@ -35,7 +35,7 @@ class TreeListGestureHandler(private val listView: TreeListView) {
                     val itemH = listView.getItemHeight(gestureStartPos!!)
                     if (abs(dy) <= itemH * gestureMaxDy) { // no swiping vertically
                         if (dx >= listView.width * gestureMinDx) { // swipe right
-                            val item: AbstractTreeItem = listView.adapter.getItem(
+                            val item: AbstractTreeItem = listView.adapter!!.getItem(
                                 gestureStartPos!!
                             )
                             TreeCommand().itemGoIntoClicked(gestureStartPos!!, item)

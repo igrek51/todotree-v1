@@ -45,30 +45,27 @@ class AppInitializer(
 
         logger.info("Initializing application...")
 
-
         GlobalScope.launch {
             withContext(Dispatchers.Main) {
-
-                userDataDao // load
-                layoutController.init()
-                windowManagerService.hideTaskbar()
-
-                layoutController.showLayout(startingScreen).join()
-
-                activity.get()?.window?.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
-
-                GUICommand().guiInit()
-                PersistenceCommand().loadRootTree()
-                GUICommand().showItemsList()
-                explosionService.init()
-
+                actualInit()
                 activityController.initialized = true
             }
-
             logger.info("Application has been initialized.")
         }
+    }
 
+    private suspend fun actualInit() {
+        userDataDao // load
+        layoutController.init()
+        windowManagerService.hideTaskbar()
 
+        layoutController.showLayout(startingScreen).join()
+
+        activity.get()?.window?.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
+
+        PersistenceCommand().loadRootTree()
+        GUICommand().showItemsList()
+        explosionService.init()
     }
 
     private fun debugInit() {

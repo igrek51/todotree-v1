@@ -50,10 +50,6 @@ class GUICommand(
         }
     }
 
-    fun guiInit() {
-        gui.lazyInit()
-    }
-
     fun numKeyboardHyphenTyped() {
         gui.quickInsertRange()
     }

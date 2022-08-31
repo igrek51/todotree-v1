@@ -26,9 +26,7 @@ open class GUI(
     private var itemsListView: TreeListView? = null
     private var editItemGUI: EditItemGUI? = null
 
-    open fun lazyInit() {
-        activity.setContentView(R.layout.activity_main)
-
+    fun lazyInit() {
         //toolbar
         val toolbar1 = activity.findViewById<Toolbar>(R.id.toolbar1)
         activity.setSupportActionBar(toolbar1)

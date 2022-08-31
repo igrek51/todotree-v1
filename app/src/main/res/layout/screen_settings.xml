@@ -7,7 +7,7 @@
     android:layout_gravity="center_horizontal"
     android:orientation="vertical">
 
-    <igrek.netrunner.layout.navigation.TitleBarView
+    <igrek.todotree.layout.navigation.TitleBarView
         android:id="@+id/titleBarFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
