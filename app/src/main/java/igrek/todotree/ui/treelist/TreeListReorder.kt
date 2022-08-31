@@ -25,22 +25,11 @@ import android.view.View
 class TreeListReorder(private val listView: TreeListView) {
     private val logger = LoggerFactory.logger
 
-    /** początkowa pozycja kursora przy rozpoczęciu przeciągania (ulega zmianie przy zamianie elementów)  */
     private var startTouchY = 0f
-
-    /** aktualna pozycja kursora względem ekranu i listview (bez scrollowania)  */
     private var lastTouchY = 0f
-
-    /** położenie scrolla przy rozpoczęciu przeciągania  */
     private var scrollStart = 0
-
-    /** pozycja aktualnie przeciąganego elementu  */
     private var draggedItemPos: Int? = null
-
-    /** widok aktualnie przeciąganego elementu  */
     private var draggedItemView: View? = null
-
-    /** oryginalna górna pozycja niewidocznego elementu na liście, którego bitmapa jest przeciągana  */
     private var draggedItemViewTop: Int? = null
     private var hoverBitmap: BitmapDrawable? = null
     private var hoverBitmapAnimation: BitmapDrawable? = null
@@ -49,6 +38,7 @@ class TreeListReorder(private val listView: TreeListView) {
     private val ITEMS_REPLACE_COVER = 0.65f
     private val HOVER_BORDER_THICKNESS = 5
     private val HOVER_BORDER_COLOR = -0x334f4f50
+
     private fun updateHoverBitmap() {
         if (draggedItemViewTop != null && draggedItemPos != null) {
             val dy = lastTouchY - startTouchY

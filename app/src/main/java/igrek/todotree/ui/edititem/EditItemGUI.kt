@@ -9,17 +9,17 @@ import android.widget.ImageButton
 import android.widget.TextView.OnEditorActionListener
 import igrek.todotree.R
 import igrek.todotree.domain.treeitem.AbstractTreeItem
+import igrek.todotree.info.errorcheck.SafeClickListener
 import igrek.todotree.intent.ItemEditorCommand
 import igrek.todotree.intent.RemotePushCommand
 import igrek.todotree.ui.GUI
-import igrek.todotree.ui.errorcheck.SafeClickListener
 import igrek.todotree.ui.numkeyboard.NumKeyboardListener
 import igrek.todotree.ui.numkeyboard.NumericKeyboardView
 
 class EditItemGUI(
-        private val gui: GUI,
-        item: AbstractTreeItem?,
-        parent: AbstractTreeItem,
+    private val gui: GUI,
+    item: AbstractTreeItem?,
+    parent: AbstractTreeItem,
 ) : NumKeyboardListener {
 
     private var etEditItem: ItemEditText? = null
@@ -42,127 +42,93 @@ class EditItemGUI(
         gui.setTitle(parent.displayName)
         if (item != null) {
             etEditItem!!.setText(item.displayName)
-            buttonSaveItem!!.setOnClickListener(object : SafeClickListener() {
-                override fun onClick() {
-                    if (numericKeyboard!!.isVisible) {
-                        numericKeyboard!!.finishTyping()
-                    }
-                    hideKeyboards()
-                    ItemEditorCommand().saveItem(item, etEditItem!!.text.toString())
+            buttonSaveItem!!.setOnClickListener(SafeClickListener {
+                if (numericKeyboard!!.isVisible) {
+                    numericKeyboard!!.finishTyping()
                 }
+                hideKeyboards()
+                ItemEditorCommand().saveItem(item, etEditItem!!.text.toString())
             })
-            buttonSaveAndAdd.setOnClickListener(object : SafeClickListener() {
-                override fun onClick() {
-                    ItemEditorCommand().saveAndAddItemClicked(item, etEditItem!!.text
-                            .toString())
-                    hideKeyboards()
-                }
+            buttonSaveAndAdd.setOnClickListener(SafeClickListener {
+                ItemEditorCommand().saveAndAddItemClicked(item, etEditItem!!.text
+                        .toString())
+                hideKeyboards()
             })
-            buttonSaveAndGoInto.setOnClickListener(object : SafeClickListener() {
-                override fun onClick() {
-                    ItemEditorCommand().saveAndGoIntoItemClicked(item, etEditItem!!.text
-                            .toString())
-                    hideKeyboards()
-                }
+            buttonSaveAndGoInto.setOnClickListener(SafeClickListener {
+                ItemEditorCommand().saveAndGoIntoItemClicked(item, etEditItem!!.text
+                    .toString())
+                hideKeyboards()
             })
         } else {
             etEditItem!!.setText("")
-            buttonSaveItem!!.setOnClickListener(object : SafeClickListener() {
-                override fun onClick() {
-                    if (numericKeyboard!!.isVisible) {
-                        numericKeyboard!!.finishTyping()
-                    }
-                    hideKeyboards()
-                    ItemEditorCommand().saveItem(null, etEditItem!!.text.toString())
+            buttonSaveItem!!.setOnClickListener(SafeClickListener {
+                if (numericKeyboard!!.isVisible) {
+                    numericKeyboard!!.finishTyping()
                 }
+                hideKeyboards()
+                ItemEditorCommand().saveItem(null, etEditItem!!.text.toString())
             })
-            buttonSaveAndAdd.setOnClickListener(object : SafeClickListener() {
-                override fun onClick() {
-                    ItemEditorCommand().saveAndAddItemClicked(null, etEditItem!!.text
-                            .toString())
-                    hideKeyboards()
-                }
+            buttonSaveAndAdd.setOnClickListener(SafeClickListener {
+                ItemEditorCommand().saveAndAddItemClicked(null, etEditItem!!.text
+                        .toString())
+                hideKeyboards()
             })
-            buttonSaveAndGoInto.setOnClickListener(object : SafeClickListener() {
-                override fun onClick() {
-                    ItemEditorCommand().saveAndGoIntoItemClicked(null, etEditItem!!.text
-                            .toString())
-                    hideKeyboards()
-                }
+            buttonSaveAndGoInto.setOnClickListener(SafeClickListener {
+                ItemEditorCommand().saveAndGoIntoItemClicked(null, etEditItem!!.text
+                        .toString())
+                hideKeyboards()
             })
         }
-        rotateScreenBtn.setOnClickListener(object : SafeClickListener() {
-            override fun onClick() {
-                gui.rotateScreen()
-            }
+        rotateScreenBtn.setOnClickListener(SafeClickListener {
+            gui.rotateScreen()
         })
 
         val buttonEditCancel = editItemContentLayout.findViewById<View>(R.id.buttonEditCancel) as Button
-        buttonEditCancel.setOnClickListener(object : SafeClickListener() {
-            override fun onClick() {
-                ItemEditorCommand().cancelEditedItem()
-                hideKeyboards()
-            }
+        buttonEditCancel.setOnClickListener(SafeClickListener {
+            ItemEditorCommand().cancelEditedItem()
+            hideKeyboards()
         })
 
         val quickEditGoBegin = editItemContentLayout.findViewById<View>(R.id.quickEditGoBegin) as ImageButton
-        quickEditGoBegin.setOnClickListener(object : SafeClickListener() {
-            override fun onClick() {
-                quickCursorMove(-2)
-            }
+        quickEditGoBegin.setOnClickListener(SafeClickListener {
+            quickCursorMove(-2)
         })
         val quickEditGoLeft = editItemContentLayout.findViewById<View>(R.id.quickEditGoLeft) as ImageButton
-        quickEditGoLeft.setOnClickListener(object : SafeClickListener() {
-            override fun onClick() {
-                quickCursorMove(-1)
-            }
+        quickEditGoLeft.setOnClickListener(SafeClickListener {
+            quickCursorMove(-1)
         })
         val quickEditSelectAll = editItemContentLayout.findViewById<View>(R.id.quickEditSelectAll) as ImageButton
-        quickEditSelectAll.setOnClickListener(object : SafeClickListener() {
-            override fun onClick() {
-                quickEditSelectAll()
-            }
+        quickEditSelectAll.setOnClickListener(SafeClickListener {
+            quickEditSelectAll()
         })
         val quickEditGoRight = editItemContentLayout.findViewById<View>(R.id.quickEditGoRight) as ImageButton
-        quickEditGoRight.setOnClickListener(object : SafeClickListener() {
-            override fun onClick() {
-                quickCursorMove(+1)
-            }
+        quickEditGoRight.setOnClickListener(SafeClickListener {
+            quickCursorMove(+1)
         })
         val quickEditGoEnd = editItemContentLayout.findViewById<View>(R.id.quickEditGoEnd) as ImageButton
-        quickEditGoEnd.setOnClickListener(object : SafeClickListener() {
-            override fun onClick() {
-                quickCursorMove(+2)
-            }
+        quickEditGoEnd.setOnClickListener(SafeClickListener {
+            quickCursorMove(+2)
         })
 
         val buttonEditInsertTime = editItemContentLayout.findViewById<View>(R.id.buttonEditInsertTime) as Button
-        buttonEditInsertTime.setOnClickListener(object : SafeClickListener() {
-            override fun onClick() {
-                toggleTypingHour()
-            }
+        buttonEditInsertTime.setOnClickListener(SafeClickListener {
+            toggleTypingHour()
         })
 
         val buttonEditInsertDate = editItemContentLayout.findViewById<View>(R.id.buttonEditInsertDate) as Button
-        buttonEditInsertDate.setOnClickListener(object : SafeClickListener() {
-            override fun onClick() {
-                toggleTypingDate()
-            }
+        buttonEditInsertDate.setOnClickListener(SafeClickListener {
+            toggleTypingDate()
         })
 
         val buttonEditInsertNumber = editItemContentLayout.findViewById<View>(R.id.buttonEditInsertNumber) as Button
-        buttonEditInsertNumber.setOnClickListener(object : SafeClickListener() {
-            override fun onClick() {
-                toggleTypingNumeric()
-            }
+        buttonEditInsertNumber.setOnClickListener(SafeClickListener {
+            toggleTypingNumeric()
         })
 
         val buttonEditInsertRange = editItemContentLayout.findViewById<View>(R.id.buttonEditInsertRange) as Button
-        buttonEditInsertRange.setOnClickListener(object : SafeClickListener() {
-            override fun onClick() {
-                quickInsertRange()
-                numericKeyboard!!.resetInput()
-            }
+        buttonEditInsertRange.setOnClickListener(SafeClickListener {
+            quickInsertRange()
+            numericKeyboard!!.resetInput()
         })
         etEditItem!!.setOnEditorActionListener(OnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
@@ -173,14 +139,12 @@ class EditItemGUI(
         })
         etEditItem!!.setNumKeyboardListener(this)
 
-        etEditItem!!.setOnClickListener(object : SafeClickListener() {
-            override fun onClick() {
-                if (numericKeyboard!!.isVisible) {
-                    showNumericKeyboard()
-                    numericKeyboard!!.resetInput()
-                } else {
-                    showAlphanumKeyboard()
-                }
+        etEditItem!!.setOnClickListener(SafeClickListener {
+            if (numericKeyboard!!.isVisible) {
+                showNumericKeyboard()
+                numericKeyboard!!.resetInput()
+            } else {
+                showAlphanumKeyboard()
             }
         })
         numericKeyboard = editItemContentLayout.findViewById<View>(R.id.numericKeyboard) as NumericKeyboardView
@@ -266,7 +230,7 @@ class EditItemGUI(
     private fun showNumericKeyboard() {
         val selEnd = etEditItem!!.selectionEnd
         val selStart = etEditItem!!.selectionStart
-        gui.hideSoftKeyboard(etEditItem)
+        gui.hideSoftKeyboard(etEditItem!!)
         numericKeyboard!!.isVisible = true
         etEditItem!!.setSelection(selStart, selEnd)
     }
@@ -274,7 +238,7 @@ class EditItemGUI(
     fun hideKeyboards() {
         val selEnd = etEditItem!!.selectionEnd
         val selStart = etEditItem!!.selectionStart
-        gui.hideSoftKeyboard(etEditItem)
+        gui.hideSoftKeyboard(etEditItem!!)
         numericKeyboard!!.isVisible = false
         etEditItem!!.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE
         etEditItem!!.imeOptions = EditorInfo.IME_FLAG_NO_EXTRACT_UI or EditorInfo.IME_ACTION_DONE

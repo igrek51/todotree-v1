@@ -4,20 +4,31 @@ import android.content.Context
 import android.graphics.Rect
 import android.text.SpannableString
 import android.text.style.UnderlineSpan
+import android.util.SparseArray
+import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
+import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.ImageButton
+import android.widget.TextView
+import igrek.todotree.R
+import igrek.todotree.domain.treeitem.AbstractTreeItem
+import igrek.todotree.domain.treeitem.LinkTreeItem
 import igrek.todotree.intent.ItemSelectionCommand
-import igrek.todotree.ui.errorcheck.SafeClickListener
 
 class TreeItemAdapter(
     context: Context,
     dataSource: List<AbstractTreeItem>?,
     listView: TreeListView
-) : ArrayAdapter<AbstractTreeItem?>(context, 0, ArrayList<AbstractTreeItem>()) {
+) : ArrayAdapter<AbstractTreeItem>(context, 0, ArrayList<AbstractTreeItem>()) {
+
     private var dataSource: List<AbstractTreeItem>?
     private var selections: Set<Int>? = null // selected indexes
     private val listView: TreeListView
     private val storedViews: SparseArray<View>
     private val inflater: LayoutInflater
+
     fun setDataSource(dataSource: List<AbstractTreeItem>?) {
         this.dataSource = dataSource
         storedViews.clear()
@@ -94,7 +105,7 @@ class TreeItemAdapter(
         moveButton.setClickable(false)
         increaseTouchArea(moveButton, 20)
         if (selections == null) {
-            moveButton.setOnTouchListener(OnTouchListener { v: View?, event: MotionEvent ->
+            moveButton.setOnTouchListener(View.OnTouchListener { v: View?, event: MotionEvent ->
                 event.setSource(777) // from moveButton
                 when (event.getAction()) {
                     MotionEvent.ACTION_DOWN -> {

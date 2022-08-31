@@ -1,21 +1,9 @@
 package igrek.todotree.service.tree.persistence
 
-import igrek.todotree.domain.treeitem.AbstractTreeItem.typeName
-import igrek.todotree.domain.treeitem.AbstractTreeItem.isEmpty
-import igrek.todotree.domain.treeitem.AbstractTreeItem.getChildren
-import igrek.todotree.domain.treeitem.AbstractTreeItem.displayName
-import igrek.todotree.domain.treeitem.LinkTreeItem.targetPath
-import igrek.todotree.domain.treeitem.LinkTreeItem.hasCustomName
-import igrek.todotree.domain.treeitem.LinkTreeItem.customName
-import igrek.todotree.domain.treeitem.CheckboxTreeItem.isChecked
-import igrek.todotree.domain.treeitem.AbstractTreeItem
-import java.lang.StringBuilder
-import igrek.todotree.domain.treeitem.RemoteTreeItem
-import igrek.todotree.domain.treeitem.TextTreeItem
-import igrek.todotree.domain.treeitem.LinkTreeItem
-import igrek.todotree.domain.treeitem.CheckboxTreeItem
+import igrek.todotree.domain.treeitem.*
 
 internal class JsonTreeSerializer {
+
     fun serializeTree(root: AbstractTreeItem): String {
         val output = StringBuilder()
         serializeItem(output, root, 0)

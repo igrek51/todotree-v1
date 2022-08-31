@@ -3,40 +3,25 @@ package igrek.todotree.system
 import android.Manifest
 import android.app.Activity
 import android.content.pm.PackageManager
-import android.os.Build
 import androidx.core.app.ActivityCompat
-import igrek.todotree.dagger.DaggerIoc
 import igrek.todotree.info.logger.LoggerFactory
-import javax.inject.Inject
+import igrek.todotree.inject.LazyInject
+import igrek.todotree.inject.appFactory
 
-class PermissionService {
-
+class PermissionService(
+    private val activity: LazyInject<Activity?> = appFactory.activity,
+) {
     private val logger = LoggerFactory.logger
 
-    @Inject
-    lateinit var activity: Activity
-
-    // Permission is granted
-    // Permission is revoked
-    //permission is automatically granted on sdk<23 upon installation
-    // Permission is granted
     val isStoragePermissionGranted: Boolean
         get() {
-            return if (Build.VERSION.SDK_INT >= 23) {
-                if (activity.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                    true
-                } else {
-                    ActivityCompat.requestPermissions(activity, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 1)
-                    false
-                }
-            } else {
+            return if (activity.get()!!.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                 true
+            } else {
+                ActivityCompat.requestPermissions(activity.get()!!, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 1)
+                false
             }
         }
-
-    init {
-        DaggerIoc.factoryComponent.inject(this)
-    }
 
     private fun onPermissionGranted(permission: String) {
         logger.info("permission $permission has been granted")

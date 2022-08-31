@@ -3,35 +3,32 @@ package igrek.todotree.ui.contextmenu
 import android.app.Activity
 import android.app.AlertDialog
 import android.view.View
-import igrek.todotree.dagger.DaggerIoc
 import igrek.todotree.domain.treeitem.LinkTreeItem
 import igrek.todotree.domain.treeitem.RemoteTreeItem
+import igrek.todotree.info.errorcheck.UiErrorHandler
+import igrek.todotree.inject.LazyExtractor
+import igrek.todotree.inject.LazyInject
+import igrek.todotree.inject.appFactory
 import igrek.todotree.intent.ItemActionCommand
 import igrek.todotree.intent.RemotePushCommand
 import igrek.todotree.service.clipboard.TreeClipboardManager
 import igrek.todotree.service.tree.TreeManager
 import igrek.todotree.service.tree.TreeSelectionManager
 import igrek.todotree.ui.ExplosionService
-import igrek.todotree.ui.errorcheck.UIErrorHandler
-import java.util.*
-import javax.inject.Inject
 
-class ItemActionsMenu(private val position: Int) {
-
-    @Inject
-    lateinit var activity: Activity
-
-    @Inject
-    lateinit var selectionManager: TreeSelectionManager
-
-    @Inject
-    lateinit var treeManager: TreeManager
-
-    @Inject
-    lateinit var treeClipboardManager: TreeClipboardManager
-
-    @Inject
-    lateinit var explosionService: ExplosionService
+class ItemActionsMenu(
+    private val position: Int,
+    activity: LazyInject<Activity> = appFactory.activityMust,
+    treeSelectionManager: LazyInject<TreeSelectionManager> = appFactory.treeSelectionManager,
+    treeManager: LazyInject<TreeManager> = appFactory.treeManager,
+    treeClipboardManager: LazyInject<TreeClipboardManager> = appFactory.treeClipboardManager,
+    explosionService: LazyInject<ExplosionService> = appFactory.explosionService,
+) {
+    private val activity by LazyExtractor(activity)
+    private val treeSelectionManager by LazyExtractor(treeSelectionManager)
+    private val treeManager by LazyExtractor(treeManager)
+    private val treeClipboardManager by LazyExtractor(treeClipboardManager)
+    private val explosionService by LazyExtractor(explosionService)
 
     fun show(view: View?) {
         val actions = filterVisibleOnly(buildActionsList(view))
@@ -42,7 +39,7 @@ class ItemActionsMenu(private val position: Int) {
             try {
                 actions[item].execute()
             } catch (t: Throwable) {
-                UIErrorHandler.showError(t)
+                UiErrorHandler.handleError(t)
             }
         }
         val alert = builder.create()
@@ -158,7 +155,7 @@ class ItemActionsMenu(private val position: Int) {
     private fun filterVisibleOnly(actions: List<ItemAction>): List<ItemAction> {
         val visibleActions: MutableList<ItemAction> = ArrayList()
         for (action in actions) {
-            if (action.isVisible) {
+            if (action.isVisible()) {
                 visibleActions.add(action)
             }
         }
@@ -171,9 +168,5 @@ class ItemActionsMenu(private val position: Int) {
             actionNames[i] = actions[i].name
         }
         return actionNames
-    }
-
-    init {
-        DaggerIoc.factoryComponent.inject(this)
     }
 }

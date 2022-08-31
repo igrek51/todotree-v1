@@ -1,7 +1,5 @@
 package igrek.todotree.service.preferences
 
-import igrek.todotree.service.preferences.PropertyType
-
 enum class PropertyDefinition(val type: PropertyType, val defaultValue: Any) {
     lockDB(false), userAuthToken("");
 

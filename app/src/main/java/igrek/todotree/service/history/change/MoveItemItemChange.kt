@@ -10,6 +10,5 @@ class MoveItemItemChange(
     val endPosition: Int
 ) : AbstractItemChange() {
     override fun revert() {
-        //TODO
     }
 }

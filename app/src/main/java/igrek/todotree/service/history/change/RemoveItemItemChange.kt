@@ -6,6 +6,5 @@ import igrek.todotree.service.history.change.AbstractItemChange
 class RemoveItemItemChange(val removedItem: AbstractTreeItem, val parent: AbstractTreeItem) :
     AbstractItemChange() {
     override fun revert() {
-        //TODO
     }
 }

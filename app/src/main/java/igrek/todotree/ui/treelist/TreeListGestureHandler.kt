@@ -1,26 +1,18 @@
 package igrek.todotree.ui.treelist
 
-import igrek.todotree.ui.treelist.TreeItemAdapter.getItem
-import igrek.todotree.intent.TreeCommand.itemGoIntoClicked
-import igrek.todotree.intent.TreeCommand.goBack
-import igrek.todotree.ui.treelist.TreeListView
 import igrek.todotree.domain.treeitem.AbstractTreeItem
 import igrek.todotree.intent.TreeCommand
 
 class TreeListGestureHandler(private val listView: TreeListView) {
-    /** położenie X punktu rozpoczęcia gestu  */
+
     private var gestureStartX: Float? = null
-
-    /** położenie Y punktu rozpoczęcia gestu  */
     private var gestureStartY: Float? = null
-
-    /** położenie scrolla podczas rozpoczęcia gestu  */
     private var gestureStartScroll: Int? = null
 
-    /** numer pozycji, na której rozpoczęto gest  */
     private var gestureStartPos: Int? = null
     private val GESTURE_MIN_DX = 0.27f
     private val GESTURE_MAX_DY = 0.8f
+
     fun gestureStart(startX: Float, startY: Float) {
         gestureStartX = startX
         gestureStartY = startY

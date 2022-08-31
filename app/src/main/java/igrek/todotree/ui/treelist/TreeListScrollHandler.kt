@@ -2,30 +2,22 @@ package igrek.todotree.ui.treelist
 
 import android.content.Context
 import android.os.Handler
-import igrek.todotree.info.logger.LoggerFactory.logger
-import igrek.todotree.ui.treelist.TreeListReorder.isDragging
-import igrek.todotree.ui.treelist.TreeListReorder.hoverBitmapBounds
-import igrek.todotree.ui.treelist.TreeListReorder.handleItemDragging
-import igrek.todotree.info.logger.Logger.warn
-import igrek.todotree.ui.treelist.TreeListView
 import android.widget.AbsListView
 import igrek.todotree.info.logger.LoggerFactory
-import java.lang.RuntimeException
-import java.lang.Runnable
-import android.util.DisplayMetrics
 
 class TreeListScrollHandler(private val listView: TreeListView, context: Context) :
     AbsListView.OnScrollListener {
     private val logger = LoggerFactory.logger
 
-    /** aktualne położenie scrolla  */
     var scrollOffset = 0
         private set
+
     private var scrollState = AbsListView.OnScrollListener.SCROLL_STATE_IDLE
     private val SMOOTH_SCROLL_EDGE_DP = 200
     private val SMOOTH_SCROLL_EDGE_PX: Int
     private val SMOOTH_SCROLL_FACTOR = 0.34f
     private val SMOOTH_SCROLL_DURATION = 10
+
     fun handleScrolling(): Boolean {
         if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE || scrollState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
             val offset = listView.computeVerticalScrollOffset()

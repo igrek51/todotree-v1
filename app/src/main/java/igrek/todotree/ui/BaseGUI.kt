@@ -1,12 +1,11 @@
 package igrek.todotree.ui
 
 import android.content.Context
-import androidx.appcompat.app.AppCompatActivity
-import android.view.inputmethod.InputMethodManager
-import android.widget.RelativeLayout
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
+import android.widget.RelativeLayout
+import androidx.appcompat.app.AppCompatActivity
 
 abstract class BaseGUI internal constructor(protected var activity: AppCompatActivity) {
     private val imm: InputMethodManager?

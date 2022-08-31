@@ -1,22 +1,15 @@
 package igrek.todotree.service.tree.persistence
 
-import igrek.todotree.domain.treeitem.AbstractTreeItem.add
 import com.google.gson.Gson
-import kotlin.Throws
-import igrek.todotree.exceptions.DeserializationFailedException
-import igrek.todotree.domain.treeitem.AbstractTreeItem
-import igrek.todotree.service.tree.persistence.GsonTreeDeserializer.JsonItem
-import com.google.gson.JsonSyntaxException
-import igrek.todotree.domain.treeitem.RootTreeItem
-import igrek.todotree.domain.treeitem.TextTreeItem
-import igrek.todotree.domain.treeitem.RemoteTreeItem
-import igrek.todotree.domain.treeitem.SeparatorTreeItem
-import igrek.todotree.domain.treeitem.LinkTreeItem
-import igrek.todotree.domain.treeitem.CheckboxTreeItem
 import com.google.gson.GsonBuilder
+import com.google.gson.JsonSyntaxException
+import igrek.todotree.domain.treeitem.*
+import igrek.todotree.exceptions.DeserializationFailedException
 
 class GsonTreeDeserializer internal constructor() {
+
     private val gson: Gson
+
     @Throws(DeserializationFailedException::class)
     fun deserializeTree(data: String): AbstractTreeItem {
         // trim comma at the end
@@ -34,9 +27,8 @@ class GsonTreeDeserializer internal constructor() {
 
     @Throws(DeserializationFailedException::class)
     private fun mapJsonItemToTreeItem(jsonItem: JsonItem): AbstractTreeItem {
-        val treeItem: AbstractTreeItem
         if (jsonItem.type == null) throw DeserializationFailedException("property 'type' not found")
-        treeItem = when (jsonItem.type) {
+        val treeItem: AbstractTreeItem = when (jsonItem.type) {
             "/" -> {
                 RootTreeItem()
             }

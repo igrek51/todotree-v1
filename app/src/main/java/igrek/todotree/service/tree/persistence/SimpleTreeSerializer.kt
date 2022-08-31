@@ -1,17 +1,12 @@
 package igrek.todotree.service.tree.persistence
 
-import igrek.todotree.domain.treeitem.AbstractTreeItem.lastChild
-import igrek.todotree.domain.treeitem.AbstractTreeItem.add
-import kotlin.Throws
 import igrek.todotree.domain.treeitem.AbstractTreeItem
 import igrek.todotree.domain.treeitem.RootTreeItem
-import java.util.ArrayList
-import igrek.todotree.service.tree.persistence.SimpleTreeSerializer
-import java.lang.RuntimeException
 import igrek.todotree.domain.treeitem.TextTreeItem
 import java.text.ParseException
 
 object SimpleTreeSerializer {
+
     @Throws(ParseException::class)
     fun loadTree(data: String): AbstractTreeItem {
         val rootItem = RootTreeItem()

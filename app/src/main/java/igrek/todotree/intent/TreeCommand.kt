@@ -1,6 +1,5 @@
 package igrek.todotree.intent
 
-import igrek.todotree.dagger.DaggerIoc
 import igrek.todotree.domain.treeitem.*
 import igrek.todotree.exceptions.NoSuperItemException
 import igrek.todotree.info.UiInfoService
@@ -13,18 +12,14 @@ import igrek.todotree.service.history.ChangesHistory
 import igrek.todotree.service.history.LinkHistoryService
 import igrek.todotree.service.remote.RemotePushService
 import igrek.todotree.service.remote.TodoDto
-import igrek.todotree.service.resources.UserInfoService
 import igrek.todotree.service.tree.TreeManager
 import igrek.todotree.service.tree.TreeMover
 import igrek.todotree.service.tree.TreeScrollCache
 import igrek.todotree.service.tree.TreeSelectionManager
 import igrek.todotree.ui.GUI
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import javax.inject.Inject
+import kotlinx.coroutines.*
 
+@OptIn(DelicateCoroutinesApi::class)
 class TreeCommand(
     treeManager: LazyInject<TreeManager> = appFactory.treeManager,
     gui: LazyInject<GUI> = appFactory.gui,
@@ -50,14 +45,15 @@ class TreeCommand(
 
     fun goBack() {
         try {
-            val current = treeManager.currentItem
-            var parent = current.getParent()
+            val current = treeManager.currentItem!!
+            val parent = current.getParent()
             // if item was reached from link - go back to link parent
             if (linkHistoryService.hasLink(current)) {
                 val linkFromTarget = linkHistoryService.getLinkFromTarget(current)
                 linkHistoryService.resetTarget(current)
-                parent = linkFromTarget.getParent()
-                treeManager.goTo(parent)
+                linkFromTarget?.getParent()?.let { linkParent ->
+                    treeManager.goTo(linkParent)
+                }
             } else {
                 treeManager.goUp()
                 linkHistoryService.resetTarget(current) // reset link target - just in case
@@ -71,7 +67,7 @@ class TreeCommand(
 
     fun goUp() {
         try {
-            val current = treeManager.currentItem
+            val current = treeManager.currentItem!!
             val parent = current.getParent()
             treeManager.goUp()
             linkHistoryService.resetTarget(current) // reset link target - just in case
@@ -82,13 +78,13 @@ class TreeCommand(
     }
 
     fun itemGoIntoClicked(position: Int, item: AbstractTreeItem?) {
-        lock.unlockIfLocked(item)
+        databaseLock.unlockIfLocked(item)
         when (item) {
             is LinkTreeItem -> {
                 goToLinkTarget(item)
             }
             is RemoteTreeItem -> {
-                selectionManager.cancelSelectionMode()
+                treeSelectionManager.cancelSelectionMode()
                 goInto(position)
 
                 runBlocking {
@@ -98,13 +94,13 @@ class TreeCommand(
                         result.fold(onSuccess = { todoDtos: List<TodoDto> ->
                             GUICommand().updateItemsList()
                             if (todoDtos.isEmpty()) {
-                                userInfoService.showInfo("No remote items")
+                                uiInfoService.showInfo("No remote items")
                             } else {
-                                userInfoService.showInfo("${todoDtos.size} remote items fetched.")
+                                uiInfoService.showInfo("${todoDtos.size} remote items fetched.")
                             }
                         }, onFailure = { e ->
                             logger.error(e)
-                            userInfoService.showInfo("Communication breakdown!")
+                            uiInfoService.showInfo("Communication breakdown!")
                         })
                     }
                 }
@@ -113,7 +109,7 @@ class TreeCommand(
                 gui.scrollToItem(0)
             }
             else -> {
-                selectionManager.cancelSelectionMode()
+                treeSelectionManager.cancelSelectionMode()
                 goInto(position)
                 GUICommand().updateItemsList()
                 gui.scrollToItem(0)
@@ -140,44 +136,48 @@ class TreeCommand(
     private fun storeCurrentScroll() {
         val scrollPos = gui.currentScrollPos
         if (scrollPos != null) {
-            scrollCache.storeScrollPosition(treeManager.currentItem, scrollPos)
+            treeScrollCache.storeScrollPosition(treeManager.currentItem, scrollPos)
         }
     }
 
     fun itemLongClicked(position: Int) {
-        if (!selectionManager.isAnythingSelected) {
-            selectionManager.startSelectionMode()
-            selectionManager.setItemSelected(position, true)
+        if (!treeSelectionManager.isAnythingSelected) {
+            treeSelectionManager.startSelectionMode()
+            treeSelectionManager.setItemSelected(position, true)
             GUICommand().updateItemsList()
             gui.scrollToItem(position)
         } else {
-            selectionManager.setItemSelected(position, true)
+            treeSelectionManager.setItemSelected(position, true)
             GUICommand().updateItemsList()
         }
     }
 
     fun itemClicked(position: Int, item: AbstractTreeItem) {
-        lock.assertUnlocked()
-        if (selectionManager.isAnythingSelected) {
-            selectionManager.toggleItemSelected(position)
+        databaseLock.assertUnlocked()
+        if (treeSelectionManager.isAnythingSelected) {
+            treeSelectionManager.toggleItemSelected(position)
             GUICommand().updateItemsList()
         } else {
-            if (item is RemoteTreeItem) {
-                itemGoIntoClicked(position, item)
-            } else if (item is TextTreeItem) {
-                when {
-                    !item.isEmpty -> {
-                        itemGoIntoClicked(position, item)
-                    }
-                    item.displayName == "Tmp" && (item.getParent() == null || item.getParent() is RootTreeItem) -> {
-                        itemGoIntoClicked(position, item)
-                    }
-                    else -> {
-                        ItemEditorCommand().itemEditClicked(item)
+            when (item) {
+                is RemoteTreeItem -> {
+                    itemGoIntoClicked(position, item)
+                }
+                is TextTreeItem -> {
+                    when {
+                        !item.isEmpty -> {
+                            itemGoIntoClicked(position, item)
+                        }
+                        item.displayName == "Tmp" && (item.getParent() == null || item.getParent() is RootTreeItem) -> {
+                            itemGoIntoClicked(position, item)
+                        }
+                        else -> {
+                            ItemEditorCommand().itemEditClicked(item)
+                        }
                     }
                 }
-            } else if (item is LinkTreeItem) {
-                goToLinkTarget(item)
+                is LinkTreeItem -> {
+                    goToLinkTarget(item)
+                }
             }
         }
     }
@@ -186,7 +186,7 @@ class TreeCommand(
         // go into target
         val target = item.target
         if (target == null) {
-            infoService.showInfo("Link is broken: " + item.displayTargetPath)
+            uiInfoService.showInfo("Link is broken: " + item.displayTargetPath)
         } else {
             linkHistoryService.storeTargetLink(target, item)
             navigateTo(target)
@@ -194,21 +194,17 @@ class TreeCommand(
     }
 
     fun itemMoved(position: Int, step: Int): List<AbstractTreeItem> {
-        treeMover.move(treeManager.currentItem, position, step)
+        treeMover.move(treeManager.currentItem!!, position, step)
         changesHistory.registerChange()
-        return treeManager.currentItem.getChildren()
+        return treeManager.currentItem!!.getChildren()
     }
 
     fun findItemByPath(paths: Array<String>): AbstractTreeItem? {
         var current = treeManager.rootItem
         for (path in paths) {
-            val found = current.findChildByName(path) ?: return null
+            val found = current!!.findChildByName(path) ?: return null
             current = found
         }
         return current
-    }
-
-    init {
-        DaggerIoc.factoryComponent.inject(this)
     }
 }

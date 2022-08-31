@@ -1,28 +1,25 @@
 package igrek.todotree.intent
 
+import android.content.Context
 import igrek.todotree.R
 import igrek.todotree.activity.ActivityController
 import igrek.todotree.app.AppData
 import igrek.todotree.app.AppState
-import igrek.todotree.dagger.DaggerIoc
-import igrek.todotree.dagger.FactoryComponent.inject
 import igrek.todotree.inject.LazyExtractor
 import igrek.todotree.inject.LazyInject
 import igrek.todotree.inject.appFactory
 import igrek.todotree.remote.RemoteCommander
-import igrek.todotree.service.tree.TreeManager
 import igrek.todotree.service.tree.TreeSelectionManager
 import igrek.todotree.ui.GUI
-import javax.inject.Inject
 
 class NavigationCommand(
-    treeManager: LazyInject<TreeManager> = appFactory.treeManager,
+    context: LazyInject<Context> = appFactory.context,
     gui: LazyInject<GUI> = appFactory.gui,
     appData: LazyInject<AppData> = appFactory.appData,
     activityController: LazyInject<ActivityController> = appFactory.activityController,
     treeSelectionManager: LazyInject<TreeSelectionManager> = appFactory.treeSelectionManager,
 ) {
-    private val treeManager by LazyExtractor(treeManager)
+    private val context by LazyExtractor(context)
     private val gui by LazyExtractor(gui)
     private val appData by LazyExtractor(appData)
     private val activityController by LazyExtractor(activityController)
@@ -31,7 +28,7 @@ class NavigationCommand(
     fun optionsSelect(id: Int): Boolean {
         when (id) {
             R.id.action_minimize -> {
-                activityController!!.minimize()
+                activityController.minimize()
                 return true
             }
             R.id.action_exit_without_saving -> {
@@ -79,7 +76,7 @@ class NavigationCommand(
                 return false
             }
             R.id.action_enter_command -> {
-                RemoteCommander(activityController!!.activity.get()).showCommandAlert()
+                RemoteCommander(context).showCommandAlert()
                 return false
             }
         }
@@ -87,35 +84,31 @@ class NavigationCommand(
     }
 
     fun backClicked(): Boolean {
-        if (appData!!.isState(AppState.ITEMS_LIST)) {
-            if (selectionManager!!.isAnythingSelected) {
-                selectionManager!!.cancelSelectionMode()
+        if (appData.isState(AppState.ITEMS_LIST)) {
+            if (treeSelectionManager.isAnythingSelected) {
+                treeSelectionManager.cancelSelectionMode()
                 GUICommand().updateItemsList()
             } else {
                 TreeCommand().goBack()
             }
-        } else if (appData!!.isState(AppState.EDIT_ITEM_CONTENT)) {
-            if (gui!!.editItemBackClicked()) return true
+        } else if (appData.isState(AppState.EDIT_ITEM_CONTENT)) {
+            if (gui.editItemBackClicked()) return true
             ItemEditorCommand().cancelEditedItem()
         }
         return true
     }
 
     fun approveClicked(): Boolean {
-        if (appData!!.isState(AppState.EDIT_ITEM_CONTENT)) {
-            gui!!.requestSaveEditedItem()
-        } else if (appData!!.isState(AppState.ITEMS_LIST)) {
-            if (selectionManager!!.isAnythingSelected) {
-                selectionManager!!.cancelSelectionMode()
+        if (appData.isState(AppState.EDIT_ITEM_CONTENT)) {
+            gui.requestSaveEditedItem()
+        } else if (appData.isState(AppState.ITEMS_LIST)) {
+            if (treeSelectionManager.isAnythingSelected) {
+                treeSelectionManager.cancelSelectionMode()
                 GUICommand().updateItemsList()
             } else {
                 TreeCommand().goBack()
             }
         }
         return true
-    }
-
-    init {
-        DaggerIoc.factoryComponent.inject(this)
     }
 }

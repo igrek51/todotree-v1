@@ -4,6 +4,7 @@ import java.util.HashMap
 import igrek.todotree.domain.treeitem.AbstractTreeItem
 
 class TreeScrollCache {
+
     private val storedScrollPositions: HashMap<AbstractTreeItem, Int> = HashMap()
 
     fun storeScrollPosition(item: AbstractTreeItem?, y: Int?) {

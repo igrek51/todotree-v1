@@ -1,11 +1,23 @@
 package igrek.todotree.ui.treelist
 
 import android.content.Context
+import android.graphics.Canvas
+import android.util.AttributeSet
+import android.util.SparseArray
+import android.view.MotionEvent
 import android.view.View
+import android.view.ViewTreeObserver
+import android.widget.AdapterView
+import android.widget.ListView
+import igrek.todotree.domain.treeitem.AbstractTreeItem
+import igrek.todotree.info.errorcheck.UiErrorHandler
 import igrek.todotree.info.logger.Logger
-import igrek.todotree.ui.errorcheck.UIErrorHandler
+import igrek.todotree.info.logger.LoggerFactory
+import igrek.todotree.intent.ItemEditorCommand
+import igrek.todotree.intent.TreeCommand
+import igrek.todotree.ui.contextmenu.ItemActionsMenu
 
-class TreeListView : ListView, OnItemClickListener, OnItemLongClickListener {
+class TreeListView : ListView, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
     private val logger: Logger = LoggerFactory.logger
     private var adapter: TreeItemAdapter? = null
     var scrollHandler: TreeListScrollHandler? = null
@@ -33,7 +45,7 @@ class TreeListView : ListView, OnItemClickListener, OnItemLongClickListener {
         setOnItemLongClickListener(this)
         setOnScrollListener(scrollHandler)
         setChoiceMode(ListView.CHOICE_MODE_SINGLE)
-        setAdapter(adapter)
+        setAdapter(adapter!!)
     }
 
     override fun getAdapter(): TreeItemAdapter {
@@ -106,7 +118,7 @@ class TreeListView : ListView, OnItemClickListener, OnItemLongClickListener {
     private fun calculateViewHeights() {
         // WARNING: for a moment - there's invalidated item heights map
         val observer: ViewTreeObserver = this.getViewTreeObserver()
-        observer.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
+        observer.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 itemHeights.clear()
                 this@TreeListView.getViewTreeObserver().removeGlobalOnLayoutListener(this)
@@ -133,7 +145,9 @@ class TreeListView : ListView, OnItemClickListener, OnItemLongClickListener {
     }
 
     fun putItemHeight(position: Int?, height: Int?) {
-        itemHeights.put(position, height)
+        position?.let { position ->
+            itemHeights.put(position, height)
+        }
     }
 
     fun getItemView(position: Int): View? {
@@ -151,7 +165,7 @@ class TreeListView : ListView, OnItemClickListener, OnItemLongClickListener {
                 TreeCommand().itemClicked(position, item)
             }
         } catch (t: Throwable) {
-            UIErrorHandler.showError(t)
+            UiErrorHandler.handleError(t)
         }
     }
 

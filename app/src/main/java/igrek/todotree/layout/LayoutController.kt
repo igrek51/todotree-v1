@@ -16,11 +16,8 @@ import igrek.todotree.info.logger.LoggerFactory
 import igrek.todotree.inject.LazyExtractor
 import igrek.todotree.inject.LazyInject
 import igrek.todotree.inject.appFactory
-import igrek.todotree.layout.screen.HomeLayoutController
-import igrek.todotree.layout.screen.HelpLayoutController
-import igrek.todotree.layout.screen.HistoryLayoutController
 import igrek.todotree.layout.navigation.NavigationMenuController
-import igrek.todotree.layout.screen.ProgramsLayoutController
+import igrek.todotree.layout.screen.HomeLayoutController
 import igrek.todotree.settings.SettingsLayoutController
 import igrek.todotree.system.SystemKeyDispatcher
 import kotlinx.coroutines.*
@@ -34,10 +31,7 @@ class LayoutController(
     activityController: LazyInject<ActivityController> = appFactory.activityController,
     systemKeyDispatcher: LazyInject<SystemKeyDispatcher> = appFactory.systemKeyDispatcher,
     homeLayoutController: LazyInject<HomeLayoutController> = appFactory.homeLayoutController,
-    historyLayoutController: LazyInject<HistoryLayoutController> = appFactory.historyLayoutController,
-    helpLayoutController: LazyInject<HelpLayoutController> = appFactory.helpLayoutController,
     settingsLayoutController: LazyInject<SettingsLayoutController> = appFactory.settingsLayoutController,
-    programsLayoutController: LazyInject<ProgramsLayoutController> = appFactory.programsLayoutController,
 ) {
     private val navigationMenuController by LazyExtractor(navigationMenuController)
     private val activityController by LazyExtractor(activityController)
@@ -48,10 +42,7 @@ class LayoutController(
     private var layoutHistory: MutableList<MainLayout> = mutableListOf()
     private var registeredLayouts: Map<KClass<out MainLayout>, MainLayout> = mapOf(
         HomeLayoutController::class to homeLayoutController.get(),
-        HelpLayoutController::class to helpLayoutController.get(),
         SettingsLayoutController::class to settingsLayoutController.get(),
-        HistoryLayoutController::class to historyLayoutController.get(),
-        ProgramsLayoutController::class to programsLayoutController.get(),
     )
     private val logger = LoggerFactory.logger
     private val layoutCache = hashMapOf<Int, View>()

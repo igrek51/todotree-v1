@@ -1,8 +1,7 @@
 package igrek.todotree.service.tree.persistence
 
-import igrek.todotree.service.tree.persistence.ItemAttribute
-
 internal class ItemAttribute(val name: String, val value: String) {
+
     override fun equals(obj: Any?): Boolean {
         if (obj !is ItemAttribute) return false
         val attr2 = obj

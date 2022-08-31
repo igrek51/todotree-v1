@@ -1,31 +1,16 @@
 package igrek.todotree.service.tree.persistence
 
-import igrek.todotree.service.tree.persistence.IndentedLine.indentedLine
-import igrek.todotree.domain.treeitem.AbstractTreeItem.getChild
-import igrek.todotree.service.tree.persistence.IndentedLine.indentation
-import igrek.todotree.domain.treeitem.AbstractTreeItem.setParent
-import igrek.todotree.domain.treeitem.AbstractTreeItem.add
-import igrek.todotree.service.tree.persistence.ItemAttribute.name
-import igrek.todotree.service.tree.persistence.ItemAttribute.value
-import kotlin.Throws
+import igrek.todotree.domain.treeitem.*
 import igrek.todotree.exceptions.DeserializationFailedException
-import igrek.todotree.domain.treeitem.AbstractTreeItem
-import igrek.todotree.domain.treeitem.RootTreeItem
-import igrek.todotree.service.tree.persistence.IndentedLine
-import java.util.ArrayList
-import igrek.todotree.service.tree.persistence.ItemAttribute
-import igrek.todotree.domain.treeitem.TextTreeItem
-import igrek.todotree.domain.treeitem.RemoteTreeItem
-import igrek.todotree.domain.treeitem.SeparatorTreeItem
-import igrek.todotree.domain.treeitem.LinkTreeItem
-import igrek.todotree.domain.treeitem.CheckboxTreeItem
 import java.util.regex.Pattern
 
 internal class JsonTreeDeserializer {
+
     private val singleItemPattern: Pattern
     private val multiItemPattern: Pattern
     private val nameValuePattern: Pattern
     private val BLOCK_CLOSING_BRACKET = "]},"
+
     @Throws(DeserializationFailedException::class)
     fun deserializeTree(data: String): AbstractTreeItem {
         val rootItem = RootTreeItem()

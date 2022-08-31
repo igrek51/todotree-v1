@@ -82,6 +82,10 @@ open class UiInfoService(
         showSnackbar(info = info, actionResId = R.string.action_info_ok, indefinite = indefinite)
     }
 
+    fun showInfoCancellable(info: String, indefinite: Boolean = false, action: (() -> Unit)) {
+        showSnackbar(info = info, actionResId = R.string.action_cancel, indefinite = indefinite, action=action)
+    }
+
     fun showInfoAction(infoResId: Int, vararg args: String,
                        indefinite: Boolean = false, actionResId: Int, action: () -> Unit) {
         val info = resString(infoResId, *args)

@@ -1,9 +1,8 @@
 package igrek.todotree.ui.treelist
 
-import igrek.todotree.ui.treelist.TreeListView
-import android.view.View.OnTouchListener
 import android.view.MotionEvent
 import android.view.View
+import android.view.View.OnTouchListener
 
 internal class TreeItemTouchListener(
     private val listView: TreeListView,

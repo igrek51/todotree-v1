@@ -11,6 +11,7 @@ import igrek.todotree.info.logger.Logger
 import igrek.todotree.info.logger.LoggerFactory
 import igrek.todotree.layout.LayoutController
 import igrek.todotree.layout.navigation.NavigationMenuController
+import igrek.todotree.layout.screen.HomeLayoutController
 import igrek.todotree.persistence.LocalDataService
 import igrek.todotree.persistence.user.UserDataDao
 import igrek.todotree.service.access.AccessLogService
@@ -105,4 +106,5 @@ class AppFactory(
     val remoteDbRequester = SingletonInject { RemoteDbRequester() }
     val remotePushService = SingletonInject { RemotePushService() }
     val explosionService = SingletonInject { ExplosionService() }
+    val homeLayoutController = SingletonInject { HomeLayoutController() }
 }

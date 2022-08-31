@@ -1,17 +1,15 @@
 package igrek.todotree.system
 
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
-import igrek.todotree.dagger.DaggerIoc
 import igrek.todotree.info.logger.LoggerFactory
-import javax.inject.Inject
+import igrek.todotree.inject.LazyInject
+import igrek.todotree.inject.appFactory
 
-class PackageInfoService {
-
-    @Inject
-    lateinit var activity: AppCompatActivity
-
+class PackageInfoService(
+    context: LazyInject<Context> = appFactory.context,
+) {
     private val logger = LoggerFactory.logger
     var versionName: String? = null
         private set
@@ -19,11 +17,9 @@ class PackageInfoService {
         private set
 
     init {
-        DaggerIoc.factoryComponent.inject(this)
-
         try {
-            val pInfo = activity.packageManager
-                    .getPackageInfo(activity.packageName, 0)
+            val pInfo = context.get().packageManager
+                    .getPackageInfo(context.get().packageName, 0)
             versionName = pInfo.versionName
             versionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 pInfo.longVersionCode

@@ -1,6 +1,5 @@
 package igrek.todotree.intent
 
-import igrek.todotree.dagger.DaggerIoc
 import igrek.todotree.domain.treeitem.AbstractTreeItem
 import igrek.todotree.info.UiInfoService
 import igrek.todotree.info.logger.LoggerFactory.logger
@@ -8,13 +7,12 @@ import igrek.todotree.inject.LazyExtractor
 import igrek.todotree.inject.LazyInject
 import igrek.todotree.inject.appFactory
 import igrek.todotree.service.remote.RemotePushService
-import igrek.todotree.service.resources.UserInfoService
 import igrek.todotree.service.tree.TreeManager
 import igrek.todotree.service.tree.TreeSelectionManager
 import kotlinx.coroutines.*
 import java.util.*
-import javax.inject.Inject
 
+@OptIn(DelicateCoroutinesApi::class)
 class RemotePushCommand(
     treeManager: LazyInject<TreeManager> = appFactory.treeManager,
     uiInfoService: LazyInject<UiInfoService> = appFactory.uiInfoService,
@@ -27,17 +25,17 @@ class RemotePushCommand(
     private val treeSelectionManager by LazyExtractor(treeSelectionManager)
 
     fun isRemotePushingEnabled(): Boolean {
-        return remotePushService.isRemotePushingEnabled
+        return remotePushService.isRemotePushEnabled
     }
 
     fun actionPushItemsToRemote(position: Int) {
-        val itemPosistions: TreeSet<Int> = TreeSet(selectionManager.selectedItemsNotNull)
+        val itemPosistions: TreeSet<Int> = TreeSet(treeSelectionManager.selectedItemsNotNull)
         if (itemPosistions.isEmpty()) {
             itemPosistions.add(position)
         }
 
         if (!itemPosistions.isEmpty()) {
-            val currentItem: AbstractTreeItem = treeManager.currentItem
+            val currentItem: AbstractTreeItem = treeManager.currentItem!!
 
             runBlocking {
                 GlobalScope.launch(Dispatchers.Main) {
@@ -60,14 +58,14 @@ class RemotePushCommand(
                         result.exceptionOrNull()?.let { exception ->
                             logger.error(exception)
                         }
-                        userInfoService.showToast("Communication breakdown!")
+                        uiInfoService.showToast("Communication breakdown!")
                     } else {
                         val message = when (contents.size) {
                             1 -> "Entry pushed: ${contents[0]}"
                             else -> "${contents.size} Entries pushed"
                         }
-                        userInfoService.showInfo(message)
-                        userInfoService.showToast(message)
+                        uiInfoService.showInfo(message)
+                        uiInfoService.showToast(message)
                     }
 
                 }

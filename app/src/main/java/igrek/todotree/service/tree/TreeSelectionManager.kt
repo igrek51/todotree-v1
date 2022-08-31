@@ -3,6 +3,7 @@ package igrek.todotree.service.tree
 import java.util.TreeSet
 
 class TreeSelectionManager {
+
     var selectedItems: TreeSet<Int>? = null
         private set
     val selectedItemsNotNull: TreeSet<Int>

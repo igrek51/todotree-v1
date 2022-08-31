@@ -5,7 +5,9 @@ import igrek.todotree.domain.treeitem.LinkTreeItem
 import java.util.HashMap
 
 class LinkHistoryService {
+
     private val target2link: MutableMap<AbstractTreeItem, LinkTreeItem> = HashMap()
+
     fun storeTargetLink(target: AbstractTreeItem, link: LinkTreeItem) {
         target2link[target] = link
     }

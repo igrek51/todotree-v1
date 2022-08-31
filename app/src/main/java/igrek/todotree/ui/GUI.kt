@@ -9,12 +9,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import igrek.todotree.R
 import igrek.todotree.domain.treeitem.AbstractTreeItem
+import igrek.todotree.info.errorcheck.SafeClickListener
 import igrek.todotree.inject.LazyInject
 import igrek.todotree.inject.appFactory
 import igrek.todotree.intent.ExitCommand
 import igrek.todotree.intent.NavigationCommand
 import igrek.todotree.ui.edititem.EditItemGUI
-import igrek.todotree.ui.errorcheck.SafeClickListener
 import igrek.todotree.ui.treelist.TreeListView
 
 open class GUI(
@@ -33,10 +33,8 @@ open class GUI(
         activity.setSupportActionBar(toolbar1)
         actionBar = activity.supportActionBar
         showBackButton(true)
-        toolbar1.setNavigationOnClickListener(object : SafeClickListener() {
-            override fun onClick() {
-                NavigationCommand().backClicked()
-            }
+        toolbar1.setNavigationOnClickListener(SafeClickListener {
+            NavigationCommand().backClicked()
         })
         val save2Button = activity.findViewById<ImageButton>(R.id.save2Button)
         save2Button.setOnClickListener { ExitCommand().optionSaveAndExit() }
@@ -53,7 +51,7 @@ open class GUI(
     open fun showItemsList(currentItem: AbstractTreeItem) {
         setOrientationPortrait()
         val itemsListLayout = setMainContentLayout(R.layout.items_list)
-        itemsListView = itemsListLayout.findViewById(R.id.treeItemsList)
+        itemsListView = itemsListLayout.findViewById<TreeListView>(R.id.treeItemsList) as TreeListView
         itemsListView?.init(activity)
         updateItemsList(currentItem, currentItem.getChildren(), null)
     }

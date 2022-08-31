@@ -1,8 +1,10 @@
 package igrek.todotree.service.tree
 
 class ContentTrimmer {
+
     val WHITE_CHARS = " "
     val INVALID_CHARS = "{}[]\n\t"
+
     fun trimContent(content: String): String {
         // remove unallowed characteres
         var content = content

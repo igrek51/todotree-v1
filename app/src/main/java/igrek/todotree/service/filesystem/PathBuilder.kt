@@ -1,9 +1,9 @@
 package igrek.todotree.service.filesystem
 
-import igrek.todotree.service.filesystem.PathBuilder
 import java.io.File
 
 class PathBuilder {
+
     private var pathstr: String
 
     internal constructor(pathstr: String) {

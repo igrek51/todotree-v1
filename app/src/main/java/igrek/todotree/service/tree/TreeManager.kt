@@ -15,7 +15,11 @@ class TreeManager(
 ) {
     private val changesHistory by LazyExtractor(changesHistory)
 
-    private var rootItem: AbstractTreeItem? = null
+    var rootItem: AbstractTreeItem? = null
+        set(value) {
+            field = value
+            this.currentItem = value
+        }
 
     var currentItem: AbstractTreeItem? = null
         private set
@@ -24,15 +28,6 @@ class TreeManager(
 
     fun reset() {
         rootItem = RootTreeItem()
-        currentItem = rootItem
-    }
-
-    fun getRootItem(): AbstractTreeItem? {
-        return rootItem
-    }
-
-    fun setRootItem(rootItem: AbstractTreeItem?) {
-        this.rootItem = rootItem
         currentItem = rootItem
     }
 
@@ -61,8 +56,8 @@ class TreeManager(
         return currentItem!!.getChild(position)
     }
 
-    fun addToCurrent(position: Int?, item: AbstractTreeItem) {
-        var position = position
+    fun addToCurrent(_position: Int?, item: AbstractTreeItem) {
+        var position = _position
         if (position == null) {
             position = currentItem!!.size()
         }

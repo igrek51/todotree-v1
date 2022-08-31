@@ -1,28 +1,30 @@
 package igrek.todotree.ui.numkeyboard
 
 import android.content.Context
-import igrek.todotree.intent.GUICommand.numKeyboardHyphenTyped
+import android.inputmethodservice.Keyboard
 import android.inputmethodservice.KeyboardView
 import android.inputmethodservice.KeyboardView.OnKeyboardActionListener
-import android.widget.EditText
-import igrek.todotree.ui.numkeyboard.NumKeyboardListener
-import java.lang.StringBuffer
 import android.util.AttributeSet
-import android.inputmethodservice.Keyboard
+import android.widget.EditText
 import igrek.todotree.R
 import igrek.todotree.intent.GUICommand
 
 class NumericKeyboardView : KeyboardView, OnKeyboardActionListener {
-    private var context: Context
+
+    private var _context: Context
+
     private var editText: EditText? = null
+
     var listener: NumKeyboardListener? = null
+
     private var input = StringBuffer()
+
     var typingMode //1 - godzina, 2 - data, 3 - liczba (waluta)
             = 0
         private set
 
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
-        this.context = context
+        this._context = context
     }
 
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
@@ -30,7 +32,7 @@ class NumericKeyboardView : KeyboardView, OnKeyboardActionListener {
         attrs,
         defStyleAttr
     ) {
-        this.context = context
+        this._context = context
     }
 
     fun init(listener: NumKeyboardListener?, editText: EditText?) {

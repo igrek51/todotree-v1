@@ -4,8 +4,10 @@ import java.util.LinkedList
 import igrek.todotree.service.history.change.AbstractItemChange
 
 class ChangesHistory {
+
     private val changes = LinkedList<AbstractItemChange>()
     private var anyChange = false
+
     fun getChanges(): List<AbstractItemChange> {
         return changes
     }
