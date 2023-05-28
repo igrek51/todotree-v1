@@ -42,10 +42,14 @@ class ClipboardCommand(
                     treeClipboardManager.addToClipboard(selectedItem)
                 }
             }
-            //if one item selected - copying also to system clipboard
+
+            val copyText = treeClipboardManager.clipboard!!.joinToString("\n") {
+                it.displayName
+            }
+            systemClipboardManager.copyToSystemClipboard(copyText)
+
             if (treeClipboardManager.clipboardSize == 1) {
                 val item = treeClipboardManager.clipboard!![0]
-                systemClipboardManager.copyToSystemClipboard(item.displayName)
                 if (info) uiInfoService.showInfo("Item copied: " + item.displayName)
             } else {
                 if (info) uiInfoService.showInfo("Items copied: " + treeClipboardManager.clipboardSize)
