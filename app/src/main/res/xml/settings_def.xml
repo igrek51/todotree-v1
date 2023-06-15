@@ -16,6 +16,14 @@
             app:iconSpaceReserved="false" />
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="Backup">
+        <EditTextPreference
+            android:key="externalBackupPath"
+            android:title="externalBackupPath"
+            android:summary="Absolute path to a directory for the external backup, eg. /storage/DD99-B30F/.todotree"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
+
     <PreferenceCategory android:title="Maintenance">
         <Preference
             android:key="initFilesystemPermissions"

@@ -8,6 +8,8 @@ enum class SettingsField constructor(
 
     UserAuthToken(""),
 
+    ExternalBackupPath(""),
+
     AppExecutionCount(0),
 
     ;

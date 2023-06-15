@@ -61,6 +61,13 @@ class SettingsFragment(
             }
         )
 
+        setupEditTextPreference("externalBackupPath",
+            onLoad = { preferencesState.externalBackupPath },
+            onSave = { value: String ->
+                preferencesState.externalBackupPath = value
+            }
+        )
+
         setupClickPreference("initFilesystemPermissions") {
             PermissionsManager(_context).setupFiles()
         }

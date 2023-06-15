@@ -13,6 +13,7 @@ class SettingsState(
 
     var lockDB: Boolean by PreferenceDelegate(SettingsField.LockDB)
     var userAuthToken: String by PreferenceDelegate(SettingsField.UserAuthToken)
+    var externalBackupPath: String by PreferenceDelegate(SettingsField.ExternalBackupPath)
     var appExecutionCount: Long by PreferenceDelegate(SettingsField.AppExecutionCount)
 
 }

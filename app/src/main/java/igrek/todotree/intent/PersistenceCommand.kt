@@ -34,6 +34,7 @@ class PersistenceCommand(
     private val filesystemService by LazyExtractor(filesystemService)
     private val treePersistenceService by LazyExtractor(treePersistenceService)
     private val changesHistory by LazyExtractor(changesHistory)
+    private val settingsState by LazyExtractor(appFactory.settingsState)
 
     private val logger = LoggerFactory.logger
 
@@ -77,6 +78,13 @@ class PersistenceCommand(
 
     private fun dbCopyFile(): File {
         return filesystemService.internalStorageAppDir().resolve("todo.json")
+    }
+
+    private fun externalBackupFile(): File? {
+        val path = settingsState.externalBackupPath.takeIf { it.isNotBlank() } ?: return null
+        val dir = File(path)
+        dir.mkdirs()
+        return dir.resolve("todo.json")
     }
 
     fun loadRootTreeFromBackup(backup: Backup) {
@@ -141,11 +149,20 @@ class PersistenceCommand(
         try {
             val output = treePersistenceService.serializeTree(treeManager.rootItem)
             val dbFilePath = dbFile().absolutePath
-            val dbCopyFilePath = dbCopyFile().absolutePath
+            val internalBackupFilePath = dbCopyFile().absolutePath // backup copy in the internal storage
+            val externalBackupFile = externalBackupFile() // backup copy in the external storage (optional)
+
             filesystemService.saveFile(dbFilePath, output)
             logger.info("Database saved to $dbFilePath")
-            filesystemService.saveFile(dbCopyFilePath, output)
-            logger.debug("Database copy saved to $dbCopyFilePath")
+
+            filesystemService.saveFile(internalBackupFilePath, output)
+            logger.debug("Database copy saved to $internalBackupFilePath")
+
+            if (externalBackupFile != null) {
+                val externalBackupFilePath = externalBackupFile.absolutePath
+                filesystemService.saveFile(externalBackupFilePath, output)
+                logger.debug("Database copy saved to $externalBackupFilePath")
+            }
         } catch (e: IOException) {
             logger.error(e)
         }
