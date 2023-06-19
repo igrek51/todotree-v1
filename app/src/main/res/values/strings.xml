@@ -6,7 +6,7 @@
 
     <string name="action_minimize">🙈 Minimize</string>
     <string name="action_exit_without_saving">❌ Exit without saving</string>
-    <string name="action_save_exit">Save and exit</string>
+    <string name="action_save_exit">💾 Save and exit</string>
     <string name="action_reload">🔄 Reload</string>
     <string name="action_save">💾 Save</string>
 

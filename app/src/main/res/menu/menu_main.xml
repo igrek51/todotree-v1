@@ -68,5 +68,5 @@
         android:orderInCategory="300"
         android:title="@string/action_save_exit"
         android:icon="@drawable/save"
-        appControllerService:showAsAction="ifRoom"/>
+        appControllerService:showAsAction="never"/>
 </menu>
