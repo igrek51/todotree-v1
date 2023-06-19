@@ -5,6 +5,7 @@ import android.app.AlertDialog
 import android.view.View
 import igrek.todotree.domain.treeitem.LinkTreeItem
 import igrek.todotree.domain.treeitem.RemoteTreeItem
+import igrek.todotree.domain.treeitem.TextTreeItem
 import igrek.todotree.info.errorcheck.UiErrorHandler
 import igrek.todotree.inject.LazyExtractor
 import igrek.todotree.inject.LazyInject
@@ -133,6 +134,17 @@ class ItemActionsMenu(
 
             override fun isVisible(): Boolean {
                 return !treeClipboardManager.isClipboardEmpty
+            }
+        })
+        actions.add(object : ItemAction("\uD83D\uDD2A Split") {
+            override fun execute() {
+                ItemActionCommand().actionSplit(position)
+            }
+
+            override fun isVisible(): Boolean {
+                return treeManager.isPositionAtItem(position)
+                        && treeManager.currentItem?.getChild(position) is TextTreeItem
+                        && treeManager.currentItem?.getChild(position)?.displayName?.contains(",") == true
             }
         })
         actions.add(object : ItemAction("\uD83D\uDCE4 Push to remote") {

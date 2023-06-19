@@ -79,6 +79,10 @@ class ItemActionCommand(
         }
     }
 
+    fun actionSplit(position: Int) {
+        ItemTransformCommand().splitItem(position)
+    }
+
     fun actionSelectAll() {
         ItemSelectionCommand().toggleSelectAll()
     }
