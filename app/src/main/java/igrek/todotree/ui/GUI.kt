@@ -3,7 +3,6 @@ package igrek.todotree.ui
 import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
-import android.widget.ImageButton
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -22,17 +21,24 @@ open class GUI(
 ) : BaseGUI(appCompatActivity.get()) {
 
     private var actionBar: ActionBar? = null
+    private var toolbar: Toolbar? = null
     private var itemsListView: TreeListView? = null
     private var editItemGUI: EditItemGUI? = null
+    private var hasParent: Boolean = false
 
     fun lazyInit() {
         activity?.let { activity ->
             activity.findViewById<Toolbar>(R.id.toolbar1)?.let { toolbar ->
+                this.toolbar = toolbar
                 activity.setSupportActionBar(toolbar)
-                actionBar = activity.supportActionBar
-                showBackButton(true)
+                this.actionBar = activity.supportActionBar
+                showBackButton(false)
                 toolbar.setNavigationOnClickListener(SafeClickListener {
-                    NavigationCommand().backClicked()
+                    if (hasParent) {
+                        NavigationCommand().backClicked()
+                    } else {
+                        ExitCommand().optionSaveAndExit()
+                    }
                 })
             }
 //            activity.findViewById<ImageButton>(R.id.save2Button)?.let { save2Button ->
@@ -44,8 +50,14 @@ open class GUI(
 
     private fun showBackButton(show: Boolean) {
         if (actionBar != null) {
-            actionBar!!.setDisplayHomeAsUpEnabled(show)
-            actionBar!!.setDisplayShowHomeEnabled(show)
+            actionBar!!.setDisplayHomeAsUpEnabled(true)
+            actionBar!!.setDisplayShowHomeEnabled(true)
+            toolbar?.setNavigationIcon(androidx.appcompat.R.drawable.abc_ic_ab_back_material)
+//            toolbar?.let { toolbar ->
+//                toolbar.navigationIcon.getPadding()
+//                val drawable = AppCompatResources.getDrawable(toolbar.context, R.drawable.save)
+//                toolbar.navigationIcon = drawable
+//            }
         }
     }
 
@@ -74,6 +86,7 @@ open class GUI(
         }
         setTitle(sb.toString())
 
+        hasParent = currentItem.getParent() != null
         showBackButton(currentItem.getParent() != null)
 
         itemsListView?.setItemsAndSelected(items, selectedPositions)
