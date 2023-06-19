@@ -35,9 +35,9 @@ open class GUI(
                     NavigationCommand().backClicked()
                 })
             }
-            activity.findViewById<ImageButton>(R.id.save2Button)?.let { save2Button ->
-                save2Button.setOnClickListener { ExitCommand().optionSaveAndExit() }
-            }
+//            activity.findViewById<ImageButton>(R.id.save2Button)?.let { save2Button ->
+//                save2Button.setOnClickListener { ExitCommand().optionSaveAndExit() }
+//            }
             mainContent = activity.findViewById(R.id.mainContent)
         }
     }
