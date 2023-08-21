@@ -36,6 +36,7 @@ import igrek.todotree.system.SystemKeyDispatcher
 import igrek.todotree.system.WindowManagerService
 import igrek.todotree.ui.ExplosionService
 import igrek.todotree.ui.GUI
+import igrek.todotree.ui.treelist.TreeListLayout
 
 
 class AppFactory(
@@ -87,4 +88,5 @@ class AppFactory(
     val remotePushService = SingletonInject { RemotePushService() }
     val explosionService = SingletonInject { ExplosionService() }
     val homeLayoutController = SingletonInject { HomeLayoutController() }
+    val treeListLayout = SingletonInject { TreeListLayout() }
 }

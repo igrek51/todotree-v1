@@ -6,7 +6,6 @@ abstract class AbstractTreeItem(parent: AbstractTreeItem?) {
 
     private var _parent: AbstractTreeItem?
     var children: MutableList<AbstractTreeItem>
-        protected set
 
     /**
      * copy constructor, creates cloned item detached from parent

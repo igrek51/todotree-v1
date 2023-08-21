@@ -13,6 +13,8 @@ import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import igrek.todotree.R
+import igrek.todotree.app.AppData
+import igrek.todotree.app.AppState
 import igrek.todotree.domain.treeitem.AbstractTreeItem
 import igrek.todotree.info.errorcheck.SafeClickListener
 import igrek.todotree.inject.LazyExtractor
@@ -20,11 +22,14 @@ import igrek.todotree.inject.appFactory
 import igrek.todotree.intent.ExitCommand
 import igrek.todotree.intent.NavigationCommand
 import igrek.todotree.ui.edititem.EditItemGUI
+import igrek.todotree.ui.treelist.TreeListLayout
 import igrek.todotree.ui.treelist.TreeListView
 
 class GUI {
 
     private val appCompatActivity: AppCompatActivity by LazyExtractor(appFactory.appCompatActivity)
+    private val treeListLayout: TreeListLayout by LazyExtractor(appFactory.treeListLayout)
+    private val appData: AppData by LazyExtractor(appFactory.appData)
 
     private val imm: InputMethodManager? = appCompatActivity.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
     private var mainContentLvl2: RelativeLayout? = null
@@ -68,41 +73,23 @@ class GUI {
         mainContentLvl2 = appCompatActivity.findViewById(R.id.main_content_lvl2)
     }
 
-    private fun showBackButton(show: Boolean) {
+    fun showBackButton(show: Boolean) {
         if (actionBar != null) {
             actionBar!!.setDisplayHomeAsUpEnabled(show)
             actionBar!!.setDisplayShowHomeEnabled(show)
         }
     }
 
-    fun showItemsList(currentItem: AbstractTreeItem) {
+    fun showItemsList() {
         setOrientationPortrait()
-        val itemsListLayout = setMainContentLayout(R.layout.component_items_list)
-        itemsListView = itemsListLayout.findViewById(R.id.treeItemsList) as TreeListView
-        itemsListView?.init(appCompatActivity)
-        updateItemsList(currentItem, currentItem.children, null)
+        val layoutView = setMainContentLayout(R.layout.component_items_list)
+        appData.state = AppState.ITEMS_LIST
+        treeListLayout.showLayout(layoutView)
     }
 
     fun showEditItemPanel(item: AbstractTreeItem?, parent: AbstractTreeItem) {
         showBackButton(true)
         editItemGUI = EditItemGUI(this, item, parent)
-    }
-
-    fun updateItemsList(currentItem: AbstractTreeItem, mItems: List<AbstractTreeItem>?, selectedPositions: Set<Int>?) {
-        var items = mItems
-        if (items == null) items = currentItem.children
-
-        val sb = StringBuilder(currentItem.displayName)
-        if (!currentItem.isEmpty) {
-            sb.append(" [")
-            sb.append(currentItem.size())
-            sb.append("]")
-        }
-        setTitle(sb.toString())
-
-        showBackButton(currentItem.getParent() != null)
-
-        itemsListView?.setItemsAndSelected(items, selectedPositions)
     }
 
     fun scrollToItem(itemIndex: Int) {
