@@ -28,7 +28,7 @@ class EditItemGUI(
     private var numericKeyboard: NumericKeyboardView? = null
 
     private fun init(item: AbstractTreeItem?, parent: AbstractTreeItem) {
-        val editItemContentLayout = gui.setMainContentLayout(R.layout.edit_item_content)
+        val editItemContentLayout = gui.setMainContentLayout(R.layout.component_edit_item)
         etEditItem = editItemContentLayout.findViewById<View>(R.id.etEditItemContent) as ItemEditText
         buttonSaveItem = editItemContentLayout.findViewById<View>(R.id.buttonSaveItem) as Button
         val buttonSaveAndAdd = editItemContentLayout.findViewById<View>(R.id.buttonSaveAndAddItem) as Button

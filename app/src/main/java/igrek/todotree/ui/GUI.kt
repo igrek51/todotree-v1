@@ -1,7 +1,6 @@
 package igrek.todotree.ui
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
@@ -28,21 +27,21 @@ class GUI {
     private val appCompatActivity: AppCompatActivity by LazyExtractor(appFactory.appCompatActivity)
 
     private val imm: InputMethodManager? = appCompatActivity.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-    private var mainContent: RelativeLayout? = null
+    private var mainContentLvl2: RelativeLayout? = null
 
     private var actionBar: ActionBar? = null
     private var itemsListView: TreeListView? = null
     private var editItemGUI: EditItemGUI? = null
 
     fun setMainContentLayout(layoutResource: Int): View {
-        mainContent?.removeAllViews()
+        mainContentLvl2?.removeAllViews()
         val inflater = appCompatActivity.layoutInflater
         val layout = inflater.inflate(layoutResource, null)
         layout.layoutParams = ViewGroup.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.MATCH_PARENT
         )
-        mainContent?.addView(layout)
+        mainContentLvl2?.addView(layout)
         return layout
     }
 
@@ -66,7 +65,7 @@ class GUI {
         appCompatActivity.findViewById<ImageButton>(R.id.save2Button)?.let { save2Button ->
             save2Button.setOnClickListener { ExitCommand().optionSaveAndExit() }
         }
-        mainContent = appCompatActivity.findViewById(R.id.mainContent)
+        mainContentLvl2 = appCompatActivity.findViewById(R.id.main_content_lvl2)
     }
 
     private fun showBackButton(show: Boolean) {
@@ -78,7 +77,7 @@ class GUI {
 
     fun showItemsList(currentItem: AbstractTreeItem) {
         setOrientationPortrait()
-        val itemsListLayout = setMainContentLayout(R.layout.items_list)
+        val itemsListLayout = setMainContentLayout(R.layout.component_items_list)
         itemsListView = itemsListLayout.findViewById(R.id.treeItemsList) as TreeListView
         itemsListView?.init(appCompatActivity)
         updateItemsList(currentItem, currentItem.children, null)

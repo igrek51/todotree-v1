@@ -45,7 +45,7 @@ open class UiInfoService {
             val infoV = info.takeIf { it.isNotEmpty() } ?: resString(infoResId)
 
             // dont create new snackbars if one is already shown
-            val view: View? = activity.findViewById(R.id.main_content)
+            val view: View? = activity.findViewById(R.id.main_content_container)
             if (view == null) {
                 logger.error("No main content view")
                 Toast.makeText(activity.applicationContext, infoV, Toast.LENGTH_LONG).show()

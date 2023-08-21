@@ -57,7 +57,7 @@ class Toaster(
             val snackbarLength = if (indefinite) Snackbar.LENGTH_INDEFINITE else Snackbar.LENGTH_LONG
 
             // dont create new snackbars if one is already shown
-            val view: View = activity.findViewById(R.id.main_content)
+            val view: View = activity.findViewById(R.id.main_content_container)
             var snackbar: Snackbar? = infobars[view]
             if (snackbar == null || !snackbar.isShown) { // a new one
                 snackbar = Snackbar.make(view, info, snackbarLength)
