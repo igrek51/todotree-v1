@@ -7,5 +7,18 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+
+        <item name="android:colorPrimary">@color/colorPrimary</item>
+        <item name="android:navigationBarColor">@color/navigationBarColor</item>
+        <item name="android:windowAllowReturnTransitionOverlap">true</item>
+        <item name="android:windowAllowEnterTransitionOverlap">true</item>
+    </style>
+
+    <style name="AppThemeEditButtons" parent="AppTheme">
+        <item name="android:layout_height">46dp</item>
+        <item name="android:layout_marginBottom">-2dp</item>
+        <item name="android:layout_marginTop">-2dp</item>
+        <item name="android:layout_marginLeft">-2dp</item>
+        <item name="android:layout_marginRight">-2dp</item>
     </style>
 </resources>
