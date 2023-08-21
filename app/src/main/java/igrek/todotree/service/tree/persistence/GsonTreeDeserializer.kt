@@ -58,7 +58,9 @@ class GsonTreeDeserializer internal constructor() {
         }
         if (jsonItem.items != null) {
             for (jsonChild in jsonItem.items!!) {
-                treeItem.add(mapJsonItemToTreeItem(jsonChild))
+                if (jsonChild != null) {
+                    treeItem.add(mapJsonItemToTreeItem(jsonChild))
+                }
             }
         }
         return treeItem
@@ -69,7 +71,7 @@ class GsonTreeDeserializer internal constructor() {
         var name: String? = null
         var target: String? = null
         var checked: String? = null
-        var items: List<JsonItem>? = null
+        var items: List<JsonItem?>? = null
     }
 
     init {
