@@ -22,10 +22,9 @@ import java.util.*
 
 @OptIn(DelicateCoroutinesApi::class)
 class RemoteDbRequester (
-    activity: LazyInject<Activity> = appFactory.activityMust,
     private val settingsState: LazyInject<SettingsState> = appFactory.settingsState,
 ) {
-    private val activity by LazyExtractor(activity)
+    private val activity: Activity by LazyExtractor(appFactory.activity)
 
     companion object {
         private const val todoApiBase = "https://todo.igrek.dev/api/v1"

@@ -116,7 +116,7 @@ class TreeItemAdapter(
         moveButton.isClickable = false
         increaseTouchArea(moveButton, 20)
         if (selections == null) {
-            moveButton.setOnTouchListener(View.OnTouchListener { v: View?, event: MotionEvent ->
+            moveButton.setOnTouchListener(View.OnTouchListener { _: View?, event: MotionEvent ->
                 event.source = 777 // from moveButton
                 when (event.action) {
                     MotionEvent.ACTION_DOWN -> {
@@ -230,7 +230,7 @@ class TreeItemAdapter(
         moveButton.isClickable = false
         increaseTouchArea(moveButton, 20)
         if (selections == null) {
-            moveButton.setOnTouchListener(View.OnTouchListener { v: View?, event: MotionEvent ->
+            moveButton.setOnTouchListener(View.OnTouchListener { _: View?, event: MotionEvent ->
                 event.source = 777 // from moveButton
                 when (event.action) {
                     MotionEvent.ACTION_DOWN -> {
@@ -280,7 +280,7 @@ class TreeItemAdapter(
         })
         // redirect long click to tree list view
         plusButton.isLongClickable = true
-        plusButton.setOnLongClickListener { v: View? ->
+        plusButton.setOnLongClickListener { _: View? ->
             listView.onItemLongClick(
                 null,
                 itemPlus,

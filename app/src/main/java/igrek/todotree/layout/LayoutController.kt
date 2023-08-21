@@ -26,13 +26,13 @@ import kotlin.reflect.KClass
 
 @OptIn(DelicateCoroutinesApi::class)
 class LayoutController(
-    private val activity: LazyInject<Activity?> = appFactory.activity,
     navigationMenuController: LazyInject<NavigationMenuController> = appFactory.navigationMenuController,
     activityController: LazyInject<ActivityController> = appFactory.activityController,
     systemKeyDispatcher: LazyInject<SystemKeyDispatcher> = appFactory.systemKeyDispatcher,
     homeLayoutController: LazyInject<HomeLayoutController> = appFactory.homeLayoutController,
     settingsLayoutController: LazyInject<SettingsLayoutController> = appFactory.settingsLayoutController,
 ) {
+    private val activity: Activity by LazyExtractor(appFactory.activity)
     private val navigationMenuController by LazyExtractor(navigationMenuController)
     private val activityController by LazyExtractor(activityController)
     private val systemKeyDispatcher by LazyExtractor(systemKeyDispatcher)
@@ -48,7 +48,7 @@ class LayoutController(
     private val layoutCache = hashMapOf<Int, View>()
 
     fun init() {
-        activity.get()?.let { activity ->
+        activity.let { activity ->
             activity.setContentView(R.layout.main_layout)
             mainContentLayout = activity.findViewById(R.id.main_content)
             mainContentLayout.isFocusable = true
@@ -111,7 +111,7 @@ class LayoutController(
     }
 
     private fun createLayout(layoutResourceId: Int): Pair<View, Boolean> {
-        val inflater = activity.get()!!.layoutInflater
+        val inflater = activity.layoutInflater
         val properLayoutView = inflater.inflate(layoutResourceId, null)
         properLayoutView.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
         layoutCache[layoutResourceId] = properLayoutView

@@ -65,26 +65,26 @@ internal class JsonTreeDeserializer {
     }
 
     private fun unescape(s: String): String {
-        var s = s
-        s = s.replace("\\\"", "\"") // unescape \"
-        s = s.replace("\\\\", "\\") // unescape \\
-        return s
+        var mStr = s
+        mStr = mStr.replace("\\\"", "\"") // unescape \"
+        mStr = mStr.replace("\\\\", "\\") // unescape \\
+        return mStr
     }
 
-    fun isHeaderMatchingSingleItem(line: String?): Boolean {
+    fun isHeaderMatchingSingleItem(line: String): Boolean {
         return singleItemPattern.matcher(line).find()
     }
 
-    fun isHeaderMatchingMultiItem(line: String?): Boolean {
+    fun isHeaderMatchingMultiItem(line: String): Boolean {
         return multiItemPattern.matcher(line).find()
     }
 
-    fun extractAttributes(line: String?): List<ItemAttribute> {
+    fun extractAttributes(line: String): List<ItemAttribute> {
         val attrs: MutableList<ItemAttribute> = ArrayList()
         val m = nameValuePattern.matcher(line)
         while (m.find()) {
-            val name = unescape(m.group(1))
-            val value = unescape(m.group(2))
+            val name = unescape(m.group(1)!!)
+            val value = unescape(m.group(2)!!)
             attrs.add(ItemAttribute(name, value))
         }
         return attrs

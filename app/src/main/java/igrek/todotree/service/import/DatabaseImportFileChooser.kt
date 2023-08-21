@@ -20,11 +20,10 @@ import igrek.todotree.intent.PersistenceCommand
 import java.io.InputStream
 
 class DatabaseImportFileChooser (
-    activity: LazyInject<Activity> = appFactory.activityMust,
     uiInfoService: LazyInject<UiInfoService> = appFactory.uiInfoService,
     activityResultDispatcher: LazyInject<ActivityResultDispatcher> = appFactory.activityResultDispatcher,
 ) {
-    private val activity by LazyExtractor(activity)
+    private val activity: Activity by LazyExtractor(appFactory.activity)
     private val uiInfoService by LazyExtractor(uiInfoService)
     private val activityResultDispatcher by LazyExtractor(activityResultDispatcher)
 

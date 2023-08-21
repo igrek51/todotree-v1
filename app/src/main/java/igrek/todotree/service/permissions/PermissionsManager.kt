@@ -11,14 +11,14 @@ import android.provider.Settings
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import igrek.todotree.activity.MainActivity
-import igrek.todotree.inject.LazyInject
+import igrek.todotree.inject.LazyExtractor
 import igrek.todotree.inject.appFactory
 
 
 class PermissionsManager (
     val context: Context,
-    private val appCompatActivity: LazyInject<AppCompatActivity?> = appFactory.appCompatActivity,
 ) {
+    private val appCompatActivity: AppCompatActivity by LazyExtractor(appFactory.appCompatActivity)
 
     fun setupFiles() {
         if (SDK_INT >= Build.VERSION_CODES.R) {
@@ -34,7 +34,7 @@ class PermissionsManager (
             //below android 11=======
             context.startActivity(Intent(context, MainActivity::class.java))
             ActivityCompat.requestPermissions(
-                appCompatActivity.get()!!,
+                appCompatActivity,
                 arrayOf(WRITE_EXTERNAL_STORAGE),
                 7
             )

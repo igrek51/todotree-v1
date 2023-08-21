@@ -11,12 +11,12 @@ import igrek.todotree.layout.MainLayout
 
 class SettingsLayoutController(
     layoutController: LazyInject<LayoutController> = appFactory.layoutController,
-    private val appCompatActivity: LazyInject<AppCompatActivity?> = appFactory.appCompatActivity,
 ) : MainLayout {
     private val layoutController by LazyExtractor(layoutController)
+    private val appCompatActivity: AppCompatActivity by LazyExtractor(appFactory.appCompatActivity)
 
     override fun showLayout(layout: View) {
-        appCompatActivity.get()!!.supportFragmentManager
+        appCompatActivity.supportFragmentManager
                 .beginTransaction()
                 .replace(R.id.fragment_content, SettingsFragment())
                 .commit()

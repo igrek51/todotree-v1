@@ -16,11 +16,11 @@ class ActivityController(
     windowManagerService: LazyInject<WindowManagerService> = appFactory.windowManagerService,
     settingsService: LazyInject<SettingsService> = appFactory.settingsService,
     userDataDao: LazyInject<UserDataDao> = appFactory.userDataDao,
-    private val activity: LazyInject<Activity?> = appFactory.activity,
 ) {
     private val windowManagerService by LazyExtractor(windowManagerService)
     private val preferencesService by LazyExtractor(settingsService)
     private val userDataDao by LazyExtractor(userDataDao)
+    private val activity: Activity by LazyExtractor(appFactory.activity)
 
     private val logger = LoggerFactory.logger
     var initialized = false
@@ -45,12 +45,12 @@ class ActivityController(
 
     fun quit() {
         windowManagerService.keepScreenOn(false)
-        activity.get()?.finish()
+        activity.finish()
     }
 
     fun onStart() {
         if (initialized) {
-            val activityName = activity.get()!!::class.simpleName
+            val activityName = activity::class.simpleName
             logger.debug("starting activity $activityName...")
             userDataDao.requestSave(false)
         }
@@ -58,7 +58,7 @@ class ActivityController(
 
     fun onStop() {
         if (initialized) {
-            val activityName = activity.get()!!::class.simpleName
+            val activityName = activity::class.simpleName
             logger.debug("stopping activity $activityName...")
             if (exitingDiscardingChanges) {
                 exitingDiscardingChanges = false
@@ -82,7 +82,7 @@ class ActivityController(
         val startMain = Intent(Intent.ACTION_MAIN)
         startMain.addCategory(Intent.CATEGORY_HOME)
         startMain.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        activity.get()?.startActivity(startMain)
+        activity.startActivity(startMain)
     }
 
 }

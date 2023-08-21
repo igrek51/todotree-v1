@@ -47,7 +47,7 @@ class NestedSubcommandRule(
     val simpleKey = StringSimplifier.simplify(key)
     prefixes.any { prefix -> simpleKey.startsWith("$prefix ") }
 
-}, activator = { key: String ->
+}, activator = { _: String ->
 })
 
 class ActivationResult(

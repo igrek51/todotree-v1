@@ -1,11 +1,11 @@
 package igrek.todotree.inject
 
-import android.content.Context
+import androidx.appcompat.app.AppCompatActivity
 
 var appFactory: AppFactory = AppFactory(null)
 
 object AppContextFactory {
-    fun createAppContext(context: Context) {
-        appFactory = AppFactory(context)
+    fun createAppContext(activity: AppCompatActivity) {
+        appFactory = AppFactory(activity)
     }
 }

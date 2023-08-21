@@ -13,10 +13,10 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class BackupListMenu(
-    activity: LazyInject<Activity> = appFactory.activityMust,
     backupManager: LazyInject<BackupManager> = appFactory.backupManager,
 ) {
-    private val activity by LazyExtractor(activity)
+    private val activity: Activity by LazyExtractor(appFactory.activity)
+
     private val backupManager by LazyExtractor(backupManager)
 
     private val displayDateFormat: SimpleDateFormat =

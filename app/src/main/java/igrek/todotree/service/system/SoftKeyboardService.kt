@@ -5,15 +5,15 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import igrek.todotree.info.logger.LoggerFactory
+import igrek.todotree.inject.LazyExtractor
 import igrek.todotree.inject.LazyInject
 import igrek.todotree.inject.appFactory
 
 
-class SoftKeyboardService(
-    private val appCompatActivity: LazyInject<AppCompatActivity?> = appFactory.appCompatActivity,
-) {
+class SoftKeyboardService {
+    private val appCompatActivity: AppCompatActivity by LazyExtractor(appFactory.appCompatActivity)
 
-    private val imm: InputMethodManager? = appCompatActivity.get()!!.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+    private val imm: InputMethodManager? = appCompatActivity.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
     private val logger = LoggerFactory.logger
 
     private fun hideSoftKeyboard(view: View?) {
@@ -30,10 +30,10 @@ class SoftKeyboardService(
 
     fun hideSoftKeyboard() {
         //Find the currently focused view, so we can grab the correct window token from it.
-        var view = appCompatActivity.get()!!.currentFocus
+        var view = appCompatActivity.currentFocus
         //If no view currently has focus, create a new one, just so we can grab a window token from it
         if (view == null) {
-            view = View(appCompatActivity.get()!!)
+            view = View(appCompatActivity)
         }
         hideSoftKeyboard(view)
     }

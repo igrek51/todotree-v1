@@ -84,7 +84,7 @@ class AccessLogService(
                 val datePart = removeExtension(filename)
                         .substring(ACCESS_LOG_PREFIX.length)
                 try {
-                    val date = filenameDateFormat.parse(datePart)
+                    val date = filenameDateFormat.parse(datePart) ?: throw RuntimeException("Inalid date: $datePart")
                     if (date.before(minDate)) {
                         // need to be removed
                         removeLog(accessDir, filename)

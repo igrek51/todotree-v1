@@ -1,45 +1,72 @@
 package igrek.todotree.ui
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Context
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
+import android.view.View
+import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.ImageButton
+import android.widget.RelativeLayout
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import igrek.todotree.R
 import igrek.todotree.domain.treeitem.AbstractTreeItem
 import igrek.todotree.info.errorcheck.SafeClickListener
-import igrek.todotree.inject.LazyInject
+import igrek.todotree.inject.LazyExtractor
 import igrek.todotree.inject.appFactory
 import igrek.todotree.intent.ExitCommand
 import igrek.todotree.intent.NavigationCommand
 import igrek.todotree.ui.edititem.EditItemGUI
 import igrek.todotree.ui.treelist.TreeListView
 
-open class GUI(
-    appCompatActivity: LazyInject<AppCompatActivity?> = appFactory.appCompatActivity,
-) : BaseGUI(appCompatActivity.get()) {
+class GUI {
+
+    private val appCompatActivity: AppCompatActivity by LazyExtractor(appFactory.appCompatActivity)
+
+    private val imm: InputMethodManager? = appCompatActivity.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+    private var mainContent: RelativeLayout? = null
 
     private var actionBar: ActionBar? = null
     private var itemsListView: TreeListView? = null
     private var editItemGUI: EditItemGUI? = null
 
+    fun setMainContentLayout(layoutResource: Int): View {
+        mainContent?.removeAllViews()
+        val inflater = appCompatActivity.layoutInflater
+        val layout = inflater.inflate(layoutResource, null)
+        layout.layoutParams = ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
+        )
+        mainContent?.addView(layout)
+        return layout
+    }
+
+    fun hideSoftKeyboard(window: View) {
+        imm?.hideSoftInputFromWindow(window.windowToken, 0)
+    }
+
+    fun showSoftKeyboard(window: View?) {
+        imm?.showSoftInput(window, 0)
+    }
+
     fun lazyInit() {
-        activity?.let { activity ->
-            activity.findViewById<Toolbar>(R.id.toolbar1)?.let { toolbar ->
-                activity.setSupportActionBar(toolbar)
-                actionBar = activity.supportActionBar
-                showBackButton(true)
-                toolbar.setNavigationOnClickListener(SafeClickListener {
-                    NavigationCommand().backClicked()
-                })
-            }
-            activity.findViewById<ImageButton>(R.id.save2Button)?.let { save2Button ->
-                save2Button.setOnClickListener { ExitCommand().optionSaveAndExit() }
-            }
-            mainContent = activity.findViewById(R.id.mainContent)
+        appCompatActivity.findViewById<Toolbar>(R.id.toolbar1)?.let { toolbar ->
+            appCompatActivity.setSupportActionBar(toolbar)
+            actionBar = appCompatActivity.supportActionBar
+            showBackButton(true)
+            toolbar.setNavigationOnClickListener(SafeClickListener {
+                NavigationCommand().backClicked()
+            })
         }
+        appCompatActivity.findViewById<ImageButton>(R.id.save2Button)?.let { save2Button ->
+            save2Button.setOnClickListener { ExitCommand().optionSaveAndExit() }
+        }
+        mainContent = appCompatActivity.findViewById(R.id.mainContent)
     }
 
     private fun showBackButton(show: Boolean) {
@@ -49,21 +76,21 @@ open class GUI(
         }
     }
 
-    open fun showItemsList(currentItem: AbstractTreeItem) {
+    fun showItemsList(currentItem: AbstractTreeItem) {
         setOrientationPortrait()
         val itemsListLayout = setMainContentLayout(R.layout.items_list)
         itemsListView = itemsListLayout.findViewById(R.id.treeItemsList) as TreeListView
-        itemsListView?.init(activity)
+        itemsListView?.init(appCompatActivity)
         updateItemsList(currentItem, currentItem.children, null)
     }
 
-    open fun showEditItemPanel(item: AbstractTreeItem?, parent: AbstractTreeItem) {
+    fun showEditItemPanel(item: AbstractTreeItem?, parent: AbstractTreeItem) {
         showBackButton(true)
         editItemGUI = EditItemGUI(this, item, parent)
     }
 
-    open fun updateItemsList(currentItem: AbstractTreeItem, _items: List<AbstractTreeItem>?, selectedPositions: Set<Int>?) {
-        var items = _items
+    fun updateItemsList(currentItem: AbstractTreeItem, mItems: List<AbstractTreeItem>?, selectedPositions: Set<Int>?) {
+        var items = mItems
         if (items == null) items = currentItem.children
 
         val sb = StringBuilder(currentItem.displayName)
@@ -79,56 +106,56 @@ open class GUI(
         itemsListView?.setItemsAndSelected(items, selectedPositions)
     }
 
-    open fun scrollToItem(itemIndex: Int) {
+    fun scrollToItem(itemIndex: Int) {
         itemsListView?.scrollToItem(itemIndex)
     }
 
-    open fun scrollToPosition(y: Int) {
+    fun scrollToPosition(y: Int) {
         itemsListView!!.scrollToPosition(y)
     }
 
-    open fun scrollToBottom() {
+    fun scrollToBottom() {
         itemsListView!!.scrollToBottom()
     }
 
-    open fun hideSoftKeyboard() {
+    fun hideSoftKeyboard() {
         editItemGUI!!.hideKeyboards()
     }
 
-    open fun editItemBackClicked(): Boolean {
+    fun editItemBackClicked(): Boolean {
         return editItemGUI!!.editItemBackClicked()
     }
 
-    open fun setTitle(title: String?) {
+    fun setTitle(title: String?) {
         actionBar?.title = title
     }
 
-    open val currentScrollPos: Int?
+    val currentScrollPos: Int?
         get() = itemsListView?.currentScrollPosition
 
-    open fun requestSaveEditedItem() {
+    fun requestSaveEditedItem() {
         editItemGUI!!.requestSaveEditedItem()
     }
 
     @SuppressLint("SourceLockedOrientationActivity")
-    open fun rotateScreen() {
-        val orientation = activity?.resources?.configuration?.orientation
+    fun rotateScreen() {
+        val orientation = appCompatActivity.resources?.configuration?.orientation
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+            appCompatActivity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         } else if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-            activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+            appCompatActivity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
         }
     }
 
     @SuppressLint("SourceLockedOrientationActivity")
     private fun setOrientationPortrait() {
-        val orientation = activity?.resources?.configuration?.orientation
+        val orientation = appCompatActivity.resources?.configuration?.orientation
         if (orientation != Configuration.ORIENTATION_PORTRAIT) {
-            activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+            appCompatActivity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
     }
 
-    open fun quickInsertRange() {
+    fun quickInsertRange() {
         if (editItemGUI != null) {
             editItemGUI!!.quickInsertRange()
         }

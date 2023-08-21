@@ -5,13 +5,11 @@ import android.content.ClipData
 import android.content.ClipDescription
 import android.content.ClipboardManager
 import igrek.todotree.inject.LazyExtractor
-import igrek.todotree.inject.LazyInject
 import igrek.todotree.inject.appFactory
 
 open class SystemClipboardManager (
-    activity: LazyInject<Activity> = appFactory.activityMust,
 ) {
-    private val activity by LazyExtractor(activity)
+    private val activity: Activity by LazyExtractor(appFactory.activity)
 
     open fun copyToSystemClipboard(text: String?) {
         val clipboard = activity.getSystemService(Activity.CLIPBOARD_SERVICE) as ClipboardManager

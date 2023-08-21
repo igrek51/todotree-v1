@@ -13,11 +13,11 @@ class GsonTreeDeserializer internal constructor() {
     @Throws(DeserializationFailedException::class)
     fun deserializeTree(data: String): AbstractTreeItem {
         // trim comma at the end
-        var data = data
-        data = data.trim { it <= ' ' }
-        if (data.endsWith(",")) data = data.substring(0, data.length - 1)
+        var mData = data
+        mData = mData.trim { it <= ' ' }
+        if (mData.endsWith(",")) mData = mData.substring(0, mData.length - 1)
         return try {
-            val rootTreeItem = gson.fromJson(data, JsonItem::class.java)
+            val rootTreeItem = gson.fromJson(mData, JsonItem::class.java)
                 ?: throw DeserializationFailedException("root tree item is null")
             mapJsonItemToTreeItem(rootTreeItem)
         } catch (e: JsonSyntaxException) {
@@ -58,7 +58,7 @@ class GsonTreeDeserializer internal constructor() {
         }
         if (jsonItem.items != null) {
             for (jsonChild in jsonItem.items!!) {
-                if (jsonChild != null) treeItem.add(mapJsonItemToTreeItem(jsonChild))
+                treeItem.add(mapJsonItemToTreeItem(jsonChild))
             }
         }
         return treeItem

@@ -25,12 +25,12 @@ import kotlinx.coroutines.launch
 import java.util.*
 
 class NavigationMenuController(
-    private val activity: LazyInject<Activity?> = appFactory.activity,
     context: LazyInject<Context> = appFactory.context,
     activityController: LazyInject<ActivityController> = appFactory.activityController,
     layoutController: LazyInject<LayoutController> = appFactory.layoutController,
     softKeyboardService: LazyInject<SoftKeyboardService> = appFactory.softKeyboardService,
 ) {
+    private val activity: Activity by LazyExtractor(appFactory.activity)
     private val context by LazyExtractor(context)
     private val activityController by LazyExtractor(activityController)
     private val layoutController by LazyExtractor(layoutController)
@@ -55,8 +55,8 @@ class NavigationMenuController(
     }
 
     fun init() {
-        drawerLayout = activity.get()?.findViewById(R.id.drawer_layout)
-        navigationView = activity.get()?.findViewById(R.id.nav_view)
+        drawerLayout = activity.findViewById(R.id.drawer_layout)
+        navigationView = activity.findViewById(R.id.nav_view)
 
         if (!swipeDrawerEnabled)
             drawerLayout?.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)

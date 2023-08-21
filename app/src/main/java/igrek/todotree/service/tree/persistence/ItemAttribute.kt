@@ -2,9 +2,9 @@ package igrek.todotree.service.tree.persistence
 
 internal class ItemAttribute(val name: String, val value: String) {
 
-    override fun equals(obj: Any?): Boolean {
-        if (obj !is ItemAttribute) return false
-        return name == obj.name && value == obj.value
+    override fun equals(other: Any?): Boolean {
+        if (other !is ItemAttribute) return false
+        return name == other.name && value == other.value
     }
 
     override fun toString(): String {

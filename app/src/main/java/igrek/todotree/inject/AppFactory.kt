@@ -39,23 +39,13 @@ import igrek.todotree.ui.GUI
 
 
 class AppFactory(
-    private var _context: Context?,
+    private var _activity: AppCompatActivity?,
 ) {
 
-    val context: LazyInject<Context> = SingletonInject { _context!! }
-    val activity: LazyInject<Activity?> = SingletonInject {
-        val mainApp = _context?.applicationContext as? MainApplication?
-        mainApp?.currentActivityListener?.currentActivity
-    }
-    val activityMust: LazyInject<Activity> = SingletonInject {
-        val mainApp: MainApplication = _context!!.applicationContext as MainApplication
-        mainApp.currentActivityListener.currentActivity!!
-    }
-    val appCompatActivity: LazyInject<AppCompatActivity?> = SingletonInject {
-        val mainApp = _context?.applicationContext as? MainApplication?
-        mainApp?.currentActivityListener?.currentActivity as AppCompatActivity?
-    }
+    val activity: LazyInject<Activity> = SingletonInject { _activity!! }
+    val appCompatActivity: LazyInject<AppCompatActivity> = SingletonInject { _activity!! }
 
+    val context: LazyInject<Context> = SingletonInject { _activity!!.applicationContext }
     val logger: LazyInject<Logger> = PrototypeInject { LoggerFactory.logger }
 
     /* Services */

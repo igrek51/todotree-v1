@@ -82,7 +82,7 @@ class StatisticsLogService(
                 val datePart = removeExtension(filename)
                         .substring(LOG_FILENAME_PREFIX.length)
                 try {
-                    val date = filenameDateFormat.parse(datePart)
+                    val date = filenameDateFormat.parse(datePart) ?: throw RuntimeException("Invalid date: $datePart")
                     if (date.before(minDate)) {
                         // need to be removed
                         removeLog(logsDirPath, filename)

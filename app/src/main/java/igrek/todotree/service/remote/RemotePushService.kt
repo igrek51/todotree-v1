@@ -8,6 +8,7 @@ import igrek.todotree.domain.treeitem.RemoteTreeItem
 import igrek.todotree.domain.treeitem.TextTreeItem
 import igrek.todotree.info.UiInfoService
 import igrek.todotree.info.logger.LoggerFactory
+import igrek.todotree.inject.LazyExtractor
 import igrek.todotree.inject.LazyInject
 import igrek.todotree.inject.appFactory
 import igrek.todotree.intent.ItemEditorCommand
@@ -17,12 +18,13 @@ import kotlinx.coroutines.*
 
 @OptIn(DelicateCoroutinesApi::class)
 class RemotePushService(
-    private val activity: LazyInject<Activity> = appFactory.activityMust,
     private val treeManager: LazyInject<TreeManager> = appFactory.treeManager,
     private val gui: LazyInject<GUI> = appFactory.gui,
     private val uiInfoService: LazyInject<UiInfoService> = appFactory.uiInfoService,
     private val remoteDbRequester: LazyInject<RemoteDbRequester> = appFactory.remoteDbRequester,
 ) {
+    private val activity: Activity by LazyExtractor(appFactory.activity)
+
     private val logger = LoggerFactory.logger
     var isRemotePushEnabled = false
     private val remoteItemToId = hashMapOf<TextTreeItem, String>()
@@ -41,7 +43,7 @@ class RemotePushService(
     }
 
     private fun showOnLockScreen() {
-        activity.get().window
+        activity.window
                 .addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON)
     }
 

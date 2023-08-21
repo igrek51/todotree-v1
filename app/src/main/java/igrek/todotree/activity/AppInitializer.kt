@@ -32,7 +32,6 @@ class AppInitializer(
     explosionService: LazyInject<ExplosionService> = appFactory.explosionService,
     context: LazyInject<Context> = appFactory.context,
     settingsState: LazyInject<SettingsState> = appFactory.settingsState,
-    private val activity: LazyInject<Activity?> = appFactory.activity,
 ) {
     private val windowManagerService by LazyExtractor(windowManagerService)
     private val layoutController by LazyExtractor(layoutController)
@@ -41,6 +40,7 @@ class AppInitializer(
     private val explosionService by LazyExtractor(explosionService)
     private val context by LazyExtractor(context)
     private val settingsState by LazyExtractor(settingsState)
+    private val activity: Activity by LazyExtractor(appFactory.activity)
 
     private val logger = LoggerFactory.logger
     private val startingScreen: KClass<out MainLayout> = HomeLayoutController::class
@@ -76,7 +76,7 @@ class AppInitializer(
 
         layoutController.showLayout(startingScreen).join()
 
-        activity.get()?.window?.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
+        activity.window?.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
 
         PersistenceCommand().loadRootTree()
         GUICommand().showItemsList()

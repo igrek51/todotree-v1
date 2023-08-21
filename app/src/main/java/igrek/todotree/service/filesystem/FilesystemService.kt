@@ -43,7 +43,7 @@ open class FilesystemService(
     }
 
     fun listDirFilenames(dir: File): List<String> {
-        return dir.listFiles().map { it.name }
+        return dir.listFiles()?.map { it.name } ?: emptyList()
     }
 
     @Throws(IOException::class)
@@ -74,8 +74,8 @@ open class FilesystemService(
 
     private fun createMissingParentDir(file: File) {
         val parentDir = file.parentFile
-        if (!parentDir.exists()) {
-            parentDir.mkdir()
+        if (parentDir?.exists() != true) {
+            parentDir?.mkdir()
             logger.debug("missing dir created: $parentDir")
         }
     }

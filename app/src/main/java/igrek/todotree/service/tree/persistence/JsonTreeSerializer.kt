@@ -60,9 +60,9 @@ internal class JsonTreeSerializer {
     }
 
     private fun escape(s: String?): String {
-        var s = s
-        s = s!!.replace("\\", "\\\\") // escape \
-        s = s.replace("\"", "\\\"") // escape "
-        return s
+        var myStr = s
+        myStr = myStr!!.replace("\\", "\\\\") // escape \
+        myStr = myStr.replace("\"", "\\\"") // escape "
+        return myStr
     }
 }

@@ -45,7 +45,7 @@ open class MainActivity(
     override fun onNewIntent(intent: Intent?) {
         stdNewIntent(intent)
         logger.debug("new intent received: action=${intent?.action}")
-        val lastActivityName = appFactory.activity.get()?.javaClass?.simpleName
+        val lastActivityName = appFactory.activity.get().javaClass.simpleName
         val currentActivityName = this::class.simpleName
         if (lastActivityName != currentActivityName) {
             logger.info("recreating $currentActivityName due to different last activity class ($lastActivityName)")

@@ -7,11 +7,11 @@ data class StatisticEvent(val type: StatisticEventType, val datetime: Date, val 
 
     companion object {
         fun parse(line: String, dateFormat: DateFormat): StatisticEvent {
-            var line = line
-            line = line.trim { it <= ' ' }
-            val parts = line.split("\t").toTypedArray()
+            var mLine = line
+            mLine = mLine.trim { it <= ' ' }
+            val parts = mLine.split("\t").toTypedArray()
             val type = StatisticEventType.parse(parts[0])
-            val datetime = dateFormat.parse(parts[1])
+            val datetime = dateFormat.parse(parts[1])!!
             val taskName = parts[2]
             return StatisticEvent(type, datetime, taskName)
         }

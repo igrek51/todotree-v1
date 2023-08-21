@@ -16,13 +16,13 @@ import igrek.todotree.layout.navigation.NavigationMenuController
 open class InflatedLayout(
     private val _layoutResourceId: Int,
     context: LazyInject<Context> = appFactory.context,
-    private val appCompatActivity: LazyInject<AppCompatActivity?> = appFactory.appCompatActivity,
     layoutController: LazyInject<LayoutController> = appFactory.layoutController,
     navigationMenuController: LazyInject<NavigationMenuController> = appFactory.navigationMenuController,
 ) : MainLayout {
     protected val context by LazyExtractor(context)
     private val layoutController by LazyExtractor(layoutController)
     private val navigationMenuController by LazyExtractor(navigationMenuController)
+    private val appCompatActivity: AppCompatActivity by LazyExtractor(appFactory.appCompatActivity)
 
     protected val logger: Logger = LoggerFactory.logger
 
@@ -43,8 +43,8 @@ open class InflatedLayout(
 
     private fun setupToolbar(layout: View) {
         layout.findViewById<Toolbar>(R.id.toolbar1)?.let { toolbar ->
-            appCompatActivity.get()?.setSupportActionBar(toolbar)
-            appCompatActivity.get()?.supportActionBar?.run {
+            appCompatActivity.setSupportActionBar(toolbar)
+            appCompatActivity.supportActionBar?.run {
                 setDisplayHomeAsUpEnabled(false)
                 setDisplayShowHomeEnabled(false)
             }

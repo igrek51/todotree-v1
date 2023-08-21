@@ -25,9 +25,9 @@ import java.util.*
 
 @OptIn(DelicateCoroutinesApi::class)
 open class UiInfoService(
-    private val activity: LazyInject<Activity?> = appFactory.activity,
     context: LazyInject<Context> = appFactory.context,
 ) {
+    private val activity: Activity by LazyExtractor(appFactory.activity)
     private val context by LazyExtractor(context)
 
     private val infobars = HashMap<View?, Snackbar>()
@@ -44,8 +44,6 @@ open class UiInfoService(
         GlobalScope.launch(Dispatchers.Main) {
             val snackbarLength = if (indefinite) Snackbar.LENGTH_INDEFINITE else Snackbar.LENGTH_LONG
             val infoV = info.takeIf { it.isNotEmpty() } ?: resString(infoResId)
-
-            val activity = activity.get() ?: return@launch
 
             // dont create new snackbars if one is already shown
             val view: View? = activity.findViewById(R.id.main_content)
@@ -195,7 +193,7 @@ open class UiInfoService(
             alertBuilder.setCancelable(true)
             val alertDialog = alertBuilder.create()
             postProcessor.invoke(alertDialog)
-            activity.get()?.let { activity ->
+            activity.let { activity ->
                 if (!activity.isFinishing) {
                     alertDialog.show()
                 }

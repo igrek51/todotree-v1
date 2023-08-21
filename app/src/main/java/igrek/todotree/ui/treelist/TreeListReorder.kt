@@ -178,7 +178,7 @@ class TreeListReorder(private val listView: TreeListView) {
                 rectBoundsEvaluator,
                 hoverBitmapBoundsCopy
             )
-            hoverViewAnimator.addUpdateListener { valueAnimator: ValueAnimator? -> listView.invalidate() }
+            hoverViewAnimator.addUpdateListener { _: ValueAnimator? -> listView.invalidate() }
             hoverViewAnimator.addListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationStart(animation: Animator) {
                     listView.isEnabled = false

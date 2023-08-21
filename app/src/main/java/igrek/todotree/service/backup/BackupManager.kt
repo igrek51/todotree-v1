@@ -42,10 +42,10 @@ class BackupManager(
         val backups = getBackups()
 
         // retain few newest backups
-        var i = 0
-        while (i < BACKUP_LAST_VERSIONS && backups.isNotEmpty()) {
+        var n = 0
+        while (n < BACKUP_LAST_VERSIONS && backups.isNotEmpty()) {
             backups.removeAt(0)
-            i++
+            n++
         }
 
         // retain backups from different days

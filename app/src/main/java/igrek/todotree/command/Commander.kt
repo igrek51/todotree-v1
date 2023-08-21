@@ -59,7 +59,7 @@ class Commander(
                 SubCommandRule("error") { message ->
                     throw RuntimeException("fail: $message")
                 },
-                SubCommandRule("remote_item") { sub ->
+                SubCommandRule("remote_item") { _ ->
                     ItemEditorCommand().createRemoteItem()
                 },
             )),
