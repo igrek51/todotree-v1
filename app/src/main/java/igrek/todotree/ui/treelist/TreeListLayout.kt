@@ -61,7 +61,6 @@ import igrek.todotree.util.mainScope
 import kotlinx.coroutines.launch
 
 class TreeListLayout {
-    private val appCompatActivity: AppCompatActivity by LazyExtractor(appFactory.appCompatActivity)
     private val treeManager: TreeManager by LazyExtractor(appFactory.treeManager)
     private val gui: GUI by LazyExtractor(appFactory.gui)
     private val treeSelectionManager: TreeSelectionManager by LazyExtractor(appFactory.treeSelectionManager)
@@ -244,8 +243,8 @@ private fun TreeItemComposable(
             )
         }
 
-        // TODO gesture handling
         // TODO remember scroll
+        // TODO gesture handling
 
         val fontWeight: FontWeight = when {
             item is LinkTreeItem -> FontWeight.Normal
@@ -258,7 +257,7 @@ private fun TreeItemComposable(
         }
 
         Text(
-            modifier = Modifier.weight(1f).padding(vertical = 4.dp, horizontal = 4.dp),
+            modifier = Modifier.weight(1f).padding(vertical = 2.dp, horizontal = 4.dp),
             text = item.displayName,
             fontWeight = fontWeight,
             textDecoration = textDecoration,
@@ -272,7 +271,7 @@ private fun TreeItemComposable(
                 }
             } else { // parent
                 Text(
-                    modifier = Modifier.padding(vertical = 4.dp, horizontal = 4.dp),
+                    modifier = Modifier.padding(horizontal = 4.dp),
                     text = "[${item.size()}]",
                 )
                 // Edit item

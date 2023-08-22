@@ -160,10 +160,8 @@ class TreeListView : ListView, AdapterView.OnItemClickListener, AdapterView.OnIt
     override fun onItemClick(parent: AdapterView<*>?, view: View, position: Int, id: Long) {
         try {
             if (position == adapter!!.items!!.size) {
-                //nowy element
                 ItemEditorCommand().addItemClicked()
             } else {
-                //istniejący element
                 val item: AbstractTreeItem = adapter!!.getItem(position)
                 TreeCommand().itemClicked(position, item)
             }
