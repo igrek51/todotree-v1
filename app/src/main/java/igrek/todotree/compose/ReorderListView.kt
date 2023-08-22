@@ -114,7 +114,7 @@ fun <T> ReorderListView(
     key(itemsContainer.modifiedAll.value) {
         Column(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth()
                 .verticalScroll(scrollState)
                 .onGloballyPositioned { coordinates: LayoutCoordinates ->
                     parentViewportHeight.value =

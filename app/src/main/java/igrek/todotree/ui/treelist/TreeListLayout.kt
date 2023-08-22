@@ -5,11 +5,15 @@ package igrek.todotree.ui.treelist
 import android.annotation.SuppressLint
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -26,13 +30,14 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import igrek.todotree.R
 import igrek.todotree.compose.AppTheme
 import igrek.todotree.compose.ItemsContainer
 import igrek.todotree.compose.ReorderListView
 import igrek.todotree.domain.treeitem.AbstractTreeItem
-import igrek.todotree.info.errorcheck.UiErrorHandler
+import igrek.todotree.domain.treeitem.LinkTreeItem
 import igrek.todotree.inject.LazyExtractor
 import igrek.todotree.inject.appFactory
 import igrek.todotree.intent.ItemEditorCommand
@@ -85,25 +90,28 @@ class TreeListLayout {
         state.selectedPositions.value = selectedPositions
     }
 
-    fun onItemClick(position: Int, item: AbstractTreeItem) {
-        try {
-            if (position == state.visibleItems.items.size) { // plus - new
-                ItemEditorCommand().addItemClicked()
-            } else { // existing one
-                TreeCommand().itemClicked(position, item)
-            }
-        } catch (t: Throwable) {
-            UiErrorHandler.handleError(t)
-        }
+    fun onItemClick(index: Int, item: AbstractTreeItem) {
+        TreeCommand().itemClicked(index, item)
     }
 
-    fun onItemLongClick(position: Int, item: AbstractTreeItem): Boolean {
-//        if (reorder?.isDragging == false) {
-//            reorder?.itemDraggingStopped()
+    fun onItemLongClick(index: Int, item: AbstractTreeItem) {
+//            reorder?.itemDraggingStopped(item: AbstractTreeItem): Boolean {
+////        if (reorder?.isDragging == false) {)
 //            gestureHandler.reset()
 //            ItemActionsMenu(position).show(view)
 //        }
-        return true
+    }
+
+    fun onEnterItemClick(index: Int, item: AbstractTreeItem) {
+        TreeCommand().itemGoIntoClicked(index, item)
+    }
+
+    fun onPlusClick() {
+        ItemEditorCommand().addItemClicked()
+    }
+
+    fun onPlusLongClick() {
+
     }
 
     fun onItemsReordered(newItems: MutableList<AbstractTreeItem>) {
@@ -111,6 +119,14 @@ class TreeListLayout {
         val currentItem: AbstractTreeItem = treeManager.currentItem ?: return
         currentItem.children = mNewItems
         appFactory.changesHistory.get().registerChange()
+    }
+
+    fun onAddItemAboveClick(index: Int) {
+        ItemEditorCommand().addItemHereClicked(index)
+    }
+
+    fun onEditItemClick(item: AbstractTreeItem) {
+        ItemEditorCommand().itemEditClicked(item)
     }
 
 }
@@ -136,6 +152,8 @@ private fun MainComponent(controller: TreeListLayout) {
         ) { itemsContainer: ItemsContainer<AbstractTreeItem>, index: Int, modifier: Modifier, reorderButtonModifier: Modifier ->
             TreeItemComposable(controller, itemsContainer, index, modifier, reorderButtonModifier)
         }
+
+        PlusButtonComposable(controller)
     }
 }
 
@@ -181,27 +199,118 @@ private fun TreeItemComposable(
             )
         }
 
+        // TODO select button
+
+        val fontWeight: FontWeight = when {
+            item is LinkTreeItem -> FontWeight.Normal
+            item.isEmpty -> FontWeight.Normal
+            else -> FontWeight.Bold
+        }
+        val textDecoration: TextDecoration? = when (item) {
+            is LinkTreeItem -> TextDecoration.Underline
+            else -> null
+        }
+
         Text(
             modifier = Modifier
                 .weight(1f)
-                .padding(vertical = 6.dp, horizontal = 4.dp),
+                .padding(vertical = 4.dp, horizontal = 4.dp),
             text = item.displayName,
-            fontWeight = FontWeight.Normal,
+            fontWeight = fontWeight,
+            textDecoration = textDecoration,
         )
 
-//        IconButton(
-//            onClick = {
-//                mainScope.launch {
-//                    controller.onPlaylistMore(playlist)
-//                }
-//            },
-//        ) {
-//            Icon(
-//                painterResource(id = R.drawable.more),
-//                contentDescription = null,
-//                modifier = Modifier.size(24.dp),
-//                tint = Color.White,
-//            )
-//        }
+        if (!controller.state.selectMode.value) {
+            if (item.isEmpty) { // leaf
+                // Enter item
+                IconButton(
+                    onClick = {
+                        mainScope.launch {
+                            controller.onEnterItemClick(index, item)
+                        }
+                    },
+                ) {
+                    Icon(
+                        painterResource(id = R.drawable.arrow_forward),
+                        contentDescription = null,
+                        modifier = Modifier.size(24.dp),
+                        tint = Color.White,
+                    )
+                }
+            } else { // parent
+                Text(
+                    modifier = Modifier.padding(vertical = 4.dp, horizontal = 4.dp),
+                    text = "[${item.size()}]",
+                )
+
+                // Edit item
+                IconButton(
+                    onClick = {
+                        mainScope.launch {
+                            controller.onEditItemClick(item)
+                        }
+                    },
+                ) {
+                    Icon(
+                        painterResource(id = R.drawable.edit),
+                        contentDescription = null,
+                        modifier = Modifier.size(24.dp),
+                        tint = Color.White,
+                    )
+                }
+
+            }
+
+            // Add new above
+            IconButton(
+                onClick = {
+                    mainScope.launch {
+                        controller.onAddItemAboveClick(index)
+                    }
+                },
+            ) {
+                Icon(
+                    painterResource(id = R.drawable.plus),
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp),
+                    tint = Color.White,
+                )
+            }
+
+        }
+
+    }
+}
+
+@Composable
+private fun PlusButtonComposable(
+    controller: TreeListLayout,
+) {
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .border(BorderStroke(1.dp, Color(0xFF444444)))
+            .padding(8.dp)
+            .combinedClickable(
+                onClick = {
+                    mainScope.launch {
+                        controller.onPlusClick()
+                    }
+                },
+                onLongClick = {
+                    mainScope.launch {
+                        controller.onPlusLongClick()
+                    }
+                },
+            ),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center,
+    ) {
+        Icon(
+            painterResource(id = R.drawable.plus),
+            contentDescription = null,
+            modifier = Modifier.size(24.dp),
+            tint = Color.White,
+        )
     }
 }
