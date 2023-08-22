@@ -1,6 +1,5 @@
 package igrek.todotree.intent
 
-import android.content.Context
 import igrek.todotree.app.AppData
 import igrek.todotree.app.AppState
 import igrek.todotree.domain.treeitem.AbstractTreeItem
@@ -51,15 +50,15 @@ class ItemEditorCommand(
     private val newItemPosition: Int?
         get() = treeManager.newItemPosition
 
-    private fun tryToSaveNewItem(_content: String): Boolean {
-        var content = _content
+    private fun tryToSaveNewItem(aContent: String): Boolean {
+        var content = aContent
         content = contentTrimmer.trimContent(content)
         return if (content.isEmpty()) {
             uiInfoService.showInfo("Empty item has been removed.")
             false
         } else {
             treeManager.addToCurrent(newItemPosition, TextTreeItem(content))
-            uiInfoService.showInfo("New item has been saved.")
+            uiInfoService.showInfo("New item saved: $content")
             true
         }
     }
@@ -78,7 +77,7 @@ class ItemEditorCommand(
         } else {
             editedItem.setName(content)
             changesHistory.registerChange()
-            uiInfoService.showInfo("Item has been saved.")
+            uiInfoService.showInfo("Item saved.")
             true
         }
     }

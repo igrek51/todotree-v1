@@ -8,6 +8,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.rememberScrollState
@@ -70,6 +71,7 @@ fun <T> ReorderListView(
     scrollState: ScrollState = rememberScrollState(),
     onReorder: (newItems: MutableList<T>) -> Unit,
     itemContent: @Composable (itemsContainer: ItemsContainer<T>, index: Int, modifier: Modifier, reorderButtonModifier: Modifier) -> Unit,
+    postContent: @Composable () -> Unit,
 ) {
     val draggingIndex: MutableState<Int> = remember { mutableStateOf(-1) }
     val dragTargetIndex: MutableState<Int?> = remember { mutableStateOf(null) }
@@ -113,7 +115,7 @@ fun <T> ReorderListView(
     key(itemsContainer.modifiedAll.value) {
         Column(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxSize()
                 .verticalScroll(scrollState)
                 .onGloballyPositioned { coordinates: LayoutCoordinates ->
                     parentViewportHeight.value =
@@ -126,6 +128,8 @@ fun <T> ReorderListView(
                 itemHeights, itemAnimatedOffsets,
                 scrollDiff, reorderButtonModifiers, dividerPx, itemContent,
             )
+
+            postContent()
         }
     }
 }

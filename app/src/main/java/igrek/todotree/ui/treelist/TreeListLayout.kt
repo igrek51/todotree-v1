@@ -162,11 +162,13 @@ private fun MainComponent(controller: TreeListLayout) {
             onReorder = { newItems ->
                 controller.onItemsReordered(newItems)
             },
-        ) { itemsContainer: ItemsContainer<AbstractTreeItem>, index: Int, modifier: Modifier, reorderButtonModifier: Modifier ->
-            TreeItemComposable(controller, itemsContainer, index, modifier, reorderButtonModifier)
-        }
-
-        PlusButtonComposable(controller)
+            itemContent = { itemsContainer: ItemsContainer<AbstractTreeItem>, index: Int, modifier: Modifier, reorderButtonModifier: Modifier ->
+                TreeItemComposable(controller, itemsContainer, index, modifier, reorderButtonModifier)
+            },
+            postContent = {
+                PlusButtonComposable(controller)
+            },
+        )
     }
 }
 
@@ -243,6 +245,7 @@ private fun TreeItemComposable(
         }
 
         // TODO gesture handling
+        // TODO remember scroll
 
         val fontWeight: FontWeight = when {
             item is LinkTreeItem -> FontWeight.Normal
