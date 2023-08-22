@@ -25,20 +25,25 @@ class ExplosionService {
         Arrays.fill(mExpandInset, Utils.dp2Px(160))
     }
 
-    fun explode(coordinates: SizeAndPosition) {
+    fun explode(coordinates: SizeAndPosition?) {
+        val mCoordinates = when (coordinates) {
+            null -> SizeAndPosition(0, 0, 0, 0)
+            else -> coordinates
+        }
         val r = Rect(
-            coordinates.x,
-            coordinates.y + yOffset,
-            coordinates.x + coordinates.w,
-            coordinates.y + coordinates.h + yOffset,
+            mCoordinates.x,
+            mCoordinates.y + yOffset,
+            mCoordinates.x + mCoordinates.w,
+            mCoordinates.y + mCoordinates.h + yOffset,
         )
+
         r.inset(-this.mExpandInset[0], -this.mExpandInset[1])
 
         val startDelay = 10L
         val duration = 1024L
 
         mExplosionField?.explode(
-            createRandomBitmap(coordinates),
+            createRandomBitmap(mCoordinates),
             r,
             startDelay,
             duration,

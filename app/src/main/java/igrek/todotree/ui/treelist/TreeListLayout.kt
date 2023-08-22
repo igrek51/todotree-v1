@@ -101,7 +101,7 @@ class TreeListLayout {
         TreeCommand().itemClicked(index, item)
     }
 
-    fun onItemLongClick(index: Int, item: AbstractTreeItem, coordinates: SizeAndPosition) {
+    fun onItemLongClick(index: Int, coordinates: SizeAndPosition) {
         ItemActionsMenu(index).show(coordinates)
     }
 
@@ -114,7 +114,8 @@ class TreeListLayout {
     }
 
     fun onPlusLongClick() {
-
+        val index = state.visibleItems.items.size
+        ItemActionsMenu(index).show(null)
     }
 
     fun onItemsReordered(newItems: MutableList<AbstractTreeItem>) {
@@ -196,7 +197,7 @@ private fun TreeItemComposable(
                             w = itemSize.value.width,
                             h = itemSize.value.height,
                         )
-                        controller.onItemLongClick(index, item, coordinates)
+                        controller.onItemLongClick(index, coordinates)
                     }
                 },
             ),

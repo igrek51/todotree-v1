@@ -2,7 +2,6 @@ package igrek.todotree.ui.contextmenu
 
 import android.app.Activity
 import android.app.AlertDialog
-import android.view.View
 import igrek.todotree.domain.treeitem.LinkTreeItem
 import igrek.todotree.domain.treeitem.RemoteTreeItem
 import igrek.todotree.domain.treeitem.TextTreeItem
@@ -28,7 +27,7 @@ class ItemActionsMenu(
     private val treeClipboardManager by LazyExtractor(treeClipboardManager)
     private val explosionService by LazyExtractor(explosionService)
 
-    fun show(coordinates: SizeAndPosition) {
+    fun show(coordinates: SizeAndPosition?) {
         val actions = filterVisibleOnly(buildActionsList(coordinates))
         val actionNames = convertToNamesArray(actions)
         val builder = AlertDialog.Builder(activity)
@@ -44,7 +43,7 @@ class ItemActionsMenu(
         alert.show()
     }
 
-    private fun buildActionsList(coordinates: SizeAndPosition): List<ItemAction> {
+    private fun buildActionsList(coordinates: SizeAndPosition?): List<ItemAction> {
         val actions: MutableList<ItemAction> = ArrayList()
         actions.add(object : ItemAction("❌ Remove") {
             override fun execute() {
