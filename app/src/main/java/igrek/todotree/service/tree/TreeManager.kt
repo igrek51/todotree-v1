@@ -38,7 +38,7 @@ class TreeManager(
         return position >= currentItem!!.size()
     }
 
-    fun isPositionAtItem(position: Int): Boolean {
+    fun isItemAtPosition(position: Int): Boolean {
         return position >= 0 && position < currentItem!!.size()
     }
 

@@ -52,7 +52,7 @@ class ItemActionsMenu(
             }
 
             override fun isVisible(): Boolean {
-                return treeManager.isPositionAtItem(position) && treeManager.currentItem !is RemoteTreeItem
+                return treeManager.isItemAtPosition(position) && treeManager.currentItem !is RemoteTreeItem
             }
         })
         actions.add(object : ItemAction("❌ Remove from remote") {
@@ -81,7 +81,7 @@ class ItemActionsMenu(
             }
 
             override fun isVisible(): Boolean {
-                return treeManager.isPositionAtItem(position)
+                return treeManager.isItemAtPosition(position)
             }
         })
         actions.add(object : ItemAction("☑️ Select all") {
@@ -95,7 +95,7 @@ class ItemActionsMenu(
             }
 
             override fun isVisible(): Boolean {
-                return treeManager.isPositionAtItem(position)
+                return treeManager.isItemAtPosition(position)
             }
         })
         actions.add(object : ItemAction("➕ Add above") {
@@ -109,7 +109,7 @@ class ItemActionsMenu(
             }
 
             override fun isVisible(): Boolean {
-                return treeManager.isPositionAtItem(position)
+                return treeManager.isItemAtPosition(position)
             }
         })
         actions.add(object : ItemAction("\uD83D\uDCC4 Copy") {
@@ -118,7 +118,7 @@ class ItemActionsMenu(
             }
 
             override fun isVisible(): Boolean {
-                return treeManager.isPositionAtItem(position)
+                return treeManager.isItemAtPosition(position)
             }
         })
         actions.add(object : ItemAction("\uD83D\uDCCB Paste above") {
@@ -141,7 +141,7 @@ class ItemActionsMenu(
             }
 
             override fun isVisible(): Boolean {
-                return treeManager.isPositionAtItem(position)
+                return treeManager.isItemAtPosition(position)
                         && treeManager.currentItem?.getChild(position) is TextTreeItem
                         && treeManager.currentItem?.getChild(position)?.displayName?.contains(",") == true
             }
@@ -150,12 +150,16 @@ class ItemActionsMenu(
             override fun execute() {
                 RemotePushCommand().actionPushItemsToRemote(position)
             }
+
+            override fun isVisible(): Boolean {
+                return treeManager.isItemAtPosition(position)
+            }
         })
         return actions
     }
 
     private fun isItemLink(position: Int): Boolean {
-        if (!treeManager.isPositionAtItem(position)) return false
+        if (!treeManager.isItemAtPosition(position)) return false
         val item = treeManager.getChild(position)
         return item is LinkTreeItem
     }

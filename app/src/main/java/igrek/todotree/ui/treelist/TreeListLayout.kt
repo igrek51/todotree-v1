@@ -4,6 +4,7 @@ package igrek.todotree.ui.treelist
 
 import android.annotation.SuppressLint
 import android.view.View
+import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -13,9 +14,11 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -215,7 +218,7 @@ private fun TreeItemComposable(
         if (!selectMode) {
             IconButton(
                 modifier = reorderButtonModifier
-                    .padding(1.dp).size(24.dp),
+                    .width(28.dp).fillMaxHeight(),
                 onClick = {},
             ) {
                 Icon(
@@ -239,10 +242,7 @@ private fun TreeItemComposable(
             )
         }
 
-
         // TODO gesture handling
-
-        // TODO select button
 
         val fontWeight: FontWeight = when {
             item is LinkTreeItem -> FontWeight.Normal
@@ -255,9 +255,7 @@ private fun TreeItemComposable(
         }
 
         Text(
-            modifier = Modifier
-                .weight(1f)
-                .padding(vertical = 4.dp, horizontal = 4.dp),
+            modifier = Modifier.weight(1f).padding(vertical = 4.dp, horizontal = 4.dp),
             text = item.displayName,
             fontWeight = fontWeight,
             textDecoration = textDecoration,
@@ -266,19 +264,8 @@ private fun TreeItemComposable(
         if (!selectMode) {
             if (item.isEmpty) { // leaf
                 // Enter item
-                IconButton(
-                    onClick = {
-                        mainScope.launch {
-                            controller.onEnterItemClick(index, item)
-                        }
-                    },
-                ) {
-                    Icon(
-                        painterResource(id = R.drawable.arrow_forward),
-                        contentDescription = null,
-                        modifier = Modifier.size(24.dp),
-                        tint = Color.White,
-                    )
+                ItemIconButton(R.drawable.arrow_forward) {
+                    controller.onEnterItemClick(index, item)
                 }
             } else { // parent
                 Text(
@@ -286,35 +273,13 @@ private fun TreeItemComposable(
                     text = "[${item.size()}]",
                 )
                 // Edit item
-                IconButton(
-                    onClick = {
-                        mainScope.launch {
-                            controller.onEditItemClick(item)
-                        }
-                    },
-                ) {
-                    Icon(
-                        painterResource(id = R.drawable.edit),
-                        contentDescription = null,
-                        modifier = Modifier.size(24.dp),
-                        tint = Color.White,
-                    )
+                ItemIconButton(R.drawable.edit) {
+                    controller.onEditItemClick(item)
                 }
             }
             // Add new above
-            IconButton(
-                onClick = {
-                    mainScope.launch {
-                        controller.onAddItemAboveClick(index)
-                    }
-                },
-            ) {
-                Icon(
-                    painterResource(id = R.drawable.plus),
-                    contentDescription = null,
-                    modifier = Modifier.size(24.dp),
-                    tint = Color.White,
-                )
+            ItemIconButton(R.drawable.plus) {
+                controller.onAddItemAboveClick(index)
             }
         }
 
@@ -348,6 +313,28 @@ private fun PlusButtonComposable(
             painterResource(id = R.drawable.plus),
             contentDescription = null,
             modifier = Modifier.padding(12.dp).size(24.dp),
+            tint = Color.White,
+        )
+    }
+}
+
+@Composable
+private fun ItemIconButton(
+    @DrawableRes drawableId: Int,
+    onClick: () -> Unit,
+) {
+    IconButton(
+        modifier = Modifier.width(32.dp).fillMaxHeight(),
+        onClick = {
+            mainScope.launch {
+                onClick()
+            }
+        },
+    ) {
+        Icon(
+            painterResource(id = drawableId),
+            contentDescription = null,
+            modifier = Modifier.size(24.dp),
             tint = Color.White,
         )
     }
