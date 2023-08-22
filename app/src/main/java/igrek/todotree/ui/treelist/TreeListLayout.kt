@@ -13,6 +13,7 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -27,6 +28,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -43,6 +45,9 @@ import igrek.todotree.R
 import igrek.todotree.compose.AppTheme
 import igrek.todotree.compose.ItemsContainer
 import igrek.todotree.compose.ReorderListView
+import igrek.todotree.compose.colorLinkItem
+import igrek.todotree.compose.md_theme_dark_outline
+import igrek.todotree.compose.md_theme_light_outline
 import igrek.todotree.domain.treeitem.AbstractTreeItem
 import igrek.todotree.domain.treeitem.LinkTreeItem
 import igrek.todotree.inject.LazyExtractor
@@ -251,18 +256,38 @@ private fun TreeItemComposable(
             item.isEmpty -> FontWeight.Normal
             else -> FontWeight.Bold
         }
-        val textDecoration: TextDecoration? = when (item) {
-            is LinkTreeItem -> TextDecoration.Underline
-            else -> null
-        }
 
-        Text(
-            modifier = Modifier.weight(1f).padding(vertical = 4.dp, horizontal = 4.dp),
-            text = item.displayName,
-            fontSize = 16.sp,
-            fontWeight = fontWeight,
-            textDecoration = textDecoration,
-        )
+        if (item is LinkTreeItem) {
+            Text(
+                modifier = Modifier
+                    .padding(vertical = 4.dp, horizontal = 4.dp)
+                    .drawBehind {
+                        val strokeWidthPx = 1.dp.toPx()
+                        val verticalOffset = size.height - 2.sp.toPx()
+                        drawLine(
+                            color = colorLinkItem,
+                            strokeWidth = strokeWidthPx,
+                            start = Offset(0f, verticalOffset),
+                            end = Offset(size.width, verticalOffset)
+                        )
+                    },
+                color = colorLinkItem,
+                text = item.displayName,
+                fontSize = 16.sp,
+                fontWeight = fontWeight,
+            )
+            Spacer(modifier = Modifier.weight(1.0f))
+
+        } else {
+            Text(
+                modifier = Modifier
+                    .weight(1.0f)
+                    .padding(vertical = 4.dp, horizontal = 4.dp),
+                text = item.displayName,
+                fontSize = 16.sp,
+                fontWeight = fontWeight,
+            )
+        }
 
         if (!selectMode) {
             if (item.isEmpty) { // leaf
