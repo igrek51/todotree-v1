@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -46,6 +47,7 @@ import igrek.todotree.domain.treeitem.LinkTreeItem
 import igrek.todotree.inject.LazyExtractor
 import igrek.todotree.inject.appFactory
 import igrek.todotree.intent.ItemEditorCommand
+import igrek.todotree.intent.ItemSelectionCommand
 import igrek.todotree.intent.TreeCommand
 import igrek.todotree.service.tree.TreeManager
 import igrek.todotree.service.tree.TreeSelectionManager
@@ -133,6 +135,10 @@ class TreeListLayout {
         ItemEditorCommand().itemEditClicked(item)
     }
 
+    fun onSelectItemClick(index: Int, checked: Boolean) {
+        ItemSelectionCommand().selectedItemClicked(index, checked)
+    }
+
 }
 
 
@@ -203,19 +209,36 @@ private fun TreeItemComposable(
             ),
         verticalAlignment = Alignment.CenterVertically,
     ) {
+        val selectMode: Boolean = controller.state.selectMode.value
 
-        IconButton(
-            modifier = reorderButtonModifier
-                .padding(1.dp).size(24.dp),
-            onClick = {},
-        ) {
-            Icon(
-                painterResource(id = R.drawable.reorder),
-                contentDescription = null,
-                modifier = Modifier.size(24.dp),
-                tint = Color.White,
+        // Reorder
+        if (!selectMode) {
+            IconButton(
+                modifier = reorderButtonModifier
+                    .padding(1.dp).size(24.dp),
+                onClick = {},
+            ) {
+                Icon(
+                    painterResource(id = R.drawable.reorder),
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp),
+                    tint = Color.White,
+                )
+            }
+        }
+
+        // Select
+        if (selectMode) {
+            val positionsSet: Set<Int> = controller.state.selectedPositions.value ?: emptySet()
+            val isSelected = positionsSet.contains(index)
+            Checkbox(
+                checked = isSelected,
+                onCheckedChange = { checked ->
+                    controller.onSelectItemClick(index, checked)
+                }
             )
         }
+
 
         // TODO gesture handling
 
@@ -240,7 +263,7 @@ private fun TreeItemComposable(
             textDecoration = textDecoration,
         )
 
-        if (!controller.state.selectMode.value) {
+        if (!selectMode) {
             if (item.isEmpty) { // leaf
                 // Enter item
                 IconButton(
@@ -262,7 +285,6 @@ private fun TreeItemComposable(
                     modifier = Modifier.padding(vertical = 4.dp, horizontal = 4.dp),
                     text = "[${item.size()}]",
                 )
-
                 // Edit item
                 IconButton(
                     onClick = {
@@ -278,9 +300,7 @@ private fun TreeItemComposable(
                         tint = Color.White,
                     )
                 }
-
             }
-
             // Add new above
             IconButton(
                 onClick = {
@@ -296,7 +316,6 @@ private fun TreeItemComposable(
                     tint = Color.White,
                 )
             }
-
         }
 
     }
