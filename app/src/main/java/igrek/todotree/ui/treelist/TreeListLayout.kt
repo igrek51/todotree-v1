@@ -247,7 +247,6 @@ private fun TreeItemComposable(
             )
         }
 
-        // TODO remember scroll
         // TODO gesture handling
 
         val fontWeight: FontWeight = when {

@@ -179,7 +179,7 @@ private fun <T> ReorderListViewItem(
     itemContent: @Composable (itemsContainer: ItemsContainer<T>, index: Int, modifier: Modifier, reorderButtonModifier: Modifier) -> Unit,
 ) {
     key(itemsContainer.modifiedMap.getValue(index).value) {
-        logger.debug("recompose item $index")
+//        logger.debug("recompose item $index")
 
         var itemModifier = Modifier
             .offset { IntOffset(0, offsetYAnimated.value.roundToInt()) }
