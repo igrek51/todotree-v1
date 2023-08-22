@@ -23,7 +23,6 @@ import igrek.todotree.intent.ExitCommand
 import igrek.todotree.intent.NavigationCommand
 import igrek.todotree.ui.edititem.EditItemGUI
 import igrek.todotree.ui.treelist.TreeListLayout
-import igrek.todotree.ui.treelist.TreeListView
 import igrek.todotree.util.mainScope
 import kotlinx.coroutines.launch
 
@@ -37,7 +36,6 @@ class GUI {
     private var mainContentLvl2: RelativeLayout? = null
 
     private var actionBar: ActionBar? = null
-    private var itemsListView: TreeListView? = null
     private var editItemGUI: EditItemGUI? = null
 
     fun setMainContentLayout(layoutResource: Int): View {

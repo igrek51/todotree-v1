@@ -5,7 +5,6 @@ package igrek.todotree.ui.treelist
 import android.annotation.SuppressLint
 import android.view.View
 import androidx.annotation.DrawableRes
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.ScrollState
@@ -14,11 +13,9 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -196,7 +193,6 @@ private fun TreeItemComposable(
                 itemPosition.value = coordinates.positionInRoot()
                 itemSize.value = coordinates.size
             }
-            .padding(0.dp)
             .combinedClickable(
                 onClick = {
                     mainScope.launch {
@@ -223,7 +219,7 @@ private fun TreeItemComposable(
         if (!selectMode) {
             IconButton(
                 modifier = reorderButtonModifier
-                    .width(28.dp).fillMaxHeight(),
+                    .size(32.dp, 36.dp), // TODO fill to max available height
                 onClick = {},
             ) {
                 Icon(
@@ -329,7 +325,7 @@ private fun ItemIconButton(
     onClick: () -> Unit,
 ) {
     IconButton(
-        modifier = Modifier.width(32.dp).fillMaxHeight(),
+        modifier = Modifier.size(32.dp, 36.dp),
         onClick = {
             mainScope.launch {
                 onClick()
