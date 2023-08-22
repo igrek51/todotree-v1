@@ -23,14 +23,19 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import igrek.todotree.R
 import igrek.todotree.compose.AppTheme
@@ -45,6 +50,8 @@ import igrek.todotree.intent.TreeCommand
 import igrek.todotree.service.tree.TreeManager
 import igrek.todotree.service.tree.TreeSelectionManager
 import igrek.todotree.ui.GUI
+import igrek.todotree.ui.SizeAndPosition
+import igrek.todotree.ui.contextmenu.ItemActionsMenu
 import igrek.todotree.util.mainScope
 import kotlinx.coroutines.launch
 
@@ -94,12 +101,8 @@ class TreeListLayout {
         TreeCommand().itemClicked(index, item)
     }
 
-    fun onItemLongClick(index: Int, item: AbstractTreeItem) {
-//            reorder?.itemDraggingStopped(item: AbstractTreeItem): Boolean {
-////        if (reorder?.isDragging == false) {)
-//            gestureHandler.reset()
-//            ItemActionsMenu(position).show(view)
-//        }
+    fun onItemLongClick(index: Int, item: AbstractTreeItem, coordinates: SizeAndPosition) {
+        ItemActionsMenu(index).show(coordinates)
     }
 
     fun onEnterItemClick(index: Int, item: AbstractTreeItem) {
@@ -169,8 +172,16 @@ private fun TreeItemComposable(
 ) {
     val item: AbstractTreeItem = itemsContainer.items.getOrNull(index) ?: return
 
+    val itemPosition: MutableState<Offset> = remember { mutableStateOf(Offset.Zero) }
+    val itemSize: MutableState<IntSize> = remember { mutableStateOf(IntSize.Zero) }
+
     Row(
-        modifier.padding(0.dp)
+        modifier
+            .onGloballyPositioned { coordinates ->
+                itemPosition.value = coordinates.positionInRoot()
+                itemSize.value = coordinates.size
+            }
+            .padding(0.dp)
             .combinedClickable(
                 onClick = {
                     mainScope.launch {
@@ -179,7 +190,13 @@ private fun TreeItemComposable(
                 },
                 onLongClick = {
                     mainScope.launch {
-                        controller.onItemLongClick(index, item)
+                        val coordinates = SizeAndPosition(
+                            x = itemPosition.value.x.toInt(),
+                            y = itemPosition.value.y.toInt(),
+                            w = itemSize.value.width,
+                            h = itemSize.value.height,
+                        )
+                        controller.onItemLongClick(index, item, coordinates)
                     }
                 },
             ),
@@ -198,6 +215,8 @@ private fun TreeItemComposable(
                 tint = Color.White,
             )
         }
+
+        // TODO gesture handling
 
         // TODO select button
 
@@ -290,7 +309,6 @@ private fun PlusButtonComposable(
         Modifier
             .fillMaxWidth()
             .border(BorderStroke(1.dp, Color(0xFF444444)))
-            .padding(8.dp)
             .combinedClickable(
                 onClick = {
                     mainScope.launch {
@@ -309,7 +327,7 @@ private fun PlusButtonComposable(
         Icon(
             painterResource(id = R.drawable.plus),
             contentDescription = null,
-            modifier = Modifier.size(24.dp),
+            modifier = Modifier.padding(12.dp).size(24.dp),
             tint = Color.White,
         )
     }

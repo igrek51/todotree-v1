@@ -89,7 +89,7 @@ open class UiInfoService {
     }
 
     fun showInfoCancellable(info: String, indefinite: Boolean = false, action: (() -> Unit)) {
-        showSnackbar(info = info, actionResId = R.string.action_cancel, indefinite = indefinite, action=action)
+        showSnackbar(info = info, actionResId = R.string.action_undo, indefinite = indefinite, action=action)
     }
 
     fun showInfoAction(

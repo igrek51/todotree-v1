@@ -15,6 +15,7 @@ import igrek.todotree.intent.RemotePushCommand
 import igrek.todotree.service.clipboard.TreeClipboardManager
 import igrek.todotree.service.tree.TreeManager
 import igrek.todotree.ui.ExplosionService
+import igrek.todotree.ui.SizeAndPosition
 
 class ItemActionsMenu(
     private val position: Int,
@@ -27,8 +28,8 @@ class ItemActionsMenu(
     private val treeClipboardManager by LazyExtractor(treeClipboardManager)
     private val explosionService by LazyExtractor(explosionService)
 
-    fun show(view: View?) {
-        val actions = filterVisibleOnly(buildActionsList(view))
+    fun show(coordinates: SizeAndPosition) {
+        val actions = filterVisibleOnly(buildActionsList(coordinates))
         val actionNames = convertToNamesArray(actions)
         val builder = AlertDialog.Builder(activity)
         builder.setTitle("Choose action")
@@ -43,11 +44,11 @@ class ItemActionsMenu(
         alert.show()
     }
 
-    private fun buildActionsList(view: View?): List<ItemAction> {
+    private fun buildActionsList(coordinates: SizeAndPosition): List<ItemAction> {
         val actions: MutableList<ItemAction> = ArrayList()
         actions.add(object : ItemAction("❌ Remove") {
             override fun execute() {
-                explosionService.explode(view)
+                explosionService.explode(coordinates)
                 ItemActionCommand().actionRemove(position)
             }
 
@@ -57,7 +58,7 @@ class ItemActionsMenu(
         })
         actions.add(object : ItemAction("❌ Remove from remote") {
             override fun execute() {
-                explosionService.explode(view)
+                explosionService.explode(coordinates)
                 ItemActionCommand().actionRemoveRemote(position)
             }
 
@@ -67,7 +68,7 @@ class ItemActionsMenu(
         })
         actions.add(object : ItemAction("\uD83D\uDDD1️ Remove link and target") {
             override fun execute() {
-                explosionService.explode(view)
+                explosionService.explode(coordinates)
                 ItemActionCommand().actionRemoveLinkAndTarget(position)
             }
 

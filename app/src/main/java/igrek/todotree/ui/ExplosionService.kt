@@ -18,27 +18,27 @@ class ExplosionService {
 
     private var mExplosionField: ExplosionField? = null
     private val mExpandInset = IntArray(2)
+    private val yOffset = Utils.dp2Px(30)
 
     fun init() {
         mExplosionField = ExplosionField.attach2Window(activity)
         Arrays.fill(mExpandInset, Utils.dp2Px(160))
     }
 
-    fun explode(view: View?) {
-        if (view == null)
-            return
-
-        val r = Rect()
-        view.getGlobalVisibleRect(r)
-        val location = IntArray(2)
-        view.getLocationOnScreen(location)
+    fun explode(coordinates: SizeAndPosition) {
+        val r = Rect(
+            coordinates.x,
+            coordinates.y + yOffset,
+            coordinates.x + coordinates.w,
+            coordinates.y + coordinates.h + yOffset,
+        )
         r.inset(-this.mExpandInset[0], -this.mExpandInset[1])
 
         val startDelay = 10L
         val duration = 1024L
 
         mExplosionField?.explode(
-            createRandomBitmap(view),
+            createRandomBitmap(coordinates),
             r,
             startDelay,
             duration,
@@ -52,14 +52,21 @@ class ExplosionService {
         return bitmap
     }
 
-    private fun createRandomBitmap(v: View): Bitmap {
-        val bitmap = Bitmap.createBitmap(v.width, v.height, Bitmap.Config.ARGB_8888)
+    private fun createRandomBitmap(r: SizeAndPosition): Bitmap {
+        val bitmap = Bitmap.createBitmap(r.w, r.h, Bitmap.Config.ARGB_8888)
         val alphaChannel = 255 shl 24
-        val pixels = IntArray(v.width * v.height) {
+        val pixels = IntArray(r.w * r.h) {
             alphaChannel or Random().nextInt(16777216)
         }
-        bitmap.setPixels(pixels, 0, v.width, 0, 0, v.width, v.height)
+        bitmap.setPixels(pixels, 0, r.w, 0, 0, r.w, r.h)
         return bitmap
     }
 
 }
+
+data class SizeAndPosition(
+    val x: Int,
+    val y: Int,
+    val w: Int,
+    val h: Int,
+)

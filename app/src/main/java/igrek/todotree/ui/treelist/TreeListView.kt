@@ -181,7 +181,7 @@ class TreeListView : ListView, AdapterView.OnItemClickListener, AdapterView.OnIt
         if (reorder?.isDragging == false) {
             reorder?.itemDraggingStopped()
             gestureHandler.reset()
-            ItemActionsMenu(position).show(view)
+//            ItemActionsMenu(position).show(view)
         }
         return true
     }
