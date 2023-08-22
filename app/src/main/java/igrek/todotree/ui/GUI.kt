@@ -24,6 +24,8 @@ import igrek.todotree.intent.NavigationCommand
 import igrek.todotree.ui.edititem.EditItemGUI
 import igrek.todotree.ui.treelist.TreeListLayout
 import igrek.todotree.ui.treelist.TreeListView
+import igrek.todotree.util.mainScope
+import kotlinx.coroutines.launch
 
 class GUI {
 
@@ -93,15 +95,12 @@ class GUI {
     }
 
     fun scrollToItem(itemIndex: Int) {
-        itemsListView?.scrollToItem(itemIndex)
-    }
-
-    fun scrollToPosition(y: Int) {
-        itemsListView!!.scrollToPosition(y)
-    }
-
-    fun scrollToBottom() {
-        itemsListView!!.scrollToBottom()
+        if (itemIndex == 0) {
+            mainScope.launch {
+                treeListLayout.scrollToPosition(0)
+            }
+        }
+//        itemsListView?.scrollToItem(itemIndex)
     }
 
     fun hideSoftKeyboard() {
@@ -115,9 +114,6 @@ class GUI {
     fun setTitle(title: String?) {
         actionBar?.title = title
     }
-
-    val currentScrollPos: Int?
-        get() = itemsListView?.currentScrollPosition
 
     fun requestSaveEditedItem() {
         editItemGUI!!.requestSaveEditedItem()

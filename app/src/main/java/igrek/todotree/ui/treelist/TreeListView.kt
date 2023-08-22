@@ -16,7 +16,6 @@ import igrek.todotree.info.logger.Logger
 import igrek.todotree.info.logger.LoggerFactory
 import igrek.todotree.intent.ItemEditorCommand
 import igrek.todotree.intent.TreeCommand
-import igrek.todotree.ui.contextmenu.ItemActionsMenu
 
 class TreeListView : ListView, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
 
@@ -194,17 +193,6 @@ class TreeListView : ListView, AdapterView.OnItemClickListener, AdapterView.OnIt
 
     public override fun computeVerticalScrollRange(): Int {
         return super.computeVerticalScrollRange()
-    }
-
-    val currentScrollPosition: Int
-        get() = scrollHandler!!.currentScrollPosition
-
-    fun scrollToBottom() {
-        scrollHandler!!.scrollToBottom()
-    }
-
-    fun scrollToPosition(y: Int) {
-        scrollHandler!!.scrollToPosition(y)
     }
 
     fun scrollToItem(itemIndex: Int) {

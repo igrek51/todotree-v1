@@ -34,6 +34,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import igrek.todotree.info.logger.LoggerFactory.logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -151,7 +152,7 @@ fun <T> ReorderListColumn(
 ) {
     DividerBeforeItem(isDragTargetFirst)
 
-//  logger.debug("recompose all items")
+    logger.debug("recompose all items")
     itemsContainer.items.indices.forEach { index: Int ->
         ReorderListViewItem(
             itemsContainer, index,
@@ -178,7 +179,7 @@ private fun <T> ReorderListViewItem(
     itemContent: @Composable (itemsContainer: ItemsContainer<T>, index: Int, modifier: Modifier, reorderButtonModifier: Modifier) -> Unit,
 ) {
     key(itemsContainer.modifiedMap.getValue(index).value) {
-        //logger.debug("recompose item $index")
+        logger.debug("recompose item $index")
 
         var itemModifier = Modifier
             .offset { IntOffset(0, offsetYAnimated.value.roundToInt()) }

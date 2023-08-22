@@ -47,7 +47,6 @@ class TreeCommand(
     fun goBack() {
         try {
             val current = treeManager.currentItem!!
-            val parent = current.getParent()
             // if item was reached from link - go back to link parent
             if (linkHistoryService.hasLink(current)) {
                 val linkFromTarget = linkHistoryService.getLinkFromTarget(current)
@@ -60,7 +59,7 @@ class TreeCommand(
                 linkHistoryService.resetTarget(current) // reset link target - just in case
             }
             GUICommand().updateItemsList()
-            GUICommand().restoreScrollPosition(parent)
+            treeScrollCache.restoreScrollPosition()
         } catch (e: NoSuperItemException) {
             ExitCommand().saveAndExitRequested()
         }
@@ -69,12 +68,12 @@ class TreeCommand(
     fun goUp() {
         try {
             val current = treeManager.currentItem!!
-            val parent = current.getParent()
             treeManager.goUp()
             linkHistoryService.resetTarget(current) // reset link target - just in case
             GUICommand().updateItemsList()
-            GUICommand().restoreScrollPosition(parent)
+            treeScrollCache.restoreScrollPosition()
         } catch (e: NoSuperItemException) {
+            // ignoring
         }
     }
 
@@ -120,12 +119,12 @@ class TreeCommand(
     }
 
     fun goInto(childIndex: Int) {
-        storeCurrentScroll()
+        treeScrollCache.storeScrollPosition()
         treeManager.goInto(childIndex)
     }
 
     private fun navigateTo(item: AbstractTreeItem?) {
-        storeCurrentScroll()
+        treeScrollCache.storeScrollPosition()
         treeManager.goTo(item)
         GUICommand().updateItemsList()
         gui.scrollToItem(0)
@@ -135,14 +134,7 @@ class TreeCommand(
         navigateTo(treeManager.rootItem)
     }
 
-    private fun storeCurrentScroll() {
-        val scrollPos = gui.currentScrollPos
-        if (scrollPos != null) {
-            treeScrollCache.storeScrollPosition(treeManager.currentItem, scrollPos)
-        }
-    }
-
-    fun itemLongClicked(position: Int) {
+    fun markItemSelected(position: Int) {
         if (!treeSelectionManager.isAnythingSelected) {
             treeSelectionManager.startSelectionMode()
             treeSelectionManager.setItemSelected(position, true)

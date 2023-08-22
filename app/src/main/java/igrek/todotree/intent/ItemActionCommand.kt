@@ -31,7 +31,7 @@ class ItemActionCommand(
         if (treeManager.isPositionBeyond(position)) {
             uiInfoService.showSnackbar("Could not select")
         } else {
-            TreeCommand().itemLongClicked(position)
+            TreeCommand().markItemSelected(position)
         }
     }
 

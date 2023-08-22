@@ -12,15 +12,13 @@ import igrek.todotree.service.clipboard.TreeClipboardManager
 import igrek.todotree.service.tree.TreeManager
 import igrek.todotree.service.tree.TreeScrollCache
 import igrek.todotree.service.tree.TreeSelectionManager
-import igrek.todotree.ui.GUI
-import java.util.*
+import java.util.TreeSet
 
 class ClipboardCommand(
     treeManager: LazyInject<TreeManager> = appFactory.treeManager,
     systemClipboardManager: LazyInject<SystemClipboardManager> = appFactory.systemClipboardManager,
     treeClipboardManager: LazyInject<TreeClipboardManager> = appFactory.treeClipboardManager,
     uiInfoService: LazyInject<UiInfoService> = appFactory.uiInfoService,
-    gui: LazyInject<GUI> = appFactory.gui,
     treeSelectionManager: LazyInject<TreeSelectionManager> = appFactory.treeSelectionManager,
     treeScrollCache: LazyInject<TreeScrollCache> = appFactory.treeScrollCache,
 ) {
@@ -28,7 +26,6 @@ class ClipboardCommand(
     private val systemClipboardManager by LazyExtractor(systemClipboardManager)
     private val treeClipboardManager by LazyExtractor(treeClipboardManager)
     private val uiInfoService by LazyExtractor(uiInfoService)
-    private val gui by LazyExtractor(gui)
     private val treeSelectionManager by LazyExtractor(treeSelectionManager)
     private val treeScrollCache by LazyExtractor(treeScrollCache)
 
@@ -87,9 +84,9 @@ class ClipboardCommand(
         }
     }
 
-    fun pasteItems(_position: Int) {
-        var position = _position
-        treeScrollCache.storeScrollPosition(treeManager.currentItem, gui.currentScrollPos)
+    fun pasteItems(aPosition: Int) {
+        var position = aPosition
+        treeScrollCache.storeScrollPosition()
         if (treeClipboardManager.isClipboardEmpty) {
             val systemClipboard = systemClipboardManager.systemClipboard
             if (systemClipboard != null) {
@@ -97,9 +94,7 @@ class ClipboardCommand(
                 treeManager.addToCurrent(position, TextTreeItem(systemClipboard))
                 uiInfoService.showInfo("Item pasted: $systemClipboard")
                 GUICommand().updateItemsList()
-                treeScrollCache.restoreScrollPosition(treeManager.currentItem)?.let { y ->
-                    gui.scrollToPosition(y)
-                }
+                treeScrollCache.restoreScrollPosition()
             } else {
                 uiInfoService.showInfo("Clipboard is empty.")
             }
@@ -112,15 +107,13 @@ class ClipboardCommand(
             uiInfoService.showInfo("Items pasted: " + treeClipboardManager.clipboardSize)
             treeClipboardManager.recopyClipboard()
             GUICommand().updateItemsList()
-            treeScrollCache.restoreScrollPosition(treeManager.currentItem)?.let { y ->
-                gui.scrollToPosition(y)
-            }
+            treeScrollCache.restoreScrollPosition()
         }
     }
 
-    fun pasteItemsAsLink(_position: Int) {
-        var position = _position
-        treeScrollCache.storeScrollPosition(treeManager.currentItem, gui.currentScrollPos)
+    fun pasteItemsAsLink(aPosition: Int) {
+        var position = aPosition
+        treeScrollCache.storeScrollPosition()
         if (treeClipboardManager.isClipboardEmpty) {
             uiInfoService.showInfo("Clipboard is empty.")
         } else {
@@ -130,9 +123,7 @@ class ClipboardCommand(
             }
             uiInfoService.showInfo("Items pasted as links: " + treeClipboardManager.clipboardSize)
             GUICommand().updateItemsList()
-            treeScrollCache.restoreScrollPosition(treeManager.currentItem)?.let { y ->
-                gui.scrollToPosition(y)
-            }
+            treeScrollCache.restoreScrollPosition()
         }
     }
 

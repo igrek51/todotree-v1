@@ -190,7 +190,7 @@ class ItemEditorCommand(
         if (position < 0) position = treeManager.currentItem?.size() ?: 0
         if (position > (treeManager.currentItem?.size() ?: 0))
             position = treeManager.currentItem?.size() ?: 0
-        treeScrollCache.storeScrollPosition(treeManager.currentItem, gui.currentScrollPos)
+        treeScrollCache.storeScrollPosition()
         treeManager.newItemPosition = position
         treeManager.currentItem?.let { currentItem ->
             gui.showEditItemPanel(null, currentItem)
@@ -199,7 +199,7 @@ class ItemEditorCommand(
     }
 
     private fun editItem(item: AbstractTreeItem, parent: AbstractTreeItem) {
-        treeScrollCache.storeScrollPosition(treeManager.currentItem, gui.currentScrollPos)
+        treeScrollCache.storeScrollPosition()
         treeManager.newItemPosition = null
         gui.showEditItemPanel(item, parent)
         appData.state = AppState.EDIT_ITEM_CONTENT

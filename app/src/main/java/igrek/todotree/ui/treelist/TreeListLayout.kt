@@ -141,6 +141,10 @@ class TreeListLayout {
         ItemSelectionCommand().selectedItemClicked(index, checked)
     }
 
+    suspend fun scrollToPosition(y: Int) {
+        state.scrollState.scrollTo(y)
+    }
+
 }
 
 

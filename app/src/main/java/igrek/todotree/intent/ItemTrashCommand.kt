@@ -9,18 +9,15 @@ import igrek.todotree.inject.appFactory
 import igrek.todotree.service.access.DatabaseLock
 import igrek.todotree.service.tree.TreeManager
 import igrek.todotree.service.tree.TreeSelectionManager
-import igrek.todotree.ui.GUI
-import java.util.*
+import java.util.TreeSet
 
 class ItemTrashCommand(
     treeManager: LazyInject<TreeManager> = appFactory.treeManager,
-    gui: LazyInject<GUI> = appFactory.gui,
     uiInfoService: LazyInject<UiInfoService> = appFactory.uiInfoService,
     databaseLock: LazyInject<DatabaseLock> = appFactory.databaseLock,
     treeSelectionManager: LazyInject<TreeSelectionManager> = appFactory.treeSelectionManager,
 ) {
     private val treeManager by LazyExtractor(treeManager)
-    private val gui by LazyExtractor(gui)
     private val uiInfoService by LazyExtractor(uiInfoService)
     private val databaseLock by LazyExtractor(databaseLock)
     private val treeSelectionManager by LazyExtractor(treeSelectionManager)
@@ -28,7 +25,7 @@ class ItemTrashCommand(
     fun itemRemoveClicked(position: Int) { // removing locked before going into first element
         databaseLock.assertUnlocked()
         if (treeSelectionManager.isAnythingSelected) {
-            removeSelectedItems(true)
+            removeSelectedItems()
         } else {
             removeItem(position)
         }
@@ -50,21 +47,20 @@ class ItemTrashCommand(
     private fun restoreRemovedItem(restored: AbstractTreeItem, position: Int) {
         treeManager.addToCurrent(position, restored)
         GUICommand().showItemsList()
-        gui.scrollToItem(position)
         uiInfoService.showInfo("Removed item restored.")
     }
 
-    private fun removeSelectedItems(info: Boolean) {
-        removeItems(treeSelectionManager.selectedItems!!, info)
+    private fun removeSelectedItems() {
+        removeItems(treeSelectionManager.selectedItems!!, true)
     }
 
-    fun removeItems(selectedIds: TreeSet<Int>, info: Boolean) {
+    fun removeItems(selectedIds: TreeSet<Int>, printInfo: Boolean) {
         //descending order in order to not overwriting indices when removing
         val iterator = selectedIds.descendingIterator()
         while (iterator.hasNext()) {
             treeManager.removeFromCurrent(iterator.next()!!)
         }
-        if (info) {
+        if (printInfo) {
             uiInfoService.showInfo("Items removed: " + selectedIds.size)
         }
         treeSelectionManager.cancelSelectionMode()
@@ -99,7 +95,6 @@ class ItemTrashCommand(
             // restore link
             treeManager.addToCurrent(linkPosition, linkItem)
             GUICommand().showItemsList()
-            gui.scrollToItem(linkPosition)
             uiInfoService.showInfo("Removed items restored.")
         }
     }
