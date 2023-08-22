@@ -304,6 +304,7 @@ private fun <T> Modifier.createReorderButtonModifier(
                     onReorder(itemsContainer.items)
                 }
                 else -> coroutineScope.launch {
+                    itemAnimatedOffsets[index]?.snapTo(relativateOffset)
                     itemAnimatedOffsets[index]?.animateTo(0f)
                 }
             }
@@ -319,7 +320,9 @@ private fun <T> Modifier.createReorderButtonModifier(
             dragTargetIndex.value = null
             scrollJob.value?.cancel()
             scrollJob.value = null
+            val relativateOffset = (itemAnimatedOffsets[index]?.targetValue ?: 0f) + scrollDiff.value
             coroutineScope.launch {
+                itemAnimatedOffsets[index]?.snapTo(relativateOffset)
                 itemAnimatedOffsets[index]?.animateTo(0f)
             }
         },
