@@ -205,8 +205,8 @@ private fun DividerBeforeItem(
 ) {
     if (isDragTargetFirst.value) {
         Divider(
-            thickness = 3.dp,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+            thickness = 1.dp,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.9f),
         )
     }
 }
@@ -218,8 +218,8 @@ private fun DividerAfterItem(
 ) {
     if (isDragTargetMe.value) {
         Divider(
-            thickness = 3.dp,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+            thickness = 1.dp,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.9f),
         )
     } else if (isDragging.value) {
         Divider(

@@ -38,6 +38,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import igrek.todotree.R
 import igrek.todotree.compose.AppTheme
 import igrek.todotree.compose.ItemsContainer
@@ -219,7 +220,7 @@ private fun TreeItemComposable(
         if (!selectMode) {
             IconButton(
                 modifier = reorderButtonModifier
-                    .size(32.dp, 36.dp), // TODO fill to max available height
+                    .size(34.dp, 36.dp), // TODO fill to max available height
                 onClick = {},
             ) {
                 Icon(
@@ -256,8 +257,9 @@ private fun TreeItemComposable(
         }
 
         Text(
-            modifier = Modifier.weight(1f).padding(vertical = 2.dp, horizontal = 4.dp),
+            modifier = Modifier.weight(1f).padding(vertical = 4.dp, horizontal = 4.dp),
             text = item.displayName,
+            fontSize = 16.sp,
             fontWeight = fontWeight,
             textDecoration = textDecoration,
         )
@@ -272,6 +274,7 @@ private fun TreeItemComposable(
                 Text(
                     modifier = Modifier.padding(horizontal = 4.dp),
                     text = "[${item.size()}]",
+                    fontSize = 16.sp,
                 )
                 // Edit item
                 ItemIconButton(R.drawable.edit) {
