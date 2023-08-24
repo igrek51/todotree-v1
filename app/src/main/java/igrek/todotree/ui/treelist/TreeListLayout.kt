@@ -37,7 +37,6 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -46,8 +45,6 @@ import igrek.todotree.compose.AppTheme
 import igrek.todotree.compose.ItemsContainer
 import igrek.todotree.compose.ReorderListView
 import igrek.todotree.compose.colorLinkItem
-import igrek.todotree.compose.md_theme_dark_outline
-import igrek.todotree.compose.md_theme_light_outline
 import igrek.todotree.domain.treeitem.AbstractTreeItem
 import igrek.todotree.domain.treeitem.LinkTreeItem
 import igrek.todotree.inject.LazyExtractor
@@ -61,6 +58,7 @@ import igrek.todotree.ui.GUI
 import igrek.todotree.ui.SizeAndPosition
 import igrek.todotree.ui.contextmenu.ItemActionsMenu
 import igrek.todotree.util.mainScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class TreeListLayout {
@@ -202,6 +200,7 @@ private fun TreeItemComposable(
             .combinedClickable(
                 onClick = {
                     mainScope.launch {
+                        delay(10)
                         controller.onItemClick(index, item)
                     }
                 },
