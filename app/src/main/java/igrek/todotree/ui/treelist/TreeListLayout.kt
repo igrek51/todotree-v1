@@ -242,6 +242,7 @@ private fun TreeItemComposable(
             val positionsSet: Set<Int> = controller.state.selectedPositions.value ?: emptySet()
             val isSelected = positionsSet.contains(index)
             Checkbox(
+                modifier = Modifier.size(36.dp),
                 checked = isSelected,
                 onCheckedChange = { checked ->
                     controller.onSelectItemClick(index, checked)
