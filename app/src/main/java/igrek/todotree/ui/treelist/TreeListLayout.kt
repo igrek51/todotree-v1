@@ -165,8 +165,8 @@ private fun MainComponent(controller: TreeListLayout) {
             onReorder = { newItems ->
                 controller.onItemsReordered(newItems)
             },
-            itemContent = { itemsContainer: ItemsContainer<AbstractTreeItem>, id: Int, position: Int, modifier: Modifier ->
-                TreeItemComposable(controller, itemsContainer, id, position, modifier)
+            itemContent = { itemsContainer: ItemsContainer<AbstractTreeItem>, id: Int, modifier: Modifier ->
+                TreeItemComposable(controller, itemsContainer, id, modifier)
             },
             postContent = {
                 PlusButtonComposable(controller)
@@ -182,7 +182,6 @@ private fun TreeItemComposable(
     controller: TreeListLayout,
     itemsContainer: ItemsContainer<AbstractTreeItem>,
     id: Int,
-    position: Int,
     modifier: Modifier,
 ) {
     logger.debug("recompose item id: $id")
@@ -201,12 +200,14 @@ private fun TreeItemComposable(
             }
             .combinedClickable(
                 onClick = {
+                    val position = itemsContainer.indexToPositionMap.getValue(id)
                     mainScope.launch {
                         delay(5)
                         controller.onItemClick(position, item)
                     }
                 },
                 onLongClick = {
+                    val position = itemsContainer.indexToPositionMap.getValue(id)
                     mainScope.launch {
                         val coordinates = SizeAndPosition(
                             x = itemPosition.value.x.toInt(),
@@ -241,11 +242,13 @@ private fun TreeItemComposable(
         // Select
         if (selectMode) {
             val positionsSet: Set<Int> = controller.state.selectedPositions.value ?: emptySet()
+            val position = itemsContainer.indexToPositionMap.getValue(id)
             val isSelected = positionsSet.contains(position)
             Checkbox(
                 modifier = Modifier.size(36.dp),
                 checked = isSelected,
                 onCheckedChange = { checked ->
+                    val position = itemsContainer.indexToPositionMap.getValue(id)
                     controller.onSelectItemClick(position, checked)
                 }
             )
@@ -293,6 +296,7 @@ private fun TreeItemComposable(
             if (item.isEmpty) { // leaf
                 // Enter item
                 ItemIconButton(R.drawable.arrow_forward) {
+                    val position = itemsContainer.indexToPositionMap.getValue(id)
                     controller.onEnterItemClick(position, item)
                 }
             } else { // parent
@@ -308,6 +312,7 @@ private fun TreeItemComposable(
             }
             // Add new above
             ItemIconButton(R.drawable.plus) {
+                val position = itemsContainer.indexToPositionMap.getValue(id)
                 controller.onAddItemAboveClick(position)
             }
         }
