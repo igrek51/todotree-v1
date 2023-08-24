@@ -68,5 +68,6 @@ val colorBackground = Color(0xFF303030)
 
 val colorLightBackground = Color(0xFF393939)
 val colorLinkItem = Color(0xFFD2D2D2)
+val colorItemListBorder = md_theme_dark_onSurface.copy(alpha = 0.1f)
 
 //val seed = Color(0xFF1564C0)

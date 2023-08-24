@@ -3,8 +3,10 @@ package igrek.todotree.compose
 import android.annotation.SuppressLint
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Column
@@ -49,6 +51,10 @@ class ItemsContainer<T>(
     var items: MutableList<T> = mutableListOf(),
     val modifiedMap: MutableMap<Int, MutableState<Long>> = mutableMapOf(),
     val modifiedAll: MutableState<Long> = mutableStateOf(0),
+    val itemHeights: MutableMap<Int, Float> = mutableMapOf(),
+    val itemAnimatedOffsets: MutableMap<Int, Animatable<Float, AnimationVector1D>> = mutableMapOf(),
+    val reorderButtonModifiers: MutableMap<Int, Modifier> = mutableMapOf(),
+    val isDraggingMes: MutableMap<Int, State<Boolean>> = mutableMapOf(),
 ) {
     fun replaceAll(newList: MutableList<T>) {
         items = newList
@@ -71,45 +77,40 @@ fun <T> ReorderListView(
     itemsContainer: ItemsContainer<T>,
     scrollState: ScrollState = rememberScrollState(),
     onReorder: (newItems: MutableList<T>) -> Unit,
-    itemContent: @Composable (itemsContainer: ItemsContainer<T>, index: Int, modifier: Modifier, reorderButtonModifier: Modifier) -> Unit,
+    itemContent: @Composable (itemsContainer: ItemsContainer<T>, index: Int, modifier: Modifier) -> Unit,
     postContent: @Composable () -> Unit,
 ) {
     val draggingIndex: MutableState<Int> = remember { mutableStateOf(-1) }
-    val dragTargetIndex: MutableState<Int?> = remember { mutableStateOf(null) }
-    val itemHeights: MutableMap<Int, Float> = remember { mutableStateMapOf() }
-    val itemAnimatedOffsets: MutableMap<Int, Animatable<Float, AnimationVector1D>> = remember { mutableStateMapOf() }
     val scrollDiff: MutableState<Float> = remember { mutableStateOf(0f) }
     val parentViewportHeight: MutableState<Float> = remember { mutableStateOf(0f) }
     val coroutineScope: CoroutineScope = rememberCoroutineScope()
     val scrollJob: MutableState<Job?> = remember { mutableStateOf(null) }
-    val reorderButtonModifiers: MutableMap<Int, Modifier> = remember { mutableStateMapOf() }
-    val isDraggingMes: MutableMap<Int, State<Boolean>> = remember { mutableStateMapOf() }
-    val isDragTargetMes: MutableMap<Int, State<Boolean>> = remember { mutableStateMapOf() }
 
-    val isDragging: State<Boolean> = derivedStateOf {
-        draggingIndex.value != -1
-    }
-    val isDragTargetFirst: State<Boolean> = derivedStateOf {
-        dragTargetIndex.value == -1
-    }
+//    val isDragging: State<Boolean> = derivedStateOf {
+//        draggingIndex.value != -1
+//    }
 
     val dividerPx: Float = with(LocalDensity.current) { 1.dp.toPx() }
 
     itemsContainer.items.indices.forEach { index: Int ->
-        reorderButtonModifiers[index] = Modifier.createReorderButtonModifier(
-            itemsContainer, index, draggingIndex, dragTargetIndex, itemHeights, itemAnimatedOffsets,
-            scrollState, scrollDiff, parentViewportHeight, coroutineScope, scrollJob,
-            onReorder,
-        )
-
-        itemAnimatedOffsets[index] = remember { Animatable(0f) }
-
-        isDraggingMes[index] = derivedStateOf {
-            draggingIndex.value == index
+        if (!itemsContainer.reorderButtonModifiers.containsKey(index)) {
+            itemsContainer.reorderButtonModifiers[index] = Modifier.createReorderButtonModifier(
+                itemsContainer,
+                index,
+                draggingIndex,
+                scrollState,
+                scrollDiff,
+                parentViewportHeight,
+                coroutineScope,
+                scrollJob,
+                onReorder,
+            )
         }
 
-        isDragTargetMes[index] = derivedStateOf {
-            dragTargetIndex.value == index
+        itemsContainer.itemAnimatedOffsets[index] = remember { Animatable(0f) }
+
+        itemsContainer.isDraggingMes[index] = derivedStateOf {
+            draggingIndex.value == index
         }
     }
 
@@ -125,9 +126,9 @@ fun <T> ReorderListView(
         ) {
             ReorderListColumn(
                 itemsContainer,
-                isDragging, isDragTargetFirst, isDraggingMes, isDragTargetMes,
-                itemHeights, itemAnimatedOffsets,
-                scrollDiff, reorderButtonModifiers, dividerPx, itemContent,
+                scrollDiff,
+                dividerPx,
+                itemContent,
             )
 
             postContent()
@@ -139,26 +140,16 @@ fun <T> ReorderListView(
 @Composable
 fun <T> ReorderListColumn(
     itemsContainer: ItemsContainer<T>,
-    isDragging: State<Boolean>,
-    isDragTargetFirst: State<Boolean>,
-    isDraggingMes: Map<Int, State<Boolean>>,
-    isDragTargetMes: Map<Int, State<Boolean>>,
-    itemHeights: MutableMap<Int, Float>,
-    itemAnimatedOffsets: Map<Int, Animatable<Float, AnimationVector1D>>,
     scrollDiff: State<Float>,
-    reorderButtonModifiers: Map<Int, Modifier>,
     dividerPx: Float,
-    itemContent: @Composable (itemsContainer: ItemsContainer<T>, index: Int, modifier: Modifier, reorderButtonModifier: Modifier) -> Unit,
+    itemContent: @Composable (itemsContainer: ItemsContainer<T>, index: Int, modifier: Modifier) -> Unit,
 ) {
-    DividerBeforeItem(isDragTargetFirst)
-
     logger.debug("recomposing all items")
     itemsContainer.items.indices.forEach { index: Int ->
         ReorderListViewItem(
             itemsContainer, index,
-            isDragging, isDraggingMes.getValue(index), isDragTargetMes.getValue(index),
-            itemAnimatedOffsets.getValue(index), reorderButtonModifiers.getValue(index),
-            itemHeights, scrollDiff, dividerPx, itemContent,
+            itemsContainer.isDraggingMes.getValue(index),
+            scrollDiff, dividerPx, itemContent,
         )
     }
 }
@@ -168,24 +159,21 @@ fun <T> ReorderListColumn(
 private fun <T> ReorderListViewItem(
     itemsContainer: ItemsContainer<T>,
     index: Int,
-    isDragging: State<Boolean>,
     isDraggingMe: State<Boolean>,
-    isDragTargetMe: State<Boolean>,
-    offsetYAnimated: Animatable<Float, AnimationVector1D>,
-    reorderButtonModifier: Modifier,
-    itemHeights: MutableMap<Int, Float>,
     scrollDiff: State<Float>,
     dividerPx: Float,
-    itemContent: @Composable (itemsContainer: ItemsContainer<T>, index: Int, modifier: Modifier, reorderButtonModifier: Modifier) -> Unit,
+    itemContent: @Composable (itemsContainer: ItemsContainer<T>, index: Int, modifier: Modifier) -> Unit,
 ) {
     key(itemsContainer.modifiedMap.getValue(index).value) {
-//        logger.debug("recomposing item $index")
+        logger.debug("recomposing item $index")
 
+        val offsetYAnimated: Animatable<Float, AnimationVector1D> = itemsContainer.itemAnimatedOffsets.getValue(index)
         var itemModifier = Modifier
             .offset { IntOffset(0, offsetYAnimated.value.roundToInt()) }
             .fillMaxWidth()
+            .border(BorderStroke(0.5.dp, colorItemListBorder))
             .onGloballyPositioned { coordinates: LayoutCoordinates ->
-                itemHeights[index] = coordinates.size.height.toFloat() + dividerPx
+                itemsContainer.itemHeights[index] = coordinates.size.height.toFloat() + dividerPx
             }
         if (isDraggingMe.value) {
             itemModifier = itemModifier
@@ -193,54 +181,22 @@ private fun <T> ReorderListViewItem(
                 .background(Color.LightGray.copy(alpha = 0.2f))
         }
 
-        itemContent(itemsContainer, index, itemModifier, reorderButtonModifier)
-
-        DividerAfterItem(isDragging, isDragTargetMe)
+        itemContent(itemsContainer, index, itemModifier)
     }
 }
 
 @Composable
-private fun DividerBeforeItem(
-    isDragTargetFirst: State<Boolean>,
-) {
-    if (isDragTargetFirst.value) {
-        Divider(
-            thickness = 1.dp,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.9f),
-        )
-    }
-}
-
-@Composable
-private fun DividerAfterItem(
-    isDragging: State<Boolean>,
-    isDragTargetMe: State<Boolean>,
-) {
-    if (isDragTargetMe.value) {
-        Divider(
-            thickness = 1.dp,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.9f),
-        )
-    } else if (isDragging.value) {
-        Divider(
-            thickness = 1.dp,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.04f),
-        )
-    } else {
-        Divider(
-            thickness = 1.dp,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
-        )
-    }
+private fun DividerAfterItem() {
+    Divider(
+        thickness = 1.dp,
+        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
+    )
 }
 
 private fun <T> Modifier.createReorderButtonModifier(
     itemsContainer: ItemsContainer<T>,
     index: Int,
     draggingIndex: MutableState<Int>,
-    dragTargetIndex: MutableState<Int?>,
-    itemHeights: MutableMap<Int, Float>,
-    itemAnimatedOffsets: MutableMap<Int, Animatable<Float, AnimationVector1D>>,
     scrollState: ScrollState,
     scrollDiff: MutableState<Float>,
     parentViewportHeight: MutableState<Float>,
@@ -252,79 +208,9 @@ private fun <T> Modifier.createReorderButtonModifier(
 
         onDragStart = { _: Offset ->
             draggingIndex.value = index
-            dragTargetIndex.value = null
             scrollDiff.value = 0f
             coroutineScope.launch {
-                itemAnimatedOffsets[index]?.snapTo(0f)
-            }
-        },
-
-        onDragEnd = {
-            val relativateOffset = (itemAnimatedOffsets[index]?.targetValue ?: 0f) + scrollDiff.value
-            val (swapped, movedBy) = calculateItemsToSwap(index, itemsContainer.items.size, relativateOffset, itemHeights)
-            val minIndex = Integer.min(index, index + swapped)
-            val maxIndex = Integer.max(index, index + swapped)
-            val endOffset = relativateOffset - movedBy
-            when {
-                swapped < 0 -> {
-                    for (i in minIndex + 1..maxIndex) {
-                        coroutineScope.launch {
-                            val heightPx = itemHeights[i] ?: 0f
-                            itemAnimatedOffsets[i]?.snapTo(-heightPx)
-                            itemAnimatedOffsets[i]?.animateTo(0f)
-                        }
-                    }
-                    coroutineScope.launch {
-                        itemAnimatedOffsets[index + swapped]?.snapTo(endOffset)
-                        itemAnimatedOffsets[index + swapped]?.animateTo(0f)
-                    }
-                    
-                    itemsContainer.items.add(index + swapped, itemsContainer.items.removeAt(index))
-                    for (i in minIndex..maxIndex) {
-                        itemsContainer.notifyItemChange(i)
-                    }
-                    onReorder(itemsContainer.items)
-                }
-                swapped > 0 -> {
-                    for (i in minIndex until maxIndex) {
-                        coroutineScope.launch {
-                            val heightPx = itemHeights[i] ?: 0f
-                            itemAnimatedOffsets[i]?.snapTo(+heightPx)
-                            itemAnimatedOffsets[i]?.animateTo(0f)
-                        }
-                    }
-                    coroutineScope.launch {
-                        itemAnimatedOffsets[index + swapped]?.snapTo(endOffset)
-                        itemAnimatedOffsets[index + swapped]?.animateTo(0f)
-                    }
-                    
-                    itemsContainer.items.add(index + swapped, itemsContainer.items.removeAt(index))
-                    for (i in minIndex..maxIndex) {
-                        itemsContainer.notifyItemChange(i)
-                    }
-                    onReorder(itemsContainer.items)
-                }
-                else -> coroutineScope.launch {
-                    itemAnimatedOffsets[index]?.snapTo(relativateOffset)
-                    itemAnimatedOffsets[index]?.animateTo(0f)
-                }
-            }
-
-            draggingIndex.value = -1
-            dragTargetIndex.value = null
-            scrollJob.value?.cancel()
-            scrollJob.value = null
-        },
-
-        onDragCancel = {
-            draggingIndex.value = -1
-            dragTargetIndex.value = null
-            scrollJob.value?.cancel()
-            scrollJob.value = null
-            val relativateOffset = (itemAnimatedOffsets[index]?.targetValue ?: 0f) + scrollDiff.value
-            coroutineScope.launch {
-                itemAnimatedOffsets[index]?.snapTo(relativateOffset)
-                itemAnimatedOffsets[index]?.animateTo(0f)
+                itemsContainer.itemAnimatedOffsets[index]?.snapTo(0f)
             }
         },
 
@@ -334,21 +220,22 @@ private fun <T> Modifier.createReorderButtonModifier(
             scrollJob.value?.cancel()
             scrollJob.value = null
 
-            val offsetYAnimatedVal = itemAnimatedOffsets[index]?.targetValue ?: 0f
+            val offsetYAnimatedVal: Float = itemsContainer.itemAnimatedOffsets[index]?.targetValue ?: 0f
             val relativateOffset = offsetYAnimatedVal + scrollDiff.value
-            val thisHeight = itemHeights[index] ?: 0f
+            val thisHeight = itemsContainer.itemHeights[index] ?: 0f
 
-            val (swapped, _) = calculateItemsToSwap(index, itemsContainer.items.size, relativateOffset, itemHeights)
-            dragTargetIndex.value = when {
-                swapped < 0 -> index + swapped - 1
-                swapped > 0 -> index + swapped
-                else -> null
-            }
+            // minimize overlap by moving item when it's half-covered
+            val (swapped, _) = calculateItemsToSwap(index, itemsContainer.items.size, relativateOffset, itemsContainer.itemHeights)
+//            dragTargetIndex.value = when {
+//                swapped < 0 -> index + swapped - 1
+//                swapped > 0 -> index + swapped
+//                else -> null
+//            }
 
             // overscroll
             var priorVisibleHeight = thisHeight / 2 - scrollState.value
             for (i in 0 until index) {
-                priorVisibleHeight += itemHeights[i] ?: 0f
+                priorVisibleHeight += itemsContainer.itemHeights[i] ?: 0f
             }
             val beyondVisibleHeight = parentViewportHeight.value - priorVisibleHeight
             val borderArea = thisHeight * 2.5f
@@ -366,7 +253,7 @@ private fun <T> Modifier.createReorderButtonModifier(
             }
 
             coroutineScope.launch {
-                itemAnimatedOffsets[index]?.snapTo(offsetYAnimatedVal + dragAmount.y)
+                itemsContainer.itemAnimatedOffsets[index]?.snapTo(offsetYAnimatedVal + dragAmount.y)
             }
 
             if (overscrolledY != 0f) {
@@ -379,7 +266,74 @@ private fun <T> Modifier.createReorderButtonModifier(
                     }
                 }
             }
-        }
+        },
+
+        onDragEnd = {
+            val relativateOffset = (itemsContainer.itemAnimatedOffsets[index]?.targetValue ?: 0f) + scrollDiff.value
+            val (swapped, movedBy) = calculateItemsToSwap(index, itemsContainer.items.size, relativateOffset, itemsContainer.itemHeights)
+            val minIndex = Integer.min(index, index + swapped)
+            val maxIndex = Integer.max(index, index + swapped)
+            val endOffset = relativateOffset - movedBy
+            when {
+                swapped < 0 -> {
+                    for (i in minIndex + 1..maxIndex) {
+                        coroutineScope.launch {
+                            val heightPx = itemsContainer.itemHeights[i] ?: 0f
+                            itemsContainer.itemAnimatedOffsets[i]?.snapTo(-heightPx)
+                            itemsContainer.itemAnimatedOffsets[i]?.animateTo(0f)
+                        }
+                    }
+                    coroutineScope.launch {
+                        itemsContainer.itemAnimatedOffsets[index + swapped]?.snapTo(endOffset)
+                        itemsContainer.itemAnimatedOffsets[index + swapped]?.animateTo(0f)
+                    }
+                    
+                    itemsContainer.items.add(index + swapped, itemsContainer.items.removeAt(index))
+                    for (i in minIndex..maxIndex) {
+                        itemsContainer.notifyItemChange(i)
+                    }
+                    onReorder(itemsContainer.items)
+                }
+                swapped > 0 -> {
+                    for (i in minIndex until maxIndex) {
+                        coroutineScope.launch {
+                            val heightPx = itemsContainer.itemHeights[i] ?: 0f
+                            itemsContainer.itemAnimatedOffsets[i]?.snapTo(+heightPx)
+                            itemsContainer.itemAnimatedOffsets[i]?.animateTo(0f)
+                        }
+                    }
+                    coroutineScope.launch {
+                        itemsContainer.itemAnimatedOffsets[index + swapped]?.snapTo(endOffset)
+                        itemsContainer.itemAnimatedOffsets[index + swapped]?.animateTo(0f)
+                    }
+                    
+                    itemsContainer.items.add(index + swapped, itemsContainer.items.removeAt(index))
+                    for (i in minIndex..maxIndex) {
+                        itemsContainer.notifyItemChange(i)
+                    }
+                    onReorder(itemsContainer.items)
+                }
+                else -> coroutineScope.launch {
+                    itemsContainer.itemAnimatedOffsets[index]?.snapTo(relativateOffset)
+                    itemsContainer.itemAnimatedOffsets[index]?.animateTo(0f)
+                }
+            }
+
+            draggingIndex.value = -1
+            scrollJob.value?.cancel()
+            scrollJob.value = null
+        },
+
+        onDragCancel = {
+            draggingIndex.value = -1
+            scrollJob.value?.cancel()
+            scrollJob.value = null
+            val relativateOffset = (itemsContainer.itemAnimatedOffsets[index]?.targetValue ?: 0f) + scrollDiff.value
+            coroutineScope.launch {
+                itemsContainer.itemAnimatedOffsets[index]?.snapTo(relativateOffset)
+                itemsContainer.itemAnimatedOffsets[index]?.animateTo(0f)
+            }
+        },
     )
 }
 

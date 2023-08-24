@@ -166,8 +166,8 @@ private fun MainComponent(controller: TreeListLayout) {
             onReorder = { newItems ->
                 controller.onItemsReordered(newItems)
             },
-            itemContent = { itemsContainer: ItemsContainer<AbstractTreeItem>, index: Int, modifier: Modifier, reorderButtonModifier: Modifier ->
-                TreeItemComposable(controller, itemsContainer, index, modifier, reorderButtonModifier)
+            itemContent = { itemsContainer: ItemsContainer<AbstractTreeItem>, index: Int, modifier: Modifier ->
+                TreeItemComposable(controller, itemsContainer, index, modifier)
             },
             postContent = {
                 PlusButtonComposable(controller)
@@ -184,9 +184,9 @@ private fun TreeItemComposable(
     itemsContainer: ItemsContainer<AbstractTreeItem>,
     index: Int,
     modifier: Modifier,
-    reorderButtonModifier: Modifier,
 ) {
     val item: AbstractTreeItem = itemsContainer.items.getOrNull(index) ?: return
+    val reorderButtonModifier: Modifier = itemsContainer.reorderButtonModifiers.getValue(index)
 
     val itemPosition: MutableState<Offset> = remember { mutableStateOf(Offset.Zero) }
     val itemSize: MutableState<IntSize> = remember { mutableStateOf(IntSize.Zero) }
@@ -200,7 +200,7 @@ private fun TreeItemComposable(
             .combinedClickable(
                 onClick = {
                     mainScope.launch {
-                        delay(10)
+                        delay(5)
                         controller.onItemClick(index, item)
                     }
                 },
