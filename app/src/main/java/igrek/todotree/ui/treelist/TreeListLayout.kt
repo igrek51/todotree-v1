@@ -102,6 +102,14 @@ class TreeListLayout {
         state.selectedPositions.value = selectedPositions
     }
 
+    fun updateOneListItem(position: Int) {
+        state.visibleItems.notifyItemChange(position)
+
+        val selectedPositions: Set<Int>? = treeSelectionManager.selectedItems
+        state.selectMode.value = selectedPositions?.isNotEmpty() == true
+        state.selectedPositions.value = selectedPositions
+    }
+
     fun onItemClick(position: Int, item: AbstractTreeItem) {
         TreeCommand().itemClicked(position, item)
     }
@@ -248,8 +256,8 @@ private fun TreeItemComposable(
                 modifier = Modifier.size(36.dp),
                 checked = isSelected,
                 onCheckedChange = { checked ->
-                    val position = itemsContainer.indexToPositionMap.getValue(id)
-                    controller.onSelectItemClick(position, checked)
+                    val actualPosition = itemsContainer.indexToPositionMap.getValue(id)
+                    controller.onSelectItemClick(actualPosition, checked)
                 }
             )
         }

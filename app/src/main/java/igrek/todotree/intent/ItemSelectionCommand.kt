@@ -34,7 +34,9 @@ class ItemSelectionCommand (
     }
 
     fun selectedItemClicked(position: Int, checked: Boolean) {
-        treeSelectionManager.setItemSelected(position, checked)
-        GUICommand().updateItemsList()
+        when (treeSelectionManager.setItemSelected(position, checked)) {
+            true -> GUICommand().updateItemsList()
+            false -> GUICommand().updateOneListItem(position)
+        }
     }
 }

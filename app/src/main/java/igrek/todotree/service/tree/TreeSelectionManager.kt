@@ -21,22 +21,27 @@ class TreeSelectionManager {
         selectedItems = null
     }
 
-    fun setItemSelected(position: Int, selectedState: Boolean) {
+    fun setItemSelected(position: Int, selectedState: Boolean): Boolean {
+        // Return true if all elements has to be refreshed
+        var refreshAll = false
         if (!isAnythingSelected) {
             startSelectionMode()
+            refreshAll = true
         }
         if (selectedState) {
             if (!isItemSelected(position)) {
-                selectedItems!!.add(position)
+                selectedItems?.add(position)
             }
         } else {
             if (isItemSelected(position)) {
-                selectedItems!!.remove(Integer.valueOf(position))
-                if (selectedItems!!.isEmpty()) {
+                selectedItems?.remove(Integer.valueOf(position))
+                if (selectedItems.isNullOrEmpty()) {
                     selectedItems = null
+                    refreshAll = true
                 }
             }
         }
+        return refreshAll
     }
 
     private fun isItemSelected(position: Int): Boolean {

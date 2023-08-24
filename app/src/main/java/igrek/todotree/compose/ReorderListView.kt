@@ -45,7 +45,7 @@ val itemBorderStroke = BorderStroke(0.5.dp, colorItemListBorder)
 
 class ItemsContainer<T>(
     var items: MutableList<T> = mutableListOf(),
-    private val modifiedMap: MutableMap<Int, MutableState<Long>> = mutableMapOf(),
+    val modifiedMap: MutableMap<Int, MutableState<Long>> = mutableMapOf(),
     val modifiedAll: MutableState<Long> = mutableStateOf(0),
     val itemHeights: MutableMap<Int, Float> = mutableMapOf(),
     val itemBiasOffsets: MutableMap<Int, Animatable<Float, AnimationVector1D>> = mutableMapOf(),
@@ -68,8 +68,8 @@ class ItemsContainer<T>(
         modifiedAll.value += 1
     }
 
-    @Suppress("unused")
-    fun notifyItemChange(index: Int) {
+    fun notifyItemChange(position: Int) {
+        val index = positionToIndexMap[position] ?: return
         modifiedMap.getValue(index).value += 1
     }
 }
@@ -120,25 +120,25 @@ fun <T> ReorderListView(
                         coordinates.parentLayoutCoordinates?.size?.height?.toFloat() ?: 0f
                 },
         ) {
-            ReorderListColumn(
-                itemsContainer,
-                itemContent,
-            )
+
+//            logger.debug("recomposing all items")
+            itemsContainer.items.indices.forEach { index: Int ->
+                ReorderListViewItem(itemsContainer, index, itemContent)
+            }
 
             postContent()
         }
     }
 }
 
-
 @Composable
-fun <T> ReorderListColumn(
+private fun <T> ReorderListViewItem(
     itemsContainer: ItemsContainer<T>,
+    index: Int,
     itemContent: @Composable (itemsContainer: ItemsContainer<T>, id: Int, modifier: Modifier) -> Unit,
 ) {
-//    logger.debug("recomposing all items")
-    itemsContainer.items.indices.forEach { index: Int ->
 //        logger.debug("recomposing item $index")
+    key(itemsContainer.modifiedMap.getValue(index).value) {
         val itemModifier = itemsContainer.itemModifiers.getValue(index)
         itemContent(itemsContainer, index, itemModifier)
     }

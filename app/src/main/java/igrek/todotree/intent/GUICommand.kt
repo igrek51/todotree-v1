@@ -24,6 +24,10 @@ class GUICommand(
         treeListLayout.updateItemsList()
     }
 
+    fun updateOneListItem(position: Int) {
+        treeListLayout.updateOneListItem(position)
+    }
+
     fun showItemsList() {
         appData.state = AppState.ITEMS_LIST
         treeManager.currentItem?.let { _ ->
