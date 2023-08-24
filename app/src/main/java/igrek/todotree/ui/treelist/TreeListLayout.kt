@@ -249,8 +249,6 @@ private fun TreeItemComposable(
             )
         }
 
-        // TODO gesture handling
-
         val fontWeight: FontWeight = when {
             item is LinkTreeItem -> FontWeight.Normal
             item.isEmpty -> FontWeight.Normal
