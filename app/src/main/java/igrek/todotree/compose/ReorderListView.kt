@@ -5,7 +5,6 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.scrollBy
@@ -24,8 +23,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.LayoutCoordinates
@@ -41,6 +40,8 @@ import kotlinx.coroutines.yield
 import kotlin.math.abs
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
+
+val itemBorderStroke = BorderStroke(0.5.dp, colorItemListBorder)
 
 
 class ItemsContainer<T>(
@@ -161,18 +162,18 @@ private fun <T> ReorderListViewItem(
         val stablePosition: Animatable<Float, AnimationVector1D> = itemsContainer.itemStablePositions.getValue(index)
         val offsetBias: Animatable<Float, AnimationVector1D> = itemsContainer.itemBiasOffsets.getValue(index)
         val isDraggingMe: State<Boolean> = itemsContainer.isDraggingMes.getValue(index)
-
-        var itemModifier = Modifier
+        val itemModifier = Modifier
             .offset { IntOffset(0, stablePosition.value.roundToInt() + offsetBias.value.roundToInt()) }
             .fillMaxWidth()
-            .border(BorderStroke(0.5.dp, colorItemListBorder))
+            .border(itemBorderStroke)
             .onGloballyPositioned { coordinates: LayoutCoordinates ->
                 itemsContainer.itemHeights[index] = coordinates.size.height.toFloat()
             }
-        if (isDraggingMe.value) {
-            itemModifier = itemModifier
-                .background(Color.LightGray.copy(alpha = 0.3f))
-        }
+            .drawBehind {
+                if (isDraggingMe.value) {
+                    drawRect(color = colorItemDraggedBackground)
+                }
+            }
 
         itemContent(itemsContainer, index, itemModifier)
     }
