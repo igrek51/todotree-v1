@@ -79,12 +79,11 @@ class AppInitializer(
         layoutController.init()
         windowManagerService.hideTaskbar()
 
+        PersistenceCommand().loadRootTree()
         layoutController.showLayout(startingScreen).join()
 
         activity.window?.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
 
-        PersistenceCommand().loadRootTree()
-        GUICommand().showItemsList()
         explosionService.init()
     }
 
