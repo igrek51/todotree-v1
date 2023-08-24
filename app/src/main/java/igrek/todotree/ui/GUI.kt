@@ -33,21 +33,26 @@ class GUI {
     private val appData: AppData by LazyExtractor(appFactory.appData)
 
     private val imm: InputMethodManager? = appCompatActivity.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-    private var mainContentLvl2: RelativeLayout? = null
+    private var lvl2TreeView: View? = null
+    private var lvl2EditView: View? = null
 
     private var actionBar: ActionBar? = null
     private var editItemGUI: EditItemGUI? = null
 
     fun setMainContentLayout(layoutResource: Int): View {
-        mainContentLvl2?.removeAllViews()
-        val inflater = appCompatActivity.layoutInflater
-        val layout = inflater.inflate(layoutResource, null)
-        layout.layoutParams = ViewGroup.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.MATCH_PARENT
-        )
-        mainContentLvl2?.addView(layout)
-        return layout
+        when (layoutResource) {
+            R.layout.component_items_list -> {
+                lvl2TreeView?.visibility = View.VISIBLE
+                lvl2EditView?.visibility = View.GONE
+                return lvl2TreeView!!
+            }
+            R.layout.component_edit_item -> {
+                lvl2TreeView?.visibility = View.GONE
+                lvl2EditView?.visibility = View.VISIBLE
+                return lvl2EditView!!
+            }
+            else -> return lvl2TreeView!!
+        }
     }
 
     fun hideSoftKeyboard(window: View) {
@@ -70,7 +75,8 @@ class GUI {
         appCompatActivity.findViewById<ImageButton>(R.id.save2Button)?.let { save2Button ->
             save2Button.setOnClickListener { ExitCommand().optionSaveAndExit() }
         }
-        mainContentLvl2 = appCompatActivity.findViewById(R.id.main_content_lvl2)
+        lvl2TreeView = appCompatActivity.findViewById(R.id.compose_view)
+        lvl2EditView = appCompatActivity.findViewById(R.id.frameEditItem)
     }
 
     fun showBackButton(show: Boolean) {

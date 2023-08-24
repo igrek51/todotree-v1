@@ -36,11 +36,14 @@
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <RelativeLayout
-        android:id="@+id/main_content_lvl2"
+    <include
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        >
-    </RelativeLayout>
+        layout="@layout/component_items_list" />
+    <include
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        layout="@layout/component_edit_item" />
 
 </LinearLayout>
