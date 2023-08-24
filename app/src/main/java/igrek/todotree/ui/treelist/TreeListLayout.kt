@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+@file:OptIn(ExperimentalFoundationApi::class)
 
 package igrek.todotree.ui.treelist
 
@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -47,6 +46,7 @@ import igrek.todotree.compose.ReorderListView
 import igrek.todotree.compose.colorLinkItem
 import igrek.todotree.domain.treeitem.AbstractTreeItem
 import igrek.todotree.domain.treeitem.LinkTreeItem
+import igrek.todotree.info.logger.LoggerFactory.logger
 import igrek.todotree.inject.LazyExtractor
 import igrek.todotree.inject.appFactory
 import igrek.todotree.intent.ItemEditorCommand
@@ -102,16 +102,16 @@ class TreeListLayout {
         state.selectedPositions.value = selectedPositions
     }
 
-    fun onItemClick(index: Int, item: AbstractTreeItem) {
-        TreeCommand().itemClicked(index, item)
+    fun onItemClick(position: Int, item: AbstractTreeItem) {
+        TreeCommand().itemClicked(position, item)
     }
 
-    fun onItemLongClick(index: Int, coordinates: SizeAndPosition) {
-        ItemActionsMenu(index).show(coordinates)
+    fun onItemLongClick(position: Int, coordinates: SizeAndPosition) {
+        ItemActionsMenu(position).show(coordinates)
     }
 
-    fun onEnterItemClick(index: Int, item: AbstractTreeItem) {
-        TreeCommand().itemGoIntoClicked(index, item)
+    fun onEnterItemClick(position: Int, item: AbstractTreeItem) {
+        TreeCommand().itemGoIntoClicked(position, item)
     }
 
     fun onPlusClick() {
@@ -130,22 +130,21 @@ class TreeListLayout {
         appFactory.changesHistory.get().registerChange()
     }
 
-    fun onAddItemAboveClick(index: Int) {
-        ItemEditorCommand().addItemHereClicked(index)
+    fun onAddItemAboveClick(position: Int) {
+        ItemEditorCommand().addItemHereClicked(position)
     }
 
     fun onEditItemClick(item: AbstractTreeItem) {
         ItemEditorCommand().itemEditClicked(item)
     }
 
-    fun onSelectItemClick(index: Int, checked: Boolean) {
-        ItemSelectionCommand().selectedItemClicked(index, checked)
+    fun onSelectItemClick(position: Int, checked: Boolean) {
+        ItemSelectionCommand().selectedItemClicked(position, checked)
     }
 
     suspend fun scrollToPosition(y: Int) {
         state.scrollState.scrollTo(y)
     }
-
 }
 
 
@@ -166,8 +165,8 @@ private fun MainComponent(controller: TreeListLayout) {
             onReorder = { newItems ->
                 controller.onItemsReordered(newItems)
             },
-            itemContent = { itemsContainer: ItemsContainer<AbstractTreeItem>, index: Int, modifier: Modifier ->
-                TreeItemComposable(controller, itemsContainer, index, modifier)
+            itemContent = { itemsContainer: ItemsContainer<AbstractTreeItem>, id: Int, position: Int, modifier: Modifier ->
+                TreeItemComposable(controller, itemsContainer, id, position, modifier)
             },
             postContent = {
                 PlusButtonComposable(controller)
@@ -182,11 +181,14 @@ private fun MainComponent(controller: TreeListLayout) {
 private fun TreeItemComposable(
     controller: TreeListLayout,
     itemsContainer: ItemsContainer<AbstractTreeItem>,
-    index: Int,
+    id: Int,
+    position: Int,
     modifier: Modifier,
 ) {
-    val item: AbstractTreeItem = itemsContainer.items.getOrNull(index) ?: return
-    val reorderButtonModifier: Modifier = itemsContainer.reorderButtonModifiers.getValue(index)
+    logger.debug("recompose item id: $id")
+
+    val item: AbstractTreeItem = itemsContainer.items.getOrNull(id) ?: return
+    val reorderButtonModifier: Modifier = itemsContainer.reorderButtonModifiers.getValue(id)
 
     val itemPosition: MutableState<Offset> = remember { mutableStateOf(Offset.Zero) }
     val itemSize: MutableState<IntSize> = remember { mutableStateOf(IntSize.Zero) }
@@ -201,7 +203,7 @@ private fun TreeItemComposable(
                 onClick = {
                     mainScope.launch {
                         delay(5)
-                        controller.onItemClick(index, item)
+                        controller.onItemClick(position, item)
                     }
                 },
                 onLongClick = {
@@ -212,7 +214,7 @@ private fun TreeItemComposable(
                             w = itemSize.value.width,
                             h = itemSize.value.height,
                         )
-                        controller.onItemLongClick(index, coordinates)
+                        controller.onItemLongClick(position, coordinates)
                     }
                 },
             ),
@@ -239,12 +241,12 @@ private fun TreeItemComposable(
         // Select
         if (selectMode) {
             val positionsSet: Set<Int> = controller.state.selectedPositions.value ?: emptySet()
-            val isSelected = positionsSet.contains(index)
+            val isSelected = positionsSet.contains(position)
             Checkbox(
                 modifier = Modifier.size(36.dp),
                 checked = isSelected,
                 onCheckedChange = { checked ->
-                    controller.onSelectItemClick(index, checked)
+                    controller.onSelectItemClick(position, checked)
                 }
             )
         }
@@ -291,7 +293,7 @@ private fun TreeItemComposable(
             if (item.isEmpty) { // leaf
                 // Enter item
                 ItemIconButton(R.drawable.arrow_forward) {
-                    controller.onEnterItemClick(index, item)
+                    controller.onEnterItemClick(position, item)
                 }
             } else { // parent
                 Text(
@@ -306,7 +308,7 @@ private fun TreeItemComposable(
             }
             // Add new above
             ItemIconButton(R.drawable.plus) {
-                controller.onAddItemAboveClick(index)
+                controller.onAddItemAboveClick(position)
             }
         }
 

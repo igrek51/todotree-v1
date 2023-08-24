@@ -80,7 +80,7 @@ fun <T> ReorderListView(
     itemsContainer: ItemsContainer<T>,
     scrollState: ScrollState = rememberScrollState(),
     onReorder: (newItems: MutableList<T>) -> Unit,
-    itemContent: @Composable (itemsContainer: ItemsContainer<T>, index: Int, modifier: Modifier) -> Unit,
+    itemContent: @Composable (itemsContainer: ItemsContainer<T>, id: Int, position: Int, modifier: Modifier) -> Unit,
     postContent: @Composable () -> Unit,
 ) {
     val draggingIndex: MutableState<Int> = remember { mutableStateOf(-1) }
@@ -134,13 +134,14 @@ fun <T> ReorderListView(
 @Composable
 fun <T> ReorderListColumn(
     itemsContainer: ItemsContainer<T>,
-    itemContent: @Composable (itemsContainer: ItemsContainer<T>, index: Int, modifier: Modifier) -> Unit,
+    itemContent: @Composable (itemsContainer: ItemsContainer<T>, id: Int, position: Int, modifier: Modifier) -> Unit,
 ) {
 //    logger.debug("recomposing all items")
     itemsContainer.items.indices.forEach { index: Int ->
 //        logger.debug("recomposing item $index")
         val itemModifier = itemsContainer.itemModifiers.getValue(index)
-        itemContent(itemsContainer, index, itemModifier)
+        val position = itemsContainer.indexToPositionMap.getValue(index)
+        itemContent(itemsContainer, index, position, itemModifier)
     }
 }
 
