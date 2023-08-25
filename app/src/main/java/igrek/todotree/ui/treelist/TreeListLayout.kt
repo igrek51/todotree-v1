@@ -192,8 +192,7 @@ private fun TreeItemComposable(
     id: Int,
     modifier: Modifier,
 ) {
-    logger.debug("recompose item id: $id")
-
+//    logger.debug("recompose item id: $id")
     val item: AbstractTreeItem = itemsContainer.items.getOrNull(id) ?: return
     val reorderButtonModifier: Modifier = itemsContainer.reorderButtonModifiers.getValue(id)
 
