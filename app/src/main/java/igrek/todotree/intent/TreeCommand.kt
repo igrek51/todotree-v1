@@ -149,8 +149,10 @@ class TreeCommand(
     fun itemClicked(position: Int, item: AbstractTreeItem) {
         databaseLock.assertUnlocked()
         if (treeSelectionManager.isAnythingSelected) {
-            treeSelectionManager.toggleItemSelected(position)
-            GUICommand().updateItemsList()
+            when (treeSelectionManager.toggleItemSelected(position)) {
+                true -> GUICommand().updateItemsList()
+                false -> GUICommand().updateOneListItem(position)
+            }
         } else {
             when (item) {
                 is RemoteTreeItem -> {

@@ -53,7 +53,7 @@ class TreeSelectionManager {
         return false
     }
 
-    fun toggleItemSelected(position: Int) {
-        setItemSelected(position, !isItemSelected(position))
+    fun toggleItemSelected(position: Int): Boolean {
+        return setItemSelected(position, !isItemSelected(position))
     }
 }
