@@ -1,26 +1,38 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package igrek.todotree.ui.edititem
 
 import android.view.View
+import androidx.annotation.DrawableRes
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalMinimumInteractiveComponentEnforcement
+import androidx.compose.material3.LocalMinimumTouchTargetEnforcement
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -83,56 +95,128 @@ class EditItemState {
 
 @Composable
 private fun MainComponent(controller: EditItemLayout) {
-    Column {
-        OutlinedTextField(
-            value = controller.state.content.value,
-            onValueChange = { controller.state.content.value = it },
-            label = null,
-            singleLine = false,
-            modifier = Modifier.padding(vertical = 1.dp).fillMaxWidth(),
-        )
-
-        Row (Modifier.padding(vertical = 0.dp)) {
-            FlatButton(
-                modifier = Modifier.weight(0.5f),
-                text = "Save",
-                iconVector = Icons.Filled.Done,
-                onClick = {},
+    CompositionLocalProvider(LocalMinimumInteractiveComponentEnforcement provides false) {
+        Column {
+            OutlinedTextField(
+                value = controller.state.content.value,
+                onValueChange = { controller.state.content.value = it },
+                label = null,
+                singleLine = false,
+                modifier = Modifier.padding(vertical = 1.dp).fillMaxWidth(),
             )
 
-            Spacer(Modifier.size(2.dp))
-
-            FlatButton(
-                modifier = Modifier.weight(0.25f),
-                text = "\uD83D\uDCBE & add",
-                onClick = {},
-            )
-
-            Spacer(Modifier.size(2.dp))
-
-            FlatButton(
-                modifier = Modifier.weight(0.25f),
-                text = "\uD83D\uDCBE & enter",
-                onClick = {},
-            )
-        }
-
-        Row {
-            IconButton(
-                modifier = Modifier
-                    .size(36.dp)
-                    .padding(4.dp)
-                    .align(Alignment.CenterVertically),
-                onClick = {
-                    mainScope.launch {
-
-                    }
-                }
+            Row(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
             ) {
-                Icon(
-                    painterResource(id = R.drawable.arrow_forward),
-                    contentDescription = null,
-                    tint = Color.White,
+                FlatButton(
+                    modifier = Modifier.weight(0.5f),
+                    iconVector = Icons.Filled.Done,
+                    text = "Save",
+                    onClick = {},
+                )
+
+                FlatButton(
+                    modifier = Modifier.weight(0.25f),
+                    iconVector = Icons.Filled.Done,
+                    text = "& add",
+                    onClick = {},
+                )
+
+                FlatButton(
+                    modifier = Modifier.weight(0.25f),
+                    iconVector = Icons.Filled.Done,
+                    text = "& enter",
+                    onClick = {},
+                )
+            }
+
+            Row(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                MyFlatIconButton(
+                    drawableResId = R.drawable.navigate_previous,
+                    onClick = {},
+                )
+                MyFlatIconButton(
+                    drawableResId = R.drawable.arrow_left,
+                    onClick = {},
+                )
+                MyFlatIconButton(
+                    drawableResId = R.drawable.select_all,
+                    onClick = {},
+                )
+                MyFlatIconButton(
+                    drawableResId = R.drawable.arrow_right,
+                    onClick = {},
+                )
+                MyFlatIconButton(
+                    drawableResId = R.drawable.navigate_next,
+                    onClick = {},
+                )
+            }
+
+            Row(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                MyFlatIconButton(
+                    modifier = Modifier,
+                    drawableResId = R.drawable.copy,
+                    onClick = {},
+                )
+                MyFlatIconButton(
+                    drawableResId = R.drawable.paste,
+                    onClick = {},
+                )
+                MyFlatIconButton(
+                    drawableResId = R.drawable.backspace,
+                    onClick = {},
+                )
+                MyFlatIconButton(
+                    drawableResId = R.drawable.backspace_reverse,
+                    onClick = {},
+                )
+            }
+
+            Row(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                FlatButton(
+                    modifier = Modifier.weight(2f),
+                    text = "HH:mm",
+                    onClick = {},
+                )
+                FlatButton(
+                    modifier = Modifier.weight(2f),
+                    text = "dd.MM.yy",
+                    onClick = {},
+                )
+                FlatButton(
+                    modifier = Modifier.weight(1f),
+                    text = "-",
+                    onClick = {},
+                )
+                FlatButton(
+                    modifier = Modifier.weight(1f),
+                    text = ":",
+                    onClick = {},
+                )
+                FlatButton(
+                    modifier = Modifier.weight(1.5f),
+                    text = "123",
+                    onClick = {},
+                )
+            }
+
+            Row {
+                FlatButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    iconVector = Icons.Filled.Close,
+                    text = "Cancel",
+                    onClick = {},
                 )
             }
         }
@@ -141,8 +225,8 @@ private fun MainComponent(controller: EditItemLayout) {
 
 @Composable
 private fun FlatButton(
-    modifier: Modifier,
     text: String,
+    modifier: Modifier = Modifier,
     iconVector: ImageVector? = null,
     onClick: () -> Unit,
 ) {
@@ -152,11 +236,14 @@ private fun FlatButton(
                 onClick()
             }
         },
-        modifier = modifier,
-        contentPadding = PaddingValues(horizontal = 2.dp, vertical = 8.dp),
+        modifier = modifier.padding(vertical = 2.dp).heightIn(min = 40.dp),
+        contentPadding = PaddingValues(horizontal = 1.dp, vertical = 8.dp),
         shape = RoundedCornerShape(20),
         elevation = ButtonDefaults.buttonElevation(defaultElevation = 3.0.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = md_theme_dark_surfaceVariant, contentColor = Color.White),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = md_theme_dark_surfaceVariant,
+            contentColor = Color.White
+        ),
     ) {
         if (iconVector != null) {
             Icon(
@@ -168,5 +255,35 @@ private fun FlatButton(
             Spacer(Modifier.size(ButtonDefaults.IconSpacing))
         }
         Text(text)
+    }
+}
+
+@Composable
+private fun (RowScope).MyFlatIconButton(
+    @DrawableRes drawableResId: Int,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
+    Button(
+        onClick = {
+            mainScope.launch {
+                onClick()
+            }
+        },
+        modifier = modifier.weight(1f).padding(vertical = 2.dp).heightIn(min = 40.dp),
+        contentPadding = PaddingValues(horizontal = 1.dp, vertical = 0.dp),
+        shape = RoundedCornerShape(20),
+        elevation = ButtonDefaults.buttonElevation(defaultElevation = 3.0.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = md_theme_dark_surfaceVariant,
+            contentColor = Color.White
+        ),
+    ) {
+        Icon(
+            painterResource(id = drawableResId),
+            contentDescription = null,
+            modifier = Modifier.size(28.dp),
+            tint = Color.White,
+        )
     }
 }
