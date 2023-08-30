@@ -151,20 +151,20 @@ class EditItemLayout {
     }
 
     private fun isSelecting(): Boolean {
-        val selStart = state.textFieldValue.value.selection.start
-        val selEnd = state.textFieldValue.value.selection.end
-        return selEnd > selStart || state.manualSelectionMode.value
+        val selMin = state.textFieldValue.value.selection.start
+        val selMax = state.textFieldValue.value.selection.end
+        return selMin < selMax || state.manualSelectionMode.value
     }
 
     fun quickCursorMove(direction: Int) {
         val text = state.textFieldValue.value.text
-        var selStart = state.textFieldValue.value.selection.start
+        val selStart = state.textFieldValue.value.selection.start
         var selEnd = state.textFieldValue.value.selection.end
         when (isSelecting()) {
             true -> { // expand selection
                 if (direction == -1) {
-                    selStart--
-                    if (selStart < 0) selStart = 0
+                    selEnd--
+                    if (selEnd < 0) selEnd = 0
                 } else {
                     selEnd++
                     if (selEnd > text.length) selEnd = text.length
@@ -172,24 +172,23 @@ class EditItemLayout {
                 setSelection(selStart, selEnd)
             }
             else -> { // no selection, move
-                selStart += direction
-                if (selStart < 0) selStart = 0
-                if (selStart > text.length) selStart = text.length
-                setSelection(selStart)
+                var cursor = selStart + direction
+                if (cursor < 0) cursor = 0
+                if (cursor > text.length) cursor = text.length
+                setSelection(cursor)
             }
         }
     }
 
     fun quickCursorJump(direction: Int) {
         val text = state.textFieldValue.value.text
-        var selStart = state.textFieldValue.value.selection.start
-        var selEnd = state.textFieldValue.value.selection.end
         when (isSelecting()) {
             true -> { // expand selection
-                if (direction == -1) {
-                    selStart = 0
+                val selStart = state.textFieldValue.value.selection.start
+                val selEnd = if (direction == -1) {
+                    0
                 } else {
-                    selEnd = text.length
+                    text.length
                 }
                 setSelection(selStart, selEnd)
             }
@@ -209,12 +208,12 @@ class EditItemLayout {
             .copy(selection = TextRange(start, mEnd))
     }
 
-    fun quickEditSelect() {
+    fun toggleSelectionMode() {
         state.manualSelectionMode.value = !isSelecting()
         if (!state.manualSelectionMode.value) {
             val selStart = state.textFieldValue.value.selection.start
             val selEnd = state.textFieldValue.value.selection.end
-            if (selStart < selEnd) { // cancel selection
+            if (selStart != selEnd) { // cancel selection
                 setSelection(selEnd)
             }
         }
@@ -234,11 +233,47 @@ class EditItemLayout {
     }
 
     fun onBackspaceClick() {
-
+        val text = state.textFieldValue.value.text
+        val selStart = state.textFieldValue.value.selection.start
+        val selEnd = state.textFieldValue.value.selection.end
+        when {
+            selStart < selEnd -> { // erase selection
+                val newText = text.substring(0, selStart) + text.substring(selEnd, text.length)
+                state.textFieldValue.value = TextFieldValue(
+                    text = newText,
+                    selection = TextRange(selStart, selStart),
+                )
+            }
+            selStart > 0 -> {
+                val newText = text.substring(0, selStart - 1) + text.substring(selStart, text.length)
+                state.textFieldValue.value = TextFieldValue(
+                    text = newText,
+                    selection = TextRange(selStart - 1, selStart - 1),
+                )
+            }
+        }
     }
 
     fun onReverseBackspaceClick() {
-
+        val text = state.textFieldValue.value.text
+        val selStart = state.textFieldValue.value.selection.start
+        val selEnd = state.textFieldValue.value.selection.end
+        when {
+            selStart < selEnd -> { // erase selection
+                val newText = text.substring(0, selStart) + text.substring(selEnd, text.length)
+                state.textFieldValue.value = TextFieldValue(
+                    text = newText,
+                    selection = TextRange(selStart, selStart),
+                )
+            }
+            selStart < text.length -> {
+                val newText = text.substring(0, selStart) + text.substring(selStart + 1, text.length)
+                state.textFieldValue.value = TextFieldValue(
+                    text = newText,
+                    selection = TextRange(selStart, selStart),
+                )
+            }
+        }
     }
 
     fun toggleTypingHour() {
@@ -346,7 +381,7 @@ private fun MainComponent(controller: EditItemLayout) {
                 MyFlatIconButton(
                     drawableResId = R.drawable.selection,
                     onClick = {
-                        controller.quickEditSelect()
+                        controller.toggleSelectionMode()
                     },
                 )
                 MyFlatIconButton(
