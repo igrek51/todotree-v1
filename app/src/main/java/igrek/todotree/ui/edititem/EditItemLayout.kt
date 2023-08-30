@@ -39,6 +39,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import igrek.todotree.R
 import igrek.todotree.compose.AppTheme
@@ -286,4 +287,10 @@ private fun (RowScope).MyFlatIconButton(
             tint = Color.White,
         )
     }
+}
+
+@Preview
+@Composable
+fun ComposablePreview() {
+    MainComponent(EditItemLayout())
 }
