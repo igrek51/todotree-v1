@@ -37,7 +37,7 @@ class GUI {
 
     private var actionBar: ActionBar? = null
 
-    fun setMainContentLayout(layoutResource: Int): View {
+    private fun setMainContentLayout(layoutResource: Int): View {
         return when (layoutResource) {
             R.layout.component_items_list -> {
                 lvl2TreeView?.visibility = View.VISIBLE
@@ -106,15 +106,15 @@ class GUI {
                 treeListLayout.scrollToPosition(0)
             }
         }
-//        itemsListView?.scrollToItem(itemIndex)
+//      TODO  itemsListView?.scrollToItem(itemIndex)
     }
 
     fun hideSoftKeyboard() {
-//        editItemGUI!!.hideKeyboards()
+        editItemLayout.hideKeyboards()
     }
 
     fun forceKeyboardShow() {
-//        editItemGUI?.forceKeyboardShow()
+        editItemLayout.showKeyboard()
     }
 
     fun editItemBackClicked(): Boolean {

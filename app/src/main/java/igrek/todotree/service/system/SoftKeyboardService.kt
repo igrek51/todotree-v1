@@ -6,7 +6,6 @@ import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import igrek.todotree.info.logger.LoggerFactory
 import igrek.todotree.inject.LazyExtractor
-import igrek.todotree.inject.LazyInject
 import igrek.todotree.inject.appFactory
 
 
@@ -29,16 +28,21 @@ class SoftKeyboardService {
     }
 
     fun hideSoftKeyboard() {
-        //Find the currently focused view, so we can grab the correct window token from it.
-        var view = appCompatActivity.currentFocus
-        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        var view: View? = appCompatActivity.currentFocus
         if (view == null) {
             view = View(appCompatActivity)
         }
         hideSoftKeyboard(view)
     }
 
-    fun showSoftKeyboard(view: View?) {
-        imm?.showSoftInput(view, 0)
+    fun showSoftKeyboard(view: View? = null) {
+        var mView: View? = view
+        if (mView == null) {
+            mView = appCompatActivity.currentFocus
+        }
+        if (mView == null) {
+            mView = View(appCompatActivity)
+        }
+        imm?.showSoftInput(mView, 0)
     }
 }
