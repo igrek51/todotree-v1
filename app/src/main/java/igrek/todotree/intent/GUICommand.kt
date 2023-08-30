@@ -35,8 +35,4 @@ class GUICommand(
         }
     }
 
-    fun numKeyboardHyphenTyped() {
-        gui.quickInsertRange()
-    }
-
 }

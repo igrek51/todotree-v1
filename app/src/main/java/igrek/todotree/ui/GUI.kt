@@ -18,6 +18,7 @@ import igrek.todotree.info.errorcheck.SafeClickListener
 import igrek.todotree.inject.LazyExtractor
 import igrek.todotree.inject.appFactory
 import igrek.todotree.intent.ExitCommand
+import igrek.todotree.intent.ItemEditorCommand
 import igrek.todotree.intent.NavigationCommand
 import igrek.todotree.ui.edititem.EditItemLayout
 import igrek.todotree.ui.treelist.TreeListLayout
@@ -117,19 +118,14 @@ class GUI {
         editItemLayout.showKeyboard()
     }
 
-    fun editItemBackClicked(): Boolean {
-//        return editItemGUI!!.editItemBackClicked()
+    fun onEditBackClicked(): Boolean {
+        if (editItemLayout.onEditBackClicked()) return true
+        ItemEditorCommand().cancelEditedItem()
         return false
     }
 
     fun requestSaveEditedItem() {
-//        editItemGUI!!.requestSaveEditedItem()
-    }
-
-    fun quickInsertRange() {
-//        if (editItemGUI != null) {
-//            editItemGUI!!.quickInsertRange()
-//        }
+        editItemLayout.onSaveItemClick()
     }
 
     fun setTitle(title: String?) {

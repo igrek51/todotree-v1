@@ -106,7 +106,7 @@ class EditItemLayout {
         }
 
         state.remotePushingEnabled.value = RemotePushCommand().isRemotePushingEnabled()
-        state.selectionMode.value = false
+        state.manualSelectionMode.value = false
     }
 
     fun onSaveItemClick() {
@@ -153,7 +153,7 @@ class EditItemLayout {
     private fun isSelecting(): Boolean {
         val selStart = state.textFieldValue.value.selection.start
         val selEnd = state.textFieldValue.value.selection.end
-        return selEnd > selStart || state.selectionMode.value
+        return selEnd > selStart || state.manualSelectionMode.value
     }
 
     fun quickCursorMove(direction: Int) {
@@ -210,12 +210,12 @@ class EditItemLayout {
     }
 
     fun quickEditSelect() {
-        state.selectionMode.value = !isSelecting()
-        if (!state.selectionMode.value) {
+        state.manualSelectionMode.value = !isSelecting()
+        if (!state.manualSelectionMode.value) {
             val selStart = state.textFieldValue.value.selection.start
             val selEnd = state.textFieldValue.value.selection.end
-            if (selStart < selEnd) {
-                setSelection(selStart)
+            if (selStart < selEnd) { // cancel selection
+                setSelection(selEnd)
             }
         }
     }
@@ -256,6 +256,15 @@ class EditItemLayout {
     fun quickInsertColon() {
     }
 
+    private fun isNumericKeyboardVisible(): Boolean {
+        return false
+    }
+
+    fun onEditBackClicked(): Boolean {
+        val consumed = isNumericKeyboardVisible()
+        hideKeyboards()
+        return consumed
+    }
 
 }
 
@@ -264,7 +273,7 @@ class EditItemState {
     val textFieldValue: MutableState<TextFieldValue> = mutableStateOf(TextFieldValue(text = ""))
     val remotePushingEnabled: MutableState<Boolean> = mutableStateOf(false)
     val existingItem: MutableState<Boolean> = mutableStateOf(false)
-    val selectionMode: MutableState<Boolean> = mutableStateOf(false)
+    val manualSelectionMode: MutableState<Boolean> = mutableStateOf(false)
     val focusRequester: FocusRequester = FocusRequester()
 }
 
@@ -277,7 +286,12 @@ private fun MainComponent(controller: EditItemLayout) {
         Column {
             OutlinedTextField(
                 value = state.textFieldValue.value,
-                onValueChange = { state.textFieldValue.value = it },
+                onValueChange = {
+                    if (it.selection.isDifferent(state.textFieldValue.value.selection)) {
+                        state.manualSelectionMode.value = false
+                    }
+                    state.textFieldValue.value = it
+                },
                 label = null,
                 singleLine = false,
                 modifier = Modifier
@@ -509,4 +523,8 @@ private fun (RowScope).MyFlatIconButton(
 @Composable
 fun ComposablePreview() {
     MainComponent(EditItemLayout())
+}
+
+private fun TextRange.isDifferent(other: TextRange): Boolean {
+    return this.start != other.start || this.end != other.end
 }

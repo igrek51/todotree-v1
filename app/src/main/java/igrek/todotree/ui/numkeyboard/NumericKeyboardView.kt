@@ -148,7 +148,7 @@ class NumericKeyboardView : KeyboardView, OnKeyboardActionListener {
     }
 
     private fun typedHyphen() {
-        GUICommand().numKeyboardHyphenTyped()
+//        editItemGUI!!.quickInsertRange()
     }
 
     private fun typedBackspace() {

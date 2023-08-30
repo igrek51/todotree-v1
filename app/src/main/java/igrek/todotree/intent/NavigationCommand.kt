@@ -104,8 +104,7 @@ class NavigationCommand(
                 TreeCommand().goBack()
             }
         } else if (appData.isState(AppState.EDIT_ITEM_CONTENT)) {
-            if (gui.editItemBackClicked()) return true
-            ItemEditorCommand().cancelEditedItem()
+            gui.onEditBackClicked()
         }
         return true
     }
