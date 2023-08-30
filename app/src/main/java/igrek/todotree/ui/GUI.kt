@@ -5,10 +5,8 @@ import android.content.Context
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.view.View
-import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageButton
-import android.widget.RelativeLayout
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -21,7 +19,7 @@ import igrek.todotree.inject.LazyExtractor
 import igrek.todotree.inject.appFactory
 import igrek.todotree.intent.ExitCommand
 import igrek.todotree.intent.NavigationCommand
-import igrek.todotree.ui.edititem.EditItemGUI
+import igrek.todotree.ui.edititem.EditItemLayout
 import igrek.todotree.ui.treelist.TreeListLayout
 import igrek.todotree.util.mainScope
 import kotlinx.coroutines.launch
@@ -30,6 +28,7 @@ class GUI {
 
     private val appCompatActivity: AppCompatActivity by LazyExtractor(appFactory.appCompatActivity)
     private val treeListLayout: TreeListLayout by LazyExtractor(appFactory.treeListLayout)
+    private val editItemLayout: EditItemLayout by LazyExtractor(appFactory.editItemLayout)
     private val appData: AppData by LazyExtractor(appFactory.appData)
 
     private val imm: InputMethodManager? = appCompatActivity.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
@@ -37,21 +36,22 @@ class GUI {
     private var lvl2EditView: View? = null
 
     private var actionBar: ActionBar? = null
-    private var editItemGUI: EditItemGUI? = null
 
     fun setMainContentLayout(layoutResource: Int): View {
-        when (layoutResource) {
+        return when (layoutResource) {
             R.layout.component_items_list -> {
                 lvl2TreeView?.visibility = View.VISIBLE
                 lvl2EditView?.visibility = View.GONE
-                return lvl2TreeView!!
+                lvl2TreeView!!
             }
+
             R.layout.component_edit_item -> {
                 lvl2TreeView?.visibility = View.GONE
                 lvl2EditView?.visibility = View.VISIBLE
-                return lvl2EditView!!
+                lvl2EditView!!
             }
-            else -> return lvl2TreeView!!
+
+            else -> lvl2TreeView!!
         }
     }
 
@@ -75,8 +75,8 @@ class GUI {
         appCompatActivity.findViewById<ImageButton>(R.id.save2Button)?.let { save2Button ->
             save2Button.setOnClickListener { ExitCommand().optionSaveAndExit() }
         }
-        lvl2TreeView = appCompatActivity.findViewById(R.id.compose_view)
-        lvl2EditView = appCompatActivity.findViewById(R.id.frameEditItem)
+        lvl2TreeView = appCompatActivity.findViewById(R.id.compose_view_tree)
+        lvl2EditView = appCompatActivity.findViewById(R.id.compose_view_edit)
     }
 
     fun showBackButton(show: Boolean) {
@@ -87,7 +87,7 @@ class GUI {
     }
 
     fun showItemsList() {
-        setOrientationPortrait()
+//        setOrientationPortrait()
         val layoutView = setMainContentLayout(R.layout.component_items_list)
         appData.state = AppState.ITEMS_LIST
         treeListLayout.showLayout(layoutView)
@@ -95,7 +95,9 @@ class GUI {
 
     fun showEditItemPanel(item: AbstractTreeItem?, parent: AbstractTreeItem) {
         showBackButton(true)
-        editItemGUI = EditItemGUI(this, item, parent)
+        val layoutView = setMainContentLayout(R.layout.component_edit_item)
+        editItemLayout.setCurrentItem(item, parent)
+        editItemLayout.showLayout(layoutView)
     }
 
     fun scrollToItem(itemIndex: Int) {
@@ -108,19 +110,30 @@ class GUI {
     }
 
     fun hideSoftKeyboard() {
-        editItemGUI!!.hideKeyboards()
+//        editItemGUI!!.hideKeyboards()
+    }
+
+    fun forceKeyboardShow() {
+//        editItemGUI?.forceKeyboardShow()
     }
 
     fun editItemBackClicked(): Boolean {
-        return editItemGUI!!.editItemBackClicked()
+//        return editItemGUI!!.editItemBackClicked()
+        return false
+    }
+
+    fun requestSaveEditedItem() {
+//        editItemGUI!!.requestSaveEditedItem()
+    }
+
+    fun quickInsertRange() {
+//        if (editItemGUI != null) {
+//            editItemGUI!!.quickInsertRange()
+//        }
     }
 
     fun setTitle(title: String?) {
         actionBar?.title = title
-    }
-
-    fun requestSaveEditedItem() {
-        editItemGUI!!.requestSaveEditedItem()
     }
 
     @SuppressLint("SourceLockedOrientationActivity")
@@ -139,15 +152,5 @@ class GUI {
         if (orientation != Configuration.ORIENTATION_PORTRAIT) {
             appCompatActivity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
-    }
-
-    fun quickInsertRange() {
-        if (editItemGUI != null) {
-            editItemGUI!!.quickInsertRange()
-        }
-    }
-
-    fun forceKeyboardShow() {
-        editItemGUI?.forceKeyboardShow()
     }
 }

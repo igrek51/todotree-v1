@@ -28,134 +28,134 @@ class EditItemGUI(
     private var numericKeyboard: NumericKeyboardView? = null
 
     private fun init(item: AbstractTreeItem?, parent: AbstractTreeItem) {
-        val editItemContentLayout = gui.setMainContentLayout(R.layout.component_edit_item)
-        etEditItem = editItemContentLayout.findViewById<View>(R.id.etEditItemContent) as ItemEditText
-        buttonSaveItem = editItemContentLayout.findViewById<View>(R.id.buttonSaveItem) as Button
-        val buttonSaveAndAdd = editItemContentLayout.findViewById<View>(R.id.buttonSaveAndAddItem) as Button
-        val buttonSaveAndGoInto = editItemContentLayout.findViewById<View>(R.id.buttonSaveAndGoInto) as Button
-        val rotateScreenBtn = editItemContentLayout.findViewById<View>(R.id.rotateScreenBtn) as ImageButton
-
-        if (RemotePushCommand().isRemotePushingEnabled()) {
-            buttonSaveAndAdd.visibility = View.GONE
-            buttonSaveAndGoInto.visibility = View.GONE
-        }
-
-        gui.setTitle(parent.displayName)
-        if (item != null) {
-            etEditItem!!.setText(item.displayName)
-            buttonSaveItem!!.setOnClickListener(SafeClickListener {
-                if (numericKeyboard!!.isVisible) {
-                    numericKeyboard!!.finishTyping()
-                }
-                hideKeyboards()
-                ItemEditorCommand().saveItem(item, etEditItem!!.text.toString())
-            })
-            buttonSaveAndAdd.setOnClickListener(SafeClickListener {
-                ItemEditorCommand().saveAndAddItemClicked(item, etEditItem!!.text
-                        .toString())
-                hideKeyboards()
-            })
-            buttonSaveAndGoInto.setOnClickListener(SafeClickListener {
-                ItemEditorCommand().saveAndGoIntoItemClicked(item, etEditItem!!.text
-                    .toString())
-                hideKeyboards()
-            })
-        } else {
-            etEditItem!!.setText("")
-            buttonSaveItem!!.setOnClickListener(SafeClickListener {
-                if (numericKeyboard!!.isVisible) {
-                    numericKeyboard!!.finishTyping()
-                }
-                hideKeyboards()
-                ItemEditorCommand().saveItem(null, etEditItem!!.text.toString())
-            })
-            buttonSaveAndAdd.setOnClickListener(SafeClickListener {
-                ItemEditorCommand().saveAndAddItemClicked(null, etEditItem!!.text
-                        .toString())
-                hideKeyboards()
-            })
-            buttonSaveAndGoInto.setOnClickListener(SafeClickListener {
-                ItemEditorCommand().saveAndGoIntoItemClicked(null, etEditItem!!.text
-                        .toString())
-                hideKeyboards()
-            })
-        }
-        rotateScreenBtn.setOnClickListener(SafeClickListener {
-            gui.rotateScreen()
-        })
-
-        val buttonEditCancel = editItemContentLayout.findViewById<View>(R.id.buttonEditCancel) as Button
-        buttonEditCancel.setOnClickListener(SafeClickListener {
-            ItemEditorCommand().cancelEditedItem()
-            hideKeyboards()
-        })
-
-        val quickEditGoBegin = editItemContentLayout.findViewById<View>(R.id.quickEditGoBegin) as ImageButton
-        quickEditGoBegin.setOnClickListener(SafeClickListener {
-            quickCursorMove(-2)
-        })
-        val quickEditGoLeft = editItemContentLayout.findViewById<View>(R.id.quickEditGoLeft) as ImageButton
-        quickEditGoLeft.setOnClickListener(SafeClickListener {
-            quickCursorMove(-1)
-        })
-        val quickEditSelectAll = editItemContentLayout.findViewById<View>(R.id.quickEditSelectAll) as ImageButton
-        quickEditSelectAll.setOnClickListener(SafeClickListener {
-            quickEditSelectAll()
-        })
-        val quickEditGoRight = editItemContentLayout.findViewById<View>(R.id.quickEditGoRight) as ImageButton
-        quickEditGoRight.setOnClickListener(SafeClickListener {
-            quickCursorMove(+1)
-        })
-        val quickEditGoEnd = editItemContentLayout.findViewById<View>(R.id.quickEditGoEnd) as ImageButton
-        quickEditGoEnd.setOnClickListener(SafeClickListener {
-            quickCursorMove(+2)
-        })
-
-        val buttonEditInsertTime = editItemContentLayout.findViewById<View>(R.id.buttonEditInsertTime) as Button
-        buttonEditInsertTime.setOnClickListener(SafeClickListener {
-            toggleTypingHour()
-        })
-
-        val buttonEditInsertDate = editItemContentLayout.findViewById<View>(R.id.buttonEditInsertDate) as Button
-        buttonEditInsertDate.setOnClickListener(SafeClickListener {
-            toggleTypingDate()
-        })
-
-        val buttonEditInsertNumber = editItemContentLayout.findViewById<View>(R.id.buttonEditInsertNumber) as Button
-        buttonEditInsertNumber.setOnClickListener(SafeClickListener {
-            toggleTypingNumeric()
-        })
-
-        val buttonEditInsertRange = editItemContentLayout.findViewById<View>(R.id.buttonEditInsertRange) as Button
-        buttonEditInsertRange.setOnClickListener(SafeClickListener {
-            quickInsertRange()
-            numericKeyboard!!.resetInput()
-        })
-        etEditItem!!.setOnEditorActionListener(OnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                buttonSaveItem!!.performClick()
-                return@OnEditorActionListener true
-            }
-            false
-        })
-        etEditItem!!.setNumKeyboardListener(this)
-
-        etEditItem!!.setOnClickListener(SafeClickListener {
-            if (numericKeyboard!!.isVisible) {
-                showNumericKeyboard()
-                numericKeyboard!!.resetInput()
-            } else {
-                showAlphanumKeyboard()
-            }
-        })
-        numericKeyboard = editItemContentLayout.findViewById<View>(R.id.numericKeyboard) as NumericKeyboardView
-        numericKeyboard!!.init(this, etEditItem)
-
-        etEditItem!!.requestFocus()
-        quickCursorMove(+2)
-
-        // delayed execution due to not showing keyboard after action select
-        forceKeyboardShow()
+//        val editItemContentLayout = gui.setMainContentLayout(R.layout.component_edit_item)
+//        etEditItem = editItemContentLayout.findViewById<View>(R.id.etEditItemContent) as ItemEditText
+//        buttonSaveItem = editItemContentLayout.findViewById<View>(R.id.buttonSaveItem) as Button
+//        val buttonSaveAndAdd = editItemContentLayout.findViewById<View>(R.id.buttonSaveAndAddItem) as Button
+//        val buttonSaveAndGoInto = editItemContentLayout.findViewById<View>(R.id.buttonSaveAndGoInto) as Button
+//        val rotateScreenBtn = editItemContentLayout.findViewById<View>(R.id.rotateScreenBtn) as ImageButton
+//
+//        if (RemotePushCommand().isRemotePushingEnabled()) {
+//            buttonSaveAndAdd.visibility = View.GONE
+//            buttonSaveAndGoInto.visibility = View.GONE
+//        }
+//
+//        gui.setTitle(parent.displayName)
+//        if (item != null) {
+//            etEditItem!!.setText(item.displayName)
+//            buttonSaveItem!!.setOnClickListener(SafeClickListener {
+//                if (numericKeyboard!!.isVisible) {
+//                    numericKeyboard!!.finishTyping()
+//                }
+//                hideKeyboards()
+//                ItemEditorCommand().saveItem(item, etEditItem!!.text.toString())
+//            })
+//            buttonSaveAndAdd.setOnClickListener(SafeClickListener {
+//                ItemEditorCommand().saveAndAddItemClicked(item, etEditItem!!.text
+//                        .toString())
+//                hideKeyboards()
+//            })
+//            buttonSaveAndGoInto.setOnClickListener(SafeClickListener {
+//                ItemEditorCommand().saveAndGoIntoItemClicked(item, etEditItem!!.text
+//                    .toString())
+//                hideKeyboards()
+//            })
+//        } else {
+//            etEditItem!!.setText("")
+//            buttonSaveItem!!.setOnClickListener(SafeClickListener {
+//                if (numericKeyboard!!.isVisible) {
+//                    numericKeyboard!!.finishTyping()
+//                }
+//                hideKeyboards()
+//                ItemEditorCommand().saveItem(null, etEditItem!!.text.toString())
+//            })
+//            buttonSaveAndAdd.setOnClickListener(SafeClickListener {
+//                ItemEditorCommand().saveAndAddItemClicked(null, etEditItem!!.text
+//                        .toString())
+//                hideKeyboards()
+//            })
+//            buttonSaveAndGoInto.setOnClickListener(SafeClickListener {
+//                ItemEditorCommand().saveAndGoIntoItemClicked(null, etEditItem!!.text
+//                        .toString())
+//                hideKeyboards()
+//            })
+//        }
+//        rotateScreenBtn.setOnClickListener(SafeClickListener {
+//            gui.rotateScreen()
+//        })
+//
+//        val buttonEditCancel = editItemContentLayout.findViewById<View>(R.id.buttonEditCancel) as Button
+//        buttonEditCancel.setOnClickListener(SafeClickListener {
+//            ItemEditorCommand().cancelEditedItem()
+//            hideKeyboards()
+//        })
+//
+//        val quickEditGoBegin = editItemContentLayout.findViewById<View>(R.id.quickEditGoBegin) as ImageButton
+//        quickEditGoBegin.setOnClickListener(SafeClickListener {
+//            quickCursorMove(-2)
+//        })
+//        val quickEditGoLeft = editItemContentLayout.findViewById<View>(R.id.quickEditGoLeft) as ImageButton
+//        quickEditGoLeft.setOnClickListener(SafeClickListener {
+//            quickCursorMove(-1)
+//        })
+//        val quickEditSelectAll = editItemContentLayout.findViewById<View>(R.id.quickEditSelectAll) as ImageButton
+//        quickEditSelectAll.setOnClickListener(SafeClickListener {
+//            quickEditSelectAll()
+//        })
+//        val quickEditGoRight = editItemContentLayout.findViewById<View>(R.id.quickEditGoRight) as ImageButton
+//        quickEditGoRight.setOnClickListener(SafeClickListener {
+//            quickCursorMove(+1)
+//        })
+//        val quickEditGoEnd = editItemContentLayout.findViewById<View>(R.id.quickEditGoEnd) as ImageButton
+//        quickEditGoEnd.setOnClickListener(SafeClickListener {
+//            quickCursorMove(+2)
+//        })
+//
+//        val buttonEditInsertTime = editItemContentLayout.findViewById<View>(R.id.buttonEditInsertTime) as Button
+//        buttonEditInsertTime.setOnClickListener(SafeClickListener {
+//            toggleTypingHour()
+//        })
+//
+//        val buttonEditInsertDate = editItemContentLayout.findViewById<View>(R.id.buttonEditInsertDate) as Button
+//        buttonEditInsertDate.setOnClickListener(SafeClickListener {
+//            toggleTypingDate()
+//        })
+//
+//        val buttonEditInsertNumber = editItemContentLayout.findViewById<View>(R.id.buttonEditInsertNumber) as Button
+//        buttonEditInsertNumber.setOnClickListener(SafeClickListener {
+//            toggleTypingNumeric()
+//        })
+//
+//        val buttonEditInsertRange = editItemContentLayout.findViewById<View>(R.id.buttonEditInsertRange) as Button
+//        buttonEditInsertRange.setOnClickListener(SafeClickListener {
+//            quickInsertRange()
+//            numericKeyboard!!.resetInput()
+//        })
+//        etEditItem!!.setOnEditorActionListener(OnEditorActionListener { _, actionId, _ ->
+//            if (actionId == EditorInfo.IME_ACTION_DONE) {
+//                buttonSaveItem!!.performClick()
+//                return@OnEditorActionListener true
+//            }
+//            false
+//        })
+//        etEditItem!!.setNumKeyboardListener(this)
+//
+//        etEditItem!!.setOnClickListener(SafeClickListener {
+//            if (numericKeyboard!!.isVisible) {
+//                showNumericKeyboard()
+//                numericKeyboard!!.resetInput()
+//            } else {
+//                showAlphanumKeyboard()
+//            }
+//        })
+//        numericKeyboard = editItemContentLayout.findViewById<View>(R.id.numericKeyboard) as NumericKeyboardView
+//        numericKeyboard!!.init(this, etEditItem)
+//
+//        etEditItem!!.requestFocus()
+//        quickCursorMove(+2)
+//
+//        // delayed execution due to not showing keyboard after action select
+//        forceKeyboardShow()
     }
 
     fun forceKeyboardShow() {
@@ -280,9 +280,5 @@ class EditItemGUI(
 
     fun requestSaveEditedItem() {
         buttonSaveItem!!.performClick()
-    }
-
-    init {
-        init(item, parent)
     }
 }
