@@ -10,6 +10,9 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.calculatePan
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,6 +33,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.PointerInputScope
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.pointer.positionChanged
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.ComposeView
@@ -46,7 +52,6 @@ import igrek.todotree.compose.ReorderListView
 import igrek.todotree.compose.colorLinkItem
 import igrek.todotree.domain.treeitem.AbstractTreeItem
 import igrek.todotree.domain.treeitem.LinkTreeItem
-import igrek.todotree.info.logger.LoggerFactory.logger
 import igrek.todotree.inject.LazyExtractor
 import igrek.todotree.inject.appFactory
 import igrek.todotree.intent.ItemEditorCommand
@@ -60,6 +65,7 @@ import igrek.todotree.ui.contextmenu.ItemActionsMenu
 import igrek.todotree.util.mainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.math.abs
 
 class TreeListLayout {
     private val treeManager: TreeManager by LazyExtractor(appFactory.treeManager)
@@ -225,7 +231,14 @@ private fun TreeItemComposable(
                         controller.onItemLongClick(position, coordinates)
                     }
                 },
-            ),
+            ).pointerInput(id) {
+                detectMyTransformGestures { pan ->
+                    val itemW = itemsContainer.parentViewportWidth.value
+                    val itemH = itemsContainer.itemHeights.getValue(id)
+                    val position = itemsContainer.indexToPositionMap.getValue(id)
+                    handleItemGesture(pan.x, pan.y, itemW, itemH, position, item)
+                }
+            },
         verticalAlignment = Alignment.CenterVertically,
     ) {
         val selectMode: Boolean = controller.state.selectMode.value
@@ -378,5 +391,62 @@ private fun ItemIconButton(
             modifier = Modifier.size(24.dp),
             tint = Color.White,
         )
+    }
+}
+
+private const val GESTURE_MIN_DX = 0.27f
+private const val GESTURE_MAX_DY = 0.8f
+
+fun handleItemGesture(dx: Float, dy: Float, itemWidth: Float, itemHeight: Float, position: Int, item: AbstractTreeItem): Boolean? {
+    if (abs(dy) > itemHeight * GESTURE_MAX_DY) { // no swiping vertically
+        return false // consumed and breaked
+    }
+    if (dx >= itemWidth * GESTURE_MIN_DX) { // swipe right
+        mainScope.launch {
+            TreeCommand().itemGoIntoClicked(position, item)
+        }
+        return true
+    } else if (dx <= -itemWidth * GESTURE_MIN_DX) { // swipe left
+        mainScope.launch {
+            TreeCommand().goBack()
+        }
+        return true
+    }
+    return null
+}
+
+suspend fun PointerInputScope.detectMyTransformGestures(
+    onGesture: (pan: Offset) -> Boolean?,
+) {
+    awaitEachGesture {
+        var pan = Offset.Zero
+        val touchSlop = viewConfiguration.touchSlop
+
+        awaitFirstDown(requireUnconsumed = false)
+        do {
+            val event = awaitPointerEvent()
+            val canceled = event.changes.any { it.isConsumed }
+            if (!canceled) {
+                val panChange = event.calculatePan()
+
+                pan += panChange
+                val panMotion = pan.getDistance()
+                if (panMotion > touchSlop) {
+                    if (panChange != Offset.Zero) {
+                        val consumed = onGesture(pan)
+                        if (consumed == true) {
+                            event.changes.forEach {
+                                if (it.positionChanged()) {
+                                    it.consume()
+                                }
+                            }
+                            break
+                        } else if (consumed == false) {
+                            break
+                        }
+                    }
+                }
+            }
+        } while (!canceled && event.changes.any { it.pressed })
     }
 }

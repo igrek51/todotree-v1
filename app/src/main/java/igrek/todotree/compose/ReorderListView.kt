@@ -57,6 +57,7 @@ class ItemsContainer<T>(
     val positionToIndexMap: MutableMap<Int, Int> = mutableMapOf(), // real displayed index to item index (ID) on list
     var totalRelativeSwapOffset: Float = 0f,
     val overscrollDiff: MutableState<Float> = mutableStateOf(0f),
+    val parentViewportWidth: MutableState<Float> = mutableStateOf(0f),
 ) {
     fun replaceAll(newList: MutableList<T>) {
         items = newList
@@ -118,6 +119,8 @@ fun <T> ReorderListView(
                 .onGloballyPositioned { coordinates: LayoutCoordinates ->
                     parentViewportHeight.value =
                         coordinates.parentLayoutCoordinates?.size?.height?.toFloat() ?: 0f
+                    itemsContainer.parentViewportWidth.value =
+                        coordinates.parentLayoutCoordinates?.size?.width?.toFloat() ?: 0f
                 },
         ) {
 

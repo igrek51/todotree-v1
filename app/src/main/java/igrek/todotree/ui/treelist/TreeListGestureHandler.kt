@@ -25,7 +25,6 @@ class TreeListGestureHandler(private val listView: TreeListView) {
     }
 
     fun handleItemGesture(gestureX: Float, gestureY: Float, scrollOffset: Int): Boolean {
-        // TODO gesture handling
         if (listView.reorder?.isDragging == false) {
             if (gestureStartPos != null && gestureStartX != null && gestureStartY != null) {
                 if (gestureStartPos!! < listView.items!!.size) {
