@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -43,6 +44,7 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
@@ -54,11 +56,14 @@ import igrek.todotree.compose.md_theme_dark_surfaceVariant
 import igrek.todotree.compose.md_theme_light_primaryContainer
 import igrek.todotree.domain.treeitem.AbstractTreeItem
 import igrek.todotree.domain.treeitem.RootTreeItem
+import igrek.todotree.info.UiInfoService
 import igrek.todotree.info.logger.LoggerFactory
 import igrek.todotree.inject.LazyExtractor
 import igrek.todotree.inject.appFactory
+import igrek.todotree.intent.ClipboardCommand
 import igrek.todotree.intent.ItemEditorCommand
 import igrek.todotree.intent.RemotePushCommand
+import igrek.todotree.service.clipboard.SystemClipboardManager
 import igrek.todotree.service.system.SoftKeyboardService
 import igrek.todotree.ui.GUI
 import igrek.todotree.util.mainScope
@@ -68,6 +73,8 @@ import kotlinx.coroutines.launch
 class EditItemLayout {
     private val gui: GUI by LazyExtractor(appFactory.gui)
     private val softKeyboardService: SoftKeyboardService by LazyExtractor(appFactory.softKeyboardService)
+    private val uiInfoService: UiInfoService by LazyExtractor(appFactory.uiInfoService)
+    private val systemClipboardManager: SystemClipboardManager by LazyExtractor(appFactory.systemClipboardManager)
 
     private var currentItem: AbstractTreeItem? = null
     private var parent: AbstractTreeItem = RootTreeItem()
@@ -244,11 +251,31 @@ class EditItemLayout {
     }
 
     fun onCopyClick() {
-
+        val text = state.textFieldValue.value.text
+        val selMin = state.textFieldValue.value.selection.min
+        val selMax = state.textFieldValue.value.selection.max
+        if (selMin == selMax) {
+            uiInfoService.showInfo("No text selected")
+            return
+        }
+        val selectedText = text.substring(selMin, selMax)
+        ClipboardCommand().copyAsText(selectedText)
     }
 
     fun onPasteClick() {
-
+        val clipboardText = systemClipboardManager.systemClipboard.takeIf { !it.isNullOrBlank() }
+            ?: return run {
+                uiInfoService.showInfo("Clipboard is empty")
+            }
+        val text = state.textFieldValue.value.text
+        val selMin = state.textFieldValue.value.selection.min
+        val selMax = state.textFieldValue.value.selection.max
+        val newText = text.substring(0, selMin) + clipboardText + text.substring(selMax)
+        val position = selMax + clipboardText.length
+        state.textFieldValue.value = TextFieldValue(
+            text = newText,
+            selection = TextRange(position, position),
+        )
     }
 
     fun onBackspaceClick() {
@@ -305,7 +332,7 @@ class EditItemLayout {
         state.numericKeyboard.value = !state.numericKeyboard.value
     }
 
-    fun quickInsertRange() {
+    fun insertHyphen() {
         val text = state.textFieldValue.value.text
         val selMin = state.textFieldValue.value.selection.min
         val selMax = state.textFieldValue.value.selection.max
@@ -328,18 +355,19 @@ class EditItemLayout {
         )
     }
 
-    fun quickInsertColon() {
+    fun insertColon() {
         val text = state.textFieldValue.value.text
         val selMin = state.textFieldValue.value.selection.min
         val selMax = state.textFieldValue.value.selection.max
         val before = text.substring(0, selMin)
         val after = text.substring(selMax)
         var position = selMin
-        val inserted2 = when {
+        val insertedAfter = when {
+            state.numericKeyboard.value -> ""
             after.isNotEmpty() && after.first() == ' ' -> ""
             else -> " "
         }
-        val inserted = ":$inserted2"
+        val inserted = ":$insertedAfter"
         position += inserted.length
         state.textFieldValue.value = TextFieldValue(
             text = before + inserted + after,
@@ -347,14 +375,9 @@ class EditItemLayout {
         )
     }
 
-    private fun isNumericKeyboardVisible(): Boolean {
-        return false
-    }
-
     fun onEditBackClicked(): Boolean {
-        val consumed = isNumericKeyboardVisible()
         hideKeyboards()
-        return consumed
+        return false
     }
 
 }
@@ -377,8 +400,8 @@ private fun MainComponent(controller: EditItemLayout) {
     CompositionLocalProvider(LocalMinimumInteractiveComponentEnforcement provides false) {
         Column {
             val keyboardOptions: KeyboardOptions = when (state.numericKeyboard.value) {
-                true -> KeyboardOptions(keyboardType = KeyboardType.Number)
-                false -> KeyboardOptions(keyboardType = KeyboardType.Text)
+                true -> KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done)
+                false -> KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Default)
             }
             OutlinedTextField(
                 value = state.textFieldValue.value,
@@ -387,7 +410,6 @@ private fun MainComponent(controller: EditItemLayout) {
                     if (it.selection.isDifferent(currentSelection)) {
                         state.manualSelectionMode.value = false
                     }
-                    LoggerFactory.logger.debug("on value change: ${it.selection.start} - ${it.selection.end}")
                     // prevent from reversing selection
                     if (it.selection.start != it.selection.end &&
                         it.selection.start == currentSelection.end &&
@@ -400,6 +422,11 @@ private fun MainComponent(controller: EditItemLayout) {
                 label = null,
                 singleLine = false,
                 keyboardOptions = keyboardOptions,
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        state.numericKeyboard.value = false
+                    }
+                ),
                 modifier = Modifier
                     .padding(vertical = 1.dp)
                     .fillMaxWidth()
@@ -452,12 +479,6 @@ private fun MainComponent(controller: EditItemLayout) {
                 )
                 ToggleSelectionButton(controller)
                 MyFlatIconButton(
-                    drawableResId = R.drawable.select_all,
-                    onClick = {
-                        controller.selectAllText()
-                    },
-                )
-                MyFlatIconButton(
                     drawableResId = R.drawable.arrow_right,
                     onClick = {
                         controller.quickCursorMove(+1)
@@ -483,6 +504,12 @@ private fun MainComponent(controller: EditItemLayout) {
                     drawableResId = R.drawable.paste,
                     onClick = {
                         controller.onPasteClick()
+                    },
+                )
+                MyFlatIconButton(
+                    drawableResId = R.drawable.select_all,
+                    onClick = {
+                        controller.selectAllText()
                     },
                 )
                 MyFlatIconButton(
@@ -518,14 +545,14 @@ private fun MainComponent(controller: EditItemLayout) {
                     modifier = Modifier.weight(1f),
                     text = "-",
                     onClick = {
-                        controller.quickInsertRange()
+                        controller.insertHyphen()
                     },
                 )
                 FlatButton(
                     modifier = Modifier.weight(1f),
                     text = ":",
                     onClick = {
-                        controller.quickInsertColon()
+                        controller.insertColon()
                     },
                 )
                 FlatButton(

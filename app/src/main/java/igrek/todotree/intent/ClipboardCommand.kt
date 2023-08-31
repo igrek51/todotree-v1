@@ -135,4 +135,10 @@ class ClipboardCommand(
         link.setTarget(treeClipboardManager.copiedFrom!!, clipboardItem.displayName)
         return link
     }
+
+    fun copyAsText(text: String) {
+        systemClipboardManager.copyToSystemClipboard(text)
+        treeClipboardManager.clearClipboard()
+        uiInfoService.showInfo("Text copied.")
+    }
 }

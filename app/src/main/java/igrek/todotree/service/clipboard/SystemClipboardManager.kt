@@ -7,8 +7,7 @@ import android.content.ClipboardManager
 import igrek.todotree.inject.LazyExtractor
 import igrek.todotree.inject.appFactory
 
-open class SystemClipboardManager (
-) {
+open class SystemClipboardManager {
     private val activity: Activity by LazyExtractor(appFactory.activity)
 
     open fun copyToSystemClipboard(text: String?) {
