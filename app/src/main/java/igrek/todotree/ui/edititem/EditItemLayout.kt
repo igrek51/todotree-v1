@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Done
@@ -42,6 +43,7 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -112,6 +114,7 @@ class EditItemLayout {
 
         state.remotePushingEnabled.value = RemotePushCommand().isRemotePushingEnabled()
         state.manualSelectionMode.value = false
+        state.numericKeyboard.value = false
     }
 
     fun onSaveItemClick() {
@@ -299,6 +302,7 @@ class EditItemLayout {
     }
 
     fun toggleTypingNumeric() {
+        state.numericKeyboard.value = !state.numericKeyboard.value
     }
 
     fun quickInsertRange() {
@@ -361,6 +365,7 @@ class EditItemState {
     val remotePushingEnabled: MutableState<Boolean> = mutableStateOf(false)
     val existingItem: MutableState<Boolean> = mutableStateOf(false)
     val manualSelectionMode: MutableState<Boolean> = mutableStateOf(false)
+    val numericKeyboard: MutableState<Boolean> = mutableStateOf(false)
     val focusRequester: FocusRequester = FocusRequester()
 }
 
@@ -371,6 +376,10 @@ private fun MainComponent(controller: EditItemLayout) {
     val state = controller.state
     CompositionLocalProvider(LocalMinimumInteractiveComponentEnforcement provides false) {
         Column {
+            val keyboardOptions: KeyboardOptions = when (state.numericKeyboard.value) {
+                true -> KeyboardOptions(keyboardType = KeyboardType.Number)
+                false -> KeyboardOptions(keyboardType = KeyboardType.Text)
+            }
             OutlinedTextField(
                 value = state.textFieldValue.value,
                 onValueChange = {
@@ -390,11 +399,12 @@ private fun MainComponent(controller: EditItemLayout) {
                 },
                 label = null,
                 singleLine = false,
+                keyboardOptions = keyboardOptions,
                 modifier = Modifier
                     .padding(vertical = 1.dp)
                     .fillMaxWidth()
                     .focusRequester(state.focusRequester),
-                textStyle = TextStyle.Default.copy(fontSize = 16.sp)
+                textStyle = TextStyle.Default.copy(fontSize = 16.sp),
             )
 
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
