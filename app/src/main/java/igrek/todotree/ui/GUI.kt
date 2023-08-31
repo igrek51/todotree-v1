@@ -110,7 +110,7 @@ class GUI {
     }
 
     fun hideSoftKeyboard() {
-        editItemLayout.hideKeyboards()
+        editItemLayout.hideKeyboard()
     }
 
     fun forceKeyboardShow() {

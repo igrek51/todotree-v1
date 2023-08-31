@@ -1,66 +1,15 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
-
 package igrek.todotree.ui.edititem
 
 import android.view.View
-import androidx.annotation.DrawableRes
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Done
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalMinimumInteractiveComponentEnforcement
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.input.key.KeyEventType
-import androidx.compose.ui.input.key.onKeyEvent
-import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextRange
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import igrek.todotree.R
 import igrek.todotree.compose.AppTheme
-import igrek.todotree.compose.md_theme_dark_surfaceVariant
-import igrek.todotree.compose.md_theme_light_primaryContainer
 import igrek.todotree.domain.treeitem.AbstractTreeItem
 import igrek.todotree.domain.treeitem.RootTreeItem
 import igrek.todotree.info.UiInfoService
-import igrek.todotree.info.logger.LoggerFactory
 import igrek.todotree.inject.LazyExtractor
 import igrek.todotree.inject.appFactory
 import igrek.todotree.intent.ClipboardCommand
@@ -69,8 +18,6 @@ import igrek.todotree.intent.RemotePushCommand
 import igrek.todotree.service.clipboard.SystemClipboardManager
 import igrek.todotree.service.system.SoftKeyboardService
 import igrek.todotree.ui.GUI
-import igrek.todotree.util.mainScope
-import kotlinx.coroutines.launch
 
 
 class EditItemLayout {
@@ -83,6 +30,7 @@ class EditItemLayout {
     private var parent: AbstractTreeItem = RootTreeItem()
 
     val state = EditItemState()
+    val numericTyper = NumericTyper(state)
 
     fun setCurrentItem(currentItem: AbstractTreeItem?, parent: AbstractTreeItem) {
         this.currentItem = currentItem
@@ -103,9 +51,7 @@ class EditItemLayout {
         }
 
         state.focusRequester.requestFocus()
-
         gui.setTitle(parent.displayName)
-
         showKeyboard()
     }
 
@@ -130,7 +76,7 @@ class EditItemLayout {
     }
 
     fun onSaveItemClick() {
-        hideKeyboards()
+        hideKeyboard()
         currentItem?.let { item ->
             ItemEditorCommand().saveItem(item, state.textFieldValue.value.text)
         } ?: run {
@@ -139,7 +85,7 @@ class EditItemLayout {
     }
 
     fun onSaveAndAddClick() {
-        hideKeyboards()
+        hideKeyboard()
         currentItem?.let { item ->
             ItemEditorCommand().saveAndAddItemClicked(item, state.textFieldValue.value.text)
         } ?: run {
@@ -148,7 +94,7 @@ class EditItemLayout {
     }
 
     fun onSaveAndEnterClick() {
-        hideKeyboards()
+        hideKeyboard()
         currentItem?.let { item ->
             ItemEditorCommand().saveAndGoIntoItemClicked(item, state.textFieldValue.value.text)
         } ?: run {
@@ -157,17 +103,17 @@ class EditItemLayout {
     }
 
     fun onCancelClick() {
-        hideKeyboards()
+        hideKeyboard()
         ItemEditorCommand().cancelEditedItem()
-    }
-
-    fun hideKeyboards() {
-        state.focusRequester.freeFocus()
-        softKeyboardService.hideSoftKeyboard()
     }
 
     fun showKeyboard() {
         softKeyboardService.showSoftKeyboard()
+    }
+
+    fun hideKeyboard() {
+        state.focusRequester.freeFocus()
+        softKeyboardService.hideSoftKeyboard()
     }
 
     fun isSelecting(): Boolean {
@@ -327,104 +273,8 @@ class EditItemLayout {
         }
     }
 
-    fun toggleTypingHour() {
-        state.typingDate.value = false
-        when (state.typingHour.value) {
-            true -> {
-                closeNumericKeyboard()
-                state.typingHour.value = false
-            }
-            false -> {
-                state.typingHour.value = true
-                state.numericKeyboard.value = true
-                state.numericBuffer.value = ""
-            }
-        }
-    }
-
-    fun toggleTypingDate() {
-        state.typingHour.value = false
-        when (state.typingDate.value) {
-            true -> {
-                closeNumericKeyboard()
-                state.typingDate.value = false
-            }
-            false -> {
-                state.typingDate.value = true
-                state.numericKeyboard.value = true
-                state.numericBuffer.value = ""
-            }
-        }
-    }
-
-    fun toggleTypingNumeric() {
-        if (state.numericKeyboard.value)
-            finishNumericTyping()
-        state.typingHour.value = false
-        state.typingDate.value = false
-        state.numericKeyboard.value = !state.numericKeyboard.value
-        state.numericBuffer.value = ""
-    }
-
-    fun closeNumericKeyboard() {
-        finishNumericTyping()
-        state.numericKeyboard.value = false
-        state.typingHour.value = false
-        state.typingDate.value = false
-    }
-
-    fun onKeyUp(keyCode: Int, key: Char) {
-        when {
-            keyCode in 7 .. 16 && (state.typingHour.value || state.typingDate.value) -> { // 0-9 numbers
-                state.numericBuffer.value += key
-                checkNumericTypingBuffer()
-            }
-            keyCode == 67 -> { // backspace
-                if (state.numericBuffer.value.isNotEmpty()) {
-                    state.numericBuffer.value = state.numericBuffer.value.dropLast(1)
-                }
-            }
-            else -> finishNumericTyping()
-        }
-    }
-
-    private fun checkNumericTypingBuffer() {
-        val buffer = state.numericBuffer.value
-        when {
-            state.typingHour.value && buffer.length >= 4 -> closeNumericKeyboard()
-            state.typingDate.value && buffer.length >= 4 -> closeNumericKeyboard()
-        }
-    }
-
-    private fun finishNumericTyping() {
-        val buffer = state.numericBuffer.value
-        val text = state.textFieldValue.value.text
-        var cursor = state.textFieldValue.value.selection.max
-        when {
-            state.typingHour.value && buffer.length >= 3 -> { // hour 01:02 or 1:02
-                val edited = text.insertAt(":", cursor - 2)
-                cursor += 1
-                state.textFieldValue.value = TextFieldValue(
-                    text = edited,
-                    selection = TextRange(cursor, cursor),
-                )
-                state.typingHour.value = false
-            }
-            state.typingDate.value && buffer.length >= 3 -> { // date 01.02 or 1.02
-                val edited = text.insertAt(".", cursor - 2)
-                cursor += 1
-                state.textFieldValue.value = TextFieldValue(
-                    text = edited,
-                    selection = TextRange(cursor, cursor),
-                )
-                state.typingDate.value = false
-            }
-        }
-        state.numericBuffer.value = ""
-    }
-
     fun insertHyphen() {
-        finishNumericTyping()
+        numericTyper.finishNumericTyping()
         val text = state.textFieldValue.value.text
         val selMin = state.textFieldValue.value.selection.min
         val selMax = state.textFieldValue.value.selection.max
@@ -448,7 +298,7 @@ class EditItemLayout {
     }
 
     fun insertColon() {
-        finishNumericTyping()
+        numericTyper.finishNumericTyping()
         val text = state.textFieldValue.value.text
         val selMin = state.textFieldValue.value.selection.min
         val selMax = state.textFieldValue.value.selection.max
@@ -469,7 +319,7 @@ class EditItemLayout {
     }
 
     fun onEditBackClicked(): Boolean {
-        hideKeyboards()
+        hideKeyboard()
         return false
     }
 
@@ -489,306 +339,6 @@ class EditItemLayout {
     }
 }
 
-
-class EditItemState {
-    val textFieldValue: MutableState<TextFieldValue> = mutableStateOf(TextFieldValue(text = ""))
-    val remotePushingEnabled: MutableState<Boolean> = mutableStateOf(false)
-    val existingItem: MutableState<Boolean> = mutableStateOf(false)
-    val manualSelectionMode: MutableState<Boolean> = mutableStateOf(false)
-    val numericKeyboard: MutableState<Boolean> = mutableStateOf(false)
-    val numericBuffer: MutableState<String> = mutableStateOf("")
-    val typingHour: MutableState<Boolean> = mutableStateOf(false)
-    val typingDate: MutableState<Boolean> = mutableStateOf(false)
-    val focusRequester: FocusRequester = FocusRequester()
-}
-
-
-@Composable
-private fun MainComponent(controller: EditItemLayout) {
-    LoggerFactory.logger.debug("recomposition: EditItemLayout Main")
-    val state = controller.state
-    CompositionLocalProvider(LocalMinimumInteractiveComponentEnforcement provides false) {
-        Column {
-            val keyboardOptions: KeyboardOptions = when (state.numericKeyboard.value) {
-                true -> KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done)
-                false -> KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Default)
-            }
-            OutlinedTextField(
-                value = state.textFieldValue.value,
-                onValueChange = {
-                    controller.onTextChange(it)
-                },
-                label = null,
-                singleLine = false,
-                keyboardOptions = keyboardOptions,
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        controller.closeNumericKeyboard()
-                    }
-                ),
-                modifier = Modifier
-                    .padding(vertical = 1.dp)
-                    .fillMaxWidth()
-                    .focusRequester(state.focusRequester)
-                    .onKeyEvent {
-                        if (it.type == KeyEventType.KeyUp) {
-                            controller.onKeyUp(it.nativeKeyEvent.keyCode, it.nativeKeyEvent.number)
-                        }
-                        false
-                    },
-                textStyle = TextStyle.Default.copy(fontSize = 16.sp),
-            )
-
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                FlatButton(
-                    modifier = Modifier.weight(0.5f),
-                    iconVector = Icons.Filled.Done,
-                    text = "Save",
-                    onClick = {
-                        controller.onSaveItemClick()
-                    },
-                )
-
-                if (!controller.state.remotePushingEnabled.value) {
-                    FlatButton(
-                        modifier = Modifier.weight(0.25f),
-                        iconVector = Icons.Filled.Done,
-                        text = "& add",
-                        onClick = {
-                            controller.onSaveAndAddClick()
-                        },
-                    )
-                    FlatButton(
-                        modifier = Modifier.weight(0.25f),
-                        iconVector = Icons.Filled.Done,
-                        text = "& enter",
-                        onClick = {
-                            controller.onSaveAndEnterClick()
-                        },
-                    )
-                }
-            }
-
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                MyFlatIconButton(
-                    drawableResId = R.drawable.navigate_previous,
-                    onClick = {
-                        controller.quickCursorJump(-1)
-                    },
-                )
-                MyFlatIconButton(
-                    drawableResId = R.drawable.arrow_left,
-                    onClick = {
-                        controller.quickCursorMove(-1)
-                    },
-                )
-                ToggleSelectionButton(controller)
-                MyFlatIconButton(
-                    drawableResId = R.drawable.arrow_right,
-                    onClick = {
-                        controller.quickCursorMove(+1)
-                    },
-                )
-                MyFlatIconButton(
-                    drawableResId = R.drawable.navigate_next,
-                    onClick = {
-                        controller.quickCursorJump(+1)
-                    },
-                )
-            }
-
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                MyFlatIconButton(
-                    modifier = Modifier,
-                    drawableResId = R.drawable.copy,
-                    onClick = {
-                        controller.onCopyClick()
-                    },
-                )
-                MyFlatIconButton(
-                    drawableResId = R.drawable.paste,
-                    onClick = {
-                        controller.onPasteClick()
-                    },
-                )
-                MyFlatIconButton(
-                    drawableResId = R.drawable.select_all,
-                    onClick = {
-                        controller.selectAllText()
-                    },
-                )
-                MyFlatIconButton(
-                    drawableResId = R.drawable.backspace,
-                    onClick = {
-                        controller.onBackspaceClick()
-                    },
-                )
-                MyFlatIconButton(
-                    drawableResId = R.drawable.backspace_reverse,
-                    onClick = {
-                        controller.onReverseBackspaceClick()
-                    },
-                )
-            }
-
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                FlatButton(
-                    modifier = Modifier.weight(2f),
-                    text = "HH:mm",
-                    onClick = {
-                        controller.toggleTypingHour()
-                    },
-                )
-                FlatButton(
-                    modifier = Modifier.weight(2f),
-                    text = "dd.MM",
-                    onClick = {
-                        controller.toggleTypingDate()
-                    },
-                )
-                FlatButton(
-                    modifier = Modifier.weight(1f),
-                    text = "-",
-                    onClick = {
-                        controller.insertHyphen()
-                    },
-                )
-                FlatButton(
-                    modifier = Modifier.weight(1f),
-                    text = ":",
-                    onClick = {
-                        controller.insertColon()
-                    },
-                )
-                FlatButton(
-                    modifier = Modifier.weight(1.5f),
-                    text = "123",
-                    onClick = {
-                        controller.toggleTypingNumeric()
-                    },
-                )
-            }
-
-            Row {
-                FlatButton(
-                    modifier = Modifier.fillMaxWidth(),
-                    iconVector = Icons.Filled.Close,
-                    text = "Cancel",
-                    onClick = {
-                        controller.onCancelClick()
-                    },
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun FlatButton(
-    text: String,
-    modifier: Modifier = Modifier,
-    iconVector: ImageVector? = null,
-    onClick: () -> Unit,
-) {
-    Button(
-        onClick = {
-            mainScope.launch {
-                onClick()
-            }
-        },
-        modifier = modifier
-            .padding(vertical = 2.dp)
-            .heightIn(min = 40.dp),
-        contentPadding = PaddingValues(horizontal = 1.dp, vertical = 8.dp),
-        shape = RoundedCornerShape(20),
-        elevation = ButtonDefaults.buttonElevation(defaultElevation = 3.0.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = md_theme_dark_surfaceVariant,
-            contentColor = Color.White
-        ),
-    ) {
-        if (iconVector != null) {
-            Icon(
-                iconVector,
-                contentDescription = null,
-                modifier = Modifier.size(ButtonDefaults.IconSize),
-                tint = md_theme_light_primaryContainer,
-            )
-            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-        }
-        Text(text)
-    }
-}
-
-@Composable
-private fun (RowScope).MyFlatIconButton(
-    @DrawableRes drawableResId: Int,
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit,
-) {
-    Button(
-        onClick = {
-            mainScope.launch {
-                onClick()
-            }
-        },
-        modifier = modifier
-            .weight(1f)
-            .padding(vertical = 2.dp)
-            .heightIn(min = 40.dp),
-        contentPadding = PaddingValues(horizontal = 1.dp, vertical = 0.dp),
-        shape = RoundedCornerShape(20),
-        elevation = ButtonDefaults.buttonElevation(defaultElevation = 3.0.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = md_theme_dark_surfaceVariant,
-            contentColor = Color.White
-        ),
-    ) {
-        Icon(
-            painterResource(id = drawableResId),
-            contentDescription = null,
-            modifier = Modifier.size(28.dp),
-            tint = Color.White,
-        )
-    }
-}
-
-@Composable
-private fun (RowScope).ToggleSelectionButton(
-    controller: EditItemLayout,
-) {
-    val isSelecting: Boolean by remember {
-        derivedStateOf {
-            controller.isSelecting()
-        }
-    }
-    val drawableResId = when (isSelecting) {
-        true -> R.drawable.selection_remove
-        false -> R.drawable.selection
-    }
-    MyFlatIconButton(
-        drawableResId = drawableResId,
-        onClick = {
-            controller.toggleSelectionMode()
-        },
-    )
-}
-
-@Preview
-@Composable
-fun ComposablePreview() {
-    MainComponent(EditItemLayout())
-}
-
 private fun TextRange.isDifferent(other: TextRange): Boolean {
     return this.start != other.start || this.end != other.end
-}
-
-private fun String.insertAt(c: String, offset: Int): String {
-    var mOffset = offset
-    if (mOffset < 0) mOffset = 0
-    if (mOffset > this.length) mOffset = this.length
-    val before = this.substring(0, mOffset)
-    val after = this.substring(mOffset)
-    return before + c + after
 }
