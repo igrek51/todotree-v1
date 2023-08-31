@@ -35,7 +35,7 @@ class TreeScrollCache {
         mainScope.launch {
             for (attempt in 1..8) {
                 treeListLayout.scrollToPosition(y)
-                delay(attempt * 50L) // 1800 ms in total
+                delay(attempt * 25L) // 900 ms in total
                 val diff = abs(treeListLayout.state.scrollState.value - y)
                 if (diff < 5)
                     return@launch
@@ -47,5 +47,4 @@ class TreeScrollCache {
     fun clear() {
         storedScrollPositions.clear()
     }
-
 }

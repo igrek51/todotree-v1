@@ -46,14 +46,14 @@ class TreeManager(
         return currentItem!!.getChild(position)
     }
 
-    fun addToCurrent(_position: Int?, item: AbstractTreeItem) {
-        var position = _position
-        if (position == null) {
-            position = currentItem!!.size()
+    fun addToCurrent(position: Int?, item: AbstractTreeItem) {
+        var mPosition = position
+        if (mPosition == null) {
+            mPosition = currentItem!!.size()
         }
         item.setParent(currentItem)
         changesHistory.registerChange()
-        currentItem!!.add(position, item)
+        currentItem!!.add(mPosition, item)
         StatisticsCommand().onTaskCreated(item)
     }
 

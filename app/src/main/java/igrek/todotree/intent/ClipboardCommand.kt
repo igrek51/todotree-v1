@@ -10,7 +10,6 @@ import igrek.todotree.inject.appFactory
 import igrek.todotree.service.clipboard.SystemClipboardManager
 import igrek.todotree.service.clipboard.TreeClipboardManager
 import igrek.todotree.service.tree.TreeManager
-import igrek.todotree.service.tree.TreeScrollCache
 import igrek.todotree.service.tree.TreeSelectionManager
 import java.util.TreeSet
 
@@ -20,100 +19,112 @@ class ClipboardCommand(
     treeClipboardManager: LazyInject<TreeClipboardManager> = appFactory.treeClipboardManager,
     uiInfoService: LazyInject<UiInfoService> = appFactory.uiInfoService,
     treeSelectionManager: LazyInject<TreeSelectionManager> = appFactory.treeSelectionManager,
-    treeScrollCache: LazyInject<TreeScrollCache> = appFactory.treeScrollCache,
 ) {
     private val treeManager by LazyExtractor(treeManager)
     private val systemClipboardManager by LazyExtractor(systemClipboardManager)
     private val treeClipboardManager by LazyExtractor(treeClipboardManager)
     private val uiInfoService by LazyExtractor(uiInfoService)
     private val treeSelectionManager by LazyExtractor(treeSelectionManager)
-    private val treeScrollCache by LazyExtractor(treeScrollCache)
-
-    fun copyItems(itemPosistions: Set<Int>, info: Boolean) {
-        if (itemPosistions.isNotEmpty()) {
-            treeClipboardManager.clearClipboard()
-            val currentItem = treeManager.currentItem
-            treeClipboardManager.copiedFrom = currentItem
-            for (selectedItemId in itemPosistions) {
-                currentItem?.getChild(selectedItemId)?.let { selectedItem ->
-                    treeClipboardManager.addToClipboard(selectedItem)
-                }
-            }
-
-            val copyText = treeClipboardManager.clipboard!!.joinToString("\n") {
-                it.displayName
-            }
-            systemClipboardManager.copyToSystemClipboard(copyText)
-
-            if (treeClipboardManager.clipboardSize == 1) {
-                val item = treeClipboardManager.clipboard!![0]
-                if (info) uiInfoService.showInfo("Item copied: " + item.displayName)
-            } else {
-                if (info) uiInfoService.showInfo("Items copied: " + treeClipboardManager.clipboardSize)
-            }
-            // deselect items
-            if (treeSelectionManager.isAnythingSelected) {
-                ItemSelectionCommand().deselectAll()
-            }
-        } else {
-            if (info) uiInfoService.showInfo("No items to copy.")
-        }
-    }
 
     fun copySelectedItems() {
-        if (treeSelectionManager.isAnythingSelected) {
-            copyItems(treeSelectionManager.selectedItems!!, true)
-        } else {
+        if (!treeSelectionManager.isAnythingSelected) {
             uiInfoService.showInfo("No selected items")
+            return
         }
+        copyItems(treeSelectionManager.selectedItems!!, true)
     }
 
-    fun cutItems(itemPosistions: TreeSet<Int>) {
-        if (!itemPosistions.isEmpty()) {
-            copyItems(itemPosistions, false)
-            uiInfoService.showInfo("Items cut: " + itemPosistions.size)
-            ItemTrashCommand().removeItems(itemPosistions, false)
+    fun copyItems(itemPosistions: Set<Int>, info: Boolean, cut: Boolean = false) {
+        if (itemPosistions.isEmpty()) {
+            if (info)
+                uiInfoService.showInfo("No items to copy")
+            return
+        }
+        treeClipboardManager.clearClipboard()
+        val currentItem = treeManager.currentItem
+        treeClipboardManager.copiedFrom = currentItem
+        treeClipboardManager.markForCut = cut
+        for (selectedItemId in itemPosistions) {
+            currentItem?.getChild(selectedItemId)?.let { selectedItem ->
+                treeClipboardManager.addToClipboard(selectedItem)
+            }
+        }
+
+        if (!cut) {
+            val copiedText = treeClipboardManager.clipboard!!.joinToString("\n") {
+                it.displayName
+            }
+            systemClipboardManager.copyToSystemClipboard(copiedText)
+        }
+
+        if (info) {
+            if (treeClipboardManager.clipboardSize == 1) {
+                val item = treeClipboardManager.clipboard!![0]
+                uiInfoService.showInfo("Item copied: ${item.displayName}")
+            } else {
+                uiInfoService.showInfo("Items copied: ${treeClipboardManager.clipboardSize}")
+            }
+        }
+
+        if (treeSelectionManager.isAnythingSelected) {
+            ItemSelectionCommand().deselectAll()
         }
     }
 
     fun cutSelectedItems() {
-        if (treeSelectionManager.isAnythingSelected) {
-            cutItems(treeSelectionManager.selectedItems!!)
-        } else {
+        if (!treeSelectionManager.isAnythingSelected) {
             uiInfoService.showInfo("No selected items")
+            return
         }
+        cutItems(treeSelectionManager.selectedItems!!)
+    }
+
+    fun cutItems(itemPosistions: TreeSet<Int>) {
+        if (itemPosistions.isEmpty()) return
+        copyItems(itemPosistions, false, cut=true)
+        uiInfoService.showInfo("Marked for cut: " + itemPosistions.size)
     }
 
     fun pasteItems(aPosition: Int) {
         var position = aPosition
-        treeScrollCache.storeScrollPosition()
         if (treeClipboardManager.isClipboardEmpty) {
-            val systemClipboard = systemClipboardManager.systemClipboard
-            if (systemClipboard != null) {
-                //wklejanie 1 elementu z systemowego schowka
-                treeManager.addToCurrent(position, TextTreeItem(systemClipboard))
-                uiInfoService.showInfo("Item pasted: $systemClipboard")
-                GUICommand().updateItemsList()
-                treeScrollCache.restoreScrollPosition()
-            } else {
+            // recover by taking text from system clipboard
+            val systemClipboard = systemClipboardManager.systemClipboard ?: return run {
                 uiInfoService.showInfo("Clipboard is empty.")
             }
-        } else {
-            for (clipboardItem in treeClipboardManager.clipboard ?: emptyList()) {
-                clipboardItem.setParent(treeManager.currentItem)
-                treeManager.addToCurrent(position, clipboardItem)
-                position++ // next item pasted below
-            }
-            uiInfoService.showInfo("Items pasted: " + treeClipboardManager.clipboardSize)
-            treeClipboardManager.recopyClipboard()
+            treeManager.addToCurrent(position, TextTreeItem(systemClipboard))
+            uiInfoService.showInfo("Item pasted: $systemClipboard")
             GUICommand().updateItemsList()
-            treeScrollCache.restoreScrollPosition()
+            return
+        }
+        when (treeClipboardManager.markForCut) {
+            false -> {
+                for (clipboardItem in treeClipboardManager.clipboard ?: emptyList()) {
+                    clipboardItem.setParent(treeManager.currentItem)
+                    treeManager.addToCurrent(position, clipboardItem)
+                    position++ // paste next items below
+                }
+                uiInfoService.showInfo("Items pasted: ${treeClipboardManager.clipboardSize}")
+                treeClipboardManager.recopyClipboard()
+                GUICommand().updateItemsList()
+            }
+            true -> {
+                for (clipboardItem in treeClipboardManager.clipboard ?: emptyList()) {
+                    val oldParent = clipboardItem.getParent()
+                    oldParent?.remove(clipboardItem)
+                    clipboardItem.setParent(treeManager.currentItem)
+                    treeManager.addToCurrent(position, clipboardItem)
+                    position++ // paste next items below
+                }
+                treeClipboardManager.markForCut = false
+                uiInfoService.showInfo("Items moved: ${treeClipboardManager.clipboardSize}")
+                GUICommand().updateItemsList()
+            }
         }
     }
 
     fun pasteItemsAsLink(aPosition: Int) {
         var position = aPosition
-        treeScrollCache.storeScrollPosition()
         if (treeClipboardManager.isClipboardEmpty) {
             uiInfoService.showInfo("Clipboard is empty.")
         } else {
@@ -123,7 +134,6 @@ class ClipboardCommand(
             }
             uiInfoService.showInfo("Items pasted as links: " + treeClipboardManager.clipboardSize)
             GUICommand().updateItemsList()
-            treeScrollCache.restoreScrollPosition()
         }
     }
 

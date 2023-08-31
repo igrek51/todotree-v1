@@ -54,7 +54,7 @@ class ItemTrashCommand(
         removeItems(treeSelectionManager.selectedItems!!, true)
     }
 
-    fun removeItems(selectedIds: TreeSet<Int>, printInfo: Boolean) {
+    private fun removeItems(selectedIds: TreeSet<Int>, printInfo: Boolean) {
         //descending order in order to not overwriting indices when removing
         val iterator = selectedIds.descendingIterator()
         while (iterator.hasNext()) {

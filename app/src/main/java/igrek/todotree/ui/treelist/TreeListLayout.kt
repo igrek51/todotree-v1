@@ -247,7 +247,7 @@ private fun TreeItemComposable(
         if (!selectMode) {
             IconButton(
                 modifier = reorderButtonModifier
-                    .size(34.dp, 36.dp), // TODO fill to max available height
+                    .size(34.dp, 36.dp),
                 onClick = {},
             ) {
                 Icon(

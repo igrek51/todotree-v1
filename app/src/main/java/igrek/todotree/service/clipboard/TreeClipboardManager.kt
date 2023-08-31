@@ -5,8 +5,8 @@ import igrek.todotree.domain.treeitem.AbstractTreeItem
 class TreeClipboardManager {
 
     var clipboard: MutableList<AbstractTreeItem>? = null
-
     var copiedFrom: AbstractTreeItem? = null
+    var markForCut: Boolean = false
 
     val clipboardSize: Int
         get() = if (clipboard == null) 0 else clipboard!!.size
