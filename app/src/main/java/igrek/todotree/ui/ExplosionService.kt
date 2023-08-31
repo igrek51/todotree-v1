@@ -18,7 +18,7 @@ class ExplosionService {
 
     private var mExplosionField: ExplosionField? = null
     private val mExpandInset = IntArray(2)
-    private val yOffset = Utils.dp2Px(70)
+    private val yOffset = Utils.dp2Px(90)
 
     fun init() {
         mExplosionField = ExplosionField.attach2Window(activity)

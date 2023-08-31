@@ -3,6 +3,8 @@ package igrek.todotree.service.tree
 import igrek.todotree.domain.treeitem.AbstractTreeItem
 import igrek.todotree.domain.treeitem.RootTreeItem
 import igrek.todotree.exceptions.NoSuperItemException
+import igrek.todotree.info.logger.Logger
+import igrek.todotree.info.logger.LoggerFactory
 import igrek.todotree.inject.LazyExtractor
 import igrek.todotree.inject.LazyInject
 import igrek.todotree.inject.appFactory
@@ -13,6 +15,8 @@ class TreeManager(
     changesHistory: LazyInject<ChangesHistory> = appFactory.changesHistory,
 ) {
     private val changesHistory by LazyExtractor(changesHistory)
+
+    private val logger: Logger = LoggerFactory.logger
     
     var rootItem: AbstractTreeItem? = null
         set(value) {
@@ -68,6 +72,15 @@ class TreeManager(
         changesHistory.registerChange()
         StatisticsCommand().onTaskRemoved(item!!)
         currentItem!!.remove(item)
+    }
+
+    fun removeFromParent(item: AbstractTreeItem, parent: AbstractTreeItem) {
+        changesHistory.registerChange()
+        StatisticsCommand().onTaskRemoved(item)
+        val removed = parent.remove(item)
+        if (!removed) {
+            logger.warn("item not found in parent, thus not removed")
+        }
     }
 
     @Throws(NoSuperItemException::class)

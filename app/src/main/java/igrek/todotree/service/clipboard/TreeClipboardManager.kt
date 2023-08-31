@@ -4,33 +4,26 @@ import igrek.todotree.domain.treeitem.AbstractTreeItem
 
 class TreeClipboardManager {
 
-    var clipboard: MutableList<AbstractTreeItem>? = null
+    var clipboard: MutableList<AbstractTreeItem> = mutableListOf()
     var copiedFrom: AbstractTreeItem? = null
     var markForCut: Boolean = false
 
-    val clipboardSize: Int
-        get() = if (clipboard == null) 0 else clipboard!!.size
-    val isClipboardEmpty: Boolean
-        get() = clipboard == null || clipboard!!.size == 0
+    val clipboardSize: Int get() = clipboard.size
+    val isClipboardEmpty: Boolean get() = clipboard.isEmpty()
 
     fun clearClipboard() {
-        clipboard = null
+        clipboard.clear()
     }
 
     fun addToClipboard(item: AbstractTreeItem) {
-        if (clipboard == null) {
-            clipboard = ArrayList()
-        }
-        clipboard!!.add(item.clone())
+        clipboard.add(item)
     }
 
     fun recopyClipboard() {
-        if (clipboard != null) {
-            val newClipboard = ArrayList<AbstractTreeItem>()
-            for (item in clipboard!!) {
-                newClipboard.add(item.clone())
-            }
-            clipboard = newClipboard
+        val newClipboard = ArrayList<AbstractTreeItem>()
+        for (item in clipboard) {
+            newClipboard.add(item.clone())
         }
+        clipboard = newClipboard
     }
 }
