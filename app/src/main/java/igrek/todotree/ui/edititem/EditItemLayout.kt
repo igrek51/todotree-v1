@@ -39,6 +39,9 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.painterResource
@@ -122,6 +125,8 @@ class EditItemLayout {
         state.remotePushingEnabled.value = RemotePushCommand().isRemotePushingEnabled()
         state.manualSelectionMode.value = false
         state.numericKeyboard.value = false
+        state.typingHour.value = false
+        state.typingDate.value = false
     }
 
     fun onSaveItemClick() {
@@ -323,16 +328,94 @@ class EditItemLayout {
     }
 
     fun toggleTypingHour() {
+        state.typingDate.value = false
+        when (state.typingHour.value) {
+            true -> {
+                closeNumericKeyboard()
+                state.typingHour.value = false
+            }
+            false -> {
+                state.typingHour.value = true
+                state.numericKeyboard.value = true
+                state.numericBuffer.value = ""
+            }
+        }
     }
 
     fun toggleTypingDate() {
+        state.typingHour.value = false
+        when (state.typingDate.value) {
+            true -> {
+                closeNumericKeyboard()
+                state.typingDate.value = false
+            }
+            false -> {
+                state.typingDate.value = true
+                state.numericKeyboard.value = true
+                state.numericBuffer.value = ""
+            }
+        }
     }
 
     fun toggleTypingNumeric() {
+        if (state.numericKeyboard.value)
+            finishNumericTyping()
         state.numericKeyboard.value = !state.numericKeyboard.value
+        state.numericBuffer.value = ""
+    }
+
+    fun closeNumericKeyboard() {
+        finishNumericTyping()
+        state.numericKeyboard.value = false
+        state.typingHour.value = false
+        state.typingDate.value = false
+    }
+
+    fun onKeyUp(key: Char) {
+        when (key) {
+            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' -> {
+                state.numericBuffer.value += key
+                checkNumericTypingBuffer()
+            }
+            else -> finishNumericTyping()
+        }
+    }
+
+    private fun checkNumericTypingBuffer() {
+        val buffer = state.numericBuffer.value
+        when {
+            state.typingHour.value && buffer.length >= 4 -> closeNumericKeyboard()
+            state.typingDate.value && buffer.length >= 4 -> closeNumericKeyboard()
+        }
+    }
+
+    private fun finishNumericTyping() {
+        val buffer = state.numericBuffer.value
+        val text = state.textFieldValue.value.text
+        var cursor = state.textFieldValue.value.selection.max
+        when {
+            state.typingHour.value && buffer.length >= 3 -> { // hour 01:02 or 1:02
+                val edited = text.insertAt(":", cursor - 2)
+                cursor += 1
+                state.textFieldValue.value = TextFieldValue(
+                    text = edited,
+                    selection = TextRange(cursor, cursor),
+                )
+            }
+            state.typingDate.value && buffer.length >= 3 -> { // date 01.02 or 1.02
+                val edited = text.insertAt(".", cursor - 2)
+                cursor += 1
+                state.textFieldValue.value = TextFieldValue(
+                    text = edited,
+                    selection = TextRange(cursor, cursor),
+                )
+            }
+        }
+        state.numericBuffer.value = ""
     }
 
     fun insertHyphen() {
+        finishNumericTyping()
         val text = state.textFieldValue.value.text
         val selMin = state.textFieldValue.value.selection.min
         val selMax = state.textFieldValue.value.selection.max
@@ -356,6 +439,7 @@ class EditItemLayout {
     }
 
     fun insertColon() {
+        finishNumericTyping()
         val text = state.textFieldValue.value.text
         val selMin = state.textFieldValue.value.selection.min
         val selMax = state.textFieldValue.value.selection.max
@@ -380,6 +464,20 @@ class EditItemLayout {
         return false
     }
 
+    fun onTextChange(change: TextFieldValue) {
+        val currentSelection = state.textFieldValue.value.selection
+        if (change.selection.isDifferent(currentSelection)) { // perhaps clicked manually somewehere else
+            state.manualSelectionMode.value = false
+        }
+        // prevent from reversing selection for no reason
+        if (change.selection.start != change.selection.end &&
+            change.selection.start == currentSelection.end &&
+            change.selection.end == currentSelection.start) {
+            state.textFieldValue.value = change.copy(selection = TextRange(currentSelection.start, currentSelection.end))
+        } else {
+            state.textFieldValue.value = change
+        }
+    }
 }
 
 
@@ -389,6 +487,9 @@ class EditItemState {
     val existingItem: MutableState<Boolean> = mutableStateOf(false)
     val manualSelectionMode: MutableState<Boolean> = mutableStateOf(false)
     val numericKeyboard: MutableState<Boolean> = mutableStateOf(false)
+    val numericBuffer: MutableState<String> = mutableStateOf("")
+    val typingHour: MutableState<Boolean> = mutableStateOf(false)
+    val typingDate: MutableState<Boolean> = mutableStateOf(false)
     val focusRequester: FocusRequester = FocusRequester()
 }
 
@@ -406,31 +507,27 @@ private fun MainComponent(controller: EditItemLayout) {
             OutlinedTextField(
                 value = state.textFieldValue.value,
                 onValueChange = {
-                    val currentSelection = state.textFieldValue.value.selection
-                    if (it.selection.isDifferent(currentSelection)) {
-                        state.manualSelectionMode.value = false
-                    }
-                    // prevent from reversing selection
-                    if (it.selection.start != it.selection.end &&
-                        it.selection.start == currentSelection.end &&
-                        it.selection.end == currentSelection.start) {
-                        state.textFieldValue.value = it.copy(selection = TextRange(currentSelection.start, currentSelection.end))
-                    } else {
-                        state.textFieldValue.value = it
-                    }
+                    controller.onTextChange(it)
                 },
                 label = null,
                 singleLine = false,
                 keyboardOptions = keyboardOptions,
                 keyboardActions = KeyboardActions(
                     onDone = {
-                        state.numericKeyboard.value = false
+                        controller.closeNumericKeyboard()
                     }
                 ),
                 modifier = Modifier
                     .padding(vertical = 1.dp)
                     .fillMaxWidth()
-                    .focusRequester(state.focusRequester),
+                    .focusRequester(state.focusRequester)
+                    .onKeyEvent {
+                        if (it.type == KeyEventType.KeyUp) {
+                            controller.onKeyUp(it.nativeKeyEvent.number)
+                        }
+                        LoggerFactory.logger.debug("keycode: ${it.type}, ${it.nativeKeyEvent.keyCode}, ${it.nativeKeyEvent.number}")
+                        false
+                    },
                 textStyle = TextStyle.Default.copy(fontSize = 16.sp),
             )
 
@@ -536,7 +633,7 @@ private fun MainComponent(controller: EditItemLayout) {
                 )
                 FlatButton(
                     modifier = Modifier.weight(2f),
-                    text = "dd.MM.yy",
+                    text = "dd.MM",
                     onClick = {
                         controller.toggleTypingDate()
                     },
@@ -677,4 +774,13 @@ fun ComposablePreview() {
 
 private fun TextRange.isDifferent(other: TextRange): Boolean {
     return this.start != other.start || this.end != other.end
+}
+
+private fun String.insertAt(c: String, offset: Int): String {
+    var mOffset = offset
+    if (mOffset < 0) mOffset = 0
+    if (mOffset > this.length) mOffset = this.length
+    val before = this.substring(0, mOffset)
+    val after = this.substring(mOffset)
+    return before + c + after
 }

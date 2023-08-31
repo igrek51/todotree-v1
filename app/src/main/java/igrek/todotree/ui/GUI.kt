@@ -107,7 +107,6 @@ class GUI {
                 treeListLayout.scrollToPosition(0)
             }
         }
-//      TODO  itemsListView?.scrollToItem(itemIndex)
     }
 
     fun hideSoftKeyboard() {

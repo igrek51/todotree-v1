@@ -101,7 +101,7 @@ class NumericKeyboardView : KeyboardView, OnKeyboardActionListener {
             -4 -> { // _-_
                 typedHyphen()
             }
-            -5 -> { //spacja
+            -5 -> { //space
                 typedSpace()
             }
         }
@@ -114,12 +114,12 @@ class NumericKeyboardView : KeyboardView, OnKeyboardActionListener {
     private fun typedNumber(c: Char) {
         input.append(c)
         insertString("" + c)
-        if (typingMode == 1) { //godzina
+        if (typingMode == 1) { // hour
             if (input.length >= 4) {
                 finishTyping()
                 hideAndBack()
             }
-        } else if (typingMode == 2) { //data
+        } else if (typingMode == 2) { // date
             if (input.length >= 6) {
                 finishTyping()
                 hideAndBack()
