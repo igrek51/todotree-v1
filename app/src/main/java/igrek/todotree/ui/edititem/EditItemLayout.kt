@@ -28,7 +28,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -150,9 +153,9 @@ class EditItemLayout {
         softKeyboardService.showSoftKeyboard()
     }
 
-    private fun isSelecting(): Boolean {
-        val selMin = state.textFieldValue.value.selection.start
-        val selMax = state.textFieldValue.value.selection.end
+    fun isSelecting(): Boolean {
+        val selMin = state.textFieldValue.value.selection.min
+        val selMax = state.textFieldValue.value.selection.max
         return selMin < selMax || state.manualSelectionMode.value
     }
 
@@ -378,12 +381,7 @@ private fun MainComponent(controller: EditItemLayout) {
                         controller.quickCursorMove(-1)
                     },
                 )
-                MyFlatIconButton(
-                    drawableResId = R.drawable.selection,
-                    onClick = {
-                        controller.toggleSelectionMode()
-                    },
-                )
+                ToggleSelectionButton(controller)
                 MyFlatIconButton(
                     drawableResId = R.drawable.select_all,
                     onClick = {
@@ -552,6 +550,27 @@ private fun (RowScope).MyFlatIconButton(
             tint = Color.White,
         )
     }
+}
+
+@Composable
+private fun (RowScope).ToggleSelectionButton(
+    controller: EditItemLayout,
+) {
+    val isSelecting: Boolean by remember {
+        derivedStateOf {
+            controller.isSelecting()
+        }
+    }
+    val drawableResId = when (isSelecting) {
+        true -> R.drawable.selection_remove
+        false -> R.drawable.selection
+    }
+    MyFlatIconButton(
+        drawableResId = drawableResId,
+        onClick = {
+            controller.toggleSelectionMode()
+        },
+    )
 }
 
 @Preview
