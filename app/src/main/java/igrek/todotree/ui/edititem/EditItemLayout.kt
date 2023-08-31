@@ -360,6 +360,8 @@ class EditItemLayout {
     fun toggleTypingNumeric() {
         if (state.numericKeyboard.value)
             finishNumericTyping()
+        state.typingHour.value = false
+        state.typingDate.value = false
         state.numericKeyboard.value = !state.numericKeyboard.value
         state.numericBuffer.value = ""
     }
@@ -371,11 +373,16 @@ class EditItemLayout {
         state.typingDate.value = false
     }
 
-    fun onKeyUp(key: Char) {
-        when (key) {
-            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' -> {
+    fun onKeyUp(keyCode: Int, key: Char) {
+        when {
+            keyCode in 7 .. 16 && (state.typingHour.value || state.typingDate.value) -> { // 0-9 numbers
                 state.numericBuffer.value += key
                 checkNumericTypingBuffer()
+            }
+            keyCode == 67 -> { // backspace
+                if (state.numericBuffer.value.isNotEmpty()) {
+                    state.numericBuffer.value = state.numericBuffer.value.dropLast(1)
+                }
             }
             else -> finishNumericTyping()
         }
@@ -401,6 +408,7 @@ class EditItemLayout {
                     text = edited,
                     selection = TextRange(cursor, cursor),
                 )
+                state.typingHour.value = false
             }
             state.typingDate.value && buffer.length >= 3 -> { // date 01.02 or 1.02
                 val edited = text.insertAt(".", cursor - 2)
@@ -409,6 +417,7 @@ class EditItemLayout {
                     text = edited,
                     selection = TextRange(cursor, cursor),
                 )
+                state.typingDate.value = false
             }
         }
         state.numericBuffer.value = ""
@@ -523,9 +532,8 @@ private fun MainComponent(controller: EditItemLayout) {
                     .focusRequester(state.focusRequester)
                     .onKeyEvent {
                         if (it.type == KeyEventType.KeyUp) {
-                            controller.onKeyUp(it.nativeKeyEvent.number)
+                            controller.onKeyUp(it.nativeKeyEvent.keyCode, it.nativeKeyEvent.number)
                         }
-                        LoggerFactory.logger.debug("keycode: ${it.type}, ${it.nativeKeyEvent.keyCode}, ${it.nativeKeyEvent.number}")
                         false
                     },
                 textStyle = TextStyle.Default.copy(fontSize = 16.sp),
