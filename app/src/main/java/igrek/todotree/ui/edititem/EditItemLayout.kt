@@ -41,9 +41,11 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import igrek.todotree.R
 import igrek.todotree.compose.AppTheme
 import igrek.todotree.compose.md_theme_dark_surfaceVariant
@@ -162,17 +164,22 @@ class EditItemLayout {
     fun quickCursorMove(direction: Int) {
         val text = state.textFieldValue.value.text
         val selStart = state.textFieldValue.value.selection.start
-        var selEnd = state.textFieldValue.value.selection.end
+        val selEnd = state.textFieldValue.value.selection.end
         when (isSelecting()) {
             true -> { // expand selection
+                var newSelEnd = selEnd
                 if (direction == -1) {
-                    selEnd--
-                    if (selEnd < 0) selEnd = 0
+                    newSelEnd--
+                    if (newSelEnd < 0) newSelEnd = 0
                 } else {
-                    selEnd++
-                    if (selEnd > text.length) selEnd = text.length
+                    newSelEnd++
+                    if (newSelEnd > text.length) newSelEnd = text.length
                 }
-                setSelection(selStart, selEnd)
+                if (newSelEnd != selEnd) {
+                    setSelection(selStart, newSelEnd)
+                } else {
+                    setSelection(newSelEnd)
+                }
             }
             else -> { // no selection, move
                 var cursor = selStart + direction
@@ -185,15 +192,20 @@ class EditItemLayout {
 
     fun quickCursorJump(direction: Int) {
         val text = state.textFieldValue.value.text
+        val selStart = state.textFieldValue.value.selection.start
+        val selEnd = state.textFieldValue.value.selection.end
         when (isSelecting()) {
-            true -> { // expand selection
-                val selStart = state.textFieldValue.value.selection.start
-                val selEnd = if (direction == -1) {
+            true -> { // is actively selecting - expand selection
+                val newSelEnd = if (direction == -1) {
                     0
                 } else {
                     text.length
                 }
-                setSelection(selStart, selEnd)
+                if (newSelEnd != selEnd) {
+                    setSelection(selStart, newSelEnd)
+                } else {
+                    setSelection(newSelEnd)
+                }
             }
             else -> { // no selection, jump
                 if (direction == -1) { // jump to the beginning
@@ -225,6 +237,7 @@ class EditItemLayout {
     fun selectAllText() {
         val text = state.textFieldValue.value.text
         setSelection(0, text.length)
+        state.manualSelectionMode.value = false
     }
 
     fun onCopyClick() {
@@ -237,21 +250,21 @@ class EditItemLayout {
 
     fun onBackspaceClick() {
         val text = state.textFieldValue.value.text
-        val selStart = state.textFieldValue.value.selection.start
-        val selEnd = state.textFieldValue.value.selection.end
+        val selMin = state.textFieldValue.value.selection.min
+        val selMax = state.textFieldValue.value.selection.max
         when {
-            selStart < selEnd -> { // erase selection
-                val newText = text.substring(0, selStart) + text.substring(selEnd, text.length)
+            selMin != selMax -> { // erase selection
+                val newText = text.substring(0, selMin) + text.substring(selMax)
                 state.textFieldValue.value = TextFieldValue(
                     text = newText,
-                    selection = TextRange(selStart, selStart),
+                    selection = TextRange(selMin, selMin),
                 )
             }
-            selStart > 0 -> {
-                val newText = text.substring(0, selStart - 1) + text.substring(selStart, text.length)
+            selMin > 0 -> {
+                val newText = text.substring(0, selMin - 1) + text.substring(selMin)
                 state.textFieldValue.value = TextFieldValue(
                     text = newText,
-                    selection = TextRange(selStart - 1, selStart - 1),
+                    selection = TextRange(selMin - 1, selMin - 1),
                 )
             }
         }
@@ -259,21 +272,21 @@ class EditItemLayout {
 
     fun onReverseBackspaceClick() {
         val text = state.textFieldValue.value.text
-        val selStart = state.textFieldValue.value.selection.start
-        val selEnd = state.textFieldValue.value.selection.end
+        val selMin = state.textFieldValue.value.selection.min
+        val selMax = state.textFieldValue.value.selection.max
         when {
-            selStart < selEnd -> { // erase selection
-                val newText = text.substring(0, selStart) + text.substring(selEnd, text.length)
+            selMin != selMax -> { // erase selection
+                val newText = text.substring(0, selMin) + text.substring(selMax)
                 state.textFieldValue.value = TextFieldValue(
                     text = newText,
-                    selection = TextRange(selStart, selStart),
+                    selection = TextRange(selMin, selMin),
                 )
             }
-            selStart < text.length -> {
-                val newText = text.substring(0, selStart) + text.substring(selStart + 1, text.length)
+            selMin < text.length -> {
+                val newText = text.substring(0, selMin) + text.substring(selMin + 1)
                 state.textFieldValue.value = TextFieldValue(
                     text = newText,
-                    selection = TextRange(selStart, selStart),
+                    selection = TextRange(selMin, selMin),
                 )
             }
         }
@@ -289,9 +302,45 @@ class EditItemLayout {
     }
 
     fun quickInsertRange() {
+        val text = state.textFieldValue.value.text
+        val selMin = state.textFieldValue.value.selection.min
+        val selMax = state.textFieldValue.value.selection.max
+        val before = text.substring(0, selMin)
+        val after = text.substring(selMax)
+        var position = selMin
+        val inserted1 = when {
+            before.isNotEmpty() && before.last() == ' ' -> ""
+            else -> " "
+        }
+        val inserted2 = when {
+            after.isNotEmpty() && after.first() == ' ' -> ""
+            else -> " "
+        }
+        val inserted = "$inserted1-$inserted2"
+        position += inserted.length
+        state.textFieldValue.value = TextFieldValue(
+            text = before + inserted + after,
+            selection = TextRange(position, position),
+        )
     }
 
     fun quickInsertColon() {
+        val text = state.textFieldValue.value.text
+        val selMin = state.textFieldValue.value.selection.min
+        val selMax = state.textFieldValue.value.selection.max
+        val before = text.substring(0, selMin)
+        val after = text.substring(selMax)
+        var position = selMin
+        val inserted2 = when {
+            after.isNotEmpty() && after.first() == ' ' -> ""
+            else -> " "
+        }
+        val inserted = ":$inserted2"
+        position += inserted.length
+        state.textFieldValue.value = TextFieldValue(
+            text = before + inserted + after,
+            selection = TextRange(position, position),
+        )
     }
 
     private fun isNumericKeyboardVisible(): Boolean {
@@ -318,17 +367,26 @@ class EditItemState {
 
 @Composable
 private fun MainComponent(controller: EditItemLayout) {
-    LoggerFactory.logger.debug("recomposition of EditItemLayout Main")
+    LoggerFactory.logger.debug("recomposition: EditItemLayout Main")
     val state = controller.state
     CompositionLocalProvider(LocalMinimumInteractiveComponentEnforcement provides false) {
         Column {
             OutlinedTextField(
                 value = state.textFieldValue.value,
                 onValueChange = {
-                    if (it.selection.isDifferent(state.textFieldValue.value.selection)) {
+                    val currentSelection = state.textFieldValue.value.selection
+                    if (it.selection.isDifferent(currentSelection)) {
                         state.manualSelectionMode.value = false
                     }
-                    state.textFieldValue.value = it
+                    LoggerFactory.logger.debug("on value change: ${it.selection.start} - ${it.selection.end}")
+                    // prevent from reversing selection
+                    if (it.selection.start != it.selection.end &&
+                        it.selection.start == currentSelection.end &&
+                        it.selection.end == currentSelection.start) {
+                        state.textFieldValue.value = it.copy(selection = TextRange(currentSelection.start, currentSelection.end))
+                    } else {
+                        state.textFieldValue.value = it
+                    }
                 },
                 label = null,
                 singleLine = false,
@@ -336,6 +394,7 @@ private fun MainComponent(controller: EditItemLayout) {
                     .padding(vertical = 1.dp)
                     .fillMaxWidth()
                     .focusRequester(state.focusRequester),
+                textStyle = TextStyle.Default.copy(fontSize = 16.sp)
             )
 
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
