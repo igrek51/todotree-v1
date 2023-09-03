@@ -25,6 +25,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalMinimumInteractiveComponentEnforcement
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -60,35 +61,7 @@ internal fun MainComponent(controller: EditItemLayout) {
     val state = controller.state
     CompositionLocalProvider(LocalMinimumInteractiveComponentEnforcement provides false) {
         Column {
-            val keyboardOptions: KeyboardOptions = when (state.numericKeyboard.value) {
-                true -> KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done)
-                false -> KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Default)
-            }
-            OutlinedTextField(
-                value = state.textFieldValue.value,
-                onValueChange = {
-                    controller.onTextChange(it)
-                },
-                label = null,
-                singleLine = false,
-                keyboardOptions = keyboardOptions,
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        controller.numericTyper.closeNumericKeyboard()
-                    }
-                ),
-                modifier = Modifier
-                    .padding(vertical = 1.dp)
-                    .fillMaxWidth()
-                    .focusRequester(state.focusRequester)
-                    .onKeyEvent {
-                        if (it.type == KeyEventType.KeyUp) {
-                            controller.numericTyper.onKeyUp(it.nativeKeyEvent.keyCode, it.nativeKeyEvent.number)
-                        }
-                        false
-                    },
-                textStyle = TextStyle.Default.copy(fontSize = 16.sp),
-            )
+            ContentTextField(controller)
 
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                 FlatButton(
@@ -322,6 +295,47 @@ private fun (RowScope).ToggleSelectionButton(
         onClick = {
             controller.toggleSelectionMode()
         },
+    )
+}
+
+
+@Composable
+private fun ContentTextField(
+    controller: EditItemLayout,
+) {
+    val state = controller.state
+    val keyboardOptions: KeyboardOptions = when (state.numericKeyboard.value) {
+        true -> KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done)
+        false -> KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Default)
+    }
+    OutlinedTextField(
+        value = state.textFieldValue.value,
+        onValueChange = {
+            controller.onTextChange(it)
+        },
+        label = null,
+        singleLine = false,
+        keyboardOptions = keyboardOptions,
+        keyboardActions = KeyboardActions(
+            onDone = {
+                controller.numericTyper.closeNumericKeyboard()
+            }
+        ),
+        modifier = Modifier
+            .padding(vertical = 1.dp)
+            .fillMaxWidth()
+            .focusRequester(state.focusRequester)
+            .onKeyEvent {
+                if (it.type == KeyEventType.KeyUp) {
+                    controller.numericTyper.onKeyUp(it.nativeKeyEvent.keyCode, it.nativeKeyEvent.number)
+                }
+                false
+            },
+        textStyle = TextStyle.Default.copy(fontSize = 16.sp),
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedTextColor = Color.White,
+            unfocusedTextColor = Color.White,
+        ),
     )
 }
 
