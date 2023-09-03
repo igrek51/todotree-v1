@@ -17,6 +17,7 @@ import igrek.todotree.service.tree.TreeMover
 import igrek.todotree.service.tree.TreeScrollCache
 import igrek.todotree.service.tree.TreeSelectionManager
 import igrek.todotree.ui.GUI
+import igrek.todotree.util.EmotionLessInator
 import kotlinx.coroutines.*
 import org.joda.time.DateTime
 
@@ -43,6 +44,8 @@ class TreeCommand(
     private val changesHistory by LazyExtractor(changesHistory)
     private val remotePushService by LazyExtractor(remotePushService)
     private val linkHistoryService by LazyExtractor(linkHistoryService)
+
+    private val emotionLessInator = EmotionLessInator()
 
     fun goBack() {
         try {
@@ -196,12 +199,24 @@ class TreeCommand(
     }
 
     fun findItemByPath(paths: Array<String>): AbstractTreeItem? {
-        var current = treeManager.rootItem
+        var current = treeManager.rootItem ?: return null
         for (path in paths) {
-            val found = current!!.findChildByName(path) ?: return null
-            current = found
+            current = findChildByLinkName(current, path) ?: return null
         }
         return current
+    }
+
+    private fun findChildByLinkName(item: AbstractTreeItem, name: String): AbstractTreeItem? {
+        // find by exact name
+        for (child in item.children) {
+            if (child is TextTreeItem && child.displayName == name)
+                return child
+        }
+        // find by simplified name
+        val expectedSimplified = emotionLessInator.simplify(name)
+        return item.children.firstOrNull {
+            it is TextTreeItem && emotionLessInator.simplify(it.displayName) == expectedSimplified
+        }
     }
 
     private fun Long.timestampSToString(): String {

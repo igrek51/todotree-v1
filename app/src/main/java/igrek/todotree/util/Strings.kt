@@ -32,3 +32,12 @@ class StringSimplifier {
     }
 
 }
+
+class EmotionLessInator {
+    private val emojiFilterRegex = "[^\\p{L}\\p{M}\\p{N}\\p{P}\\p{Z}\\p{Cf}\\p{Cs}\\s]".toRegex()
+
+    fun simplify(text: String): String {
+        val simple = text.trim().lowercase()
+        return simple.replace(emojiFilterRegex, "") // remove emojis
+    }
+}
