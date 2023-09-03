@@ -34,10 +34,11 @@ class StringSimplifier {
 }
 
 class EmotionLessInator {
-    private val emojiFilterRegex = "[^\\p{L}\\p{M}\\p{N}\\p{P}\\p{Z}\\p{Cf}\\p{Cs}\\s]".toRegex()
+    private val emojiFilterRegex = "\\u00a9|\\u00ae|[\\u2000-\\u3300]|\\ud83c[\\ud000-\\udfff]|\\ud83d[\\ud000-\\udfff]|\\ud83e[\\ud000-\\udfff]".toRegex()
+    private val locale = Locale("pl", "PL")
 
     fun simplify(text: String): String {
-        val simple = text.trim().lowercase()
+        val simple = text.trim().lowercase(locale)
         return simple.replace(emojiFilterRegex, "") // remove emojis
     }
 }

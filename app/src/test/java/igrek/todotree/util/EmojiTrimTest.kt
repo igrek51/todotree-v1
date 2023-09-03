@@ -8,7 +8,7 @@ class EmojiTrimTest {
     @Test
     fun testEmotionLessInator() {
         val emotionLessInator = EmotionLessInator()
-        assertThat(emotionLessInator.simplify("Emojis✅ 123#$ śółĄŚÓ\t\n⭐.:}\";'!"))
-            .isEqualTo("emojis 123#$ śółąśó\t\n.:}\";'!")
+        assertThat(emotionLessInator.simplify("Emojis✅ 123!@#\$%^&*()_+ śółĄŚÓ\t\n⭐.:}\";'!"))
+            .isEqualTo("emojis 123!@#\$%^&*()_+ śółąśó\t\n.:}\";'!")
     }
 }
