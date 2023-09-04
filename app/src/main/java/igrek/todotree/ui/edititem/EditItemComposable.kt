@@ -331,7 +331,7 @@ private fun ContentTextField(
                 }
                 false
             },
-        textStyle = TextStyle.Default.copy(fontSize = 16.sp),
+        textStyle = TextStyle.Default.copy(fontSize = 17.sp),
         colors = OutlinedTextFieldDefaults.colors(
             focusedTextColor = Color.White,
             unfocusedTextColor = Color.White,
