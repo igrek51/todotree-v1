@@ -67,32 +67,26 @@ class ItemEditorCommand(
         treeManager.addToCurrent(null, RemoteTreeItem("Remote"))
     }
 
-    private fun tryToSaveExistingItem(editedItem: TextTreeItem, _content: String): Boolean {
-        var content = _content
-        content = contentTrimmer.trimContent(content)
-        return if (content.isEmpty()) {
+    private fun tryToSaveExistingItem(editedItem: AbstractTreeItem, content: String): Boolean {
+        var mContent = content
+        mContent = contentTrimmer.trimContent(mContent)
+        return if (mContent.isEmpty()) {
             treeManager.removeFromCurrent(editedItem)
             uiInfoService.showInfo("Empty item has been removed.")
             false
         } else {
-            editedItem.setName(content)
+            when (editedItem) {
+                is TextTreeItem -> {
+                    editedItem.setName(mContent)
+                }
+                is RemoteTreeItem -> {
+                    editedItem.setName(mContent)
+                }
+                is LinkTreeItem -> {
+                    editedItem.customName = mContent
+                }
+            }
             changesHistory.registerChange()
-            uiInfoService.showInfo("Item saved.")
-            true
-        }
-    }
-
-    private fun tryToSaveExistingLink(editedLinkItem: LinkTreeItem, _content: String): Boolean {
-        var content = _content
-        content = contentTrimmer.trimContent(content)
-        return if (content.isEmpty()) {
-            treeManager.removeFromCurrent(editedLinkItem)
-            uiInfoService.showInfo("Empty link has been removed.")
-            false
-        } else {
-            editedLinkItem.customName = content
-            changesHistory.registerChange()
-            uiInfoService.showInfo("Link name has been saved.")
             true
         }
     }
@@ -102,11 +96,8 @@ class ItemEditorCommand(
             tryToSaveNewItem(content)
         } else { // existing item
             when (editedItem) {
-                is TextTreeItem -> {
+                is TextTreeItem, is RemoteTreeItem, is LinkTreeItem -> {
                     tryToSaveExistingItem(editedItem, content)
-                }
-                is LinkTreeItem -> {
-                    tryToSaveExistingLink(editedItem, content)
                 }
                 else -> {
                     logger.warn("trying to save item of type: " + editedItem.typeName)

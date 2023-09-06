@@ -1,6 +1,9 @@
 package igrek.todotree.domain.treeitem
 
-class TextTreeItem(parent: AbstractTreeItem?, override var displayName: String) : AbstractTreeItem(parent) {
+class TextTreeItem(
+    parent: AbstractTreeItem?,
+    override var displayName: String,
+) : AbstractTreeItem(parent) {
 
     constructor(name: String) : this(null, name)
 
