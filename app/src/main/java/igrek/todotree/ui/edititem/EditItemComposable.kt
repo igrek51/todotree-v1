@@ -41,6 +41,7 @@ import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -331,7 +332,10 @@ private fun ContentTextField(
                 }
                 false
             },
-        textStyle = TextStyle.Default.copy(fontSize = 17.sp),
+        textStyle = TextStyle.Default.copy(
+            fontSize = 18.sp,
+            fontFamily = FontFamily.Monospace,
+        ),
         colors = OutlinedTextFieldDefaults.colors(
             focusedTextColor = Color.White,
             unfocusedTextColor = Color.White,
