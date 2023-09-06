@@ -92,6 +92,7 @@ class TreeCommand(
 
                 runBlocking {
                     GlobalScope.launch(Dispatchers.Main) {
+                        uiInfoService.showInfo("Fetching remote items…")
                         val deferred = remotePushService.populateRemoteItemAsync((item as RemoteTreeItem?)!!)
                         val result = deferred.await()
                         result.fold(onSuccess = { todoDtos: List<TodoDto> ->
