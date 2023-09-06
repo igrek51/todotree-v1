@@ -1,5 +1,6 @@
 package igrek.todotree.domain.treeitem
 
+import igrek.todotree.util.EmotionLessInator
 import java.util.*
 
 abstract class AbstractTreeItem(parent: AbstractTreeItem?) {
@@ -63,11 +64,21 @@ abstract class AbstractTreeItem(parent: AbstractTreeItem?) {
     val lastChild: AbstractTreeItem?
         get() = if (children.isEmpty()) null else children[children.size - 1]
 
-    fun findChildByName(name: String): AbstractTreeItem? {
+    fun findChildByName(name: String, lenient: Boolean = false): AbstractTreeItem? {
+        // find by exact name
         for (child in children) {
-            if (child is TextTreeItem && child.displayName == name) return child
+            if (child is TextTreeItem && child.displayName == name)
+                return child
         }
-        return null
+        // find by simplified name
+        if (!lenient) {
+            return null
+        }
+        val emotionLessInator = EmotionLessInator()
+        val expectedSimplified = emotionLessInator.simplify(name)
+        return children.firstOrNull {
+            it is TextTreeItem && emotionLessInator.simplify(it.displayName) == expectedSimplified
+        }
     }
 
     fun size(): Int {

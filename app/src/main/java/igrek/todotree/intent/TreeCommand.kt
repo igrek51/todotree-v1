@@ -166,7 +166,7 @@ class TreeCommand(
                         !item.isEmpty -> {
                             itemGoIntoClicked(position, item)
                         }
-                        item.displayName == "Tmp" && (item.getParent() == null || item.getParent() is RootTreeItem) -> {
+                        matchesSimplifiedName(item.displayName, "Tmp") && (item.getParent() == null || item.getParent() is RootTreeItem) -> {
                             itemGoIntoClicked(position, item)
                         }
                         else -> {
@@ -217,6 +217,10 @@ class TreeCommand(
         return item.children.firstOrNull {
             it is TextTreeItem && emotionLessInator.simplify(it.displayName) == expectedSimplified
         }
+    }
+
+    private fun matchesSimplifiedName(displayName: String, expected: String): Boolean {
+        return emotionLessInator.simplify(displayName) == emotionLessInator.simplify(expected)
     }
 
     private fun Long.timestampSToString(): String {
