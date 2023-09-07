@@ -212,7 +212,6 @@ private fun TreeItemComposable(
 
     val itemPosition: MutableState<Offset> = remember { mutableStateOf(Offset.Zero) }
     val itemSize: MutableState<IntSize> = remember { mutableStateOf(IntSize.Zero) }
-    var loading = false
 
     Row(
         modifier
@@ -223,7 +222,6 @@ private fun TreeItemComposable(
             .combinedClickable(
                 onClick = {
                     val position = itemsContainer.indexToPositionMap.getValue(id)
-                    loading = true
                     mainScope.launch {
                         delay(1)
                         controller.onItemClick(position, item)
@@ -248,17 +246,18 @@ private fun TreeItemComposable(
                     val itemH = itemsContainer.itemHeights.getValue(id)
                     val position = itemsContainer.indexToPositionMap.getValue(id)
                     val result = handleItemGesture(pan.x, pan.y, itemW, itemH, position, item)
-                    if (result == true) {
-                        loading = true
-                    }
+//                    if (result == true) {
+//                        loading = true
+//                    }
                     result
                 }
             }
-            .drawBehind {
-                if (loading) {
-                    drawRect(color = colorItemClicked)
-                }
-            },
+//            .drawBehind {
+//                if (loading) {
+//                    drawRect(color = colorItemClicked)
+//                }
+//            }
+        ,
         verticalAlignment = Alignment.CenterVertically,
     ) {
         val selectMode: Boolean = controller.state.selectMode.value
