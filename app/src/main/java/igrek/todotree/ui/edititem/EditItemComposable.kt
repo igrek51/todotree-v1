@@ -29,6 +29,7 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -58,8 +59,7 @@ val logger = LoggerFactory.logger
 
 @Composable
 internal fun MainComponent(controller: EditItemLayout) {
-    logger.debug("recomposition: EditItemLayout: Main")
-    val state = controller.state
+//    logger.debug("recomposition: EditItemLayout: Main")
     CompositionLocalProvider(LocalMinimumInteractiveComponentEnforcement provides false) {
         Column {
             ContentTextField(controller)
@@ -205,6 +205,9 @@ internal fun MainComponent(controller: EditItemLayout) {
                 )
             }
         }
+    }
+    LaunchedEffect(Unit) {
+        controller.state.focusRequester.requestFocus()
     }
 }
 

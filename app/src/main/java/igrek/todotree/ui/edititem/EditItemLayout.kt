@@ -50,7 +50,6 @@ class EditItemLayout {
             }
         }
 
-        state.focusRequester.requestFocus()
         gui.setTitle(parent.displayName)
         showKeyboard()
     }
