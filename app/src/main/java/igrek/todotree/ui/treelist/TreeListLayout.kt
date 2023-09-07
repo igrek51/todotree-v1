@@ -50,6 +50,7 @@ import igrek.todotree.compose.AppTheme
 import igrek.todotree.compose.ItemsContainer
 import igrek.todotree.compose.ReorderListView
 import igrek.todotree.compose.colorLinkItem
+import igrek.todotree.compose.md_theme_dark_outline
 import igrek.todotree.domain.treeitem.AbstractTreeItem
 import igrek.todotree.domain.treeitem.LinkTreeItem
 import igrek.todotree.inject.LazyExtractor
@@ -78,6 +79,7 @@ class TreeListLayout {
         updateItemsList()
 
         val thisLayout = this
+//        splitTime.split("show layout: ${System.currentTimeMillis()}")
         layout.findViewById<ComposeView>(R.id.compose_view_tree).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnDetachedFromWindow)
             setContent {
@@ -187,6 +189,12 @@ private fun MainComponent(controller: TreeListLayout) {
             },
         )
     }
+//    Spacer(
+//        modifier = Modifier
+//            .drawBehind {
+//                splitTime.split("spacer draw: ${System.currentTimeMillis()}")
+//            }
+//    )
 }
 
 
@@ -204,6 +212,7 @@ private fun TreeItemComposable(
 
     val itemPosition: MutableState<Offset> = remember { mutableStateOf(Offset.Zero) }
     val itemSize: MutableState<IntSize> = remember { mutableStateOf(IntSize.Zero) }
+    val loading: MutableState<Boolean> = remember { mutableStateOf(false) }
 
     Row(
         modifier
@@ -214,8 +223,9 @@ private fun TreeItemComposable(
             .combinedClickable(
                 onClick = {
                     val position = itemsContainer.indexToPositionMap.getValue(id)
+                    loading.value = true
                     mainScope.launch {
-                        delay(5)
+                        delay(1)
                         controller.onItemClick(position, item)
                     }
                 },
@@ -231,12 +241,18 @@ private fun TreeItemComposable(
                         controller.onItemLongClick(position, coordinates)
                     }
                 },
-            ).pointerInput(id) {
+            )
+            .pointerInput(id) {
                 detectMyTransformGestures { pan ->
                     val itemW = itemsContainer.parentViewportWidth.value
                     val itemH = itemsContainer.itemHeights.getValue(id)
                     val position = itemsContainer.indexToPositionMap.getValue(id)
                     handleItemGesture(pan.x, pan.y, itemW, itemH, position, item)
+                }
+            }
+            .drawBehind {
+                if (loading.value) {
+                    drawRect(color = md_theme_dark_outline)
                 }
             },
         verticalAlignment = Alignment.CenterVertically,
