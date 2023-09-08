@@ -341,7 +341,7 @@ private fun ContentTextField(
                 false
             },
         textStyle = TextStyle.Default.copy(
-            fontSize = 18.sp,
+            fontSize = 17.sp,
             fontFamily = FontFamily.Monospace,
         ),
         colors = OutlinedTextFieldDefaults.colors(
