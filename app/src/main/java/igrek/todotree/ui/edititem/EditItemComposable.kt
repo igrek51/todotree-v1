@@ -3,6 +3,8 @@
 package igrek.todotree.ui.edititem
 
 import androidx.annotation.DrawableRes
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -215,6 +217,8 @@ private fun FlatButton(
     iconVector: ImageVector? = null,
     onClick: () -> Unit,
 ) {
+    val interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
+    interactionSource.collectIsPressedAsState()
     Button(
         onClick = {
             mainScope.launch {
@@ -231,6 +235,7 @@ private fun FlatButton(
             containerColor = md_theme_dark_surfaceVariant,
             contentColor = Color.White
         ),
+        interactionSource=interactionSource,
     ) {
         if (iconVector != null) {
             Icon(
@@ -328,7 +333,10 @@ private fun ContentTextField(
             .focusRequester(state.focusRequester)
             .onKeyEvent {
                 if (it.type == KeyEventType.KeyUp) {
-                    controller.numericTyper.onKeyUp(it.nativeKeyEvent.keyCode, it.nativeKeyEvent.number)
+                    controller.numericTyper.onKeyUp(
+                        it.nativeKeyEvent.keyCode,
+                        it.nativeKeyEvent.number
+                    )
                 }
                 false
             },
