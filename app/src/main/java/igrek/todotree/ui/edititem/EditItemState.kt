@@ -16,4 +16,5 @@ class EditItemState {
     val typingHour: MutableState<Boolean> = mutableStateOf(false)
     val typingDate: MutableState<Boolean> = mutableStateOf(false)
     val focusRequester: FocusRequester = FocusRequester()
+    val startEditTimestamp: MutableState<Long> = mutableStateOf(0)
 }

@@ -3,8 +3,6 @@
 package igrek.todotree.ui.edititem
 
 import androidx.annotation.DrawableRes
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -34,6 +32,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.focusRequester
@@ -67,14 +66,16 @@ internal fun MainComponent(controller: EditItemLayout) {
             ContentTextField(controller)
 
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                FlatButton(
-                    modifier = Modifier.weight(0.5f),
-                    iconVector = Icons.Filled.Done,
-                    text = "Save",
-                    onClick = {
-                        controller.onSaveItemClick()
-                    },
-                )
+                key(controller.state.startEditTimestamp.value) {
+                    FlatButton(
+                        modifier = Modifier.weight(0.5f),
+                        iconVector = Icons.Filled.Done,
+                        text = "Save",
+                        onClick = {
+                            controller.onSaveItemClick()
+                        },
+                    )
+                }
 
                 if (!controller.state.remotePushingEnabled.value) {
                     FlatButton(
@@ -197,14 +198,16 @@ internal fun MainComponent(controller: EditItemLayout) {
             }
 
             Row {
-                FlatButton(
-                    modifier = Modifier.fillMaxWidth(),
-                    iconVector = Icons.Filled.Close,
-                    text = "Cancel",
-                    onClick = {
-                        controller.onCancelClick()
-                    },
-                )
+                key(controller.state.startEditTimestamp.value) {
+                    FlatButton(
+                        modifier = Modifier.fillMaxWidth(),
+                        iconVector = Icons.Filled.Close,
+                        text = "Cancel",
+                        onClick = {
+                            controller.onCancelClick()
+                        },
+                    )
+                }
             }
         }
     }
@@ -217,8 +220,6 @@ private fun FlatButton(
     iconVector: ImageVector? = null,
     onClick: () -> Unit,
 ) {
-    val interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
-    interactionSource.collectIsPressedAsState()
     Button(
         onClick = {
             mainScope.launch {
@@ -235,7 +236,6 @@ private fun FlatButton(
             containerColor = md_theme_dark_surfaceVariant,
             contentColor = Color.White
         ),
-        interactionSource=interactionSource,
     ) {
         if (iconVector != null) {
             Icon(

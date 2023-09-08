@@ -79,6 +79,7 @@ class EditItemLayout {
         state.numericKeyboard.value = false
         state.typingHour.value = false
         state.typingDate.value = false
+        state.startEditTimestamp.value = System.currentTimeMillis()
     }
 
     fun onSaveItemClick() {
