@@ -198,7 +198,6 @@ class ItemEditorCommand(
 
     private fun discardEditingItem() {
         returnFromItemEditing()
-        uiInfoService.showInfo("Editing item cancelled.")
     }
 
     fun itemEditClicked(item: AbstractTreeItem) {

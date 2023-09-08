@@ -206,9 +206,6 @@ internal fun MainComponent(controller: EditItemLayout) {
             }
         }
     }
-    LaunchedEffect(Unit) {
-        controller.state.focusRequester.requestFocus()
-    }
 }
 
 @Composable
@@ -344,6 +341,9 @@ private fun ContentTextField(
             unfocusedTextColor = Color.White,
         ),
     )
+    LaunchedEffect(Unit) {
+        controller.state.focusRequester.requestFocus()
+    }
 }
 
 @Preview

@@ -10,6 +10,7 @@ import igrek.todotree.compose.AppTheme
 import igrek.todotree.domain.treeitem.AbstractTreeItem
 import igrek.todotree.domain.treeitem.RootTreeItem
 import igrek.todotree.info.UiInfoService
+import igrek.todotree.info.errorcheck.UiErrorHandler
 import igrek.todotree.inject.LazyExtractor
 import igrek.todotree.inject.appFactory
 import igrek.todotree.intent.ClipboardCommand
@@ -48,6 +49,12 @@ class EditItemLayout {
                     MainComponent(thisLayout)
                 }
             }
+        }
+
+        try {
+            state.focusRequester.requestFocus()
+        } catch (t: Exception) {
+            UiErrorHandler.handleError(t)
         }
 
         gui.setTitle(parent.displayName)
