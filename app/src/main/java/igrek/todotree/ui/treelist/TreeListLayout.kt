@@ -3,6 +3,8 @@
 package igrek.todotree.ui.treelist
 
 import android.annotation.SuppressLint
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
@@ -235,9 +237,11 @@ private fun TreeItemComposable(
                 onClick = {
                     controller.startLoading()
                     val position = itemsContainer.indexToPositionMap.getValue(id)
-                    mainScope.launch {
-                        delay(1)
-                        controller.onItemClick(position, item)
+                    Handler(Looper.getMainLooper()).post {
+                        mainScope.launch {
+                            delay(1)
+                            controller.onItemClick(position, item)
+                        }
                     }
                 },
                 onLongClick = {

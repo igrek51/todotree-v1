@@ -1,6 +1,8 @@
 package igrek.todotree.intent
 
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import igrek.todotree.R
 import igrek.todotree.activity.ActivityController
 import igrek.todotree.app.AppData
@@ -96,15 +98,18 @@ class NavigationCommand(
     }
 
     fun backClicked(): Boolean {
-        if (appData.isState(AppState.ITEMS_LIST)) {
-            if (treeSelectionManager.isAnythingSelected) {
-                treeSelectionManager.cancelSelectionMode()
-                GUICommand().updateItemsList()
-            } else {
-                TreeCommand().goBack()
+        gui.startLoading()
+        Handler(Looper.getMainLooper()).post {
+            if (appData.isState(AppState.ITEMS_LIST)) {
+                if (treeSelectionManager.isAnythingSelected) {
+                    treeSelectionManager.cancelSelectionMode()
+                    GUICommand().updateItemsList()
+                } else {
+                    TreeCommand().goBack()
+                }
+            } else if (appData.isState(AppState.EDIT_ITEM_CONTENT)) {
+                gui.onEditBackClicked()
             }
-        } else if (appData.isState(AppState.EDIT_ITEM_CONTENT)) {
-            gui.onEditBackClicked()
         }
         return true
     }
