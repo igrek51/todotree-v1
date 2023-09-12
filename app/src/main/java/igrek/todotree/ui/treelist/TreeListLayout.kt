@@ -49,7 +49,6 @@ import igrek.todotree.R
 import igrek.todotree.compose.AppTheme
 import igrek.todotree.compose.ItemsContainer
 import igrek.todotree.compose.ReorderListView
-import igrek.todotree.compose.colorItemClicked
 import igrek.todotree.compose.colorLinkItem
 import igrek.todotree.domain.treeitem.AbstractTreeItem
 import igrek.todotree.domain.treeitem.LinkTreeItem
@@ -91,6 +90,8 @@ class TreeListLayout {
     }
 
     fun updateItemsList() {
+        gui.startLoading()
+
         val currentItem: AbstractTreeItem = treeManager.currentItem ?: return
         val selectedPositions: Set<Int>? = treeSelectionManager.selectedItems
         val items: MutableList<AbstractTreeItem> = currentItem.children
@@ -161,6 +162,14 @@ class TreeListLayout {
     suspend fun scrollToPosition(y: Int) {
         state.scrollState.scrollTo(y)
     }
+
+    fun startLoading() {
+        gui.startLoading()
+    }
+
+    fun stopLoading() {
+        gui.stopLoading()
+    }
 }
 
 
@@ -180,6 +189,9 @@ private fun MainComponent(controller: TreeListLayout) {
             scrollState = controller.state.scrollState,
             onReorder = { newItems ->
                 controller.onItemsReordered(newItems)
+            },
+            onLoad = {
+                controller.stopLoading()
             },
             itemContent = { itemsContainer: ItemsContainer<AbstractTreeItem>, id: Int, modifier: Modifier ->
                 TreeItemComposable(controller, itemsContainer, id, modifier)
@@ -221,6 +233,7 @@ private fun TreeItemComposable(
             }
             .combinedClickable(
                 onClick = {
+                    controller.startLoading()
                     val position = itemsContainer.indexToPositionMap.getValue(id)
                     mainScope.launch {
                         delay(1)

@@ -7,6 +7,7 @@ import android.content.res.Configuration
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageButton
+import android.widget.ProgressBar
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -35,6 +36,7 @@ class GUI {
     private val imm: InputMethodManager? = appCompatActivity.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
     private var lvl2TreeView: View? = null
     private var lvl2EditView: View? = null
+    private var loadingBar: ProgressBar? = null
 
     private var actionBar: ActionBar? = null
 
@@ -54,6 +56,14 @@ class GUI {
 
             else -> lvl2TreeView!!
         }
+    }
+
+    fun startLoading() {
+        loadingBar?.visibility = View.VISIBLE
+    }
+
+    fun stopLoading() {
+        loadingBar?.visibility = View.GONE
     }
 
     fun hideSoftKeyboard(window: View) {
@@ -78,6 +88,7 @@ class GUI {
         }
         lvl2TreeView = appCompatActivity.findViewById(R.id.compose_view_tree)
         lvl2EditView = appCompatActivity.findViewById(R.id.compose_view_edit)
+        loadingBar = appCompatActivity.findViewById(R.id.loadingBar)
     }
 
     fun showBackButton(show: Boolean) {
@@ -89,12 +100,14 @@ class GUI {
 
     fun showItemsList() {
 //        setOrientationPortrait()
+        startLoading()
         val layoutView = setMainContentLayout(R.layout.component_items_list)
         appData.state = AppState.ITEMS_LIST
         treeListLayout.showLayout(layoutView)
     }
 
     fun showEditItemPanel(item: AbstractTreeItem?, parent: AbstractTreeItem) {
+        startLoading()
         showBackButton(true)
         val layoutView = setMainContentLayout(R.layout.component_edit_item)
         editItemLayout.setCurrentItem(item, parent)

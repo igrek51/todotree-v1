@@ -59,6 +59,7 @@ class EditItemLayout {
 
         gui.setTitle(parent.displayName)
         showKeyboard()
+        gui.stopLoading()
     }
 
     private fun resetState() {

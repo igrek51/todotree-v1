@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
@@ -81,6 +82,7 @@ fun <T> ReorderListView(
     itemsContainer: ItemsContainer<T>,
     scrollState: ScrollState = rememberScrollState(),
     onReorder: (newItems: MutableList<T>) -> Unit,
+    onLoad: () -> Unit,
     itemContent: @Composable (itemsContainer: ItemsContainer<T>, id: Int, modifier: Modifier) -> Unit,
     postContent: @Composable () -> Unit,
 ) {
@@ -131,6 +133,10 @@ fun <T> ReorderListView(
 
             postContent()
         }
+    }
+
+    LaunchedEffect(itemsContainer.modifiedAll.value) {
+        onLoad()
     }
 }
 
