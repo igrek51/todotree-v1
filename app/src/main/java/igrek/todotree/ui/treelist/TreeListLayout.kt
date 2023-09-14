@@ -227,6 +227,8 @@ private fun TreeItemComposable(
     val itemPosition: MutableState<Offset> = remember { mutableStateOf(Offset.Zero) }
     val itemSize: MutableState<IntSize> = remember { mutableStateOf(IntSize.Zero) }
 
+    val selectMode: Boolean = controller.state.selectMode.value
+
     Row(
         modifier
             .onGloballyPositioned { coordinates ->
@@ -235,7 +237,8 @@ private fun TreeItemComposable(
             }
             .combinedClickable(
                 onClick = {
-                    controller.startLoading()
+                    if (!selectMode)
+                        controller.startLoading()
                     val position = itemsContainer.indexToPositionMap.getValue(id)
                     Handler(Looper.getMainLooper()).post {
                         mainScope.launch {
@@ -277,8 +280,6 @@ private fun TreeItemComposable(
         ,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        val selectMode: Boolean = controller.state.selectMode.value
-
         // Reorder
         if (!selectMode) {
             IconButton(
@@ -386,8 +387,11 @@ private fun PlusButtonComposable(
             .border(BorderStroke(1.dp, Color(0xFF444444)))
             .combinedClickable(
                 onClick = {
-                    mainScope.launch {
-                        controller.onPlusClick()
+                    controller.startLoading()
+                    Handler(Looper.getMainLooper()).post {
+                        mainScope.launch {
+                            controller.onPlusClick()
+                        }
                     }
                 },
                 onLongClick = {
@@ -416,8 +420,10 @@ private fun ItemIconButton(
     IconButton(
         modifier = Modifier.size(32.dp, 36.dp),
         onClick = {
-            mainScope.launch {
-                onClick()
+            Handler(Looper.getMainLooper()).post {
+                mainScope.launch {
+                    onClick()
+                }
             }
         },
     ) {
