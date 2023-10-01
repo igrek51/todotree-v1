@@ -9,13 +9,16 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Done
@@ -63,23 +66,180 @@ internal fun MainComponent(controller: EditItemLayout) {
 //    logger.debug("recomposition: EditItemLayout: Main")
     CompositionLocalProvider(LocalMinimumInteractiveComponentEnforcement provides false) {
         Column {
-            ContentTextField(controller)
+            Column(Modifier.verticalScroll(rememberScrollState())) {
+                ContentTextField(controller)
 
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                    key(controller.state.startEditTimestamp.value) {
+                        FlatButton(
+                            modifier = Modifier.weight(0.5f),
+                            iconVector = Icons.Filled.Done,
+                            text = "Save",
+                            onClick = {
+                                controller.onSaveItemClick()
+                            },
+                        )
+                    }
+
+                    if (!controller.state.remotePushingEnabled.value) {
+                        FlatButton(
+                            modifier = Modifier.weight(0.25f),
+                            iconVector = Icons.Filled.Done,
+                            text = "& add",
+                            onClick = {
+                                controller.onSaveAndAddClick()
+                            },
+                        )
+                        FlatButton(
+                            modifier = Modifier.weight(0.25f),
+                            iconVector = Icons.Filled.Done,
+                            text = "& enter",
+                            onClick = {
+                                controller.onSaveAndEnterClick()
+                            },
+                        )
+                    }
+                }
+
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                    MyFlatIconButton(
+                        drawableResId = R.drawable.navigate_previous,
+                        onClick = {
+                            controller.quickCursorJump(-1)
+                        },
+                    )
+                    MyFlatIconButton(
+                        drawableResId = R.drawable.arrow_left,
+                        onClick = {
+                            controller.quickCursorMove(-1)
+                        },
+                    )
+                    MyFlatIconButton(
+                        drawableResId = R.drawable.select_all,
+                        onClick = {
+                            controller.selectAllText()
+                        },
+                    )
+                    MyFlatIconButton(
+                        drawableResId = R.drawable.arrow_right,
+                        onClick = {
+                            controller.quickCursorMove(+1)
+                        },
+                    )
+                    MyFlatIconButton(
+                        drawableResId = R.drawable.navigate_next,
+                        onClick = {
+                            controller.quickCursorJump(+1)
+                        },
+                    )
+                }
+
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                    MyFlatIconButton(
+                        modifier = Modifier,
+                        drawableResId = R.drawable.copy,
+                        onClick = {
+                            controller.onCopyClick()
+                        },
+                    )
+                    MyFlatIconButton(
+                        drawableResId = R.drawable.paste,
+                        onClick = {
+                            controller.onPasteClick()
+                        },
+                    )
+                    ToggleSelectionButton(controller)
+                    MyFlatIconButton(
+                        drawableResId = R.drawable.backspace,
+                        onClick = {
+                            controller.onBackspaceClick()
+                        },
+                    )
+                    MyFlatIconButton(
+                        drawableResId = R.drawable.backspace_reverse,
+                        onClick = {
+                            controller.onReverseBackspaceClick()
+                        },
+                    )
+                }
+
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                    FlatButton(
+                        modifier = Modifier.weight(2f),
+                        text = "HH:mm",
+                        onClick = {
+                            controller.numericTyper.toggleTypingHour()
+                        },
+                    )
+                    FlatButton(
+                        modifier = Modifier.weight(2f),
+                        text = "dd.MM",
+                        onClick = {
+                            controller.numericTyper.toggleTypingDate()
+                        },
+                    )
+                    FlatButton(
+                        modifier = Modifier.weight(1f),
+                        text = "-",
+                        onClick = {
+                            controller.insertHyphen()
+                        },
+                    )
+                    FlatButton(
+                        modifier = Modifier.weight(1f),
+                        text = ":",
+                        onClick = {
+                            controller.insertColon()
+                        },
+                    )
+                    FlatButton(
+                        modifier = Modifier.weight(1.5f),
+                        text = "123",
+                        onClick = {
+                            controller.numericTyper.toggleTypingNumeric()
+                        },
+                    )
+                }
+
+                Row {
+                    key(controller.state.startEditTimestamp.value) {
+                        FlatButton(
+                            modifier = Modifier.fillMaxWidth(),
+                            iconVector = Icons.Filled.Close,
+                            text = "Cancel",
+                            onClick = {
+                                controller.onCancelClick()
+                            },
+                        )
+                    }
+                }
+            }
+
+            Row(
+                Modifier.fillMaxWidth().weight(1f),
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
                 key(controller.state.startEditTimestamp.value) {
                     FlatButton(
-                        modifier = Modifier.weight(0.5f),
+                        modifier = Modifier.weight(0.25f).fillMaxHeight(),
                         iconVector = Icons.Filled.Done,
                         text = "Save",
                         onClick = {
                             controller.onSaveItemClick()
                         },
                     )
+                    FlatButton(
+                        modifier = Modifier.weight(0.25f).fillMaxHeight(),
+                        iconVector = Icons.Filled.Close,
+                        text = "Cancel",
+                        onClick = {
+                            controller.onCancelClick()
+                        },
+                    )
                 }
-
                 if (!controller.state.remotePushingEnabled.value) {
                     FlatButton(
-                        modifier = Modifier.weight(0.25f),
+                        modifier = Modifier.weight(0.25f).fillMaxHeight(),
                         iconVector = Icons.Filled.Done,
                         text = "& add",
                         onClick = {
@@ -87,124 +247,11 @@ internal fun MainComponent(controller: EditItemLayout) {
                         },
                     )
                     FlatButton(
-                        modifier = Modifier.weight(0.25f),
+                        modifier = Modifier.weight(0.25f).fillMaxHeight(),
                         iconVector = Icons.Filled.Done,
                         text = "& enter",
                         onClick = {
                             controller.onSaveAndEnterClick()
-                        },
-                    )
-                }
-            }
-
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                MyFlatIconButton(
-                    drawableResId = R.drawable.navigate_previous,
-                    onClick = {
-                        controller.quickCursorJump(-1)
-                    },
-                )
-                MyFlatIconButton(
-                    drawableResId = R.drawable.arrow_left,
-                    onClick = {
-                        controller.quickCursorMove(-1)
-                    },
-                )
-                ToggleSelectionButton(controller)
-                MyFlatIconButton(
-                    drawableResId = R.drawable.arrow_right,
-                    onClick = {
-                        controller.quickCursorMove(+1)
-                    },
-                )
-                MyFlatIconButton(
-                    drawableResId = R.drawable.navigate_next,
-                    onClick = {
-                        controller.quickCursorJump(+1)
-                    },
-                )
-            }
-
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                MyFlatIconButton(
-                    modifier = Modifier,
-                    drawableResId = R.drawable.copy,
-                    onClick = {
-                        controller.onCopyClick()
-                    },
-                )
-                MyFlatIconButton(
-                    drawableResId = R.drawable.paste,
-                    onClick = {
-                        controller.onPasteClick()
-                    },
-                )
-                MyFlatIconButton(
-                    drawableResId = R.drawable.select_all,
-                    onClick = {
-                        controller.selectAllText()
-                    },
-                )
-                MyFlatIconButton(
-                    drawableResId = R.drawable.backspace,
-                    onClick = {
-                        controller.onBackspaceClick()
-                    },
-                )
-                MyFlatIconButton(
-                    drawableResId = R.drawable.backspace_reverse,
-                    onClick = {
-                        controller.onReverseBackspaceClick()
-                    },
-                )
-            }
-
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                FlatButton(
-                    modifier = Modifier.weight(2f),
-                    text = "HH:mm",
-                    onClick = {
-                        controller.numericTyper.toggleTypingHour()
-                    },
-                )
-                FlatButton(
-                    modifier = Modifier.weight(2f),
-                    text = "dd.MM",
-                    onClick = {
-                        controller.numericTyper.toggleTypingDate()
-                    },
-                )
-                FlatButton(
-                    modifier = Modifier.weight(1f),
-                    text = "-",
-                    onClick = {
-                        controller.insertHyphen()
-                    },
-                )
-                FlatButton(
-                    modifier = Modifier.weight(1f),
-                    text = ":",
-                    onClick = {
-                        controller.insertColon()
-                    },
-                )
-                FlatButton(
-                    modifier = Modifier.weight(1.5f),
-                    text = "123",
-                    onClick = {
-                        controller.numericTyper.toggleTypingNumeric()
-                    },
-                )
-            }
-
-            Row {
-                key(controller.state.startEditTimestamp.value) {
-                    FlatButton(
-                        modifier = Modifier.fillMaxWidth(),
-                        iconVector = Icons.Filled.Close,
-                        text = "Cancel",
-                        onClick = {
-                            controller.onCancelClick()
                         },
                     )
                 }
