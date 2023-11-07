@@ -11,6 +11,7 @@ import igrek.todotree.inject.LazyExtractor
 import igrek.todotree.inject.LazyInject
 import igrek.todotree.inject.appFactory
 import igrek.todotree.command.Commander
+import igrek.todotree.info.splitTime
 import igrek.todotree.layout.navigation.NavigationMenuController
 import igrek.todotree.service.import.DatabaseImportFileChooser
 import igrek.todotree.service.tree.TreeSelectionManager
@@ -98,6 +99,7 @@ class NavigationCommand(
     }
 
     fun backClicked(): Boolean {
+        splitTime.split("back click")
         gui.startLoading()
         Handler(Looper.getMainLooper()).post {
             if (appData.isState(AppState.ITEMS_LIST)) {

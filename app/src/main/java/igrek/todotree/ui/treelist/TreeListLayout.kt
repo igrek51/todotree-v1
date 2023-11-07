@@ -54,6 +54,7 @@ import igrek.todotree.compose.ReorderListView
 import igrek.todotree.compose.colorLinkItem
 import igrek.todotree.domain.treeitem.AbstractTreeItem
 import igrek.todotree.domain.treeitem.LinkTreeItem
+import igrek.todotree.info.splitTime
 import igrek.todotree.inject.LazyExtractor
 import igrek.todotree.inject.appFactory
 import igrek.todotree.intent.ItemEditorCommand
@@ -79,8 +80,8 @@ class TreeListLayout {
     fun showLayout(layout: View) {
         updateItemsList()
 
+        splitTime.split("show layout")
         val thisLayout = this
-//        splitTime.split("show layout: ${System.currentTimeMillis()}")
         layout.findViewById<ComposeView>(R.id.compose_view_tree).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnDetachedFromWindow)
             setContent {
@@ -194,6 +195,7 @@ private fun MainComponent(controller: TreeListLayout) {
             },
             onLoad = {
                 controller.stopLoading()
+                splitTime.split("composition done")
             },
             itemContent = { itemsContainer: ItemsContainer<AbstractTreeItem>, id: Int, modifier: Modifier ->
                 TreeItemComposable(controller, itemsContainer, id, modifier)
@@ -203,12 +205,6 @@ private fun MainComponent(controller: TreeListLayout) {
             },
         )
     }
-//    Spacer(
-//        modifier = Modifier
-//            .drawBehind {
-//                splitTime.split("spacer draw: ${System.currentTimeMillis()}")
-//            }
-//    )
 }
 
 
@@ -237,6 +233,7 @@ private fun TreeItemComposable(
             }
             .combinedClickable(
                 onClick = {
+                    splitTime.split("item click")
                     if (!selectMode)
                         controller.startLoading()
                     val position = itemsContainer.indexToPositionMap.getValue(id)
@@ -266,17 +263,9 @@ private fun TreeItemComposable(
                     val itemH = itemsContainer.itemHeights.getValue(id)
                     val position = itemsContainer.indexToPositionMap.getValue(id)
                     val result = handleItemGesture(pan.x, pan.y, itemW, itemH, position, item)
-//                    if (result == true) {
-//                        loading = true
-//                    }
                     result
                 }
             }
-//            .drawBehind {
-//                if (loading) {
-//                    drawRect(color = colorItemClicked)
-//                }
-//            }
         ,
         verticalAlignment = Alignment.CenterVertically,
     ) {
