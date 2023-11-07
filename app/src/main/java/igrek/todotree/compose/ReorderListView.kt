@@ -23,7 +23,6 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -35,6 +34,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import igrek.todotree.info.logger.LoggerFactory.logger
+import igrek.todotree.info.splitTime
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -45,7 +45,6 @@ import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
 val itemBorderStroke = BorderStroke(0.5.dp, colorItemListBorder)
-
 
 class ItemsContainer<T>(
     var items: MutableList<T> = mutableListOf(),
@@ -64,7 +63,10 @@ class ItemsContainer<T>(
     var totalRelativeSwapOffset: Float = 0f,
     val overscrollDiff: MutableState<Float> = mutableStateOf(0f),
     val parentViewportWidth: MutableState<Float> = mutableStateOf(0f),
+    val parentViewportHeight: MutableState<Float> = mutableStateOf(0f),
     val highlightedIndex: MutableState<Int> = mutableStateOf(-1),
+    val draggingIndex: MutableState<Int> = mutableStateOf(-1),
+    val scrollJob: MutableState<Job?> = mutableStateOf(null),
 ) {
     fun replaceAll(newList: MutableList<T>) {
         items = newList
@@ -92,10 +94,7 @@ fun <T> ReorderListView(
     itemContent: @Composable (itemsContainer: ItemsContainer<T>, id: Int, modifier: Modifier) -> Unit,
     postContent: @Composable () -> Unit,
 ) {
-    val draggingIndex: MutableState<Int> = remember { mutableStateOf(-1) }
-    val parentViewportHeight: MutableState<Float> = remember { mutableStateOf(0f) }
     val coroutineScope: CoroutineScope = rememberCoroutineScope()
-    val scrollJob: MutableState<Job?> = remember { mutableStateOf(null) }
 
     itemsContainer.items.indices.forEach { index: Int ->
         itemsContainer.indexToPositionMap[index] = index
@@ -103,29 +102,37 @@ fun <T> ReorderListView(
 
         itemsContainer.itemBiasOffsets[index] = Animatable(0f)
         itemsContainer.itemStablePositions[index] = Animatable(0f)
-        itemsContainer.itemHighlights[index] = Animatable(0f)
-
-        itemsContainer.isDraggingMes[index] = derivedStateOf {
-            draggingIndex.value == index
+        itemsContainer.itemHighlights.getOrPut(index) {
+            Animatable(0f)
         }
-        itemsContainer.isHighlightingMes[index] = derivedStateOf {
-            itemsContainer.highlightedIndex.value == index
+
+        itemsContainer.isDraggingMes.getOrPut(index) {
+            derivedStateOf {
+                itemsContainer.draggingIndex.value == index
+            }
+        }
+        itemsContainer.isHighlightingMes.getOrPut(index) {
+            derivedStateOf {
+                itemsContainer.highlightedIndex.value == index
+            }
         }
         itemsContainer.reorderButtonModifiers[index] = Modifier.createReorderButtonModifier(
-            itemsContainer, index, draggingIndex, scrollState, parentViewportHeight,
-            coroutineScope, scrollJob, onReorder,
+            itemsContainer, index, itemsContainer.draggingIndex, scrollState, itemsContainer.parentViewportHeight,
+            coroutineScope, itemsContainer.scrollJob, onReorder,
         )
         itemsContainer.itemModifiers[index] = Modifier.createItemModifier(
             itemsContainer, index,
         )
     }
 
+    splitTime.split("items container init")
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(scrollState)
             .onGloballyPositioned { coordinates: LayoutCoordinates ->
-                parentViewportHeight.value =
+                itemsContainer.parentViewportHeight.value =
                     coordinates.parentLayoutCoordinates?.size?.height?.toFloat() ?: 0f
                 itemsContainer.parentViewportWidth.value =
                     coordinates.parentLayoutCoordinates?.size?.width?.toFloat() ?: 0f
@@ -153,7 +160,7 @@ private fun <T> ReorderListViewItem(
     index: Int,
     itemContent: @Composable (itemsContainer: ItemsContainer<T>, id: Int, modifier: Modifier) -> Unit,
 ) {
-//        logger.debug("recomposing item $index")
+//    logger.debug("recomposing item $index")
     key(itemsContainer.modifiedMap.getValue(index).value) {
         val itemModifier = itemsContainer.itemModifiers.getValue(index)
         val isHighlightingMe: State<Boolean> = itemsContainer.isHighlightingMes.getValue(index)
