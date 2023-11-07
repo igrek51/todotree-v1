@@ -34,6 +34,7 @@ import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import igrek.todotree.info.logger.LoggerFactory.logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -57,6 +58,7 @@ class ItemsContainer<T>(
     val reorderButtonModifiers: MutableMap<Int, Modifier> = mutableMapOf(),
     val itemModifiers: MutableMap<Int, Modifier> = mutableMapOf(),
     val isDraggingMes: MutableMap<Int, State<Boolean>> = mutableMapOf(),
+    val isHighlightingMes: MutableMap<Int, State<Boolean>> = mutableMapOf(),
     val indexToPositionMap: MutableMap<Int, Int> = mutableMapOf(), // item index (ID) on list to real displayed position index
     val positionToIndexMap: MutableMap<Int, Int> = mutableMapOf(), // real displayed index to item index (ID) on list
     var totalRelativeSwapOffset: Float = 0f,
@@ -106,6 +108,9 @@ fun <T> ReorderListView(
         itemsContainer.isDraggingMes[index] = derivedStateOf {
             draggingIndex.value == index
         }
+        itemsContainer.isHighlightingMes[index] = derivedStateOf {
+            itemsContainer.highlightedIndex.value == index
+        }
         itemsContainer.reorderButtonModifiers[index] = Modifier.createReorderButtonModifier(
             itemsContainer, index, draggingIndex, scrollState, parentViewportHeight,
             coroutineScope, scrollJob, onReorder,
@@ -151,10 +156,11 @@ private fun <T> ReorderListViewItem(
 //        logger.debug("recomposing item $index")
     key(itemsContainer.modifiedMap.getValue(index).value) {
         val itemModifier = itemsContainer.itemModifiers.getValue(index)
+        val isHighlightingMe: State<Boolean> = itemsContainer.isHighlightingMes.getValue(index)
 
-        if (itemsContainer.highlightedIndex.value == index) {
-            LaunchedEffect(itemsContainer.highlightedIndex.value) {
-                if (itemsContainer.highlightedIndex.value == index) {
+        if (isHighlightingMe.value) {
+            LaunchedEffect(isHighlightingMe.value) {
+                if (isHighlightingMe.value) {
                     itemsContainer.itemHighlights[index]?.snapTo(1f)
                     itemsContainer.itemHighlights[index]?.animateTo(0f, animationSpec=tween(
                         durationMillis = 600,
