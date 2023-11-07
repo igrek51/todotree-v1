@@ -71,5 +71,6 @@ val colorLinkItem = Color(0xFFD2D2D2)
 val colorItemListBorder = md_theme_dark_onSurface.copy(alpha = 0.1f)
 val colorItemDraggedBackground = Color.LightGray.copy(alpha = 0.3f)
 val colorItemClicked = Color(0xFF6A6C72)
+val colorHighlightParent = Color(0xA02A7CDB)
 
 //val seed = Color(0xFF1564C0)

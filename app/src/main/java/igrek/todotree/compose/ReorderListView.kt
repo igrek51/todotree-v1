@@ -3,6 +3,8 @@ package igrek.todotree.compose
 import android.annotation.SuppressLint
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
+import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.border
@@ -51,6 +53,7 @@ class ItemsContainer<T>(
     val itemHeights: MutableMap<Int, Float> = mutableMapOf(),
     val itemBiasOffsets: MutableMap<Int, Animatable<Float, AnimationVector1D>> = mutableMapOf(),
     val itemStablePositions: MutableMap<Int, Animatable<Float, AnimationVector1D>> = mutableMapOf(), // ID to position offset
+    val itemHighlights: MutableMap<Int, Animatable<Float, AnimationVector1D>> = mutableMapOf(),
     val reorderButtonModifiers: MutableMap<Int, Modifier> = mutableMapOf(),
     val itemModifiers: MutableMap<Int, Modifier> = mutableMapOf(),
     val isDraggingMes: MutableMap<Int, State<Boolean>> = mutableMapOf(),
@@ -59,6 +62,7 @@ class ItemsContainer<T>(
     var totalRelativeSwapOffset: Float = 0f,
     val overscrollDiff: MutableState<Float> = mutableStateOf(0f),
     val parentViewportWidth: MutableState<Float> = mutableStateOf(0f),
+    val highlightedIndex: MutableState<Int> = mutableStateOf(-1),
 ) {
     fun replaceAll(newList: MutableList<T>) {
         items = newList
@@ -97,6 +101,7 @@ fun <T> ReorderListView(
 
         itemsContainer.itemBiasOffsets[index] = Animatable(0f)
         itemsContainer.itemStablePositions[index] = Animatable(0f)
+        itemsContainer.itemHighlights[index] = Animatable(0f)
 
         itemsContainer.isDraggingMes[index] = derivedStateOf {
             draggingIndex.value == index
@@ -146,6 +151,21 @@ private fun <T> ReorderListViewItem(
 //        logger.debug("recomposing item $index")
     key(itemsContainer.modifiedMap.getValue(index).value) {
         val itemModifier = itemsContainer.itemModifiers.getValue(index)
+
+        if (itemsContainer.highlightedIndex.value == index) {
+            LaunchedEffect(itemsContainer.highlightedIndex.value) {
+                if (itemsContainer.highlightedIndex.value == index) {
+                    itemsContainer.itemHighlights[index]?.snapTo(1f)
+                    itemsContainer.itemHighlights[index]?.animateTo(0f, animationSpec=tween(
+                        durationMillis = 600,
+                        delayMillis = 0,
+                        easing = FastOutLinearInEasing,
+                    ))
+                    itemsContainer.highlightedIndex.value = -1
+                }
+            }
+        }
+
         itemContent(itemsContainer, index, itemModifier)
     }
 }
@@ -156,6 +176,7 @@ private fun <T> Modifier.createItemModifier(
 ): Modifier {
     val stablePosition: Animatable<Float, AnimationVector1D> = itemsContainer.itemStablePositions.getValue(index)
     val offsetBias: Animatable<Float, AnimationVector1D> = itemsContainer.itemBiasOffsets.getValue(index)
+    val highlightAlpha: Animatable<Float, AnimationVector1D> = itemsContainer.itemHighlights.getValue(index)
     val isDraggingMe: State<Boolean> = itemsContainer.isDraggingMes.getValue(index)
     return this
         .offset { IntOffset(0, stablePosition.value.roundToInt() + offsetBias.value.roundToInt()) }
@@ -167,6 +188,8 @@ private fun <T> Modifier.createItemModifier(
         .drawBehind {
             if (isDraggingMe.value) {
                 drawRect(color = colorItemDraggedBackground)
+            } else if (highlightAlpha.value > 0) {
+                drawRect(color = colorHighlightParent, alpha = highlightAlpha.value)
             }
         }
 }

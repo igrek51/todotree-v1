@@ -69,6 +69,7 @@ class TreeCommand(
     }
 
     fun goUp() {
+        // If entered link, it goes to real link parent, breaking the history
         try {
             val current = treeManager.currentItem!!
             treeManager.goUp()

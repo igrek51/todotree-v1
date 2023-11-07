@@ -113,6 +113,13 @@ class TreeListLayout {
 
         state.selectMode.value = selectedPositions?.isNotEmpty() == true
         state.selectedPositions.value = selectedPositions
+
+        items.forEachIndexed { index, item ->
+            if (item == treeManager.focusItem) {
+                state.visibleItems.highlightedIndex.value = index
+                return@forEachIndexed
+            }
+        }
     }
 
     fun updateOneListItem(position: Int) {

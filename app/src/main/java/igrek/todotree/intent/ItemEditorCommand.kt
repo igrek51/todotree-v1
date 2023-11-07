@@ -51,7 +51,9 @@ class ItemEditorCommand(
             uiInfoService.showInfo("Empty item has been removed.")
             false
         } else {
-            treeManager.addToCurrent(newItemPosition, TextTreeItem(content))
+            val newItem = TextTreeItem(content)
+            treeManager.addToCurrent(newItemPosition, newItem)
+            treeManager.focusItem = newItem
             uiInfoService.showInfo("New item saved: $content")
             true
         }
@@ -66,6 +68,7 @@ class ItemEditorCommand(
         mContent = contentTrimmer.trimContent(mContent)
         return if (mContent.isEmpty()) {
             treeManager.removeFromCurrent(editedItem)
+            treeManager.focusItem = null
             uiInfoService.showInfo("Empty item has been removed.")
             false
         } else {
@@ -80,6 +83,7 @@ class ItemEditorCommand(
                     editedItem.customName = mContent
                 }
             }
+            treeManager.focusItem = editedItem
             changesHistory.registerChange()
             true
         }
@@ -115,6 +119,7 @@ class ItemEditorCommand(
     }
 
     fun saveItem(editedItem: AbstractTreeItem?, content: String) {
+        treeManager.focusItem = editedItem
         tryToSaveItem(editedItem, content)
         // try to execute secret command
         returnFromItemEditing()
@@ -174,6 +179,7 @@ class ItemEditorCommand(
     private fun editItem(item: AbstractTreeItem, parent: AbstractTreeItem) {
         treeScrollCache.storeScrollPosition()
         treeManager.newItemPosition = null
+        treeManager.focusItem = item
         gui.showEditItemPanel(item, parent)
         appData.state = AppState.EDIT_ITEM_CONTENT
     }

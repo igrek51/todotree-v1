@@ -27,6 +27,8 @@ class TreeManager(
     var currentItem: AbstractTreeItem? = null
         private set
 
+    var focusItem: AbstractTreeItem? = null
+
     var newItemPosition: Int? = null
 
     init {
@@ -36,6 +38,7 @@ class TreeManager(
     fun reset() {
         rootItem = RootTreeItem()
         currentItem = rootItem
+        focusItem = null
     }
 
     fun isPositionBeyond(position: Int): Boolean {
@@ -65,13 +68,13 @@ class TreeManager(
         val removingChild = currentItem!!.getChild(position)
         StatisticsCommand().onTaskRemoved(removingChild)
         changesHistory.registerChange()
-        currentItem!!.remove(position)
+        currentItem?.remove(position)
     }
 
     fun removeFromCurrent(item: AbstractTreeItem?) {
         changesHistory.registerChange()
         StatisticsCommand().onTaskRemoved(item!!)
-        currentItem!!.remove(item)
+        currentItem?.remove(item)
     }
 
     fun removeFromParent(item: AbstractTreeItem, parent: AbstractTreeItem) {
@@ -85,12 +88,13 @@ class TreeManager(
 
     @Throws(NoSuperItemException::class)
     fun goUp() {
+        focusItem = currentItem
         currentItem = if (currentItem === rootItem) {
             throw NoSuperItemException()
-        } else if (currentItem!!.getParent() == null) {
+        } else if (currentItem?.getParent() == null) {
             throw IllegalStateException("parent = null. This should not happen")
         } else {
-            currentItem!!.getParent()
+            currentItem?.getParent()
         }
     }
 
@@ -100,6 +104,7 @@ class TreeManager(
     }
 
     fun goTo(child: AbstractTreeItem?) {
+        focusItem = currentItem
         currentItem = child
     }
 }
