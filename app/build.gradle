@@ -83,17 +83,17 @@ android {
         exclude 'META-INF/ASL2.0'
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
         incremental = true
     }
     kotlinOptions {
+        jvmTarget = "11"
         freeCompilerArgs = [
                 "-Xallow-result-return-type",
                 "-opt-in=kotlin.RequiresOptIn",
                 "-opt-in=kotlinx.coroutines.DelicateCoroutinesApi",
         ]
-        jvmTarget = "17"
     }
     buildFeatures {
         compose true
@@ -113,8 +113,12 @@ android {
     }
 }
 
+kotlin {
+    jvmToolchain(11)
+}
+
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation fileTree(include: ['*.jar', '*.aar'], dir: 'libs')
     // Android
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.annotation:annotation:1.7.0'
@@ -157,7 +161,7 @@ dependencies {
     // Joda Time
     implementation 'joda-time:joda-time:2.12.5'
     implementation 'org.joda:joda-convert:2.2.3'
-    implementation 'tyrantgit:explosionfield:1.0.1@aar'
+    implementation files('libs/explosionfield-1.0.1.aar')
     // Unit tests
     testImplementation 'androidx.appcompat:appcompat:1.6.1'
     testImplementation 'junit:junit:4.13.2'
