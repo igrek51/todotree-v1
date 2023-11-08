@@ -1,69 +1,20 @@
 package igrek.todotree.service.remote
 
-import android.app.Activity
-import android.os.Handler
-import android.os.Looper
-import android.view.WindowManager
 import igrek.todotree.domain.treeitem.RemoteTreeItem
 import igrek.todotree.domain.treeitem.TextTreeItem
 import igrek.todotree.info.UiInfoService
-import igrek.todotree.info.logger.LoggerFactory
-import igrek.todotree.inject.LazyExtractor
 import igrek.todotree.inject.LazyInject
 import igrek.todotree.inject.appFactory
-import igrek.todotree.intent.ItemEditorCommand
 import igrek.todotree.service.tree.TreeManager
-import igrek.todotree.ui.GUI
 import kotlinx.coroutines.*
 
 @OptIn(DelicateCoroutinesApi::class)
 class RemotePushService(
     private val treeManager: LazyInject<TreeManager> = appFactory.treeManager,
-    private val gui: LazyInject<GUI> = appFactory.gui,
     private val uiInfoService: LazyInject<UiInfoService> = appFactory.uiInfoService,
     private val remoteDbRequester: LazyInject<RemoteDbRequester> = appFactory.remoteDbRequester,
 ) {
-    private val activity: Activity by LazyExtractor(appFactory.activity)
-
-    private val logger = LoggerFactory.logger
-    var isRemotePushEnabled = false
     private val remoteItemToId = hashMapOf<TextTreeItem, String>()
-
-    fun enableRemotePush() {
-        logger.debug("enabling remote push")
-        showOnLockScreen()
-        isRemotePushEnabled = true
-        editNewPushItem()
-        showKeyboard()
-    }
-
-    private fun showKeyboard() {
-        gui.get().forceKeyboardShow()
-        Handler(Looper.getMainLooper()).postDelayed({ gui.get().forceKeyboardShow() }, 300)
-    }
-
-    private fun showOnLockScreen() {
-        activity.window
-                .addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON)
-    }
-
-    private fun editNewPushItem() {
-        // add item at the end
-        ItemEditorCommand().addItemClicked()
-    }
-
-    fun pushAndExitAsync(content: String?): Deferred<Result<String>> {
-        if (content.isNullOrBlank()) {
-            uiInfoService.get().showToast("Nothing to do")
-            return GlobalScope.async { Result.success(content.orEmpty()) }
-        }
-
-        GlobalScope.launch(Dispatchers.Main) {
-            uiInfoService.get().showSnackbar("Pushing...")
-        }
-
-        return remoteDbRequester.get().createRemoteTodoAsync(content)
-    }
 
     fun pushNewItemAsync(content: String): Deferred<Result<String>> {
         if (content.isBlank()) {
@@ -126,5 +77,4 @@ class RemotePushService(
         }
         return remoteDbRequester.get().deleteRemoteTodoAsync(itemId)
     }
-
 }

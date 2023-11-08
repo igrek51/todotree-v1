@@ -3,7 +3,6 @@ package igrek.todotree.intent
 import igrek.todotree.domain.treeitem.AbstractTreeItem
 import igrek.todotree.info.Toaster
 import igrek.todotree.info.UiInfoService
-import igrek.todotree.info.logger.LoggerFactory.logger
 import igrek.todotree.inject.LazyExtractor
 import igrek.todotree.inject.LazyInject
 import igrek.todotree.inject.appFactory
@@ -24,10 +23,6 @@ class RemotePushCommand(
     private val uiInfoService by LazyExtractor(uiInfoService)
     private val remotePushService by LazyExtractor(remotePushService)
     private val treeSelectionManager by LazyExtractor(treeSelectionManager)
-
-    fun isRemotePushingEnabled(): Boolean {
-        return remotePushService.isRemotePushEnabled
-    }
 
     fun actionPushItemsToRemote(position: Int) {
         val itemPosistions: TreeSet<Int> = TreeSet(treeSelectionManager.selectedItemsNotNull)

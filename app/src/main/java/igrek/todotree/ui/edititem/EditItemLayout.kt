@@ -15,7 +15,6 @@ import igrek.todotree.inject.LazyExtractor
 import igrek.todotree.inject.appFactory
 import igrek.todotree.intent.ClipboardCommand
 import igrek.todotree.intent.ItemEditorCommand
-import igrek.todotree.intent.RemotePushCommand
 import igrek.todotree.service.clipboard.SystemClipboardManager
 import igrek.todotree.service.system.SoftKeyboardService
 import igrek.todotree.ui.GUI
@@ -75,7 +74,6 @@ class EditItemLayout {
             state.existingItem.value = false
         }
 
-        state.remotePushingEnabled.value = RemotePushCommand().isRemotePushingEnabled()
         state.manualSelectionMode.value = false
         state.numericKeyboard.value = false
         state.typingHour.value = false

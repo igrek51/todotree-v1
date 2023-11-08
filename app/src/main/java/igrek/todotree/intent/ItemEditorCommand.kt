@@ -6,7 +6,6 @@ import igrek.todotree.domain.treeitem.AbstractTreeItem
 import igrek.todotree.domain.treeitem.LinkTreeItem
 import igrek.todotree.domain.treeitem.RemoteTreeItem
 import igrek.todotree.domain.treeitem.TextTreeItem
-import igrek.todotree.info.Toaster
 import igrek.todotree.info.UiInfoService
 import igrek.todotree.info.logger.LoggerFactory
 import igrek.todotree.inject.LazyExtractor
@@ -14,15 +13,12 @@ import igrek.todotree.inject.LazyInject
 import igrek.todotree.inject.appFactory
 import igrek.todotree.service.access.QuickAddService
 import igrek.todotree.service.history.ChangesHistory
-import igrek.todotree.service.remote.RemotePushService
 import igrek.todotree.service.tree.ContentTrimmer
 import igrek.todotree.service.tree.TreeManager
 import igrek.todotree.service.tree.TreeScrollCache
 import igrek.todotree.service.tree.TreeSelectionManager
 import igrek.todotree.ui.GUI
-import kotlinx.coroutines.*
 
-@OptIn(DelicateCoroutinesApi::class)
 class ItemEditorCommand(
     treeManager: LazyInject<TreeManager> = appFactory.treeManager,
     gui: LazyInject<GUI> = appFactory.gui,
@@ -33,7 +29,6 @@ class ItemEditorCommand(
     treeSelectionManager: LazyInject<TreeSelectionManager> = appFactory.treeSelectionManager,
     changesHistory: LazyInject<ChangesHistory> = appFactory.changesHistory,
     quickAddService: LazyInject<QuickAddService> = appFactory.quickAddService,
-    remotePushService: LazyInject<RemotePushService> = appFactory.remotePushService,
 ) {
     private val treeManager by LazyExtractor(treeManager)
     private val gui by LazyExtractor(gui)
@@ -44,7 +39,6 @@ class ItemEditorCommand(
     private val treeSelectionManager by LazyExtractor(treeSelectionManager)
     private val changesHistory by LazyExtractor(changesHistory)
     private val quickAddService by LazyExtractor(quickAddService)
-    private val remotePushService by LazyExtractor(remotePushService)
 
     private val logger = LoggerFactory.logger
     private val newItemPosition: Int?
@@ -127,18 +121,6 @@ class ItemEditorCommand(
         // exit if it's quick add mode only
         if (quickAddService.isQuickAddModeEnabled) {
             quickAddService.exitApp()
-        } else if (remotePushService.isRemotePushEnabled) {
-            runBlocking {
-                GlobalScope.launch(Dispatchers.Main) {
-                    val result = remotePushService.pushAndExitAsync(content).await()
-                    result.fold(onSuccess = {
-                        uiInfoService.showToast("Success!")
-                        exitApp()
-                    }, onFailure = { e ->
-                        Toaster().error(e, "Communication breakdown!")
-                    })
-                }
-            }
         }
     }
 
@@ -213,8 +195,6 @@ class ItemEditorCommand(
         // exit if it's quick add mode only
         if (quickAddService.isQuickAddModeEnabled) {
             quickAddService.exitApp()
-        } else if (remotePushService.isRemotePushEnabled) {
-            exitApp()
         }
     }
 

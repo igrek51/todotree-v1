@@ -81,24 +81,22 @@ internal fun MainComponent(controller: EditItemLayout) {
                         )
                     }
 
-                    if (!controller.state.remotePushingEnabled.value) {
-                        FlatButton(
-                            modifier = Modifier.weight(0.25f),
-                            iconVector = Icons.Filled.Done,
-                            text = "& add",
-                            onClick = {
-                                controller.onSaveAndAddClick()
-                            },
-                        )
-                        FlatButton(
-                            modifier = Modifier.weight(0.25f),
-                            iconVector = Icons.Filled.Done,
-                            text = "& enter",
-                            onClick = {
-                                controller.onSaveAndEnterClick()
-                            },
-                        )
-                    }
+                    FlatButton(
+                        modifier = Modifier.weight(0.25f),
+                        iconVector = Icons.Filled.Done,
+                        text = "& add",
+                        onClick = {
+                            controller.onSaveAndAddClick()
+                        },
+                    )
+                    FlatButton(
+                        modifier = Modifier.weight(0.25f),
+                        iconVector = Icons.Filled.Done,
+                        text = "& enter",
+                        onClick = {
+                            controller.onSaveAndEnterClick()
+                        },
+                    )
                 }
 
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -237,24 +235,22 @@ internal fun MainComponent(controller: EditItemLayout) {
                         },
                     )
                 }
-                if (!controller.state.remotePushingEnabled.value) {
-                    FlatButton(
-                        modifier = Modifier.weight(0.25f).fillMaxHeight(),
-                        iconVector = Icons.Filled.Done,
-                        text = "& add",
-                        onClick = {
-                            controller.onSaveAndAddClick()
-                        },
-                    )
-                    FlatButton(
-                        modifier = Modifier.weight(0.25f).fillMaxHeight(),
-                        iconVector = Icons.Filled.Done,
-                        text = "& enter",
-                        onClick = {
-                            controller.onSaveAndEnterClick()
-                        },
-                    )
-                }
+                FlatButton(
+                    modifier = Modifier.weight(0.25f).fillMaxHeight(),
+                    iconVector = Icons.Filled.Done,
+                    text = "& add",
+                    onClick = {
+                        controller.onSaveAndAddClick()
+                    },
+                )
+                FlatButton(
+                    modifier = Modifier.weight(0.25f).fillMaxHeight(),
+                    iconVector = Icons.Filled.Done,
+                    text = "& enter",
+                    onClick = {
+                        controller.onSaveAndEnterClick()
+                    },
+                )
             }
         }
     }

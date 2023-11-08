@@ -8,7 +8,6 @@ import androidx.compose.ui.text.input.TextFieldValue
 
 class EditItemState {
     val textFieldValue: MutableState<TextFieldValue> = mutableStateOf(TextFieldValue(text = ""))
-    val remotePushingEnabled: MutableState<Boolean> = mutableStateOf(false)
     val existingItem: MutableState<Boolean> = mutableStateOf(false)
     val manualSelectionMode: MutableState<Boolean> = mutableStateOf(false)
     val numericKeyboard: MutableState<Boolean> = mutableStateOf(false)
