@@ -153,7 +153,8 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:3.12.12' // last version supporting API 19
     implementation 'com.squareup.okhttp3:logging-interceptor:3.12.12'
     // Joda Time
-    implementation 'joda-time:joda-time:2.9.9'
+    implementation 'joda-time:joda-time:2.12.5'
+    implementation 'org.joda:joda-convert:2.2.3'
     implementation 'tyrantgit:explosionfield:1.0.1@aar'
     // Unit tests
     testImplementation 'androidx.appcompat:appcompat:1.6.1'
