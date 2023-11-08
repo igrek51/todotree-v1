@@ -21,8 +21,9 @@ class SplitTime {
                 durations.add(duration)
                 val meanDuration = durations.average()
                 val meanStr = "%.2f".format(meanDuration)
+                val median = median(durations)
 
-                logger.debug("Split: $context: $duration ms, mean: $meanStr ms (${durations.size})")
+                logger.debug("Split: $context: ${duration}ms, mean: ${meanStr}ms, median: ${median}ms, ${durations.size} samples")
             }
         }
         lastTime = now
@@ -30,3 +31,10 @@ class SplitTime {
 }
 
 val splitTime = SplitTime()
+
+fun median(list: List<Long>) = list.sorted().let {
+    if (it.size % 2 == 0)
+        (it[it.size / 2] + it[(it.size - 1) / 2]) / 2
+    else
+        it[it.size / 2]
+}

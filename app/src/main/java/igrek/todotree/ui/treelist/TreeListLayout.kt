@@ -41,6 +41,7 @@ import androidx.compose.ui.input.pointer.positionChanged
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -225,6 +226,9 @@ private fun TreeItemComposable(
 
     val selectMode: Boolean = controller.state.selectMode.value
 
+    val linkStrokeWidthPx = with(LocalDensity.current) { 1.dp.toPx() }
+    val linkOffset2Sp = with(LocalDensity.current) { 2.sp.toPx() }
+
     Row(
         modifier
             .onGloballyPositioned { coordinates ->
@@ -311,11 +315,10 @@ private fun TreeItemComposable(
                 modifier = Modifier
                     .padding(vertical = 4.dp, horizontal = 4.dp)
                     .drawBehind {
-                        val strokeWidthPx = 1.dp.toPx()
-                        val verticalOffset = size.height - 2.sp.toPx()
+                        val verticalOffset = size.height - linkOffset2Sp
                         drawLine(
                             color = colorLinkItem,
-                            strokeWidth = strokeWidthPx,
+                            strokeWidth = linkStrokeWidthPx,
                             start = Offset(0f, verticalOffset),
                             end = Offset(size.width, verticalOffset)
                         )

@@ -90,7 +90,6 @@ fun <T> ReorderListView(
     val parentViewportHeight: MutableState<Float> = remember { mutableStateOf(0f) }
     val coroutineScope: CoroutineScope = rememberCoroutineScope()
     val scrollJob: MutableState<Job?> = remember { mutableStateOf(null) }
-    //val dividerPx = with(LocalDensity.current) { 1.dp.toPx() }
 
     itemsContainer.items.indices.forEach { index: Int ->
         itemsContainer.indexToPositionMap[index] = index
@@ -111,26 +110,26 @@ fun <T> ReorderListView(
         )
     }
 
-    key(itemsContainer.modifiedAll.value) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(scrollState)
-                .onGloballyPositioned { coordinates: LayoutCoordinates ->
-                    parentViewportHeight.value =
-                        coordinates.parentLayoutCoordinates?.size?.height?.toFloat() ?: 0f
-                    itemsContainer.parentViewportWidth.value =
-                        coordinates.parentLayoutCoordinates?.size?.width?.toFloat() ?: 0f
-                },
-        ) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(scrollState)
+            .onGloballyPositioned { coordinates: LayoutCoordinates ->
+                parentViewportHeight.value =
+                    coordinates.parentLayoutCoordinates?.size?.height?.toFloat() ?: 0f
+                itemsContainer.parentViewportWidth.value =
+                    coordinates.parentLayoutCoordinates?.size?.width?.toFloat() ?: 0f
+            },
+    ) {
 
+        key(itemsContainer.modifiedAll.value) {
 //            logger.debug("recomposing all items")
             itemsContainer.items.indices.forEach { index: Int ->
                 ReorderListViewItem(itemsContainer, index, itemContent)
             }
-
-            postContent()
         }
+
+        postContent()
     }
 
     LaunchedEffect(itemsContainer.modifiedAll.value) {
