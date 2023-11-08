@@ -125,8 +125,6 @@ fun <T> ReorderListView(
         )
     }
 
-    splitTime.split("items container init")
-
     Column(
         modifier = Modifier
             .fillMaxSize()

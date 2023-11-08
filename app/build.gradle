@@ -23,6 +23,7 @@ def getVersionName = { ->
 }
 
 android {
+    namespace "igrek.todotree"
     compileSdkVersion 33
     defaultConfig {
         applicationId "igrek.todotree"
@@ -96,6 +97,7 @@ android {
     }
     buildFeatures {
         compose true
+        buildConfig true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.8" // based on https://developer.android.com/jetpack/androidx/releases/compose-kotlin
