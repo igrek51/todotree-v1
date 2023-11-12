@@ -3,11 +3,10 @@ import java.io.FileInputStream
 import java.io.ByteArrayOutputStream
 
 plugins {
-//    kotlin("jvm")
     id("com.android.application")
     kotlin("android")
-//    kotlin("kapt") version "1.9.20"
     kotlin("plugin.serialization") //version "1.9.0"
+    //kotlin("kapt") version "1.9.20"
 }
 
 fun getVersionCode(): Int {

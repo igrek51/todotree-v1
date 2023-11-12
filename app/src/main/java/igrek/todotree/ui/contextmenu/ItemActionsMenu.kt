@@ -2,6 +2,8 @@ package igrek.todotree.ui.contextmenu
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.os.Handler
+import android.os.Looper
 import igrek.todotree.domain.treeitem.LinkTreeItem
 import igrek.todotree.domain.treeitem.RemoteTreeItem
 import igrek.todotree.domain.treeitem.TextTreeItem
@@ -15,6 +17,8 @@ import igrek.todotree.service.clipboard.TreeClipboardManager
 import igrek.todotree.service.tree.TreeManager
 import igrek.todotree.ui.ExplosionService
 import igrek.todotree.ui.SizeAndPosition
+import igrek.todotree.util.mainScope
+import kotlinx.coroutines.launch
 
 class ItemActionsMenu(
     private val position: Int,
@@ -33,10 +37,14 @@ class ItemActionsMenu(
         val builder = AlertDialog.Builder(activity)
         builder.setTitle("Choose action")
         builder.setItems(actionNames) { _, item ->
-            try {
-                actions[item].execute()
-            } catch (t: Throwable) {
-                UiErrorHandler.handleError(t)
+            Handler(Looper.getMainLooper()).post {
+                mainScope.launch {
+                    try {
+                        actions[item].execute()
+                    } catch (t: Throwable) {
+                        UiErrorHandler.handleError(t)
+                    }
+                }
             }
         }
         val alert = builder.create()
