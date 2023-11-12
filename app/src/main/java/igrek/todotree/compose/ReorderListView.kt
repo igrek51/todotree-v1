@@ -102,9 +102,7 @@ fun <T> ReorderListView(
 
         itemsContainer.itemBiasOffsets[index] = Animatable(0f)
         itemsContainer.itemStablePositions[index] = Animatable(0f)
-        itemsContainer.itemHighlights.getOrPut(index) {
-            Animatable(0f)
-        }
+        itemsContainer.itemHighlights[index] = Animatable(0f)
 
         itemsContainer.isDraggingMes.getOrPut(index) {
             derivedStateOf {
