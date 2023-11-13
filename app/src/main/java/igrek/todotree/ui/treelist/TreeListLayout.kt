@@ -114,8 +114,15 @@ class TreeListLayout {
         state.selectMode.value = selectedPositions?.isNotEmpty() == true
         state.selectedPositions.value = selectedPositions
 
+        fun itemToBeFocused(item: AbstractTreeItem): Boolean {
+            return when {
+                item == treeManager.focusItem -> true
+                item is LinkTreeItem && item.target == treeManager.focusItem -> true
+                else -> false
+            }
+        }
         items.forEachIndexed { index, item ->
-            if (item == treeManager.focusItem) {
+            if (itemToBeFocused(item)){
                 state.visibleItems.highlightedIndex.value = index
                 return@forEachIndexed
             }
