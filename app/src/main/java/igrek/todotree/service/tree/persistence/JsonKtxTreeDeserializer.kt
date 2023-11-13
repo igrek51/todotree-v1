@@ -2,6 +2,8 @@ package igrek.todotree.service.tree.persistence
 
 import igrek.todotree.domain.treeitem.*
 import igrek.todotree.exceptions.DeserializationFailedException
+import igrek.todotree.info.logger.Logger
+import igrek.todotree.info.logger.LoggerFactory
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
@@ -15,18 +17,25 @@ class JsonKtxTreeDeserializer {
         useArrayPolymorphism = false
         isLenient = true
     }
+    private val logger: Logger = LoggerFactory.logger
 
     @Throws(DeserializationFailedException::class)
     fun deserializeTree(data: String): AbstractTreeItem {
+        val startTime = System.currentTimeMillis()
+
         var mData = data.trim { it <= ' ' }
         if (mData.endsWith(",")) // trim trailing comma at the end
             mData = mData.substring(0, mData.length - 1)
         // remove trailing commas in items
-        mData = mData.replace("},\n(\t*)]".toRegex(), "}\n$1]")
+        mData = mData.replace("\\},\\n(\\s*)]".toRegex(), "}\n$1]")
 
         try {
             val rootTreeItem: JsonItem = json.decodeFromString(JsonItem.serializer(), mData)
-            return mapJsonItemToTreeItem(rootTreeItem)
+            val result = mapJsonItemToTreeItem(rootTreeItem)
+
+            val duration = System.currentTimeMillis() - startTime
+            logger.debug("Tree deserialization done in $duration ms")
+            return result
         } catch (e: SerializationException) {
             throw DeserializationFailedException(e.message)
         }

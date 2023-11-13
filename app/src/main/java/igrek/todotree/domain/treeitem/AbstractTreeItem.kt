@@ -27,7 +27,7 @@ abstract class AbstractTreeItem(parent: AbstractTreeItem?) {
 
     abstract val displayName: String
 
-    abstract val typeName: String?
+    abstract val typeName: String
 
     fun setParent(parent: AbstractTreeItem?) {
         this._parent = parent

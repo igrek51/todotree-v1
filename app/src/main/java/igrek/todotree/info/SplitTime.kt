@@ -4,7 +4,7 @@ import igrek.todotree.info.logger.Logger
 import igrek.todotree.info.logger.LoggerFactory
 
 class SplitTime {
-    private val debug: Boolean = false
+    private val debug: Boolean = true
     private var lastTime: Long = 0
     private val logger: Logger = LoggerFactory.logger
     private val durationHistory: MutableMap<String, MutableList<Long>> = mutableMapOf()
