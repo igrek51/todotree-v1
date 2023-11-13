@@ -115,19 +115,25 @@ abstract class AbstractTreeItem(parent: AbstractTreeItem?) {
     }
 
     //except root item
-    val namesPaths: MutableList<String?>
+    val namesPaths: MutableList<String>
         get() {
-            val names: MutableList<String?> = ArrayList()
+            val names: MutableList<String> = ArrayList()
             var current: AbstractTreeItem? = this
             do {
                 //except root item
                 if (current is RootTreeItem) break
-                names.add(current!!.displayName)
+                if (current == null) break
+                names.add(current.displayName)
                 current = current.getParent()
             } while (current != null)
             names.reverse()
             return names
         }
+
+    // for debugging only
+    fun absolutePath(): String {
+        return "/" + namesPaths.joinToString(separator="/")
+    }
 
     override fun toString(): String {
         val sb = StringBuilder()

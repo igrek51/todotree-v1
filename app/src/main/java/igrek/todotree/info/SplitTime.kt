@@ -25,7 +25,7 @@ class SplitTime {
                 val meanStr = "%.2f".format(meanDuration)
                 val median = median(durations)
 
-                logger.debug("Split: $context: ${duration}ms, mean: ${meanStr}ms, median: ${median}ms, ${durations.size} samples")
+                logger.debug("Split: $context: ${duration}ms, median: ${median}ms, avg: ${meanStr}ms, ${durations.size} samples")
             }
         }
         lastTime = now

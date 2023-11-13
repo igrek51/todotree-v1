@@ -26,6 +26,7 @@ fun getVersionName(): String {
     return stdout.toString().trim()
 }
 
+@Suppress("UnstableApiUsage")
 android {
     namespace = "igrek.todotree"
     compileSdk = 33

@@ -203,7 +203,8 @@ private fun MainComponent(controller: TreeListLayout) {
             },
             onLoad = {
                 controller.stopLoading()
-                splitTime.split("composition done")
+                val absPath = appFactory.treeManager.get().currentItem?.absolutePath().orEmpty()
+                splitTime.split("composition done: $absPath")
             },
             itemContent = { itemsContainer: ItemsContainer<AbstractTreeItem>, id: Int, modifier: Modifier ->
                 TreeItemComposable(controller, itemsContainer, id, modifier)
