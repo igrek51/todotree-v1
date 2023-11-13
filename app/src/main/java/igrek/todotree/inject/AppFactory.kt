@@ -2,8 +2,8 @@ package igrek.todotree.inject
 
 import android.app.Activity
 import android.content.Context
+import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
-import igrek.todotree.MainApplication
 import igrek.todotree.activity.*
 import igrek.todotree.app.AppData
 import igrek.todotree.info.UiInfoService
@@ -89,6 +89,10 @@ class AppFactory(
     val remotePushService = SingletonInject { RemotePushService() }
     val explosionService = SingletonInject { ExplosionService() }
     val homeLayoutController = SingletonInject { HomeLayoutController() }
-    val treeListLayout = SingletonInject { TreeListLayout() }
+    var treeListLayout = SingletonInject { TreeListLayout() }
     val editItemLayout = SingletonInject { EditItemLayout() }
+
+    val inputMethodManager = PrototypeInject {
+        appCompatActivity.get().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    }
 }

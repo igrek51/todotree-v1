@@ -159,8 +159,6 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview")
     // Guava
     implementation("com.google.guava:guava:31.1-android")
-    // GSON
-    implementation("com.google.code.gson:gson:2.9.0")
     // RX
     implementation("io.reactivex.rxjava2:rxandroid:2.1.1")
     implementation("io.reactivex.rxjava2:rxkotlin:2.4.0")

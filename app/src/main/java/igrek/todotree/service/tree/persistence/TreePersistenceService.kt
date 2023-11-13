@@ -5,7 +5,7 @@ import igrek.todotree.exceptions.DeserializationFailedException
 
 class TreePersistenceService {
 
-    private val deserializer = GsonTreeDeserializer()
+    private val deserializer = JsonKtxTreeDeserializer()
     private val serializer = JsonTreeSerializer()
 
     fun serializeTree(root: AbstractTreeItem?): String {

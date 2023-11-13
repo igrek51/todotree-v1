@@ -9,6 +9,7 @@ import igrek.todotree.intent.ClipboardCommand
 import igrek.todotree.intent.TreeCommand
 import igrek.todotree.mock.SettingsServiceMock
 import igrek.todotree.mock.SystemClipboardManagerMock
+import igrek.todotree.mock.TreeListLayoutMock
 import igrek.todotree.service.access.DatabaseLock
 import igrek.todotree.service.tree.persistence.TreePersistenceService
 import igrek.todotree.settings.SettingsState
@@ -46,12 +47,14 @@ class TreeManagerTest {
         val settingsState = SettingsState(settingsService = SingletonInject { settingsService })
         val systemClipboardManager = SystemClipboardManagerMock()
         val databaseLock = DatabaseLock(settingsState = SingletonInject { settingsState })
+        val treeListLayout = TreeListLayoutMock()
         appFactory.treeManager = SingletonInject { treeManager }
         appFactory.treePersistenceService = SingletonInject { treePersistenceService }
         appFactory.settingsService = SingletonInject { settingsService }
         appFactory.settingsState = SingletonInject { settingsState }
         appFactory.databaseLock = SingletonInject { databaseLock }
         appFactory.systemClipboardManager = SingletonInject { systemClipboardManager }
+        appFactory.treeListLayout = SingletonInject { treeListLayout }
 
         // build db tree
         val itemR = RootTreeItem()

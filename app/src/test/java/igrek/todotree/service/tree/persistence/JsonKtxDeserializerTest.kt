@@ -1,17 +1,9 @@
 package igrek.todotree.service.tree.persistence
 
 import org.junit.Assert
-import org.junit.Before
 import org.junit.Test
 
-class GsonDeserializerTest {
-
-    private var deserializer: GsonTreeDeserializer? = null
-
-    @Before
-    fun init() {
-        deserializer = GsonTreeDeserializer()
-    }
+class JsonKtxDeserializerTest {
 
     @Test
     fun testSingleItem() {
@@ -40,7 +32,8 @@ class GsonDeserializerTest {
     }
 
     private fun assertValidDeserialize(input: String) {
-        val item = deserializer!!.deserializeTree(input)
+        val deserializer = JsonKtxTreeDeserializer()
+        val item = deserializer.deserializeTree(input)
         println(item.toString())
         Assert.assertNotNull(item)
     }

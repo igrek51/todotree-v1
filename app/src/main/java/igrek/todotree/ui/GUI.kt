@@ -32,8 +32,8 @@ class GUI {
     private val treeListLayout: TreeListLayout by LazyExtractor(appFactory.treeListLayout)
     private val editItemLayout: EditItemLayout by LazyExtractor(appFactory.editItemLayout)
     private val appData: AppData by LazyExtractor(appFactory.appData)
+    private val imm: InputMethodManager by LazyExtractor(appFactory.inputMethodManager)
 
-    private val imm: InputMethodManager? = appCompatActivity.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
     private var lvl2TreeView: View? = null
     private var lvl2EditView: View? = null
     private var loadingBar: ProgressBar? = null
@@ -67,11 +67,11 @@ class GUI {
     }
 
     fun hideSoftKeyboard(window: View) {
-        imm?.hideSoftInputFromWindow(window.windowToken, 0)
+        imm.hideSoftInputFromWindow(window.windowToken, 0)
     }
 
     fun showSoftKeyboard(window: View?) {
-        imm?.showSoftInput(window, 0)
+        imm.showSoftInput(window, 0)
     }
 
     fun lazyInit() {

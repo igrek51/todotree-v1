@@ -71,7 +71,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 
-class TreeListLayout {
+open class TreeListLayout {
     private val treeManager: TreeManager by LazyExtractor(appFactory.treeManager)
     private val gui: GUI by LazyExtractor(appFactory.gui)
     private val treeSelectionManager: TreeSelectionManager by LazyExtractor(appFactory.treeSelectionManager)
@@ -93,7 +93,7 @@ class TreeListLayout {
         }
     }
 
-    fun updateItemsList() {
+    open fun updateItemsList() {
         gui.startLoading()
 
         val currentItem: AbstractTreeItem = treeManager.currentItem ?: return

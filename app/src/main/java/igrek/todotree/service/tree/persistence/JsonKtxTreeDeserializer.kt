@@ -1,26 +1,33 @@
 package igrek.todotree.service.tree.persistence
 
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import com.google.gson.JsonSyntaxException
 import igrek.todotree.domain.treeitem.*
 import igrek.todotree.exceptions.DeserializationFailedException
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.SerializationException
+import kotlinx.serialization.json.Json
 
-class GsonTreeDeserializer internal constructor() {
+class JsonKtxTreeDeserializer {
 
-    private val gson: Gson
+    private val json = Json {
+        ignoreUnknownKeys = true
+        allowStructuredMapKeys = true
+        prettyPrint = false
+        useArrayPolymorphism = false
+        isLenient = true
+    }
 
     @Throws(DeserializationFailedException::class)
     fun deserializeTree(data: String): AbstractTreeItem {
-        // trim comma at the end
-        var mData = data
-        mData = mData.trim { it <= ' ' }
-        if (mData.endsWith(",")) mData = mData.substring(0, mData.length - 1)
-        return try {
-            val rootTreeItem = gson.fromJson(mData, JsonItem::class.java)
-                ?: throw DeserializationFailedException("root tree item is null")
-            mapJsonItemToTreeItem(rootTreeItem)
-        } catch (e: JsonSyntaxException) {
+        var mData = data.trim { it <= ' ' }
+        if (mData.endsWith(",")) // trim trailing comma at the end
+            mData = mData.substring(0, mData.length - 1)
+        // remove trailing commas in items
+        mData = mData.replace("},\n(\t*)]".toRegex(), "}\n$1]")
+
+        try {
+            val rootTreeItem: JsonItem = json.decodeFromString(JsonItem.serializer(), mData)
+            return mapJsonItemToTreeItem(rootTreeItem)
+        } catch (e: SerializationException) {
             throw DeserializationFailedException(e.message)
         }
     }
@@ -44,7 +51,6 @@ class GsonTreeDeserializer internal constructor() {
                 SeparatorTreeItem(null)
             }
             "link" -> {
-
                 // name is optional, target required
                 if (jsonItem.target == null) throw DeserializationFailedException("property 'target' not found")
                 LinkTreeItem(null, jsonItem.target!!, jsonItem.name)
@@ -66,16 +72,12 @@ class GsonTreeDeserializer internal constructor() {
         return treeItem
     }
 
-    private inner class JsonItem {
-        var type: String? = null
-        var name: String? = null
-        var target: String? = null
-        var checked: String? = null
-        var items: List<JsonItem?>? = null
-    }
-
-    init {
-        val gsonb = GsonBuilder()
-        gson = gsonb.create()
-    }
+    @Serializable
+    private data class JsonItem(
+        var type: String? = null,
+        var name: String? = null,
+        var target: String? = null,
+        var checked: String? = null,
+        var items: List<JsonItem?>? = null,
+    )
 }
