@@ -6,7 +6,6 @@ plugins {
     id("com.android.application")
     kotlin("android")
     kotlin("plugin.serialization") //version "1.9.0"
-    //kotlin("kapt") version "1.9.20"
 }
 
 fun getVersionCode(): Int {
@@ -29,7 +28,7 @@ fun getVersionName(): String {
 
 android {
     namespace = "igrek.todotree"
-    compileSdkVersion(33)
+    compileSdk = 33
     defaultConfig {
         applicationId = "igrek.todotree"
         minSdk = 25
@@ -38,6 +37,7 @@ android {
         versionName = getVersionName()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled = true
+        vectorDrawables.useSupportLibrary = true
     }
     signingConfigs {
         create("release") {
@@ -53,7 +53,7 @@ android {
         }
     }
     buildTypes {
-        debug {
+        getByName("debug") {
             isDebuggable = true
             isMinifyEnabled = true
             isShrinkResources = true
@@ -77,16 +77,6 @@ android {
             signingConfig = signingConfigs.getByName("release")
         }
     }
-    packagingOptions {
-        exclude("META-INF/DEPENDENCIES")
-        exclude("META-INF/LICENSE")
-        exclude("META-INF/LICENSE.txt")
-        exclude("META-INF/license.txt")
-        exclude("META-INF/NOTICE")
-        exclude("META-INF/NOTICE.txt")
-        exclude("META-INF/notice.txt")
-        exclude("META-INF/ASL2.0")
-    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -101,6 +91,7 @@ android {
     }
     buildFeatures {
         compose = true
+        viewBinding = true
         buildConfig = true
     }
     composeOptions {
@@ -110,6 +101,16 @@ android {
         resolutionStrategy {
             force("com.google.code.findbugs:jsr305:1.3.9")
         }
+    }
+    packagingOptions {
+        exclude("META-INF/DEPENDENCIES")
+        exclude("META-INF/LICENSE")
+        exclude("META-INF/LICENSE.txt")
+        exclude("META-INF/license.txt")
+        exclude("META-INF/NOTICE")
+        exclude("META-INF/NOTICE.txt")
+        exclude("META-INF/notice.txt")
+        exclude("META-INF/ASL2.0")
     }
     testOptions {
         unitTests {
