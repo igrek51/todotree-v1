@@ -35,9 +35,14 @@ class TreeScrollCache {
         val item: AbstractTreeItem = treeManager.currentItem ?: return
         val y = storedScrollPositions[item] ?: 0
         mainScope.launch {
-            for (attempt in 1..8) {
+            Handler(Looper.getMainLooper()).post {
+                mainScope.launch {
+                    treeListLayout.scrollToPosition(y)
+                }
+            }
+            for (attempt in 1..6) {
                 treeListLayout.scrollToPosition(y)
-                delay(attempt * 25L) // 900 ms in total
+                delay(attempt * 25L) // 525ms in total
                 val diff = abs(treeListLayout.state.scrollState.value - y)
                 if (diff < 5)
                     return@launch
