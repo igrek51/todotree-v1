@@ -114,6 +114,10 @@ open class TreeListLayout {
         state.selectMode.value = selectedPositions?.isNotEmpty() == true
         state.selectedPositions.value = selectedPositions
 
+        updateFocusedItem(items)
+    }
+
+    private fun updateFocusedItem(items: MutableList<AbstractTreeItem>) {
         fun itemToBeFocused(item: AbstractTreeItem): Boolean {
             return when {
                 item == treeManager.focusItem -> true
@@ -124,9 +128,10 @@ open class TreeListLayout {
         items.forEachIndexed { index, item ->
             if (itemToBeFocused(item)){
                 state.visibleItems.highlightedIndex.value = index
-                return@forEachIndexed
+                return
             }
         }
+        state.visibleItems.highlightedIndex.value = -1
     }
 
     fun updateOneListItem(position: Int) {
