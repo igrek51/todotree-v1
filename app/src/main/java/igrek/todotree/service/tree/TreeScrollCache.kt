@@ -1,5 +1,7 @@
 package igrek.todotree.service.tree
 
+import android.os.Handler
+import android.os.Looper
 import java.util.HashMap
 import igrek.todotree.domain.treeitem.AbstractTreeItem
 import igrek.todotree.info.logger.Logger
@@ -52,6 +54,11 @@ class TreeScrollCache {
     fun scrollToBottom() {
         mainScope.launch {
             treeListLayout.scrollToBottom()
+            Handler(Looper.getMainLooper()).post {
+                mainScope.launch {
+                    treeListLayout.scrollToBottom()
+                }
+            }
         }
     }
 
