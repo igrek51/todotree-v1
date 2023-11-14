@@ -111,7 +111,7 @@ class ItemEditorCommand(
         if (newItemPosition != null
             && newItemPosition == (treeManager.currentItem?.size() ?: 0) - 1
         ) {
-            // TODO scroll to bottom
+            treeScrollCache.scrollToBottom()
         } else {
             treeScrollCache.restoreScrollPosition()
         }

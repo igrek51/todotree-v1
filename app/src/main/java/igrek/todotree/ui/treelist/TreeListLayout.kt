@@ -15,6 +15,7 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.calculatePan
+import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -76,7 +77,14 @@ open class TreeListLayout {
     private val gui: GUI by LazyExtractor(appFactory.gui)
     private val treeSelectionManager: TreeSelectionManager by LazyExtractor(appFactory.treeSelectionManager)
 
-    val state = TreeLayoutState()
+    val state = LayoutState()
+
+    class LayoutState {
+        val scrollState: ScrollState = ScrollState(0)
+        val visibleItems: ItemsContainer<AbstractTreeItem> = ItemsContainer()
+        val selectMode: MutableState<Boolean> = mutableStateOf(false)
+        val selectedPositions: MutableState<Set<Int>?> = mutableStateOf(null)
+    }
 
     fun showLayout(layout: View) {
         updateItemsList()
@@ -186,6 +194,10 @@ open class TreeListLayout {
         state.scrollState.scrollTo(y)
     }
 
+    suspend fun scrollToBottom() {
+        state.scrollState.scrollBy(999999f)
+    }
+
     fun startLoading() {
         gui.startLoading()
     }
@@ -193,14 +205,6 @@ open class TreeListLayout {
     fun stopLoading() {
         gui.stopLoading()
     }
-}
-
-
-class TreeLayoutState {
-    val scrollState: ScrollState = ScrollState(0)
-    val visibleItems: ItemsContainer<AbstractTreeItem> = ItemsContainer()
-    val selectMode: MutableState<Boolean> = mutableStateOf(false)
-    val selectedPositions: MutableState<Set<Int>?> = mutableStateOf(null)
 }
 
 

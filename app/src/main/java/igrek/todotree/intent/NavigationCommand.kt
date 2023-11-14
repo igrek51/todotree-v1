@@ -74,16 +74,8 @@ class NavigationCommand(
                 ClipboardCommand().copySelectedItems()
                 return false
             }
-//            R.id.action_sum_selected -> {
-//                ItemSelectionCommand().sumItems()
-//                return false
-//            }
-//            R.id.action_show_statistics -> {
-//                StatisticsCommand().showStatisticsInfo()
-//                return false
-//            }
             R.id.action_go_up -> {
-                TreeCommand().goUp()
+                TreeCommand().goStepUp()
                 return false
             }
             R.id.action_enter_command -> {

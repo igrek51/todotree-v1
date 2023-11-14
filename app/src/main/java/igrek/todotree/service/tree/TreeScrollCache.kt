@@ -44,6 +44,17 @@ class TreeScrollCache {
         }
     }
 
+    fun getStoredScrollPosition(): Int {
+        val item: AbstractTreeItem = treeManager.currentItem ?: return 0
+        return storedScrollPositions[item] ?: 0
+    }
+
+    fun scrollToBottom() {
+        mainScope.launch {
+            treeListLayout.scrollToBottom()
+        }
+    }
+
     fun clear() {
         storedScrollPositions.clear()
     }
