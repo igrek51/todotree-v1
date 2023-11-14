@@ -33,6 +33,7 @@ import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import igrek.todotree.info.splitTime
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -134,7 +135,7 @@ fun <T> ReorderListView(
     ) {
 
         key(itemsContainer.modifiedAll.value) {
-//            logger.debug("recomposing all items")
+            //igrek.todotree.info.logger.LoggerFactory.logger.debug("recomposing all items")
             itemsContainer.items.indices.forEach { index: Int ->
                 ReorderListViewItem(itemsContainer, index, itemContent)
             }

@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import igrek.todotree.inject.LazyExtractor
 import igrek.todotree.inject.appFactory
 
+@Suppress("DEPRECATION")
 class WindowManagerService {
     private val appCompatActivity: AppCompatActivity by LazyExtractor(appFactory.appCompatActivity)
 
