@@ -126,10 +126,7 @@ open class TreeListLayout {
         state.selectMode.value = selectedPositions?.isNotEmpty() == true
         state.selectedPositions.value = selectedPositions
 
-        val keyEvaluator: (AbstractTreeItem) -> String = { item: AbstractTreeItem ->
-            "${item.typeName}|${item.displayName}|${item.size()}"
-        }
-        state.itemsContainer.replaceAll(items, keyEvaluator)
+        state.itemsContainer.replaceAll(items)
 
         updateFocusedItem(items)
     }

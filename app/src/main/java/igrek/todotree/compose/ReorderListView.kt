@@ -48,8 +48,6 @@ internal val logger = igrek.todotree.info.logger.LoggerFactory.logger
 
 class ItemsContainer(
     var items: MutableList<AbstractTreeItem> = mutableListOf(),
-    val modifiedMap: MutableMap<Int, MutableState<Long>> = mutableMapOf(),
-    val modifiedAll: MutableState<Long> = mutableStateOf(0),
     val itemHeights: MutableMap<Int, Float> = mutableMapOf(),
     val itemBiasOffsets: MutableMap<Int, Animatable<Float, AnimationVector1D>> = mutableMapOf(),
     val itemStablePositions: MutableMap<Int, Animatable<Float, AnimationVector1D>> = mutableMapOf(), // ID to position offset
@@ -57,7 +55,6 @@ class ItemsContainer(
     val reorderButtonModifiers: MutableMap<Int, Modifier> = mutableMapOf(),
     val itemModifiers: MutableMap<Int, Modifier> = mutableMapOf(),
     val isDraggingMes: MutableMap<Int, State<Boolean>> = mutableMapOf(),
-    val isHighlightingMes: MutableMap<Int, State<Boolean>> = mutableMapOf(),
     val indexToPositionMap: MutableMap<Int, Int> = mutableMapOf(), // item index (ID) on list to real displayed position index
     val positionToIndexMap: MutableMap<Int, Int> = mutableMapOf(), // real displayed index to item index (ID) on list
     var totalRelativeSwapOffset: Float = 0f,
@@ -65,25 +62,70 @@ class ItemsContainer(
     val parentViewportWidth: MutableState<Float> = mutableStateOf(0f),
     val parentViewportHeight: MutableState<Float> = mutableStateOf(0f),
     val highlightedIndex: MutableState<Int> = mutableStateOf(-1),
-    var isHighlightedIndex: State<Boolean> = mutableStateOf(false),
-    val draggingIndex: MutableState<Int> = mutableStateOf(-1),
-    val scrollJob: MutableState<Job?> = mutableStateOf(null),
+    private val draggingIndex: MutableState<Int> = mutableStateOf(-1),
+    private val scrollJob: MutableState<Job?> = mutableStateOf(null),
     val maxItemsSize: MutableState<Int> = mutableStateOf(40),
-    val actualItemsSize: MutableState<Int> = mutableStateOf(0),
+    private val actualItemsSize: MutableState<Int> = mutableStateOf(0),
     val itemContentKeys: MutableMap<Int, MutableState<String>> = mutableMapOf(),
     val isItemVisibles: MutableMap<Int, State<Boolean>> = mutableMapOf(),
+    private var coroutineScope: CoroutineScope? = null,
 ) {
+    fun init(
+        coroutineScope: CoroutineScope,
+        scrollState: ScrollState,
+        onReorder: (newItems: MutableList<AbstractTreeItem>) -> Unit,
+    ) {
+        this.coroutineScope = coroutineScope
+        (0 .. maxItemsSize.value).forEach { index: Int ->
+            indexToPositionMap[index] = index
+            positionToIndexMap[index] = index
+
+            itemBiasOffsets.getOrPut(index) {
+                Animatable(0f)
+            }
+            itemStablePositions.getOrPut(index) {
+                Animatable(0f)
+            }
+            itemHighlights.getOrPut(index) {
+                Animatable(0f)
+            }
+
+            isDraggingMes.getOrPut(index) {
+                derivedStateOf {
+                    draggingIndex.value == index
+                }
+            }
+            isItemVisibles.getOrPut(index) {
+                derivedStateOf {
+                    index < actualItemsSize.value
+                }
+            }
+            reorderButtonModifiers[index] = Modifier.createReorderButtonModifier(
+                this, index, draggingIndex, scrollState, parentViewportHeight,
+                coroutineScope, scrollJob, onReorder,
+            )
+            itemModifiers[index] = Modifier.createItemModifier(
+                this, index,
+            )
+        }
+    }
+
+    private suspend fun rearrange() {
+        items.indices.forEach { index: Int ->
+            indexToPositionMap[index] = index
+            positionToIndexMap[index] = index
+
+            itemBiasOffsets[index]?.snapTo(0f)
+            itemStablePositions[index]?.snapTo(0f)
+            itemHighlights[index]?.snapTo(0f)
+        }
+    }
+
     fun replaceAll(
         newList: MutableList<AbstractTreeItem>,
-        keyEvaluator: (AbstractTreeItem) -> String,
     ) {
         items = newList
-        items.indices.forEach { index: Int ->
-            if (!modifiedMap.containsKey(index)) {
-                modifiedMap[index] = mutableStateOf(0)
-            }
-        }
-        modifiedAll.value += 1
+
         actualItemsSize.value = newList.size
         if (newList.size > maxItemsSize.value) {
             maxItemsSize.value = newList.size
@@ -96,16 +138,30 @@ class ItemsContainer(
             keyState.value = when {
                 index < newList.size -> {
                     val item = newList[index]
-                    keyEvaluator(item)
+                    evaluateKey(item)
                 }
                 else -> ""
             }
         }
+
+        coroutineScope?.let { coroutineScope ->
+            coroutineScope.launch {
+                rearrange()
+            }
+        }
+    }
+
+    private fun evaluateKey(item: AbstractTreeItem): String {
+        return "${item.typeName}|${item.displayName}|${item.size()}"
     }
 
     fun notifyItemChange(position: Int) {
         val index = positionToIndexMap[position] ?: return
-        modifiedMap.getValue(index).value += 1
+        val keyState = itemContentKeys.getOrPut(index) {
+            mutableStateOf("")
+        }
+        val item = items[index]
+        keyState.value = evaluateKey(item)
     }
 }
 
@@ -119,40 +175,10 @@ fun ReorderListView(
     postContent: @Composable () -> Unit,
 ) {
     val coroutineScope: CoroutineScope = rememberCoroutineScope()
-
     key(itemsContainer.maxItemsSize.value) {
         logger.debug("recomposing all items")
 
-        itemsContainer.isHighlightedIndex = derivedStateOf {
-            itemsContainer.highlightedIndex.value >= 0
-        }
-
-        (0 .. itemsContainer.maxItemsSize.value).forEach { index: Int ->
-            itemsContainer.indexToPositionMap[index] = index
-            itemsContainer.positionToIndexMap[index] = index
-
-            itemsContainer.itemBiasOffsets[index] = Animatable(0f)
-            itemsContainer.itemStablePositions[index] = Animatable(0f)
-            itemsContainer.itemHighlights[index] = Animatable(0f)
-
-            itemsContainer.isDraggingMes.getOrPut(index) {
-                derivedStateOf {
-                    itemsContainer.draggingIndex.value == index
-                }
-            }
-            itemsContainer.isItemVisibles.getOrPut(index) {
-                derivedStateOf {
-                    index < itemsContainer.actualItemsSize.value
-                }
-            }
-            itemsContainer.reorderButtonModifiers[index] = Modifier.createReorderButtonModifier(
-                itemsContainer, index, itemsContainer.draggingIndex, scrollState, itemsContainer.parentViewportHeight,
-                coroutineScope, itemsContainer.scrollJob, onReorder,
-            )
-            itemsContainer.itemModifiers[index] = Modifier.createItemModifier(
-                itemsContainer, index,
-            )
-        }
+        itemsContainer.init(coroutineScope, scrollState, onReorder)
 
         Column(
             modifier = Modifier
@@ -167,12 +193,12 @@ fun ReorderListView(
         ) {
 
             (0 .. itemsContainer.maxItemsSize.value).forEach { index: Int ->
-                ReorderListViewItem(itemsContainer, index, itemContent)
+                val itemModifier = itemsContainer.itemModifiers.getValue(index)
+                itemContent(itemsContainer, index, itemModifier)
             }
 
             postContent()
         }
-
     }
 
     EffectsLauncher(itemsContainer)
@@ -194,16 +220,6 @@ private fun EffectsLauncher(
             itemsContainer.highlightedIndex.value = -1
         }
     }
-}
-
-@Composable
-private fun ReorderListViewItem(
-    itemsContainer: ItemsContainer,
-    index: Int,
-    itemContent: @Composable (itemsContainer: ItemsContainer, index: Int, modifier: Modifier) -> Unit,
-) {
-    val itemModifier = itemsContainer.itemModifiers.getValue(index)
-    itemContent(itemsContainer, index, itemModifier)
 }
 
 private fun Modifier.createItemModifier(
