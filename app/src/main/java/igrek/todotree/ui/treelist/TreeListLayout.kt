@@ -29,6 +29,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
@@ -38,7 +39,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChanged
@@ -87,7 +87,7 @@ open class TreeListLayout {
 
     class LayoutState {
         val scrollState: ScrollState = ScrollState(0)
-        val itemsContainer: ItemsContainer<AbstractTreeItem> = ItemsContainer()
+        val itemsContainer: ItemsContainer = ItemsContainer()
         val selectMode: MutableState<Boolean> = mutableStateOf(false)
         val selectedPositions: MutableState<Set<Int>?> = mutableStateOf(null)
     }
@@ -123,15 +123,13 @@ open class TreeListLayout {
         gui.setTitle(sb.toString())
         gui.showBackButton(currentItem.getParent() != null)
 
-        state.itemsContainer.replaceAll(items)
-
         state.selectMode.value = selectedPositions?.isNotEmpty() == true
         state.selectedPositions.value = selectedPositions
 
-        items.forEachIndexed { index, item ->
-            val key = "${item.typeName}|${item.displayName}|${item.size()}"
-            state.itemsContainer.itemContentKeys[index] = key
+        val keyEvaluator: (AbstractTreeItem) -> String = { item: AbstractTreeItem ->
+            "${item.typeName}|${item.displayName}|${item.size()}"
         }
+        state.itemsContainer.replaceAll(items, keyEvaluator)
 
         updateFocusedItem(items)
     }
@@ -228,18 +226,17 @@ private fun MainComponent(controller: TreeListLayout) {
             onReorder = { newItems ->
                 controller.onItemsReordered(newItems)
             },
-            onLoad = {
-                controller.stopLoading()
-                val absPath = appFactory.treeManager.get().currentItem?.absolutePath().orEmpty()
-                splitTime.split("composition done: $absPath")
-            },
-            itemContent = { itemsContainer: ItemsContainer<AbstractTreeItem>, index: Int, modifier: Modifier ->
+            itemContent = { itemsContainer: ItemsContainer, index: Int, modifier: Modifier ->
                 TreeItemComposable(controller, itemsContainer, index, modifier)
             },
             postContent = {
                 PlusButtonComposable(controller)
             },
         )
+    }
+
+    LaunchedEffect(Unit) {
+        controller.stopLoading()
     }
 }
 
@@ -248,7 +245,7 @@ private fun MainComponent(controller: TreeListLayout) {
 @Composable
 private fun TreeItemComposable(
     controller: TreeListLayout,
-    itemsContainer: ItemsContainer<AbstractTreeItem>,
+    itemsContainer: ItemsContainer,
     index: Int,
     modifier: Modifier,
 ) {
@@ -259,16 +256,15 @@ private fun TreeItemComposable(
 
     Row(
         modifier
-//            .layout { measurable, constraints ->
-//                logger.debug("layout phase: $index")
-//                val placeable = when {
-//                    itemsContainer.isItemVisibles.getValue(index).value -> measurable.measure(constraints)
-//                    else -> measurable.measure(constraints.copy(minHeight = 0, maxHeight = 0))
-//                }
-//                layout(placeable.width, placeable.height) {
-//                    placeable.placeRelative(0, 0)
-//                }
-//            }
+            .layout { measurable, constraints ->
+                val placeable = when {
+                    itemsContainer.isItemVisibles.getValue(index).value -> measurable.measure(constraints)
+                    else -> measurable.measure(constraints.copy(minHeight = 0, maxHeight = 0))
+                }
+                layout(placeable.width, placeable.height) {
+                    placeable.placeRelative(0, 0)
+                }
+            }
             .onGloballyPositioned { coordinates ->
                 itemPosition.value = coordinates.positionInRoot()
                 itemSize.value = coordinates.size
@@ -276,7 +272,6 @@ private fun TreeItemComposable(
             .combinedClickable(
                 onClick = {
                     splitTime.split("item click")
-//                    if (!selectMode) controller.startLoading()
                     val position = itemsContainer.indexToPositionMap.getValue(index)
                     val item: AbstractTreeItem = itemsContainer.items.getOrNull(index)
                         ?: return@combinedClickable
@@ -347,7 +342,7 @@ private fun TreeItemComposable(
 @Composable
 private fun ReorderButtonItemContainer(
     controller: TreeListLayout,
-    itemsContainer: ItemsContainer<AbstractTreeItem>,
+    itemsContainer: ItemsContainer,
     index: Int,
 ) {
     if (controller.state.selectMode.value)
@@ -372,7 +367,7 @@ private fun ReorderButtonItemContainer(
 @Composable
 private fun SelectCheckboxItemContainer(
     controller: TreeListLayout,
-    itemsContainer: ItemsContainer<AbstractTreeItem>,
+    itemsContainer: ItemsContainer,
     index: Int,
 ) {
     if (!controller.state.selectMode.value)
@@ -394,57 +389,59 @@ private fun SelectCheckboxItemContainer(
 @SuppressLint("ModifierParameter")
 @Composable
 private fun RowScope.TextContentItemContainer(
-    itemsContainer: ItemsContainer<AbstractTreeItem>,
+    itemsContainer: ItemsContainer,
     index: Int,
 ) {
-    key(itemsContainer.itemContentKeys[index].orEmpty()) {
-        val item: AbstractTreeItem = itemsContainer.items.getOrNull(index) ?: return
-        val linkStrokeWidthPx = with(LocalDensity.current) { 1.dp.toPx() }
-        val linkOffset2Sp = with(LocalDensity.current) { 2.sp.toPx() }
+    key(itemsContainer.itemContentKeys.getValue(index).value) {
+        val item: AbstractTreeItem? = itemsContainer.items.getOrNull(index)
+        if (item != null) {
+            val linkStrokeWidthPx = with(LocalDensity.current) { 1.dp.toPx() }
+            val linkOffset2Sp = with(LocalDensity.current) { 2.sp.toPx() }
 
-        val fontWeight: FontWeight = when {
-            item is LinkTreeItem -> FontWeight.Normal
-            item.isEmpty -> FontWeight.Normal
-            else -> FontWeight.Bold
-        }
+            val fontWeight: FontWeight = when {
+                item is LinkTreeItem -> FontWeight.Normal
+                item.isEmpty -> FontWeight.Normal
+                else -> FontWeight.Bold
+            }
 
-        if (item is LinkTreeItem) {
-            Text(
-                modifier = Modifier
-                    .padding(vertical = 4.dp, horizontal = 4.dp)
-                    .drawBehind {
-                        val verticalOffset = size.height - linkOffset2Sp
-                        drawLine(
-                            color = colorLinkItem,
-                            strokeWidth = linkStrokeWidthPx,
-                            start = Offset(0f, verticalOffset),
-                            end = Offset(size.width, verticalOffset)
-                        )
-                    },
-                color = colorLinkItem,
-                text = item.displayName,
-                fontSize = 16.sp,
-                fontWeight = fontWeight,
-            )
-            Spacer(modifier = Modifier.weight(1.0f))
+            if (item is LinkTreeItem) {
+                Text(
+                    modifier = Modifier
+                        .padding(vertical = 4.dp, horizontal = 4.dp)
+                        .drawBehind {
+                            val verticalOffset = size.height - linkOffset2Sp
+                            drawLine(
+                                color = colorLinkItem,
+                                strokeWidth = linkStrokeWidthPx,
+                                start = Offset(0f, verticalOffset),
+                                end = Offset(size.width, verticalOffset)
+                            )
+                        },
+                    color = colorLinkItem,
+                    text = item.displayName,
+                    fontSize = 16.sp,
+                    fontWeight = fontWeight,
+                )
+                Spacer(modifier = Modifier.weight(1.0f))
 
-        } else {
-            Text(
-                modifier = Modifier
-                    .weight(1.0f)
-                    .padding(vertical = 4.dp, horizontal = 4.dp),
-                text = item.displayName,
-                fontSize = 16.sp,
-                fontWeight = fontWeight,
-            )
-        }
+            } else {
+                Text(
+                    modifier = Modifier
+                        .weight(1.0f)
+                        .padding(vertical = 4.dp, horizontal = 4.dp),
+                    text = item.displayName,
+                    fontSize = 16.sp,
+                    fontWeight = fontWeight,
+                )
+            }
 
-        if (!item.isEmpty) {
-            Text(
-                modifier = Modifier.padding(horizontal = 4.dp),
-                text = "[${item.size()}]",
-                fontSize = 16.sp,
-            )
+            if (!item.isEmpty) {
+                Text(
+                    modifier = Modifier.padding(horizontal = 4.dp),
+                    text = "[${item.size()}]",
+                    fontSize = 16.sp,
+                )
+            }
         }
     }
 }

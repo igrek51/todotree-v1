@@ -33,6 +33,7 @@ import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import igrek.todotree.domain.treeitem.AbstractTreeItem
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -45,8 +46,8 @@ import kotlin.math.roundToInt
 val itemBorderStroke = BorderStroke(0.5.dp, colorItemListBorder)
 internal val logger = igrek.todotree.info.logger.LoggerFactory.logger
 
-class ItemsContainer<T>(
-    var items: MutableList<T> = mutableListOf(),
+class ItemsContainer(
+    var items: MutableList<AbstractTreeItem> = mutableListOf(),
     val modifiedMap: MutableMap<Int, MutableState<Long>> = mutableMapOf(),
     val modifiedAll: MutableState<Long> = mutableStateOf(0),
     val itemHeights: MutableMap<Int, Float> = mutableMapOf(),
@@ -64,14 +65,18 @@ class ItemsContainer<T>(
     val parentViewportWidth: MutableState<Float> = mutableStateOf(0f),
     val parentViewportHeight: MutableState<Float> = mutableStateOf(0f),
     val highlightedIndex: MutableState<Int> = mutableStateOf(-1),
+    var isHighlightedIndex: State<Boolean> = mutableStateOf(false),
     val draggingIndex: MutableState<Int> = mutableStateOf(-1),
     val scrollJob: MutableState<Job?> = mutableStateOf(null),
     val maxItemsSize: MutableState<Int> = mutableStateOf(40),
     val actualItemsSize: MutableState<Int> = mutableStateOf(0),
-    val itemContentKeys: MutableMap<Int, String> = mutableMapOf(),
+    val itemContentKeys: MutableMap<Int, MutableState<String>> = mutableMapOf(),
     val isItemVisibles: MutableMap<Int, State<Boolean>> = mutableMapOf(),
 ) {
-    fun replaceAll(newList: MutableList<T>) {
+    fun replaceAll(
+        newList: MutableList<AbstractTreeItem>,
+        keyEvaluator: (AbstractTreeItem) -> String,
+    ) {
         items = newList
         items.indices.forEach { index: Int ->
             if (!modifiedMap.containsKey(index)) {
@@ -83,6 +88,19 @@ class ItemsContainer<T>(
         if (newList.size > maxItemsSize.value) {
             maxItemsSize.value = newList.size
         }
+
+        (0 .. maxItemsSize.value).forEach { index: Int ->
+            val keyState = itemContentKeys.getOrPut(index) {
+                mutableStateOf("")
+            }
+            keyState.value = when {
+                index < newList.size -> {
+                    val item = newList[index]
+                    keyEvaluator(item)
+                }
+                else -> ""
+            }
+        }
     }
 
     fun notifyItemChange(position: Int) {
@@ -93,18 +111,21 @@ class ItemsContainer<T>(
 
 @SuppressLint("UnrememberedMutableState")
 @Composable
-fun <T> ReorderListView(
-    itemsContainer: ItemsContainer<T>,
+fun ReorderListView(
+    itemsContainer: ItemsContainer,
     scrollState: ScrollState = rememberScrollState(),
-    onReorder: (newItems: MutableList<T>) -> Unit,
-    onLoad: () -> Unit,
-    itemContent: @Composable (itemsContainer: ItemsContainer<T>, index: Int, modifier: Modifier) -> Unit,
+    onReorder: (newItems: MutableList<AbstractTreeItem>) -> Unit,
+    itemContent: @Composable (itemsContainer: ItemsContainer, index: Int, modifier: Modifier) -> Unit,
     postContent: @Composable () -> Unit,
 ) {
     val coroutineScope: CoroutineScope = rememberCoroutineScope()
 
     key(itemsContainer.maxItemsSize.value) {
         logger.debug("recomposing all items")
+
+        itemsContainer.isHighlightedIndex = derivedStateOf {
+            itemsContainer.highlightedIndex.value >= 0
+        }
 
         (0 .. itemsContainer.maxItemsSize.value).forEach { index: Int ->
             itemsContainer.indexToPositionMap[index] = index
@@ -117,11 +138,6 @@ fun <T> ReorderListView(
             itemsContainer.isDraggingMes.getOrPut(index) {
                 derivedStateOf {
                     itemsContainer.draggingIndex.value == index
-                }
-            }
-            itemsContainer.isHighlightingMes.getOrPut(index) {
-                derivedStateOf {
-                    itemsContainer.highlightedIndex.value == index
                 }
             }
             itemsContainer.isItemVisibles.getOrPut(index) {
@@ -159,41 +175,39 @@ fun <T> ReorderListView(
 
     }
 
-//    LaunchedEffect(Unit) {
-//        onLoad()
-//    }
+    EffectsLauncher(itemsContainer)
 }
 
 @Composable
-private fun <T> ReorderListViewItem(
-    itemsContainer: ItemsContainer<T>,
-    index: Int,
-    itemContent: @Composable (itemsContainer: ItemsContainer<T>, index: Int, modifier: Modifier) -> Unit,
+private fun EffectsLauncher(
+    itemsContainer: ItemsContainer,
 ) {
-    logger.debug("recomposing whole item $index")
-
-    val itemModifier = itemsContainer.itemModifiers.getValue(index)
-    val isHighlightingMe: State<Boolean> = itemsContainer.isHighlightingMes.getValue(index)
-
-    if (isHighlightingMe.value) {
-        LaunchedEffect(isHighlightingMe.value) {
-            if (isHighlightingMe.value) {
-                itemsContainer.itemHighlights[index]?.snapTo(1f)
-                itemsContainer.itemHighlights[index]?.animateTo(0f, animationSpec=tween(
-                    durationMillis = 600,
-                    delayMillis = 0,
-                    easing = FastOutLinearInEasing,
-                ))
-                itemsContainer.highlightedIndex.value = -1
-            }
+    val index = itemsContainer.highlightedIndex.value
+    LaunchedEffect(index) {
+        if (index > -1) {
+            itemsContainer.itemHighlights[index]?.snapTo(1f)
+            itemsContainer.itemHighlights[index]?.animateTo(0f, animationSpec=tween(
+                durationMillis = 600,
+                delayMillis = 0,
+                easing = FastOutLinearInEasing,
+            ))
+            itemsContainer.highlightedIndex.value = -1
         }
     }
+}
 
+@Composable
+private fun ReorderListViewItem(
+    itemsContainer: ItemsContainer,
+    index: Int,
+    itemContent: @Composable (itemsContainer: ItemsContainer, index: Int, modifier: Modifier) -> Unit,
+) {
+    val itemModifier = itemsContainer.itemModifiers.getValue(index)
     itemContent(itemsContainer, index, itemModifier)
 }
 
-private fun <T> Modifier.createItemModifier(
-    itemsContainer: ItemsContainer<T>,
+private fun Modifier.createItemModifier(
+    itemsContainer: ItemsContainer,
     index: Int,
 ): Modifier {
     val stablePosition: Animatable<Float, AnimationVector1D> = itemsContainer.itemStablePositions.getValue(index)
@@ -216,15 +230,15 @@ private fun <T> Modifier.createItemModifier(
         }
 }
 
-private fun <T> Modifier.createReorderButtonModifier(
-    itemsContainer: ItemsContainer<T>,
+private fun Modifier.createReorderButtonModifier(
+    itemsContainer: ItemsContainer,
     index: Int,
     draggingIndex: MutableState<Int>,
     scrollState: ScrollState,
     parentViewportHeight: MutableState<Float>,
     coroutineScope: CoroutineScope,
     scrollJob: MutableState<Job?>,
-    onReorder: (newItems: MutableList<T>) -> Unit,
+    onReorder: (newItems: MutableList<AbstractTreeItem>) -> Unit,
 ) = this.pointerInput(index) {
     detectDragGestures(
 
@@ -412,9 +426,9 @@ private fun calculateItemsToSwap(
     }
 }
 
-private fun <T> persistSwappedItems(
-    itemsContainer: ItemsContainer<T>,
-    onReorder: (newItems: MutableList<T>) -> Unit,
+private fun persistSwappedItems(
+    itemsContainer: ItemsContainer,
+    onReorder: (newItems: MutableList<AbstractTreeItem>) -> Unit,
 ) {
     val changesMade = itemsContainer.items.indices.any { index: Int ->
         val position = itemsContainer.indexToPositionMap.getValue(index)
@@ -428,7 +442,7 @@ private fun <T> persistSwappedItems(
     if (indicesNewOrder.distinct().size != itemsContainer.items.size)
         throw RuntimeException("new indices don't contain the same original indices")
 
-    val newItems: MutableList<T> = indicesNewOrder.map { index: Int ->
+    val newItems: MutableList<AbstractTreeItem> = indicesNewOrder.map { index: Int ->
         itemsContainer.items[index]
     }.toMutableList()
 
