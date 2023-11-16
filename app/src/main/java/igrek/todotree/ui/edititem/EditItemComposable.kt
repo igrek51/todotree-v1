@@ -59,11 +59,11 @@ import igrek.todotree.info.logger.LoggerFactory
 import igrek.todotree.util.mainScope
 import kotlinx.coroutines.launch
 
-val logger = LoggerFactory.logger
+private val logger = LoggerFactory.logger
 
 @Composable
 internal fun MainComponent(controller: EditItemLayout) {
-//    logger.debug("recomposition: EditItemLayout: Main")
+    logger.debug("recomposition: EditItemLayout: Main")
     CompositionLocalProvider(LocalMinimumInteractiveComponentEnforcement provides false) {
         Column {
             Column(Modifier.verticalScroll(rememberScrollState())) {

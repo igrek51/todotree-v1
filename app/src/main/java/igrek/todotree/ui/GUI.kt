@@ -98,7 +98,7 @@ class GUI {
     }
 
     fun showItemsList() {
-//        startLoading()
+        startLoading()
         val layoutView = setMainContentLayout(R.layout.component_items_list)
         appData.state = AppState.ITEMS_LIST
         treeListLayout.showLayout(layoutView)

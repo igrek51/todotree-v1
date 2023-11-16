@@ -44,7 +44,7 @@ import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
 val itemBorderStroke = BorderStroke(0.5.dp, colorItemListBorder)
-internal val logger = igrek.todotree.info.logger.LoggerFactory.logger
+private val logger = igrek.todotree.info.logger.LoggerFactory.logger
 
 class ItemsContainer(
     var items: MutableList<AbstractTreeItem> = mutableListOf(),

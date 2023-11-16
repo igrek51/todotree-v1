@@ -91,7 +91,7 @@ class NavigationCommand(
     }
 
     fun backClicked(): Boolean {
-        //gui.startLoading()
+        gui.startLoading()
         Handler(Looper.getMainLooper()).post {
             if (appData.isState(AppState.ITEMS_LIST)) {
                 if (treeSelectionManager.isAnythingSelected) {

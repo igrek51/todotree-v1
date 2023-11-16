@@ -29,7 +29,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
@@ -75,9 +74,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 
-internal val logger = igrek.todotree.info.logger.LoggerFactory.logger
+private val logger = igrek.todotree.info.logger.LoggerFactory.logger
 
 open class TreeListLayout {
+
     private val treeManager: TreeManager by LazyExtractor(appFactory.treeManager)
     private val gui: GUI by LazyExtractor(appFactory.gui)
     private val treeSelectionManager: TreeSelectionManager by LazyExtractor(appFactory.treeSelectionManager)
@@ -243,7 +243,7 @@ private fun TreeItemComposable(
     index: Int,
     modifier: Modifier,
 ) {
-    igrek.todotree.info.logger.LoggerFactory.logger.debug("recompose tree item: $index")
+//    igrek.todotree.info.logger.LoggerFactory.logger.debug("recompose tree item: $index")
 
     val itemPosition: MutableState<Offset> = remember { mutableStateOf(Offset.Zero) }
     val itemSize: MutableState<IntSize> = remember { mutableStateOf(IntSize.Zero) }
