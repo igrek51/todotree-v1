@@ -48,6 +48,7 @@ internal val logger = igrek.todotree.info.logger.LoggerFactory.logger
 
 class ItemsContainer(
     var items: MutableList<AbstractTreeItem> = mutableListOf(),
+    val modifiedAll: MutableState<Long> = mutableStateOf(0),
     val itemHeights: MutableMap<Int, Float> = mutableMapOf(),
     val itemBiasOffsets: MutableMap<Int, Animatable<Float, AnimationVector1D>> = mutableMapOf(),
     val itemStablePositions: MutableMap<Int, Animatable<Float, AnimationVector1D>> = mutableMapOf(), // ID to position offset
@@ -130,6 +131,7 @@ class ItemsContainer(
         if (newList.size > maxItemsSize.value) {
             maxItemsSize.value = newList.size
         }
+        modifiedAll.value += 1
 
         (0 .. maxItemsSize.value).forEach { index: Int ->
             val keyState = itemContentKeys.getOrPut(index) {
@@ -144,10 +146,8 @@ class ItemsContainer(
             }
         }
 
-        coroutineScope?.let { coroutineScope ->
-            coroutineScope.launch {
-                rearrange()
-            }
+        coroutineScope?.launch {
+            rearrange()
         }
     }
 
@@ -157,9 +157,7 @@ class ItemsContainer(
 
     fun notifyItemChange(position: Int) {
         val index = positionToIndexMap[position] ?: return
-        val keyState = itemContentKeys.getOrPut(index) {
-            mutableStateOf("")
-        }
+        val keyState = itemContentKeys.getValue(index)
         val item = items[index]
         keyState.value = evaluateKey(item)
     }
@@ -171,6 +169,7 @@ fun ReorderListView(
     itemsContainer: ItemsContainer,
     scrollState: ScrollState = rememberScrollState(),
     onReorder: (newItems: MutableList<AbstractTreeItem>) -> Unit,
+    onLoad: () -> Unit,
     itemContent: @Composable (itemsContainer: ItemsContainer, index: Int, modifier: Modifier) -> Unit,
     postContent: @Composable () -> Unit,
 ) {
@@ -201,24 +200,37 @@ fun ReorderListView(
         }
     }
 
-    EffectsLauncher(itemsContainer)
+    EffectsLauncher1(itemsContainer)
+    EffectsLauncher2(itemsContainer, onLoad)
 }
 
 @Composable
-private fun EffectsLauncher(
+private fun EffectsLauncher1(
     itemsContainer: ItemsContainer,
 ) {
     val index = itemsContainer.highlightedIndex.value
     LaunchedEffect(index) {
         if (index > -1) {
             itemsContainer.itemHighlights[index]?.snapTo(1f)
-            itemsContainer.itemHighlights[index]?.animateTo(0f, animationSpec=tween(
-                durationMillis = 600,
-                delayMillis = 0,
-                easing = FastOutLinearInEasing,
-            ))
+            itemsContainer.itemHighlights[index]?.animateTo(
+                0f, animationSpec = tween(
+                    durationMillis = 600,
+                    delayMillis = 0,
+                    easing = FastOutLinearInEasing,
+                )
+            )
             itemsContainer.highlightedIndex.value = -1
         }
+    }
+}
+
+@Composable
+private fun EffectsLauncher2(
+    itemsContainer: ItemsContainer,
+    onLoad: () -> Unit,
+) {
+    LaunchedEffect(itemsContainer.modifiedAll.value) {
+        onLoad()
     }
 }
 

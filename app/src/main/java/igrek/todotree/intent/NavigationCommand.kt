@@ -91,7 +91,6 @@ class NavigationCommand(
     }
 
     fun backClicked(): Boolean {
-        splitTime.split("back click")
         //gui.startLoading()
         Handler(Looper.getMainLooper()).post {
             if (appData.isState(AppState.ITEMS_LIST)) {

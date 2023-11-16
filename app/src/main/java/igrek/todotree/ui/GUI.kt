@@ -1,7 +1,6 @@
 package igrek.todotree.ui
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.view.View

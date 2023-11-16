@@ -60,7 +60,6 @@ import igrek.todotree.compose.ReorderListView
 import igrek.todotree.compose.colorLinkItem
 import igrek.todotree.domain.treeitem.AbstractTreeItem
 import igrek.todotree.domain.treeitem.LinkTreeItem
-import igrek.todotree.info.splitTime
 import igrek.todotree.inject.LazyExtractor
 import igrek.todotree.inject.appFactory
 import igrek.todotree.intent.ItemEditorCommand
@@ -95,7 +94,6 @@ open class TreeListLayout {
     fun showLayout(layout: View) {
         updateItemsList()
 
-        splitTime.split("show layout")
         val thisLayout = this
         layout.findViewById<ComposeView>(R.id.compose_view_tree).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnDetachedFromWindow)
@@ -108,7 +106,7 @@ open class TreeListLayout {
     }
 
     open fun updateItemsList() {
-//        gui.startLoading()
+        gui.startLoading()
 
         val currentItem: AbstractTreeItem = treeManager.currentItem ?: return
         val selectedPositions: Set<Int>? = treeSelectionManager.selectedItems
@@ -223,6 +221,9 @@ private fun MainComponent(controller: TreeListLayout) {
             onReorder = { newItems ->
                 controller.onItemsReordered(newItems)
             },
+            onLoad = {
+                controller.stopLoading()
+            },
             itemContent = { itemsContainer: ItemsContainer, index: Int, modifier: Modifier ->
                 TreeItemComposable(controller, itemsContainer, index, modifier)
             },
@@ -230,10 +231,6 @@ private fun MainComponent(controller: TreeListLayout) {
                 PlusButtonComposable(controller)
             },
         )
-    }
-
-    LaunchedEffect(Unit) {
-        controller.stopLoading()
     }
 }
 
@@ -268,7 +265,6 @@ private fun TreeItemComposable(
             }
             .combinedClickable(
                 onClick = {
-                    splitTime.split("item click")
                     val position = itemsContainer.indexToPositionMap.getValue(index)
                     val item: AbstractTreeItem = itemsContainer.items.getOrNull(index)
                         ?: return@combinedClickable
