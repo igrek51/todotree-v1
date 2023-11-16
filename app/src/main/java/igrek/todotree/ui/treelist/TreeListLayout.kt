@@ -70,7 +70,6 @@ import igrek.todotree.ui.GUI
 import igrek.todotree.ui.SizeAndPosition
 import igrek.todotree.ui.contextmenu.ItemActionsMenu
 import igrek.todotree.util.mainScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 
@@ -284,7 +283,6 @@ private fun TreeItemComposable(
                         ?: return@combinedClickable
                     Handler(Looper.getMainLooper()).post {
                         mainScope.launch {
-                            delay(1)
                             controller.onItemClick(position, item)
                         }
                     }

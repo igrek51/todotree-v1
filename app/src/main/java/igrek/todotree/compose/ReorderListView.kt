@@ -158,13 +158,6 @@ class ItemsContainer(
     private fun evaluateKey(item: AbstractTreeItem): String {
         return "${item.typeName}|${item.displayName}|${item.size()}"
     }
-
-    fun notifyItemChange(position: Int) {
-        val index = positionToIndexMap[position] ?: return
-        val keyState = itemContentKeys.getValue(index)
-        val item = items[index]
-        keyState.value = evaluateKey(item)
-    }
 }
 
 @SuppressLint("UnrememberedMutableState")
