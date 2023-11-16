@@ -33,7 +33,6 @@ import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import igrek.todotree.info.splitTime
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -44,6 +43,7 @@ import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
 val itemBorderStroke = BorderStroke(0.5.dp, colorItemListBorder)
+internal val logger = igrek.todotree.info.logger.LoggerFactory.logger
 
 class ItemsContainer<T>(
     var items: MutableList<T> = mutableListOf(),
@@ -66,6 +66,10 @@ class ItemsContainer<T>(
     val highlightedIndex: MutableState<Int> = mutableStateOf(-1),
     val draggingIndex: MutableState<Int> = mutableStateOf(-1),
     val scrollJob: MutableState<Job?> = mutableStateOf(null),
+    val maxItemsSize: MutableState<Int> = mutableStateOf(40),
+    val actualItemsSize: MutableState<Int> = mutableStateOf(0),
+    val itemContentKeys: MutableMap<Int, String> = mutableMapOf(),
+    val isItemVisibles: MutableMap<Int, State<Boolean>> = mutableMapOf(),
 ) {
     fun replaceAll(newList: MutableList<T>) {
         items = newList
@@ -75,6 +79,10 @@ class ItemsContainer<T>(
             }
         }
         modifiedAll.value += 1
+        actualItemsSize.value = newList.size
+        if (newList.size > maxItemsSize.value) {
+            maxItemsSize.value = newList.size
+        }
     }
 
     fun notifyItemChange(position: Int) {
@@ -90,92 +98,98 @@ fun <T> ReorderListView(
     scrollState: ScrollState = rememberScrollState(),
     onReorder: (newItems: MutableList<T>) -> Unit,
     onLoad: () -> Unit,
-    itemContent: @Composable (itemsContainer: ItemsContainer<T>, id: Int, modifier: Modifier) -> Unit,
+    itemContent: @Composable (itemsContainer: ItemsContainer<T>, index: Int, modifier: Modifier) -> Unit,
     postContent: @Composable () -> Unit,
 ) {
     val coroutineScope: CoroutineScope = rememberCoroutineScope()
 
-    itemsContainer.items.indices.forEach { index: Int ->
-        itemsContainer.indexToPositionMap[index] = index
-        itemsContainer.positionToIndexMap[index] = index
+    key(itemsContainer.maxItemsSize.value) {
+        logger.debug("recomposing all items")
 
-        itemsContainer.itemBiasOffsets[index] = Animatable(0f)
-        itemsContainer.itemStablePositions[index] = Animatable(0f)
-        itemsContainer.itemHighlights[index] = Animatable(0f)
+        (0 .. itemsContainer.maxItemsSize.value).forEach { index: Int ->
+            itemsContainer.indexToPositionMap[index] = index
+            itemsContainer.positionToIndexMap[index] = index
 
-        itemsContainer.isDraggingMes.getOrPut(index) {
-            derivedStateOf {
-                itemsContainer.draggingIndex.value == index
+            itemsContainer.itemBiasOffsets[index] = Animatable(0f)
+            itemsContainer.itemStablePositions[index] = Animatable(0f)
+            itemsContainer.itemHighlights[index] = Animatable(0f)
+
+            itemsContainer.isDraggingMes.getOrPut(index) {
+                derivedStateOf {
+                    itemsContainer.draggingIndex.value == index
+                }
             }
-        }
-        itemsContainer.isHighlightingMes.getOrPut(index) {
-            derivedStateOf {
-                itemsContainer.highlightedIndex.value == index
+            itemsContainer.isHighlightingMes.getOrPut(index) {
+                derivedStateOf {
+                    itemsContainer.highlightedIndex.value == index
+                }
             }
+            itemsContainer.isItemVisibles.getOrPut(index) {
+                derivedStateOf {
+                    index < itemsContainer.actualItemsSize.value
+                }
+            }
+            itemsContainer.reorderButtonModifiers[index] = Modifier.createReorderButtonModifier(
+                itemsContainer, index, itemsContainer.draggingIndex, scrollState, itemsContainer.parentViewportHeight,
+                coroutineScope, itemsContainer.scrollJob, onReorder,
+            )
+            itemsContainer.itemModifiers[index] = Modifier.createItemModifier(
+                itemsContainer, index,
+            )
         }
-        itemsContainer.reorderButtonModifiers[index] = Modifier.createReorderButtonModifier(
-            itemsContainer, index, itemsContainer.draggingIndex, scrollState, itemsContainer.parentViewportHeight,
-            coroutineScope, itemsContainer.scrollJob, onReorder,
-        )
-        itemsContainer.itemModifiers[index] = Modifier.createItemModifier(
-            itemsContainer, index,
-        )
-    }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(scrollState)
-            .onGloballyPositioned { coordinates: LayoutCoordinates ->
-                itemsContainer.parentViewportHeight.value =
-                    coordinates.parentLayoutCoordinates?.size?.height?.toFloat() ?: 0f
-                itemsContainer.parentViewportWidth.value =
-                    coordinates.parentLayoutCoordinates?.size?.width?.toFloat() ?: 0f
-            },
-    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(scrollState)
+                .onGloballyPositioned { coordinates: LayoutCoordinates ->
+                    itemsContainer.parentViewportHeight.value =
+                        coordinates.parentLayoutCoordinates?.size?.height?.toFloat() ?: 0f
+                    itemsContainer.parentViewportWidth.value =
+                        coordinates.parentLayoutCoordinates?.size?.width?.toFloat() ?: 0f
+                },
+        ) {
 
-        key(itemsContainer.modifiedAll.value) {
-            //igrek.todotree.info.logger.LoggerFactory.logger.debug("recomposing all items")
-            itemsContainer.items.indices.forEach { index: Int ->
+            (0 .. itemsContainer.maxItemsSize.value).forEach { index: Int ->
                 ReorderListViewItem(itemsContainer, index, itemContent)
             }
+
+            postContent()
         }
 
-        postContent()
     }
 
-    LaunchedEffect(itemsContainer.modifiedAll.value) {
-        onLoad()
-    }
+//    LaunchedEffect(Unit) {
+//        onLoad()
+//    }
 }
 
 @Composable
 private fun <T> ReorderListViewItem(
     itemsContainer: ItemsContainer<T>,
     index: Int,
-    itemContent: @Composable (itemsContainer: ItemsContainer<T>, id: Int, modifier: Modifier) -> Unit,
+    itemContent: @Composable (itemsContainer: ItemsContainer<T>, index: Int, modifier: Modifier) -> Unit,
 ) {
-//    logger.debug("recomposing item $index")
-    key(itemsContainer.modifiedMap.getValue(index).value) {
-        val itemModifier = itemsContainer.itemModifiers.getValue(index)
-        val isHighlightingMe: State<Boolean> = itemsContainer.isHighlightingMes.getValue(index)
+    logger.debug("recomposing whole item $index")
 
-        if (isHighlightingMe.value) {
-            LaunchedEffect(isHighlightingMe.value) {
-                if (isHighlightingMe.value) {
-                    itemsContainer.itemHighlights[index]?.snapTo(1f)
-                    itemsContainer.itemHighlights[index]?.animateTo(0f, animationSpec=tween(
-                        durationMillis = 600,
-                        delayMillis = 0,
-                        easing = FastOutLinearInEasing,
-                    ))
-                    itemsContainer.highlightedIndex.value = -1
-                }
+    val itemModifier = itemsContainer.itemModifiers.getValue(index)
+    val isHighlightingMe: State<Boolean> = itemsContainer.isHighlightingMes.getValue(index)
+
+    if (isHighlightingMe.value) {
+        LaunchedEffect(isHighlightingMe.value) {
+            if (isHighlightingMe.value) {
+                itemsContainer.itemHighlights[index]?.snapTo(1f)
+                itemsContainer.itemHighlights[index]?.animateTo(0f, animationSpec=tween(
+                    durationMillis = 600,
+                    delayMillis = 0,
+                    easing = FastOutLinearInEasing,
+                ))
+                itemsContainer.highlightedIndex.value = -1
             }
         }
-
-        itemContent(itemsContainer, index, itemModifier)
     }
+
+    itemContent(itemsContainer, index, itemModifier)
 }
 
 private fun <T> Modifier.createItemModifier(

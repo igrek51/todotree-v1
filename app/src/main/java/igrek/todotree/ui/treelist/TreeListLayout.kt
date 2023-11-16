@@ -19,6 +19,7 @@ import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -29,6 +30,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -36,9 +38,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChanged
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.ComposeView
@@ -72,6 +76,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 
+internal val logger = igrek.todotree.info.logger.LoggerFactory.logger
+
 open class TreeListLayout {
     private val treeManager: TreeManager by LazyExtractor(appFactory.treeManager)
     private val gui: GUI by LazyExtractor(appFactory.gui)
@@ -81,7 +87,7 @@ open class TreeListLayout {
 
     class LayoutState {
         val scrollState: ScrollState = ScrollState(0)
-        val visibleItems: ItemsContainer<AbstractTreeItem> = ItemsContainer()
+        val itemsContainer: ItemsContainer<AbstractTreeItem> = ItemsContainer()
         val selectMode: MutableState<Boolean> = mutableStateOf(false)
         val selectedPositions: MutableState<Set<Int>?> = mutableStateOf(null)
     }
@@ -102,7 +108,7 @@ open class TreeListLayout {
     }
 
     open fun updateItemsList() {
-        gui.startLoading()
+//        gui.startLoading()
 
         val currentItem: AbstractTreeItem = treeManager.currentItem ?: return
         val selectedPositions: Set<Int>? = treeSelectionManager.selectedItems
@@ -117,10 +123,15 @@ open class TreeListLayout {
         gui.setTitle(sb.toString())
         gui.showBackButton(currentItem.getParent() != null)
 
-        state.visibleItems.replaceAll(items)
+        state.itemsContainer.replaceAll(items)
 
         state.selectMode.value = selectedPositions?.isNotEmpty() == true
         state.selectedPositions.value = selectedPositions
+
+        items.forEachIndexed { index, item ->
+            val key = "${item.typeName}|${item.displayName}|${item.size()}"
+            state.itemsContainer.itemContentKeys[index] = key
+        }
 
         updateFocusedItem(items)
     }
@@ -135,15 +146,15 @@ open class TreeListLayout {
         }
         items.forEachIndexed { index, item ->
             if (itemToBeFocused(item)){
-                state.visibleItems.highlightedIndex.value = index
+                state.itemsContainer.highlightedIndex.value = index
                 return
             }
         }
-        state.visibleItems.highlightedIndex.value = -1
+        state.itemsContainer.highlightedIndex.value = -1
     }
 
     fun updateOneListItem(position: Int) {
-        state.visibleItems.notifyItemChange(position)
+        state.itemsContainer.notifyItemChange(position)
 
         val selectedPositions: Set<Int>? = treeSelectionManager.selectedItems
         state.selectMode.value = selectedPositions?.isNotEmpty() == true
@@ -167,7 +178,7 @@ open class TreeListLayout {
     }
 
     fun onPlusLongClick() {
-        val index = state.visibleItems.items.size
+        val index = state.itemsContainer.items.size
         ItemActionsMenu(index).show(null)
     }
 
@@ -212,7 +223,7 @@ open class TreeListLayout {
 private fun MainComponent(controller: TreeListLayout) {
     Column {
         ReorderListView(
-            itemsContainer = controller.state.visibleItems,
+            itemsContainer = controller.state.itemsContainer,
             scrollState = controller.state.scrollState,
             onReorder = { newItems ->
                 controller.onItemsReordered(newItems)
@@ -222,8 +233,8 @@ private fun MainComponent(controller: TreeListLayout) {
                 val absPath = appFactory.treeManager.get().currentItem?.absolutePath().orEmpty()
                 splitTime.split("composition done: $absPath")
             },
-            itemContent = { itemsContainer: ItemsContainer<AbstractTreeItem>, id: Int, modifier: Modifier ->
-                TreeItemComposable(controller, itemsContainer, id, modifier)
+            itemContent = { itemsContainer: ItemsContainer<AbstractTreeItem>, index: Int, modifier: Modifier ->
+                TreeItemComposable(controller, itemsContainer, index, modifier)
             },
             postContent = {
                 PlusButtonComposable(controller)
@@ -238,23 +249,26 @@ private fun MainComponent(controller: TreeListLayout) {
 private fun TreeItemComposable(
     controller: TreeListLayout,
     itemsContainer: ItemsContainer<AbstractTreeItem>,
-    id: Int,
+    index: Int,
     modifier: Modifier,
 ) {
-//  igrek.todotree.info.logger.LoggerFactory.logger.debug("recompose item id: $id")
-    val item: AbstractTreeItem = itemsContainer.items.getOrNull(id) ?: return
-    val reorderButtonModifier: Modifier = itemsContainer.reorderButtonModifiers.getValue(id)
+    igrek.todotree.info.logger.LoggerFactory.logger.debug("recompose tree item: $index")
 
     val itemPosition: MutableState<Offset> = remember { mutableStateOf(Offset.Zero) }
     val itemSize: MutableState<IntSize> = remember { mutableStateOf(IntSize.Zero) }
 
-    val selectMode: Boolean = controller.state.selectMode.value
-
-    val linkStrokeWidthPx = with(LocalDensity.current) { 1.dp.toPx() }
-    val linkOffset2Sp = with(LocalDensity.current) { 2.sp.toPx() }
-
     Row(
         modifier
+//            .layout { measurable, constraints ->
+//                logger.debug("layout phase: $index")
+//                val placeable = when {
+//                    itemsContainer.isItemVisibles.getValue(index).value -> measurable.measure(constraints)
+//                    else -> measurable.measure(constraints.copy(minHeight = 0, maxHeight = 0))
+//                }
+//                layout(placeable.width, placeable.height) {
+//                    placeable.placeRelative(0, 0)
+//                }
+//            }
             .onGloballyPositioned { coordinates ->
                 itemPosition.value = coordinates.positionInRoot()
                 itemSize.value = coordinates.size
@@ -262,9 +276,10 @@ private fun TreeItemComposable(
             .combinedClickable(
                 onClick = {
                     splitTime.split("item click")
-                    if (!selectMode)
-                        controller.startLoading()
-                    val position = itemsContainer.indexToPositionMap.getValue(id)
+//                    if (!selectMode) controller.startLoading()
+                    val position = itemsContainer.indexToPositionMap.getValue(index)
+                    val item: AbstractTreeItem = itemsContainer.items.getOrNull(index)
+                        ?: return@combinedClickable
                     Handler(Looper.getMainLooper()).post {
                         mainScope.launch {
                             delay(1)
@@ -273,7 +288,7 @@ private fun TreeItemComposable(
                     }
                 },
                 onLongClick = {
-                    val position = itemsContainer.indexToPositionMap.getValue(id)
+                    val position = itemsContainer.indexToPositionMap.getValue(index)
                     mainScope.launch {
                         val coordinates = SizeAndPosition(
                             x = itemPosition.value.x.toInt(),
@@ -285,11 +300,13 @@ private fun TreeItemComposable(
                     }
                 },
             )
-            .pointerInput(id) {
+            .pointerInput(index) {
                 detectMyTransformGestures { pan ->
                     val itemW = itemsContainer.parentViewportWidth.value
-                    val itemH = itemsContainer.itemHeights.getValue(id)
-                    val position = itemsContainer.indexToPositionMap.getValue(id)
+                    val itemH = itemsContainer.itemHeights.getValue(index)
+                    val position = itemsContainer.indexToPositionMap.getValue(index)
+                    val item: AbstractTreeItem = itemsContainer.items.getOrNull(index)
+                        ?: return@detectMyTransformGestures null
                     val result = handleItemGesture(pan.x, pan.y, itemW, itemH, position, item)
                     result
                 }
@@ -297,36 +314,93 @@ private fun TreeItemComposable(
         ,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        // Reorder
-        if (!selectMode) {
-            IconButton(
-                modifier = reorderButtonModifier
-                    .size(34.dp, 36.dp),
-                onClick = {},
-            ) {
-                Icon(
-                    painterResource(id = R.drawable.reorder),
-                    contentDescription = null,
-                    modifier = Modifier.size(24.dp),
-                    tint = Color.White,
-                )
-            }
+
+        ReorderButtonItemContainer(controller, itemsContainer, index)
+
+        SelectCheckboxItemContainer(controller, itemsContainer, index)
+
+        TextContentItemContainer(itemsContainer, index)
+
+        // Edit item
+        ItemIconButton(R.drawable.edit) {
+            val item: AbstractTreeItem = itemsContainer.items.getOrNull(index) ?: return@ItemIconButton
+            controller.onEditItemClick(item)
         }
 
-        // Select
-        if (selectMode) {
-            val positionsSet: Set<Int> = controller.state.selectedPositions.value ?: emptySet()
-            val position = itemsContainer.indexToPositionMap.getValue(id)
-            val isSelected = positionsSet.contains(position)
-            Checkbox(
-                modifier = Modifier.size(36.dp),
-                checked = isSelected,
-                onCheckedChange = { checked ->
-                    val actualPosition = itemsContainer.indexToPositionMap.getValue(id)
-                    controller.onSelectItemClick(actualPosition, checked)
-                }
-            )
+        // Enter item
+        ItemIconButton(R.drawable.arrow_forward) {
+            val item: AbstractTreeItem = itemsContainer.items.getOrNull(index) ?: return@ItemIconButton
+            val position = itemsContainer.indexToPositionMap.getValue(index)
+            controller.onEnterItemClick(position, item)
         }
+
+        // Add new above
+        ItemIconButton(R.drawable.plus) {
+            val position = itemsContainer.indexToPositionMap.getValue(index)
+            controller.onAddItemAboveClick(position)
+        }
+
+    }
+}
+
+@SuppressLint("ModifierParameter")
+@Composable
+private fun ReorderButtonItemContainer(
+    controller: TreeListLayout,
+    itemsContainer: ItemsContainer<AbstractTreeItem>,
+    index: Int,
+) {
+    if (controller.state.selectMode.value)
+        return
+
+    val reorderButtonModifier: Modifier = itemsContainer.reorderButtonModifiers.getValue(index)
+    IconButton(
+        modifier = reorderButtonModifier
+            .size(34.dp, 36.dp),
+        onClick = {},
+    ) {
+        Icon(
+            painterResource(id = R.drawable.reorder),
+            contentDescription = null,
+            modifier = Modifier.size(24.dp),
+            tint = Color.White,
+        )
+    }
+}
+
+@SuppressLint("ModifierParameter")
+@Composable
+private fun SelectCheckboxItemContainer(
+    controller: TreeListLayout,
+    itemsContainer: ItemsContainer<AbstractTreeItem>,
+    index: Int,
+) {
+    if (!controller.state.selectMode.value)
+        return
+
+    val positionsSet: Set<Int> = controller.state.selectedPositions.value ?: emptySet()
+    val position = itemsContainer.indexToPositionMap.getValue(index)
+    val isSelected = positionsSet.contains(position)
+    Checkbox(
+        modifier = Modifier.size(36.dp),
+        checked = isSelected,
+        onCheckedChange = { checked ->
+            val actualPosition = itemsContainer.indexToPositionMap.getValue(index)
+            controller.onSelectItemClick(actualPosition, checked)
+        }
+    )
+}
+
+@SuppressLint("ModifierParameter")
+@Composable
+private fun RowScope.TextContentItemContainer(
+    itemsContainer: ItemsContainer<AbstractTreeItem>,
+    index: Int,
+) {
+    key(itemsContainer.itemContentKeys[index].orEmpty()) {
+        val item: AbstractTreeItem = itemsContainer.items.getOrNull(index) ?: return
+        val linkStrokeWidthPx = with(LocalDensity.current) { 1.dp.toPx() }
+        val linkOffset2Sp = with(LocalDensity.current) { 2.sp.toPx() }
 
         val fontWeight: FontWeight = when {
             item is LinkTreeItem -> FontWeight.Normal
@@ -365,31 +439,13 @@ private fun TreeItemComposable(
             )
         }
 
-        if (!selectMode) {
-            if (item.isEmpty) { // leaf
-                // Enter item
-                ItemIconButton(R.drawable.arrow_forward) {
-                    val position = itemsContainer.indexToPositionMap.getValue(id)
-                    controller.onEnterItemClick(position, item)
-                }
-            } else { // parent
-                Text(
-                    modifier = Modifier.padding(horizontal = 4.dp),
-                    text = "[${item.size()}]",
-                    fontSize = 16.sp,
-                )
-                // Edit item
-                ItemIconButton(R.drawable.edit) {
-                    controller.onEditItemClick(item)
-                }
-            }
-            // Add new above
-            ItemIconButton(R.drawable.plus) {
-                val position = itemsContainer.indexToPositionMap.getValue(id)
-                controller.onAddItemAboveClick(position)
-            }
+        if (!item.isEmpty) {
+            Text(
+                modifier = Modifier.padding(horizontal = 4.dp),
+                text = "[${item.size()}]",
+                fontSize = 16.sp,
+            )
         }
-
     }
 }
 
