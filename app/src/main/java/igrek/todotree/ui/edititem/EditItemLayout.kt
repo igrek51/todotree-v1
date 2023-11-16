@@ -28,7 +28,7 @@ class EditItemLayout {
 
     private var currentItem: AbstractTreeItem? = null
     private var parent: AbstractTreeItem = RootTreeItem()
-
+    private var wired: Boolean = false
     val state = EditItemState()
     val numericTyper = NumericTyper(state)
 
@@ -37,8 +37,21 @@ class EditItemLayout {
         this.parent = parent
     }
 
-    fun initLayout(layout: View) {
-        resetState()
+    fun showCachedLayout(layout: View) {
+        when (wired) {
+            false -> {
+                initLayout(layout)
+                wired = true
+            }
+            true -> {
+                updateState()
+                postLayoutUpdate()
+            }
+        }
+    }
+
+    private fun initLayout(layout: View) {
+        updateState()
 
         val thisLayout = this
         layout.findViewById<ComposeView>(R.id.compose_view_edit).apply {
@@ -50,6 +63,10 @@ class EditItemLayout {
             }
         }
 
+        postLayoutUpdate()
+    }
+
+    private fun postLayoutUpdate() {
         try {
             state.focusRequester.requestFocus()
         } catch (t: Exception) {
@@ -61,7 +78,7 @@ class EditItemLayout {
         gui.stopLoading()
     }
 
-    private fun resetState() {
+    private fun updateState() {
         currentItem?.let { item ->
             val text = item.displayName
             state.textFieldValue.value = TextFieldValue(
@@ -91,7 +108,6 @@ class EditItemLayout {
     }
 
     fun onSaveAndAddClick() {
-        hideKeyboard()
         currentItem?.let { item ->
             ItemEditorCommand().saveAndAddItemClicked(item, state.textFieldValue.value.text)
         } ?: run {
@@ -100,7 +116,6 @@ class EditItemLayout {
     }
 
     fun onSaveAndEnterClick() {
-        hideKeyboard()
         currentItem?.let { item ->
             ItemEditorCommand().saveAndGoIntoItemClicked(item, state.textFieldValue.value.text)
         } ?: run {

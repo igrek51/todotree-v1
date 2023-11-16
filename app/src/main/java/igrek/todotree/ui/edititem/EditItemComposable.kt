@@ -63,7 +63,7 @@ private val logger = LoggerFactory.logger
 
 @Composable
 internal fun MainComponent(controller: EditItemLayout) {
-    logger.debug("recomposition: EditItemLayout: Main")
+    logger.debug("recomposing EditItemLayout")
     CompositionLocalProvider(LocalMinimumInteractiveComponentEnforcement provides false) {
         Column {
             Column(Modifier.verticalScroll(rememberScrollState())) {

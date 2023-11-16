@@ -109,7 +109,7 @@ class GUI {
         showBackButton(true)
         val layoutView = setMainContentLayout(R.layout.component_edit_item)
         editItemLayout.setCurrentItem(item, parent)
-        editItemLayout.initLayout(layoutView)
+        editItemLayout.showCachedLayout(layoutView)
     }
 
     fun scrollToItem(itemIndex: Int) {
