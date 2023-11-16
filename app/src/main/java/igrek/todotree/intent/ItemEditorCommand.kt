@@ -106,7 +106,7 @@ class ItemEditorCommand(
     }
 
     private fun returnFromItemEditing() {
-        GUICommand().showItemsList()
+        gui.showItemsList()
         // when new item has been added to the end
         if (newItemPosition != null
             && newItemPosition == (treeManager.currentItem?.size() ?: 0) - 1

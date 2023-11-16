@@ -5,7 +5,6 @@ import igrek.todotree.R
 import igrek.todotree.inject.LazyExtractor
 import igrek.todotree.inject.LazyInject
 import igrek.todotree.inject.appFactory
-import igrek.todotree.intent.GUICommand
 import igrek.todotree.intent.NavigationCommand
 import igrek.todotree.layout.InflatedLayout
 import igrek.todotree.ui.GUI
@@ -20,7 +19,7 @@ class HomeLayoutController(
     override fun showLayout(layout: View) {
         super.showLayout(layout)
         gui.lazyInit()
-        GUICommand().showItemsList()
+        gui.showItemsList()
     }
 
     override fun onBackClicked() {

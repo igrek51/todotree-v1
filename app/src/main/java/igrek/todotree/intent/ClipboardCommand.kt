@@ -13,6 +13,7 @@ import igrek.todotree.service.clipboard.SystemClipboardManager
 import igrek.todotree.service.clipboard.TreeClipboardManager
 import igrek.todotree.service.tree.TreeManager
 import igrek.todotree.service.tree.TreeSelectionManager
+import igrek.todotree.ui.treelist.TreeListLayout
 import java.util.TreeSet
 
 class ClipboardCommand(
@@ -27,6 +28,7 @@ class ClipboardCommand(
     private val treeClipboardManager by LazyExtractor(treeClipboardManager)
     private val uiInfoService by LazyExtractor(uiInfoService)
     private val treeSelectionManager by LazyExtractor(treeSelectionManager)
+    private val treeListLayout: TreeListLayout by LazyExtractor(appFactory.treeListLayout)
 
     private val logger: Logger = LoggerFactory.logger
 
@@ -96,7 +98,7 @@ class ClipboardCommand(
             }
             treeManager.addToCurrent(position, TextTreeItem(systemClipboard))
             uiInfoService.showInfo("Pasted from system clipboard: $systemClipboard")
-            GUICommand().updateItemsList()
+            treeListLayout.updateItemsList()
             return
         }
         when (treeClipboardManager.markForCut) {
@@ -109,7 +111,7 @@ class ClipboardCommand(
                 }
                 uiInfoService.showInfo("Pasted items: ${treeClipboardManager.clipboardSize}")
                 treeClipboardManager.recopyClipboard()
-                GUICommand().updateItemsList()
+                treeListLayout.updateItemsList()
             }
             true -> {
                 for (clipboardItem in treeClipboardManager.clipboard) {
@@ -127,7 +129,7 @@ class ClipboardCommand(
                 uiInfoService.showInfo("Moved items: ${treeClipboardManager.clipboardSize}")
                 treeClipboardManager.markForCut = false
                 treeClipboardManager.clearClipboard()
-                GUICommand().updateItemsList()
+                treeListLayout.updateItemsList()
             }
         }
     }
@@ -143,7 +145,7 @@ class ClipboardCommand(
         }
         treeClipboardManager.markForCut = false
         uiInfoService.showInfo("Items pasted as links: " + treeClipboardManager.clipboardSize)
-        GUICommand().updateItemsList()
+        treeListLayout.updateItemsList()
     }
 
     private fun buildLinkItem(clipboardItem: AbstractTreeItem): AbstractTreeItem {

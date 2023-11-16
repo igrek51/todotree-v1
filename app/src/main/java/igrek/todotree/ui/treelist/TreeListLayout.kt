@@ -91,7 +91,7 @@ open class TreeListLayout {
         val selectedPositions: MutableState<Set<Int>?> = mutableStateOf(null)
     }
 
-    fun showLayout(layout: View) {
+    fun initLayout(layout: View) {
         updateItemsList()
 
         val thisLayout = this

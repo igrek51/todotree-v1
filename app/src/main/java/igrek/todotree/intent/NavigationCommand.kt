@@ -16,6 +16,7 @@ import igrek.todotree.layout.navigation.NavigationMenuController
 import igrek.todotree.service.import.DatabaseImportFileChooser
 import igrek.todotree.service.tree.TreeSelectionManager
 import igrek.todotree.ui.GUI
+import igrek.todotree.ui.treelist.TreeListLayout
 
 class NavigationCommand(
     context: LazyInject<Context> = appFactory.context,
@@ -31,6 +32,7 @@ class NavigationCommand(
     private val activityController by LazyExtractor(activityController)
     private val treeSelectionManager by LazyExtractor(treeSelectionManager)
     private val navigationMenuController by LazyExtractor(navigationMenuController)
+    private val treeListLayout: TreeListLayout by LazyExtractor(appFactory.treeListLayout)
 
     fun optionsSelect(id: Int): Boolean {
         when (id) {
@@ -96,7 +98,7 @@ class NavigationCommand(
             if (appData.isState(AppState.ITEMS_LIST)) {
                 if (treeSelectionManager.isAnythingSelected) {
                     treeSelectionManager.cancelSelectionMode()
-                    GUICommand().updateItemsList()
+                    treeListLayout.updateItemsList()
                 } else {
                     TreeCommand().goBack()
                 }
@@ -113,7 +115,7 @@ class NavigationCommand(
         } else if (appData.isState(AppState.ITEMS_LIST)) {
             if (treeSelectionManager.isAnythingSelected) {
                 treeSelectionManager.cancelSelectionMode()
-                GUICommand().updateItemsList()
+                treeListLayout.updateItemsList()
             } else {
                 TreeCommand().goBack()
             }

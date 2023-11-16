@@ -9,6 +9,7 @@ import igrek.todotree.inject.appFactory
 import igrek.todotree.service.access.DatabaseLock
 import igrek.todotree.service.tree.TreeManager
 import igrek.todotree.service.tree.TreeSelectionManager
+import igrek.todotree.ui.treelist.TreeListLayout
 import java.util.TreeSet
 
 class ItemTrashCommand(
@@ -21,6 +22,8 @@ class ItemTrashCommand(
     private val uiInfoService by LazyExtractor(uiInfoService)
     private val databaseLock by LazyExtractor(databaseLock)
     private val treeSelectionManager by LazyExtractor(treeSelectionManager)
+    private val gui by LazyExtractor(appFactory.gui)
+    private val treeListLayout: TreeListLayout by LazyExtractor(appFactory.treeListLayout)
 
     fun itemRemoveClicked(position: Int) { // removing locked before going into first element
         databaseLock.assertUnlocked()
@@ -34,7 +37,7 @@ class ItemTrashCommand(
     private fun removeItem(position: Int) {
         treeManager.currentItem?.getChild(position)?.let { removing ->
             treeManager.removeFromCurrent(position)
-            GUICommand().updateItemsList()
+            treeListLayout.updateItemsList()
             uiInfoService.showInfoCancellable("Item removed: " + removing.displayName) {
                 restoreRemovedItem(
                     removing,
@@ -46,7 +49,7 @@ class ItemTrashCommand(
 
     private fun restoreRemovedItem(restored: AbstractTreeItem, position: Int) {
         treeManager.addToCurrent(position, restored)
-        GUICommand().showItemsList()
+        gui.showItemsList()
         uiInfoService.showInfo("Removed item restored.")
     }
 
@@ -64,7 +67,7 @@ class ItemTrashCommand(
             uiInfoService.showInfo("Items removed: " + selectedIds.size)
         }
         treeSelectionManager.cancelSelectionMode()
-        GUICommand().updateItemsList()
+        treeListLayout.updateItemsList()
     }
 
     fun removeLinkAndTarget(linkPosition: Int, linkItem: LinkTreeItem) {
@@ -86,7 +89,7 @@ class ItemTrashCommand(
         } else {
             Runnable {}
         }
-        GUICommand().updateItemsList()
+        treeListLayout.updateItemsList()
         uiInfoService.showInfoCancellable("Link & item removed: " + linkItem.displayName) {
 
             // restore target
@@ -94,7 +97,7 @@ class ItemTrashCommand(
 
             // restore link
             treeManager.addToCurrent(linkPosition, linkItem)
-            GUICommand().showItemsList()
+            gui.showItemsList()
             uiInfoService.showInfo("Removed items restored.")
         }
     }

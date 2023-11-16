@@ -37,7 +37,7 @@ class EditItemLayout {
         this.parent = parent
     }
 
-    fun showLayout(layout: View) {
+    fun initLayout(layout: View) {
         resetState()
 
         val thisLayout = this

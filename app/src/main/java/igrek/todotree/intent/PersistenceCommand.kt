@@ -15,6 +15,7 @@ import igrek.todotree.service.tree.TreeManager
 import igrek.todotree.service.tree.TreeScrollCache
 import igrek.todotree.service.tree.persistence.TreePersistenceService
 import igrek.todotree.ui.contextmenu.BackupListMenu
+import igrek.todotree.ui.treelist.TreeListLayout
 import java.io.File
 import java.io.IOException
 
@@ -35,6 +36,7 @@ class PersistenceCommand(
     private val treePersistenceService by LazyExtractor(treePersistenceService)
     private val changesHistory by LazyExtractor(changesHistory)
     private val settingsState by LazyExtractor(appFactory.settingsState)
+    private val treeListLayout: TreeListLayout by LazyExtractor(appFactory.treeListLayout)
 
     private val logger = LoggerFactory.logger
 
@@ -45,7 +47,7 @@ class PersistenceCommand(
             loadDbFromFile(dbFile())
             uiInfoService.showInfo("Database loaded.")
         }
-        GUICommand().updateItemsList()
+        treeListLayout.updateItemsList()
     }
 
     fun saveDatabaseUi() {
@@ -97,7 +99,7 @@ class PersistenceCommand(
             changesHistory.registerChange()
             uiInfoService.showInfo("Database backup loaded: " + backup.filename)
         }
-        GUICommand().updateItemsList()
+        treeListLayout.updateItemsList()
     }
 
     fun loadRootTreeFromImportedFile(fileContent: String, filename: String) {
@@ -108,7 +110,7 @@ class PersistenceCommand(
             changesHistory.registerChange()
             uiInfoService.showInfo("Database imported from $filename")
         }
-        GUICommand().updateItemsList()
+        treeListLayout.updateItemsList()
     }
 
     private fun loadDbFromFile(dbFile: File) {

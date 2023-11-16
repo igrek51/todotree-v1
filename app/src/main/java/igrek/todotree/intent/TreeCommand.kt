@@ -17,6 +17,7 @@ import igrek.todotree.service.tree.TreeMover
 import igrek.todotree.service.tree.TreeScrollCache
 import igrek.todotree.service.tree.TreeSelectionManager
 import igrek.todotree.ui.GUI
+import igrek.todotree.ui.treelist.TreeListLayout
 import igrek.todotree.util.EmotionLessInator
 import kotlinx.coroutines.*
 import org.joda.time.DateTime
@@ -44,6 +45,7 @@ class TreeCommand(
     private val changesHistory by LazyExtractor(changesHistory)
     private val remotePushService by LazyExtractor(remotePushService)
     private val linkHistoryService by LazyExtractor(linkHistoryService)
+    private val treeListLayout: TreeListLayout by LazyExtractor(appFactory.treeListLayout)
 
     private val emotionLessInator = EmotionLessInator()
 
@@ -61,7 +63,7 @@ class TreeCommand(
                 treeManager.goUp()
                 linkHistoryService.resetTarget(current) // reset link target - just in case
             }
-            GUICommand().updateItemsList()
+            treeListLayout.updateItemsList()
             treeScrollCache.restoreScrollPosition()
         } catch (e: NoSuperItemException) {
             ExitCommand().saveAndExitRequested()
@@ -74,7 +76,7 @@ class TreeCommand(
             val current = treeManager.currentItem!!
             treeManager.goUp()
             linkHistoryService.resetTarget(current) // reset link target - just in case
-            GUICommand().updateItemsList()
+            treeListLayout.updateItemsList()
             treeScrollCache.restoreScrollPosition()
         } catch (e: NoSuperItemException) {
             // ignoring
@@ -97,7 +99,7 @@ class TreeCommand(
                         val deferred = remotePushService.populateRemoteItemAsync((item as RemoteTreeItem?)!!)
                         val result = deferred.await()
                         result.fold(onSuccess = { todoDtos: List<TodoDto> ->
-                            GUICommand().updateItemsList()
+                            treeListLayout.updateItemsList()
                             if (todoDtos.isEmpty()) {
                                 uiInfoService.showInfo("No remote items")
                             } else {
@@ -111,13 +113,13 @@ class TreeCommand(
                     }
                 }
 
-                GUICommand().updateItemsList()
+                treeListLayout.updateItemsList()
                 gui.scrollToItem(0)
             }
             else -> {
                 treeSelectionManager.cancelSelectionMode()
                 goInto(position)
-                GUICommand().updateItemsList()
+                treeListLayout.updateItemsList()
                 gui.scrollToItem(0)
             }
         }
@@ -131,7 +133,7 @@ class TreeCommand(
     private fun navigateTo(item: AbstractTreeItem?) {
         treeScrollCache.storeScrollPosition()
         treeManager.goTo(item)
-        GUICommand().updateItemsList()
+        treeListLayout.updateItemsList()
         gui.scrollToItem(0)
     }
 
@@ -143,11 +145,11 @@ class TreeCommand(
         if (!treeSelectionManager.isAnythingSelected) {
             treeSelectionManager.startSelectionMode()
             treeSelectionManager.setItemSelected(position, true)
-            GUICommand().updateItemsList()
+            treeListLayout.updateItemsList()
             gui.scrollToItem(position)
         } else {
             treeSelectionManager.setItemSelected(position, true)
-            GUICommand().updateItemsList()
+            treeListLayout.updateItemsList()
         }
     }
 
@@ -155,8 +157,8 @@ class TreeCommand(
         databaseLock.assertUnlocked()
         if (treeSelectionManager.isAnythingSelected) {
             when (treeSelectionManager.toggleItemSelected(position)) {
-                true -> GUICommand().updateItemsList()
-                false -> GUICommand().updateOneListItem(position)
+                true -> treeListLayout.updateItemsList()
+                false -> treeListLayout.updateOneListItem(position)
             }
         } else {
             when (item) {

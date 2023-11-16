@@ -61,7 +61,7 @@ class ExitCommand(
         TreeCommand().navigateToRoot()
         val shouldBeLocked = settingsState.lockDB
         lock.isLocked = shouldBeLocked
-        GUICommand().showItemsList()
+        gui.showItemsList()
         logger.debug("Quick exit done")
     }
 }

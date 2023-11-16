@@ -101,7 +101,7 @@ class GUI {
         startLoading()
         val layoutView = setMainContentLayout(R.layout.component_items_list)
         appData.state = AppState.ITEMS_LIST
-        treeListLayout.showLayout(layoutView)
+        treeListLayout.initLayout(layoutView)
     }
 
     fun showEditItemPanel(item: AbstractTreeItem?, parent: AbstractTreeItem) {
@@ -109,7 +109,7 @@ class GUI {
         showBackButton(true)
         val layoutView = setMainContentLayout(R.layout.component_edit_item)
         editItemLayout.setCurrentItem(item, parent)
-        editItemLayout.showLayout(layoutView)
+        editItemLayout.initLayout(layoutView)
     }
 
     fun scrollToItem(itemIndex: Int) {
