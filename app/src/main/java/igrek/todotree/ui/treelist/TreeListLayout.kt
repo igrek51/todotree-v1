@@ -74,7 +74,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 
-private val logger = igrek.todotree.info.logger.LoggerFactory.logger
+//private val logger = igrek.todotree.info.logger.LoggerFactory.logger
 
 open class TreeListLayout {
 
@@ -89,7 +89,6 @@ open class TreeListLayout {
         val scrollState: ScrollState = ScrollState(0)
         val itemsContainer: ItemsContainer = ItemsContainer()
         val selectMode: MutableState<Boolean> = mutableStateOf(false)
-        val selectedPositions: MutableState<Set<Int>?> = mutableStateOf(null)
     }
 
     fun showCachedLayout(layout: View) {
@@ -120,7 +119,6 @@ open class TreeListLayout {
         gui.startLoading()
 
         val currentItem: AbstractTreeItem = treeManager.currentItem ?: return
-        val selectedPositions: Set<Int>? = treeSelectionManager.selectedItems
         val items: MutableList<AbstractTreeItem> = currentItem.children
 
         val sb = StringBuilder(currentItem.displayName)
@@ -132,12 +130,25 @@ open class TreeListLayout {
         gui.setTitle(sb.toString())
         gui.showBackButton(currentItem.getParent() != null)
 
-        state.selectMode.value = selectedPositions?.isNotEmpty() == true
-        state.selectedPositions.value = selectedPositions
-
         state.itemsContainer.replaceAll(items)
 
+        val selectedPositions: Set<Int> = treeSelectionManager.selectedItems ?: emptySet()
+        state.selectMode.value = selectedPositions.isNotEmpty()
+
+        items.indices.forEach { index ->
+            val isSelected = selectedPositions.contains(index)
+            state.itemsContainer.isSelected[index]?.value = isSelected
+        }
+
         updateFocusedItem(items)
+    }
+
+    fun updateOneListItem(position: Int) {
+        val selectedPositions: Set<Int> = treeSelectionManager.selectedItems ?: emptySet()
+        state.selectMode.value = selectedPositions.isNotEmpty()
+
+        val index = state.itemsContainer.positionToIndexMap.getValue(position)
+        state.itemsContainer.isSelected.getValue(index).value = selectedPositions.contains(position)
     }
 
     private fun updateFocusedItem(items: MutableList<AbstractTreeItem>) {
@@ -155,14 +166,6 @@ open class TreeListLayout {
             }
         }
         state.itemsContainer.highlightedIndex.value = -1
-    }
-
-    fun updateOneListItem(position: Int) {
-        state.itemsContainer.notifyItemChange(position)
-
-        val selectedPositions: Set<Int>? = treeSelectionManager.selectedItems
-        state.selectMode.value = selectedPositions?.isNotEmpty() == true
-        state.selectedPositions.value = selectedPositions
     }
 
     fun onItemClick(position: Int, item: AbstractTreeItem) {
@@ -377,15 +380,13 @@ private fun SelectCheckboxItemContainer(
     if (!controller.state.selectMode.value)
         return
 
-    val positionsSet: Set<Int> = controller.state.selectedPositions.value ?: emptySet()
-    val position = itemsContainer.indexToPositionMap.getValue(index)
-    val isSelected = positionsSet.contains(position)
     Checkbox(
         modifier = Modifier.size(36.dp),
-        checked = isSelected,
+        checked = itemsContainer.isSelected.getValue(index).value,
         onCheckedChange = { checked ->
             val actualPosition = itemsContainer.indexToPositionMap.getValue(index)
             controller.onSelectItemClick(actualPosition, checked)
+            itemsContainer.isSelected.getValue(index).value = checked
         }
     )
 }

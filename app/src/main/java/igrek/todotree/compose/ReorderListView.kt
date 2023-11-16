@@ -70,6 +70,7 @@ class ItemsContainer(
     val itemContentKeys: MutableMap<Int, MutableState<String>> = mutableMapOf(),
     val isItemVisibles: MutableMap<Int, State<Boolean>> = mutableMapOf(),
     private var coroutineScope: CoroutineScope? = null,
+    val isSelected: MutableMap<Int, MutableState<Boolean>> = mutableMapOf(),
 ) {
     fun init(
         coroutineScope: CoroutineScope,
@@ -95,6 +96,9 @@ class ItemsContainer(
                 derivedStateOf {
                     draggingIndex.value == index
                 }
+            }
+            isSelected.getOrPut(index) {
+                mutableStateOf(false)
             }
             isItemVisibles.getOrPut(index) {
                 derivedStateOf {
