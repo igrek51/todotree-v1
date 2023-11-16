@@ -101,7 +101,7 @@ class GUI {
         startLoading()
         val layoutView = setMainContentLayout(R.layout.component_items_list)
         appData.state = AppState.ITEMS_LIST
-        treeListLayout.initLayout(layoutView)
+        treeListLayout.showCachedLayout(layoutView)
     }
 
     fun showEditItemPanel(item: AbstractTreeItem?, parent: AbstractTreeItem) {

@@ -82,6 +82,7 @@ open class TreeListLayout {
     private val gui: GUI by LazyExtractor(appFactory.gui)
     private val treeSelectionManager: TreeSelectionManager by LazyExtractor(appFactory.treeSelectionManager)
 
+    private var wired: Boolean = false
     val state = LayoutState()
 
     class LayoutState {
@@ -91,7 +92,17 @@ open class TreeListLayout {
         val selectedPositions: MutableState<Set<Int>?> = mutableStateOf(null)
     }
 
-    fun initLayout(layout: View) {
+    fun showCachedLayout(layout: View) {
+        when (wired) {
+            false -> {
+                initLayout(layout)
+                wired = true
+            }
+            true -> updateItemsList()
+        }
+    }
+
+    private fun initLayout(layout: View) {
         updateItemsList()
 
         val thisLayout = this
