@@ -104,11 +104,13 @@ open class TreeListLayout {
         updateItemsList()
 
         val thisLayout = this
-        layout.findViewById<ComposeView>(R.id.compose_view_tree).apply {
-            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnDetachedFromWindow)
-            setContent {
-                AppTheme {
-                    MainComponent(thisLayout)
+        mainScope.launch {
+            layout.findViewById<ComposeView>(R.id.compose_view_tree).apply {
+                setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnDetachedFromWindow)
+                setContent {
+                    AppTheme {
+                        MainComponent(thisLayout)
+                    }
                 }
             }
         }

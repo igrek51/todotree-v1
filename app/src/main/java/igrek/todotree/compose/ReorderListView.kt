@@ -65,7 +65,7 @@ class ItemsContainer(
     val highlightedIndex: MutableState<Int> = mutableStateOf(-1),
     private val draggingIndex: MutableState<Int> = mutableStateOf(-1),
     private val scrollJob: MutableState<Job?> = mutableStateOf(null),
-    val maxItemsSize: MutableState<Int> = mutableStateOf(30),
+    val maxItemsSize: MutableState<Int> = mutableStateOf(10),
     private val actualItemsSize: MutableState<Int> = mutableStateOf(0),
     val itemContentKeys: MutableMap<Int, MutableState<String>> = mutableMapOf(),
     val isItemVisibles: MutableMap<Int, State<Boolean>> = mutableMapOf(),
