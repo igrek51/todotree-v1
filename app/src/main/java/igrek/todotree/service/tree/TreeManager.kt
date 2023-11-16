@@ -62,6 +62,7 @@ class TreeManager(
         changesHistory.registerChange()
         currentItem!!.add(mPosition, item)
         StatisticsCommand().onTaskCreated(item)
+        focusItem = item
     }
 
     fun removeFromCurrent(position: Int) {
@@ -69,12 +70,14 @@ class TreeManager(
         StatisticsCommand().onTaskRemoved(removingChild)
         changesHistory.registerChange()
         currentItem?.remove(position)
+        focusItem = null
     }
 
     fun removeFromCurrent(item: AbstractTreeItem?) {
         changesHistory.registerChange()
         StatisticsCommand().onTaskRemoved(item!!)
         currentItem?.remove(item)
+        focusItem = null
     }
 
     fun removeFromParent(item: AbstractTreeItem, parent: AbstractTreeItem) {

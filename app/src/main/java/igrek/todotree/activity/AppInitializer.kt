@@ -8,7 +8,6 @@ import igrek.todotree.info.logger.LoggerFactory
 import igrek.todotree.inject.LazyExtractor
 import igrek.todotree.inject.LazyInject
 import igrek.todotree.inject.appFactory
-import igrek.todotree.intent.GUICommand
 import igrek.todotree.intent.PersistenceCommand
 import igrek.todotree.layout.LayoutController
 import igrek.todotree.layout.MainLayout

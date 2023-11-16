@@ -53,7 +53,6 @@ class ItemEditorCommand(
         } else {
             val newItem = TextTreeItem(content)
             treeManager.addToCurrent(newItemPosition, newItem)
-            treeManager.focusItem = newItem
             uiInfoService.showInfo("New item saved: $content")
             true
         }
@@ -68,7 +67,6 @@ class ItemEditorCommand(
         mContent = contentTrimmer.trimContent(mContent)
         return if (mContent.isEmpty()) {
             treeManager.removeFromCurrent(editedItem)
-            treeManager.focusItem = null
             uiInfoService.showInfo("Empty item has been removed.")
             false
         } else {
