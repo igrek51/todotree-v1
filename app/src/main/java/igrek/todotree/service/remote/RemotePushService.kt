@@ -3,9 +3,11 @@ package igrek.todotree.service.remote
 import igrek.todotree.domain.treeitem.RemoteTreeItem
 import igrek.todotree.domain.treeitem.TextTreeItem
 import igrek.todotree.info.UiInfoService
+import igrek.todotree.inject.LazyExtractor
 import igrek.todotree.inject.LazyInject
 import igrek.todotree.inject.appFactory
 import igrek.todotree.service.tree.TreeManager
+import igrek.todotree.ui.treelist.TreeListLayout
 import kotlinx.coroutines.*
 
 @OptIn(DelicateCoroutinesApi::class)
@@ -14,6 +16,8 @@ class RemotePushService(
     private val uiInfoService: LazyInject<UiInfoService> = appFactory.uiInfoService,
     private val remoteDbRequester: LazyInject<RemoteDbRequester> = appFactory.remoteDbRequester,
 ) {
+    private val treeListLayout: TreeListLayout by LazyExtractor(appFactory.treeListLayout)
+
     private val remoteItemToId = hashMapOf<TextTreeItem, String>()
 
     fun pushNewItemAsync(content: String): Deferred<Result<String>> {
@@ -45,6 +49,7 @@ class RemotePushService(
         repeat(item.children.size) {
             item.remove(0)
         }
+        treeListLayout.updateItemsList()
         return GlobalScope.async {
             val dr = remoteDbRequester.get().fetchAllRemoteTodosAsync()
             val result = dr.await()
@@ -65,6 +70,7 @@ class RemotePushService(
             remoteItem.add(newItem)
             todoTaskDto.id?.let { remoteItemToId[newItem] = it }
         }
+        treeListLayout.updateItemsList()
     }
 
     fun removeRemoteItemAsync(position: Int): Deferred<Result<Unit>> {
