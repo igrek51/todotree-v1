@@ -259,7 +259,6 @@ private fun TreeItemComposable(
     modifier: Modifier,
 ) {
 //    igrek.todotree.info.logger.LoggerFactory.logger.debug("recompose tree item: $index")
-
     val itemPosition: MutableState<Offset> = remember { mutableStateOf(Offset.Zero) }
     val itemSize: MutableState<IntSize> = remember { mutableStateOf(IntSize.Zero) }
 
@@ -280,6 +279,8 @@ private fun TreeItemComposable(
             }
             .combinedClickable(
                 onClick = {
+                    if (!controller.state.selectMode.value)
+                        controller.startLoading()
                     val position = itemsContainer.indexToPositionMap.getValue(index)
                     val item: AbstractTreeItem = itemsContainer.items.getOrNull(index)
                         ?: return@combinedClickable
