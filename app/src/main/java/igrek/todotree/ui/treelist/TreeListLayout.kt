@@ -353,8 +353,7 @@ private fun ReorderButtonItemContainer(
     itemsContainer: ItemsContainer,
     index: Int,
 ) {
-    if (controller.state.selectMode.value)
-        return
+    if (controller.state.selectMode.value) return
 
     val reorderButtonModifier: Modifier = itemsContainer.reorderButtonModifiers.getValue(index)
     IconButton(
@@ -378,8 +377,8 @@ private fun SelectCheckboxItemContainer(
     itemsContainer: ItemsContainer,
     index: Int,
 ) {
-    if (!controller.state.selectMode.value)
-        return
+    if (!controller.state.selectMode.value) return
+    if (index >= itemsContainer.items.size) return
 
     Checkbox(
         modifier = Modifier.size(36.dp),
