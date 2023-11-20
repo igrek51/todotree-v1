@@ -71,6 +71,7 @@ class ItemsContainer(
     val isItemVisibles: MutableMap<Int, State<Boolean>> = mutableMapOf(),
     private var coroutineScope: CoroutineScope? = null,
     val isSelected: MutableMap<Int, MutableState<Boolean>> = mutableMapOf(),
+    var indicesOrder: List<Int> = listOf()
 ) {
     fun init(
         coroutineScope: CoroutineScope,
@@ -113,6 +114,7 @@ class ItemsContainer(
                 this, index,
             )
         }
+        indicesOrder = items.indices.toList()
     }
 
     private suspend fun rearrange() {
@@ -124,6 +126,7 @@ class ItemsContainer(
             itemStablePositions[index]?.snapTo(0f)
             itemHighlights[index]?.snapTo(0f)
         }
+        indicesOrder = items.indices.toList()
     }
 
     fun replaceAll(
@@ -455,15 +458,14 @@ private fun persistSwappedItems(
     itemsContainer: ItemsContainer,
     onReorder: (newItems: MutableList<AbstractTreeItem>) -> Unit,
 ) {
-    val changesMade = itemsContainer.items.indices.any { index: Int ->
-        val position = itemsContainer.indexToPositionMap.getValue(index)
-        position != index
-    }
-    if (!changesMade) return
-
     val indicesNewOrder = itemsContainer.items.indices.map { position: Int ->
         itemsContainer.positionToIndexMap.getValue(position)
     }
+    val hasChanged = itemsContainer.items.indices.any { index: Int ->
+        indicesNewOrder[index] != itemsContainer.indicesOrder[index]
+    }
+    if (!hasChanged) return
+
     if (indicesNewOrder.distinct().size != itemsContainer.items.size)
         throw RuntimeException("new indices don't contain the same original indices")
 
@@ -472,4 +474,6 @@ private fun persistSwappedItems(
     }.toMutableList()
 
     onReorder(newItems)
+
+    itemsContainer.indicesOrder = indicesNewOrder
 }
