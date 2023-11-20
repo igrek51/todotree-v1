@@ -69,6 +69,7 @@ class ItemsContainer(
     private val actualItemsSize: MutableState<Int> = mutableStateOf(0),
     val itemContentKeys: MutableMap<Int, MutableState<String>> = mutableMapOf(),
     val isItemVisibles: MutableMap<Int, State<Boolean>> = mutableMapOf(),
+    val isItemParent: MutableMap<Int, MutableState<Boolean>> = mutableMapOf(),
     private var coroutineScope: CoroutineScope? = null,
     val isSelected: MutableMap<Int, MutableState<Boolean>> = mutableMapOf(),
     var indicesOrder: List<Int> = listOf()
@@ -105,6 +106,9 @@ class ItemsContainer(
                 derivedStateOf {
                     index < actualItemsSize.value
                 }
+            }
+            isItemParent.getOrPut(index) {
+                mutableStateOf(false)
             }
             reorderButtonModifiers[index] = Modifier.createReorderButtonModifier(
                 this, index, draggingIndex, scrollState, parentViewportHeight,

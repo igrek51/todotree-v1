@@ -136,9 +136,10 @@ open class TreeListLayout {
         val selectedPositions: Set<Int> = treeSelectionManager.selectedItems ?: emptySet()
         state.selectMode.value = selectedPositions.isNotEmpty()
 
-        items.indices.forEach { index ->
+        items.forEachIndexed { index, item ->
             val isSelected = selectedPositions.contains(index)
             state.itemsContainer.isSelected[index]?.value = isSelected
+            state.itemsContainer.isItemParent[index]?.value = item.children.isNotEmpty()
         }
 
         updateFocusedItem(items)
@@ -325,13 +326,35 @@ private fun TreeItemComposable(
         TextContentItemContainer(itemsContainer, index)
 
         // Edit item
-        ItemIconButton(R.drawable.edit) {
+        ItemIconButton(
+            R.drawable.edit,
+            modifier = Modifier.layout { measurable, constraints ->
+                val placeable = when {
+                    itemsContainer.isItemParent.getValue(index).value -> measurable.measure(constraints)
+                    else -> measurable.measure(constraints.copy(minWidth = 0, maxWidth = 0))
+                }
+                layout(placeable.width, placeable.height) {
+                    placeable.placeRelative(0, 0)
+                }
+            },
+        ) {
             val item: AbstractTreeItem = itemsContainer.items.getOrNull(index) ?: return@ItemIconButton
             controller.onEditItemClick(item)
         }
 
         // Enter item
-        ItemIconButton(R.drawable.arrow_forward) {
+        ItemIconButton(
+            R.drawable.arrow_forward,
+            modifier = Modifier.layout { measurable, constraints ->
+                val placeable = when {
+                    !itemsContainer.isItemParent.getValue(index).value -> measurable.measure(constraints)
+                    else -> measurable.measure(constraints.copy(minWidth = 0, maxWidth = 0))
+                }
+                layout(placeable.width, placeable.height) {
+                    placeable.placeRelative(0, 0)
+                }
+            },
+        ) {
             val item: AbstractTreeItem = itemsContainer.items.getOrNull(index) ?: return@ItemIconButton
             val position = itemsContainer.indexToPositionMap.getValue(index)
             controller.onEnterItemClick(position, item)
@@ -489,10 +512,11 @@ private fun PlusButtonComposable(
 @Composable
 private fun ItemIconButton(
     @DrawableRes drawableId: Int,
+    modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
     IconButton(
-        modifier = Modifier.size(32.dp, 36.dp),
+        modifier = modifier.size(32.dp, 36.dp),
         onClick = {
             Handler(Looper.getMainLooper()).post {
                 mainScope.launch {
