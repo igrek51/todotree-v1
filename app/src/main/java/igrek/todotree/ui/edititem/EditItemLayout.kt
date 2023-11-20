@@ -323,15 +323,18 @@ class EditItemLayout {
         val text = state.textFieldValue.value.text
         val selMin = state.textFieldValue.value.selection.min
         val selMax = state.textFieldValue.value.selection.max
-        val before = text.substring(0, selMin)
+        var before = text.substring(0, selMin)
         val after = text.substring(selMax)
         var position = selMin
-        val insertedAfter = when {
-            state.numericKeyboard.value -> ""
-            after.isNotEmpty() && after.first() == ' ' -> ""
-            else -> " "
+        val inserted = when {
+            state.numericKeyboard.value -> ":"
+            after.isNotEmpty() && after.first() == ' ' -> ":"
+            else -> ": "
         }
-        val inserted = ":$insertedAfter"
+        if (before.endsWith(" ")) {
+            before = before.dropLast(1)
+            position -= 1
+        }
         position += inserted.length
         state.textFieldValue.value = TextFieldValue(
             text = before + inserted + after,
