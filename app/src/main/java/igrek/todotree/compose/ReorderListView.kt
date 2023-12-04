@@ -375,9 +375,7 @@ private suspend fun onReorderDrag(
             itemsContainer.positionToIndexMap[position] = draggedId
             val newStablePosition = (itemsContainer.itemStablePositions[draggedId]?.targetValue ?: 0f) - draggedPxDelta
             offsetBias += draggedPxDelta
-            coroutineScope.launch {
-                itemsContainer.itemStablePositions[draggedId]?.snapTo(newStablePosition)
-            }
+            itemsContainer.itemStablePositions[draggedId]?.snapTo(newStablePosition)
         }
 
         swappedBy > 0 -> { // moving down
@@ -400,17 +398,13 @@ private suspend fun onReorderDrag(
             itemsContainer.positionToIndexMap[position] = draggedId
             val newStablePosition = (itemsContainer.itemStablePositions[draggedId]?.targetValue ?: 0f) + draggedPxDelta
             offsetBias -= draggedPxDelta
-            coroutineScope.launch {
-                itemsContainer.itemStablePositions[draggedId]?.snapTo(newStablePosition)
-            }
+            itemsContainer.itemStablePositions[draggedId]?.snapTo(newStablePosition)
         }
         else -> {}
     }
 
     itemsContainer.totalRelativeSwapOffset += dragAmount.y
-    coroutineScope.launch {
-        itemsContainer.itemBiasOffsets[draggedId]?.snapTo(offsetBias + dragAmount.y)
-    }
+    itemsContainer.itemBiasOffsets[draggedId]?.snapTo(offsetBias + dragAmount.y)
 
     // overscroll
     var priorVisibleHeight = thisHeight / 2 - scrollState.value
