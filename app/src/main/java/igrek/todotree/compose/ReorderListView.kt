@@ -22,6 +22,9 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -50,7 +53,7 @@ private val logger = igrek.todotree.info.logger.LoggerFactory.logger
 
 class ItemsContainer(
     var items: MutableList<AbstractTreeItem> = mutableListOf(),
-    val modifiedAll: MutableState<Long> = mutableStateOf(0),
+    val modifiedAll: MutableState<Long> = mutableLongStateOf(0),
     val itemHeights: MutableMap<Int, Float> = mutableMapOf(),
     val itemBiasOffsets: MutableMap<Int, Animatable<Float, AnimationVector1D>> = mutableMapOf(),
     val itemStablePositions: MutableMap<Int, Animatable<Float, AnimationVector1D>> = mutableMapOf(), // ID to position offset
@@ -61,14 +64,14 @@ class ItemsContainer(
     val indexToPositionMap: MutableMap<Int, Int> = mutableMapOf(), // item index (ID) on list to real displayed position index
     val positionToIndexMap: MutableMap<Int, Int> = mutableMapOf(), // real displayed index to item index (ID) on list
     var totalRelativeSwapOffset: Float = 0f,
-    val overscrollDiff: MutableState<Float> = mutableStateOf(0f),
-    val parentViewportWidth: MutableState<Float> = mutableStateOf(0f),
-    val parentViewportHeight: MutableState<Float> = mutableStateOf(0f),
-    val highlightedIndex: MutableState<Int> = mutableStateOf(-1),
-    private val draggingIndex: MutableState<Int> = mutableStateOf(-1),
-    private val scrollJob: MutableState<Job?> = mutableStateOf(null),
-    val maxItemsSize: MutableState<Int> = mutableStateOf(10),
-    private val actualItemsSize: MutableState<Int> = mutableStateOf(0),
+    val overscrollDiff: MutableState<Float> = mutableFloatStateOf(0f),
+    val parentViewportWidth: MutableState<Float> = mutableFloatStateOf(0f),
+    val parentViewportHeight: MutableState<Float> = mutableFloatStateOf(0f),
+    val highlightedIndex: MutableState<Int> = mutableIntStateOf(-1),
+    private val draggingIndex: MutableState<Int> = mutableIntStateOf(-1),
+    var scrollJob: Job? = null,
+    val maxItemsSize: MutableState<Int> = mutableIntStateOf(10),
+    private val actualItemsSize: MutableState<Int> = mutableIntStateOf(0),
     val itemContentKeys: MutableMap<Int, MutableState<String>> = mutableMapOf(),
     val isItemVisibles: MutableMap<Int, State<Boolean>> = mutableMapOf(),
     val isItemParent: MutableMap<Int, MutableState<Boolean>> = mutableMapOf(),
@@ -116,7 +119,7 @@ class ItemsContainer(
             }
             reorderButtonModifiers[index] = Modifier.createReorderButtonModifier(
                 this, index, draggingIndex, scrollState, parentViewportHeight,
-                coroutineScope, scrollJob, onReorder,
+                coroutineScope, onReorder,
             )
             itemModifiers[index] = Modifier.createItemModifier(
                 this, index,
@@ -273,7 +276,6 @@ private fun Modifier.createReorderButtonModifier(
     scrollState: ScrollState,
     parentViewportHeight: MutableState<Float>,
     coroutineScope: CoroutineScope,
-    scrollJob: MutableState<Job?>,
     onReorder: (newItems: MutableList<AbstractTreeItem>) -> Unit,
 ) = this.pointerInput(index) {
     detectDragGestures(
@@ -296,117 +298,10 @@ private fun Modifier.createReorderButtonModifier(
 
         onDrag = { change: PointerInputChange, dragAmount: Offset ->
             change.consume()
-
             itemsContainer.onDragJob?.cancel()
             itemsContainer.onDragJob = coroutineScope.launch {
                 itemsContainer.reorderMutex.withLock {
-
-                    scrollJob.value?.cancel()
-                    scrollJob.value = null
-
-                    var offsetBias: Float = itemsContainer.itemBiasOffsets[index]?.targetValue ?: 0f // relative offset
-                    val thisHeight = itemsContainer.itemHeights[index] ?: 0f
-                    var position = itemsContainer.indexToPositionMap.getValue(index) // real positional index on view
-                    val draggedId: Int = index
-
-                    // minimize overlap by moving item when it's half-covered
-                    val swappedBy: Int = calculateItemsToSwap(
-                        index, position, offsetBias, itemsContainer.items.size, itemsContainer.itemHeights,
-                        itemsContainer.positionToIndexMap,
-                    )
-
-                    when {
-                        swappedBy < 0 -> { // moving up
-                            var draggedPxDelta = 0f
-                            for(swapStep in 1..-swappedBy) {
-                                val swappedPosition = position - swapStep // position of item being swapped
-                                val newPosition = swappedPosition + 1
-                                val swappedId = itemsContainer.positionToIndexMap.getValue(swappedPosition)
-                                draggedPxDelta += itemsContainer.itemHeights[swappedId] ?: 0f
-                                val currentStablePosition = itemsContainer.itemStablePositions[swappedId]?.targetValue ?: 0f
-                                coroutineScope.launch {
-                                    itemsContainer.itemStablePositions[swappedId]?.animateTo(currentStablePosition + thisHeight)
-                                }
-                                itemsContainer.indexToPositionMap[swappedId] = newPosition
-                                itemsContainer.positionToIndexMap[newPosition] = swappedId
-                            }
-
-                            position += swappedBy
-                            itemsContainer.indexToPositionMap[draggedId] = position
-                            itemsContainer.positionToIndexMap[position] = draggedId
-                            val newStablePosition = (itemsContainer.itemStablePositions[draggedId]?.targetValue ?: 0f) - draggedPxDelta
-                            offsetBias += draggedPxDelta
-                            coroutineScope.launch {
-                                itemsContainer.itemStablePositions[draggedId]?.snapTo(newStablePosition)
-                            }
-                        }
-
-                        swappedBy > 0 -> { // moving down
-                            var draggedPxDelta = 0f
-                            for(swapStep in 1..swappedBy) {
-                                val swappedPosition = position + swapStep // position of item being swapped
-                                val newPosition = swappedPosition - 1
-                                val swappedId = itemsContainer.positionToIndexMap.getValue(swappedPosition)
-                                draggedPxDelta += itemsContainer.itemHeights[swappedId] ?: 0f
-                                val currentStablePosition = itemsContainer.itemStablePositions[swappedId]?.targetValue ?: 0f
-                                coroutineScope.launch {
-                                    itemsContainer.itemStablePositions[swappedId]?.animateTo(currentStablePosition - thisHeight)
-                                }
-                                itemsContainer.indexToPositionMap[swappedId] = newPosition
-                                itemsContainer.positionToIndexMap[newPosition] = swappedId
-                            }
-
-                            position += swappedBy
-                            itemsContainer.indexToPositionMap[draggedId] = position
-                            itemsContainer.positionToIndexMap[position] = draggedId
-                            val newStablePosition = (itemsContainer.itemStablePositions[draggedId]?.targetValue ?: 0f) + draggedPxDelta
-                            offsetBias -= draggedPxDelta
-                            coroutineScope.launch {
-                                itemsContainer.itemStablePositions[draggedId]?.snapTo(newStablePosition)
-                            }
-                        }
-                        else -> {}
-                    }
-
-                    itemsContainer.totalRelativeSwapOffset += dragAmount.y
-                    coroutineScope.launch {
-                        itemsContainer.itemBiasOffsets[draggedId]?.snapTo(offsetBias + dragAmount.y)
-                    }
-
-                    // overscroll
-                    var priorVisibleHeight = thisHeight / 2 - scrollState.value
-                    for (i in 0 until position) {
-                        val itemId = itemsContainer.positionToIndexMap.getValue(i)
-                        priorVisibleHeight += itemsContainer.itemHeights[itemId] ?: 0f
-                    }
-                    val beyondVisibleHeight = parentViewportHeight.value - priorVisibleHeight
-                    val borderArea = parentViewportHeight.value * 0.18f
-                    val overscrolledTop = priorVisibleHeight + offsetBias - borderArea
-                    val overscrolledBottom = -beyondVisibleHeight + offsetBias + borderArea
-                    val movedABit: Boolean = (itemsContainer.totalRelativeSwapOffset + itemsContainer.overscrollDiff.value).absoluteValue > thisHeight
-                    val overscrolledY: Float = when {
-                        (itemsContainer.totalRelativeSwapOffset < 0 || movedABit) && overscrolledTop < 0 && scrollState.canScrollBackward -> {
-                            overscrolledTop
-                        }
-                        (itemsContainer.totalRelativeSwapOffset > 0 || movedABit) && overscrolledBottom > 0 && scrollState.canScrollForward -> {
-                            overscrolledBottom
-                        }
-                        else -> 0f
-                    }
-
-                    if (overscrolledY != 0f) {
-                        val scrollBy = overscrolledY * 0.07f
-                        scrollJob.value = coroutineScope.launch {
-                            while ((scrollState.canScrollForward && scrollBy > 0) || (scrollState.canScrollBackward && scrollBy < 0)) {
-                                yield()
-                                val scrollDelta = scrollState.scrollBy(scrollBy)
-                                itemsContainer.overscrollDiff.value += scrollDelta
-                                itemsContainer.itemBiasOffsets[draggedId]?.snapTo((itemsContainer.itemBiasOffsets[draggedId]?.targetValue ?: 0f) + scrollDelta)
-                                delay(20)
-                            }
-                        }
-                    }
-
+                    onReorderDrag(itemsContainer, index, scrollState, parentViewportHeight, coroutineScope, dragAmount)
                 }
             }
         },
@@ -416,8 +311,8 @@ private fun Modifier.createReorderButtonModifier(
             itemsContainer.onDragJob = null
             persistSwappedItems(itemsContainer, onReorder)
             draggingIndex.value = -1
-            scrollJob.value?.cancel()
-            scrollJob.value = null
+            itemsContainer.scrollJob?.cancel()
+            itemsContainer.scrollJob = null
             coroutineScope.launch {
                 itemsContainer.itemBiasOffsets[index]?.animateTo(0f)
             }
@@ -428,13 +323,128 @@ private fun Modifier.createReorderButtonModifier(
             itemsContainer.onDragJob = null
             persistSwappedItems(itemsContainer, onReorder)
             draggingIndex.value = -1
-            scrollJob.value?.cancel()
-            scrollJob.value = null
+            itemsContainer.scrollJob?.cancel()
+            itemsContainer.scrollJob = null
             coroutineScope.launch {
                 itemsContainer.itemBiasOffsets[index]?.animateTo(0f)
             }
         },
     )
+}
+
+private suspend fun onReorderDrag(
+    itemsContainer: ItemsContainer,
+    index: Int,
+    scrollState: ScrollState,
+    parentViewportHeight: MutableState<Float>,
+    coroutineScope: CoroutineScope,
+    dragAmount: Offset,
+) {
+    itemsContainer.scrollJob?.cancel()
+    itemsContainer.scrollJob = null
+
+    var offsetBias: Float = itemsContainer.itemBiasOffsets[index]?.targetValue ?: 0f // relative offset
+    val thisHeight = itemsContainer.itemHeights[index] ?: 0f
+    var position = itemsContainer.indexToPositionMap.getValue(index) // real positional index on view
+    val draggedId: Int = index
+
+    // minimize overlap by moving item when it's half-covered
+    val swappedBy: Int = calculateItemsToSwap(
+        index, position, offsetBias, itemsContainer.items.size, itemsContainer.itemHeights,
+        itemsContainer.positionToIndexMap,
+    )
+
+    when {
+        swappedBy < 0 -> { // moving up
+            var draggedPxDelta = 0f
+            for(swapStep in 1..-swappedBy) {
+                val swappedPosition = position - swapStep // position of item being swapped
+                val newPosition = swappedPosition + 1
+                val swappedId = itemsContainer.positionToIndexMap.getValue(swappedPosition)
+                draggedPxDelta += itemsContainer.itemHeights[swappedId] ?: 0f
+                val currentStablePosition = itemsContainer.itemStablePositions[swappedId]?.targetValue ?: 0f
+                coroutineScope.launch {
+                    itemsContainer.itemStablePositions[swappedId]?.animateTo(currentStablePosition + thisHeight)
+                }
+                itemsContainer.indexToPositionMap[swappedId] = newPosition
+                itemsContainer.positionToIndexMap[newPosition] = swappedId
+            }
+
+            position += swappedBy
+            itemsContainer.indexToPositionMap[draggedId] = position
+            itemsContainer.positionToIndexMap[position] = draggedId
+            val newStablePosition = (itemsContainer.itemStablePositions[draggedId]?.targetValue ?: 0f) - draggedPxDelta
+            offsetBias += draggedPxDelta
+            coroutineScope.launch {
+                itemsContainer.itemStablePositions[draggedId]?.snapTo(newStablePosition)
+            }
+        }
+
+        swappedBy > 0 -> { // moving down
+            var draggedPxDelta = 0f
+            for(swapStep in 1..swappedBy) {
+                val swappedPosition = position + swapStep // position of item being swapped
+                val newPosition = swappedPosition - 1
+                val swappedId = itemsContainer.positionToIndexMap.getValue(swappedPosition)
+                draggedPxDelta += itemsContainer.itemHeights[swappedId] ?: 0f
+                val currentStablePosition = itemsContainer.itemStablePositions[swappedId]?.targetValue ?: 0f
+                coroutineScope.launch {
+                    itemsContainer.itemStablePositions[swappedId]?.animateTo(currentStablePosition - thisHeight)
+                }
+                itemsContainer.indexToPositionMap[swappedId] = newPosition
+                itemsContainer.positionToIndexMap[newPosition] = swappedId
+            }
+
+            position += swappedBy
+            itemsContainer.indexToPositionMap[draggedId] = position
+            itemsContainer.positionToIndexMap[position] = draggedId
+            val newStablePosition = (itemsContainer.itemStablePositions[draggedId]?.targetValue ?: 0f) + draggedPxDelta
+            offsetBias -= draggedPxDelta
+            coroutineScope.launch {
+                itemsContainer.itemStablePositions[draggedId]?.snapTo(newStablePosition)
+            }
+        }
+        else -> {}
+    }
+
+    itemsContainer.totalRelativeSwapOffset += dragAmount.y
+    coroutineScope.launch {
+        itemsContainer.itemBiasOffsets[draggedId]?.snapTo(offsetBias + dragAmount.y)
+    }
+
+    // overscroll
+    var priorVisibleHeight = thisHeight / 2 - scrollState.value
+    for (i in 0 until position) {
+        val itemId = itemsContainer.positionToIndexMap.getValue(i)
+        priorVisibleHeight += itemsContainer.itemHeights[itemId] ?: 0f
+    }
+    val beyondVisibleHeight = parentViewportHeight.value - priorVisibleHeight
+    val borderArea = parentViewportHeight.value * 0.18f
+    val overscrolledTop = priorVisibleHeight + offsetBias - borderArea
+    val overscrolledBottom = -beyondVisibleHeight + offsetBias + borderArea
+    val movedABit: Boolean = (itemsContainer.totalRelativeSwapOffset + itemsContainer.overscrollDiff.value).absoluteValue > thisHeight
+    val overscrolledY: Float = when {
+        (itemsContainer.totalRelativeSwapOffset < 0 || movedABit) && overscrolledTop < 0 && scrollState.canScrollBackward -> {
+            overscrolledTop
+        }
+        (itemsContainer.totalRelativeSwapOffset > 0 || movedABit) && overscrolledBottom > 0 && scrollState.canScrollForward -> {
+            overscrolledBottom
+        }
+        else -> 0f
+    }
+
+    if (overscrolledY != 0f) {
+        val scrollBy = overscrolledY * 0.07f
+        itemsContainer.scrollJob = coroutineScope.launch {
+            while ((scrollState.canScrollForward && scrollBy > 0) || (scrollState.canScrollBackward && scrollBy < 0)) {
+                yield()
+                val scrollDelta = scrollState.scrollBy(scrollBy)
+                itemsContainer.overscrollDiff.value += scrollDelta
+                itemsContainer.itemBiasOffsets[draggedId]?.snapTo((itemsContainer.itemBiasOffsets[draggedId]?.targetValue ?: 0f) + scrollDelta)
+                delay(20)
+            }
+        }
+    }
 }
 
 private fun calculateItemsToSwap(
