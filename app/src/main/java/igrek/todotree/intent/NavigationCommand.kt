@@ -11,7 +11,6 @@ import igrek.todotree.inject.LazyExtractor
 import igrek.todotree.inject.LazyInject
 import igrek.todotree.inject.appFactory
 import igrek.todotree.command.Commander
-import igrek.todotree.info.splitTime
 import igrek.todotree.layout.navigation.NavigationMenuController
 import igrek.todotree.service.import.DatabaseImportFileChooser
 import igrek.todotree.service.tree.TreeSelectionManager
@@ -45,7 +44,7 @@ class NavigationCommand(
                 return true
             }
             R.id.action_save_exit -> {
-                ExitCommand().optionSaveAndExit()
+                ExitCommand().saveItemAndExit()
                 return true
             }
             R.id.action_save -> {
@@ -109,7 +108,7 @@ class NavigationCommand(
         return true
     }
 
-    fun approveClicked(): Boolean {
+    fun doneClicked(): Boolean {
         if (appData.isState(AppState.EDIT_ITEM_CONTENT)) {
             gui.requestSaveEditedItem()
         } else if (appData.isState(AppState.ITEMS_LIST)) {
@@ -120,6 +119,11 @@ class NavigationCommand(
                 TreeCommand().goBack()
             }
         }
+        return true
+    }
+
+    fun doneAllClicked(): Boolean {
+        ExitCommand().saveItemAndExit()
         return true
     }
 }

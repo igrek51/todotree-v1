@@ -32,12 +32,10 @@ class ExitCommand(
     private val logger = LoggerFactory.logger
 
     fun saveAndExitRequested() {
-        // show exit screen and wait for rendered
-//        gui.showExitScreen()
         Handler(Looper.getMainLooper()).post { quickSaveAndExit() }
     }
 
-    fun optionSaveAndExit() {
+    fun saveItemAndExit() {
         if (appData.isState(AppState.EDIT_ITEM_CONTENT)) {
             gui.requestSaveEditedItem()
         }

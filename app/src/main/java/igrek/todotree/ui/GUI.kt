@@ -83,7 +83,7 @@ class GUI {
             })
         }
         appCompatActivity.findViewById<ImageButton>(R.id.save2Button)?.let { save2Button ->
-            save2Button.setOnClickListener { ExitCommand().optionSaveAndExit() }
+            save2Button.setOnClickListener { ExitCommand().saveItemAndExit() }
         }
         lvl2TreeView = appCompatActivity.findViewById(R.id.compose_view_tree)
         lvl2EditView = appCompatActivity.findViewById(R.id.compose_view_edit)

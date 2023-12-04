@@ -129,7 +129,7 @@ class ItemEditorCommand(
 
     private fun exitApp() {
         logger.debug("Exitting quick add mode...")
-        ExitCommand().optionSaveAndExit()
+        ExitCommand().saveItemAndExit()
     }
 
     fun saveAndAddItemClicked(editedItem: AbstractTreeItem?, content: String) {

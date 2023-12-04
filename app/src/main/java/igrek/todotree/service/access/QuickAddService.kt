@@ -61,7 +61,7 @@ class QuickAddService(
 
     fun exitApp() {
         logger.debug("Exitting quick add mode...")
-        ExitCommand().optionSaveAndExit()
+        ExitCommand().saveItemAndExit()
     }
 
 }

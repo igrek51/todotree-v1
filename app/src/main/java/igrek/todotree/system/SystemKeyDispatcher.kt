@@ -66,11 +66,11 @@ class SystemKeyDispatcher(
     }
 
     private fun onVolumeUp(): Boolean {
-        return NavigationCommand().approveClicked()
+        return NavigationCommand().doneAllClicked()
     }
 
     private fun onVolumeDown(): Boolean {
-        return NavigationCommand().approveClicked()
+        return NavigationCommand().doneClicked()
     }
 
     private fun onArrowUp(): Boolean {
