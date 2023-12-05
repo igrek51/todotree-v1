@@ -6,15 +6,21 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import androidx.fragment.app.FragmentTransaction
-import androidx.preference.*
-import igrek.todotree.util.RetryDelayed
+import androidx.preference.EditTextPreference
+import androidx.preference.ListPreference
+import androidx.preference.MultiSelectListPreference
+import androidx.preference.Preference
+import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.SeekBarPreference
+import androidx.preference.SwitchPreference
+import igrek.todotree.R
+import igrek.todotree.info.logger.Logger
+import igrek.todotree.info.logger.LoggerFactory
 import igrek.todotree.inject.LazyExtractor
 import igrek.todotree.inject.LazyInject
 import igrek.todotree.inject.appFactory
-import igrek.todotree.R
 import igrek.todotree.service.permissions.PermissionsManager
-import java.math.RoundingMode
-import java.text.DecimalFormat
+import igrek.todotree.util.RetryDelayed
 import kotlin.math.roundToInt
 
 class SettingsFragment(
@@ -24,13 +30,7 @@ class SettingsFragment(
     private val preferencesState by LazyExtractor(settingsState)
     private val _context by LazyExtractor(context)
 
-    private var decimalFormat1: DecimalFormat = DecimalFormat("#.#")
-    private var decimalFormat3: DecimalFormat = DecimalFormat("#.###")
-
-    init {
-        decimalFormat1.roundingMode = RoundingMode.HALF_UP
-        decimalFormat3.roundingMode = RoundingMode.HALF_UP
-    }
+    private val logger: Logger = LoggerFactory.logger
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.settings_def, rootKey)
@@ -101,7 +101,10 @@ class SettingsFragment(
         onLoad: () -> String?,
         onSave: (id: String) -> Unit,
     ) {
-        val preference = findPreference(key) as ListPreference
+        val preference = findPreference(key) as ListPreference? ?: run {
+            logger.error("preference not found: $key")
+            return
+        }
         preference.entryValues = entriesMap.keys.toTypedArray()
         preference.entries = entriesMap.values.toTypedArray()
         preference.onPreferenceChangeListener =
@@ -118,8 +121,11 @@ class SettingsFragment(
         onLoad: () -> Set<String>?,
         onSave: (ids: Set<String>) -> Unit,
         stringConverter: (ids: Set<String>, entriesMap: LinkedHashMap<String, String>) -> String
-    ): MultiSelectListPreference {
-        val preference = findPreference(key) as MultiSelectListPreference
+    ) {
+        val preference = findPreference(key) as MultiSelectListPreference? ?: run {
+            logger.error("preference not found: $key")
+            return
+        }
         preference.entryValues = entriesMap.keys.toTypedArray()
         preference.entries = entriesMap.values.toTypedArray()
 
@@ -138,7 +144,6 @@ class SettingsFragment(
                 true
             }
         preference.summary = stringConverter(preference.values, entriesMap)
-        return preference
     }
 
     private fun multiPreferenceAllSelected(multiPreference: MultiSelectListPreference): Boolean {
@@ -160,7 +165,10 @@ class SettingsFragment(
         onSave: (value: Float) -> Unit,
         stringConverter: (value: Float) -> String,
     ) {
-        val preference = findPreference(key) as SeekBarPreference
+        val preference = findPreference(key) as SeekBarPreference? ?: run {
+            logger.error("preference not found: $key")
+            return
+        }
         preference.isAdjustable = true
         preference.max = SEEKBAR_RESOLUTION
         val currentValueF: Float = onLoad()
@@ -183,7 +191,10 @@ class SettingsFragment(
         onLoad: () -> Boolean,
         onSave: (value: Boolean) -> Unit,
     ) {
-        val preference = findPreference(key) as SwitchPreference
+        val preference = findPreference(key) as SwitchPreference? ?: run {
+            logger.error("preference not found: $key")
+            return
+        }
         preference.isChecked = onLoad()
         preference.onPreferenceChangeListener =
             Preference.OnPreferenceChangeListener { _, newValue ->
@@ -197,7 +208,10 @@ class SettingsFragment(
         onLoad: () -> String,
         onSave: (value: String) -> Unit,
     ) {
-        val preference = findPreference(key) as EditTextPreference
+        val preference = findPreference(key) as EditTextPreference? ?: run {
+            logger.error("preference not found: $key")
+            return
+        }
         preference.text = onLoad()
         preference.onPreferenceChangeListener =
             Preference.OnPreferenceChangeListener { _, newValue ->
@@ -210,7 +224,10 @@ class SettingsFragment(
         key: String,
         onClick: () -> Unit,
     ) {
-        val button = findPreference(key)
+        val button: Preference = findPreference(key) ?: run {
+            logger.error("preference not found: $key")
+            return
+        }
         button.onPreferenceClickListener = Preference.OnPreferenceClickListener {
             onClick.invoke()
             true

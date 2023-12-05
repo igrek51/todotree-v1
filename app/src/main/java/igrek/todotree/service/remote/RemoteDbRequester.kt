@@ -15,8 +15,9 @@ import kotlinx.coroutines.async
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.Request
-import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import java.util.*
 
@@ -32,7 +33,7 @@ class RemoteDbRequester (
     }
 
     private val httpRequester = HttpRequester()
-    private val jsonType = MediaType.parse("application/json; charset=utf-8")
+    private val jsonType: MediaType = "application/json; charset=utf-8".toMediaType()
     private val jsonSerializer = Json {
         encodeDefaults = true
         ignoreUnknownKeys = false
@@ -51,7 +52,7 @@ class RemoteDbRequester (
                 .addHeader(authTokenHeader, authToken)
                 .build()
         return httpRequester.httpRequestAsync(request) { response: Response ->
-            val json = response.body()?.string() ?: ""
+            val json = response.body?.string() ?: ""
             val allDtos: List<TodoDto> = jsonSerializer.decodeFromString(ListSerializer(TodoDto.serializer()), json)
             allDtos
         }
@@ -66,7 +67,7 @@ class RemoteDbRequester (
         val json = jsonSerializer.encodeToString(TodoDto.serializer(), todoDto)
         val request: Request = Request.Builder()
                 .url("$todoApiBase/todo")
-                .post(RequestBody.create(jsonType, json))
+                .post(json.toRequestBody(jsonType))
                 .addHeader(authTokenHeader, authToken)
                 .build()
         return httpRequester.httpRequestAsync(request) { content }
@@ -85,7 +86,7 @@ class RemoteDbRequester (
         val json = jsonSerializer.encodeToString(ListSerializer(TodoDto.serializer()), tasks)
         val request: Request = Request.Builder()
                 .url("$todoApiBase/todo/many")
-                .post(RequestBody.create(jsonType, json))
+                .post(json.toRequestBody(jsonType))
                 .addHeader(authTokenHeader, authToken)
                 .build()
         return httpRequester.httpRequestAsync(request) { }

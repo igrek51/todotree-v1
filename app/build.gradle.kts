@@ -14,7 +14,7 @@ fun getVersionCode(): Int {
         this.commandLine = listOf("git", "tag", "--list")
         this.standardOutput = stdout
     }
-    return stdout.toString().split("\n").size + 1800
+    return stdout.toString().split("\n").count { it.isNotBlank() } + 1800
 }
 
 fun getVersionName(): String {
@@ -33,7 +33,7 @@ android {
     defaultConfig {
         applicationId = "igrek.todotree"
         minSdk = 25
-        targetSdk = 34
+        targetSdk = 34 // Android 14
         versionCode = getVersionCode()
         versionName = getVersionName()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -62,7 +62,7 @@ android {
             buildConfigField("java.util.Date", "BUILD_DATE", "new java.util.Date(" + System.currentTimeMillis() + "L)")
         }
         register("prerelease") {
-            isDebuggable = false
+            isDebuggable = true
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
@@ -141,7 +141,7 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.recyclerview:recyclerview:1.3.2")
     implementation("androidx.cardview:cardview:1.0.0")
-    implementation("androidx.legacy:legacy-preference-v14:1.0.0") // Settings layouts
+    implementation("androidx.preference:preference-ktx:1.2.1") // Settings layouts
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("androidx.activity:activity-ktx:1.8.1")
     implementation("androidx.work:work-runtime:2.8.1")
@@ -149,7 +149,6 @@ dependencies {
     val kotlinVersion = rootProject.extra.get("kotlin_version") as String
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion")
     implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.1")
@@ -170,8 +169,8 @@ dependencies {
     implementation("io.reactivex.rxjava2:rxandroid:2.1.1")
     implementation("io.reactivex.rxjava2:rxkotlin:2.4.0")
     // OkHttp
-    implementation("com.squareup.okhttp3:okhttp:3.12.12") // last version supporting API 1
-    implementation("com.squareup.okhttp3:logging-interceptor:3.12.12")
+    implementation("com.squareup.okhttp3:okhttp:4.11.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
     // Joda Time
     implementation("joda-time:joda-time:2.12.5")
     implementation("org.joda:joda-convert:2.2.3")
@@ -179,8 +178,8 @@ dependencies {
     // Unit tests
     testImplementation("androidx.appcompat:appcompat:1.6.1")
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.mockito:mockito-core:2.28.2")
+    testImplementation("org.mockito:mockito-core:5.7.0")
     testImplementation("org.assertj:assertj-core:3.24.2")
     testImplementation("androidx.arch.core:core-testing:2.2.0")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
 }

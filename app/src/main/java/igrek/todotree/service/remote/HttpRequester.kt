@@ -24,7 +24,7 @@ class HttpRequester {
 
             val response: Response = okHttpClient.newCall(request).execute()
             return if (!response.isSuccessful) {
-                logger.error("Unexpected response code: $response, ${response.body().toString()}")
+                logger.error("Unexpected response code: $response, ${response.body.toString()}")
                 Result.failure(RuntimeException(response.toString()))
             } else {
                 try {
