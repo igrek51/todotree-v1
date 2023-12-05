@@ -29,7 +29,7 @@ open class SettingsService(
         if (primitives.isNotEmpty())
             return primitives2entities(primitives)
 
-        logger.warn("no user data preferences found, reading from shared preferences")
+        logger.warn("no user data preferences found, loading empty")
         return emptyMap()
     }
 
@@ -71,6 +71,7 @@ open class SettingsService(
         userDataDao.preferencesDao.setPrimitiveEntries(primitiveValues)
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun <T> getValue(prefDef: SettingsField): T {
         val propertyName = prefDef.preferenceName()
         if (propertyName !in entityValues)

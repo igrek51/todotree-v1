@@ -23,16 +23,16 @@ class PermissionsManager (
     fun setupFiles() {
         if (SDK_INT >= Build.VERSION_CODES.R) {
             if (Environment.isExternalStorageManager()) {
-                context.startActivity(Intent(context, MainActivity::class.java))
+                appCompatActivity.startActivity(Intent(context, MainActivity::class.java))
             } else { //request for the permission
                 val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
                 val uri: Uri = Uri.fromParts("package", context.packageName, null)
                 intent.data = uri
-                context.startActivity(intent)
+                appCompatActivity.startActivity(intent)
             }
         } else {
             //below android 11=======
-            context.startActivity(Intent(context, MainActivity::class.java))
+            appCompatActivity.startActivity(Intent(context, MainActivity::class.java))
             ActivityCompat.requestPermissions(
                 appCompatActivity,
                 arrayOf(WRITE_EXTERNAL_STORAGE),
