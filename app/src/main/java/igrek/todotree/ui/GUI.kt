@@ -1,20 +1,15 @@
 package igrek.todotree.ui
 
-import android.annotation.SuppressLint
-import android.content.pm.ActivityInfo
-import android.content.res.Configuration
 import android.view.View
-import android.view.inputmethod.InputMethodManager
 import android.widget.ImageButton
 import android.widget.ProgressBar
-import androidx.appcompat.app.ActionBar
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import igrek.todotree.R
 import igrek.todotree.app.AppData
 import igrek.todotree.app.AppState
 import igrek.todotree.domain.treeitem.AbstractTreeItem
-import igrek.todotree.info.errorcheck.SafeClickListener
 import igrek.todotree.inject.LazyExtractor
 import igrek.todotree.inject.appFactory
 import igrek.todotree.intent.ExitCommand
@@ -26,18 +21,17 @@ import igrek.todotree.util.mainScope
 import kotlinx.coroutines.launch
 
 class GUI {
-
     private val appCompatActivity: AppCompatActivity by LazyExtractor(appFactory.appCompatActivity)
     private val treeListLayout: TreeListLayout by LazyExtractor(appFactory.treeListLayout)
     private val editItemLayout: EditItemLayout by LazyExtractor(appFactory.editItemLayout)
     private val appData: AppData by LazyExtractor(appFactory.appData)
-    private val imm: InputMethodManager by LazyExtractor(appFactory.inputMethodManager)
 
     private var lvl2TreeView: View? = null
     private var lvl2EditView: View? = null
     private var loadingBar: ProgressBar? = null
 
-    private var actionBar: ActionBar? = null
+    private var goBackButton: ImageButton? = null
+    private var tabTitleLabel: TextView? = null
 
     private fun setMainContentLayout(layoutResource: Int): View {
         return when (layoutResource) {
@@ -65,35 +59,34 @@ class GUI {
         loadingBar?.visibility = View.GONE
     }
 
-    fun hideSoftKeyboard(window: View) {
-        imm.hideSoftInputFromWindow(window.windowToken, 0)
-    }
-
-    fun showSoftKeyboard(window: View?) {
-        imm.showSoftInput(window, 0)
-    }
-
     fun lazyInit() {
         appCompatActivity.findViewById<Toolbar>(R.id.toolbar1)?.let { toolbar ->
             appCompatActivity.setSupportActionBar(toolbar)
-            actionBar = appCompatActivity.supportActionBar
-            showBackButton(true)
-            toolbar.setNavigationOnClickListener(SafeClickListener {
-                NavigationCommand().backClicked()
-            })
+            val actionBar = appCompatActivity.supportActionBar
+            actionBar?.setDisplayHomeAsUpEnabled(false)
+            actionBar?.setDisplayShowHomeEnabled(false)
         }
-        appCompatActivity.findViewById<ImageButton>(R.id.save2Button)?.let { save2Button ->
-            save2Button.setOnClickListener { ExitCommand().saveItemAndExit() }
+        goBackButton = appCompatActivity.findViewById<ImageButton>(R.id.goBackButton)?.also {
+            it.setOnClickListener {
+                NavigationCommand().backClicked()
+            }
+        }
+        tabTitleLabel = appCompatActivity.findViewById(R.id.tabTitleLabel)
+        appCompatActivity.findViewById<ImageButton>(R.id.save2Button)?.let {
+            it.setOnClickListener {
+                ExitCommand().saveItemAndExit()
+            }
         }
         lvl2TreeView = appCompatActivity.findViewById(R.id.compose_view_tree)
         lvl2EditView = appCompatActivity.findViewById(R.id.compose_view_edit)
         loadingBar = appCompatActivity.findViewById(R.id.loadingBar)
+        showBackButton(true)
     }
 
     fun showBackButton(show: Boolean) {
-        if (actionBar != null) {
-            actionBar!!.setDisplayHomeAsUpEnabled(show)
-            actionBar!!.setDisplayShowHomeEnabled(show)
+        goBackButton?.visibility = when (show) {
+            true -> View.VISIBLE
+            false -> View.INVISIBLE
         }
     }
 
@@ -139,24 +132,6 @@ class GUI {
     }
 
     fun setTitle(title: String?) {
-        actionBar?.title = title
-    }
-
-    @SuppressLint("SourceLockedOrientationActivity")
-    fun rotateScreen() {
-        val orientation = appCompatActivity.resources?.configuration?.orientation
-        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            appCompatActivity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        } else if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-            appCompatActivity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
-        }
-    }
-
-    @SuppressLint("SourceLockedOrientationActivity")
-    private fun setOrientationPortrait() {
-        val orientation = appCompatActivity.resources?.configuration?.orientation
-        if (orientation != Configuration.ORIENTATION_PORTRAIT) {
-            appCompatActivity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        }
+        tabTitleLabel?.text = title
     }
 }
