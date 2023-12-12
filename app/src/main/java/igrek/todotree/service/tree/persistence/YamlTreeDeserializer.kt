@@ -1,16 +1,17 @@
 package igrek.todotree.service.tree.persistence
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
+import com.charleskorn.kaml.Yaml
 import igrek.todotree.domain.treeitem.*
 import igrek.todotree.exceptions.DeserializationFailedException
 import igrek.todotree.info.logger.Logger
 import igrek.todotree.info.logger.LoggerFactory
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
+
 
 class YamlTreeDeserializer {
 
-    private val mapper = ObjectMapper(YAMLFactory())
+    private val yaml = Yaml.default
     private val logger: Logger = LoggerFactory.logger
 
     @Throws(DeserializationFailedException::class)
@@ -18,7 +19,8 @@ class YamlTreeDeserializer {
         val startTime = System.currentTimeMillis()
 
         try {
-            val rawRoot = mapper.readValue(data, SerializableItem::class.java)
+            val rawRoot: SerializableItem = yaml.decodeFromString(SerializableItem.serializer(), data)
+
             val result = mapRawItemToTreeItem(rawRoot)
 
             val duration = System.currentTimeMillis() - startTime
@@ -70,6 +72,7 @@ class YamlTreeDeserializer {
         return treeItem
     }
 
+    @Serializable
     private data class SerializableItem(
         val type: String? = null,
         val name: String? = null,

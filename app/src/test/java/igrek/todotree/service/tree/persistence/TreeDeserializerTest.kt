@@ -7,24 +7,24 @@ class TreeDeserializerTest {
 
     @Test
     fun testSingleItem() {
-        assertValidDeserialize("""---
+        assertValidDeserialize("""
 type: "text"
 name: "dupa"
-""")
+""".trim())
     }
 
     @Test
     fun testRootWithItems() {
-        assertValidDeserialize("""---
+        assertValidDeserialize("""
 type: "/"
 items:
 - name: "dupa"
-""")
+""".trim())
     }
 
     @Test
     fun test3LevelItems() {
-        val input = """---
+        val input = """
 type: "text"
 name: "New"
 items:
@@ -34,7 +34,7 @@ items:
   - name: "10, 13"
 - type: "text"
   name: "dupa"
-"""
+""".trim()
         assertValidDeserialize(input)
     }
 

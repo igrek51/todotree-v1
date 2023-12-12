@@ -15,10 +15,10 @@ class TreePersistenceService {
 
     @Throws(DeserializationFailedException::class)
     fun deserializeTree(data: String): AbstractTreeItem {
-        try {
-            return deserializer.deserializeTree(data)
+        return try {
+            deserializer.deserializeTree(data)
         } catch (e: DeserializationFailedException) {
-            return fallbackDeserializer.deserializeTree(data)
+            fallbackDeserializer.deserializeTree(data)
         }
     }
 }

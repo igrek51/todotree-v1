@@ -20,16 +20,16 @@ class TreeSerializerTest {
 
     @Test
     fun testSimpleSerialization() {
-        Assert.assertEquals("""---
+        Assert.assertEquals("""
 type: "/"
-""", serializer.serializeTree(RootTreeItem()))
+""".trim(), serializer.serializeTree(RootTreeItem()))
         val root: AbstractTreeItem = RootTreeItem()
         root.add(TextTreeItem("dupa"))
-        Assert.assertEquals("""---
+        Assert.assertEquals("""
 type: "/"
 items:
 - name: "dupa"
-""", serializer.serializeTree(root)
+""".trim(), serializer.serializeTree(root)
         )
         //System.out.println(serializer.serializeTree(root));
     }
@@ -42,14 +42,14 @@ items:
         level1.add(TextTreeItem("abc"))
         level1.add(TextTreeItem("2"))
         val serialized = serializer.serializeTree(root)
-        Assert.assertEquals("""---
+        Assert.assertEquals("""
 type: "/"
 items:
 - name: "escaping \"quote\" back\\slash"
   items:
   - name: "abc"
   - name: "2"
-""", serialized
+""".trim(), serialized
         )
         println("serialized: $serialized")
         val deserialized = deserializer.deserializeTree(serialized)

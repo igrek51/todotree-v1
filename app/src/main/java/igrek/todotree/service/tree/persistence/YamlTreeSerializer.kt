@@ -1,63 +1,74 @@
 package igrek.todotree.service.tree.persistence
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
+import com.charleskorn.kaml.Yaml
+import com.charleskorn.kaml.YamlConfiguration
 import igrek.todotree.domain.treeitem.*
 import igrek.todotree.info.logger.Logger
 import igrek.todotree.info.logger.LoggerFactory
-import java.io.StringWriter
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.builtins.serializer
 
 internal class YamlTreeSerializer {
 
-    private val mapper = ObjectMapper(YAMLFactory())
+    private val yaml = Yaml(
+        configuration = YamlConfiguration(
+            encodeDefaults=false,
+        ),
+    )
     private val logger: Logger = LoggerFactory.logger
 
     fun serializeTree(root: AbstractTreeItem): String {
         val startTime = System.currentTimeMillis()
 
-        val writer = StringWriter()
-
-        val rawRoot: Map<String, Any> = convertToSerializableItem(root)
-        mapper.writeValue(writer, rawRoot)
-        val yamlString = writer.toString()
+        val rawRoot: SerializableItem = convertToSerializableItem(root)
+        val yamlString = yaml.encodeToString(SerializableItem.serializer(), rawRoot)
 
         val duration = System.currentTimeMillis() - startTime
         logger.debug("Tree serialization done in $duration ms")
         return yamlString
     }
 
-    private fun convertToSerializableItem(item: AbstractTreeItem): Map<String, Any> {
-        val contentMap: MutableMap<String, Any> = mutableMapOf()
+    private fun convertToSerializableItem(item: AbstractTreeItem): SerializableItem {
+        val content = SerializableItem()
 
         if (item.typeName != "text") {
-            contentMap["type"] = item.typeName
+            content.type = item.typeName
         }
 
-        serializeAttributes(contentMap, item)
+        serializeAttributes(content, item)
 
         // child items
         if (!item.isEmpty) {
-            val children: List<Map<String, Any>> = item.children.map {
+            val children: List<SerializableItem> = item.children.map {
                 convertToSerializableItem(it)
             }
-            contentMap["items"] = children
+            content.items = children
         }
 
-        return contentMap
+        return content
     }
 
-    private fun serializeAttributes(contentMap: MutableMap<String, Any>, item: AbstractTreeItem) {
+    private fun serializeAttributes(content: SerializableItem, item: AbstractTreeItem) {
         if (item is RemoteTreeItem) {
-            contentMap["name"] = item.displayName
+            content.name = item.displayName
         } else if (item is TextTreeItem) {
-            contentMap["name"] = item.displayName
+            content.name = item.displayName
         } else if (item is LinkTreeItem) {
-            contentMap["target"] = item.targetPath
+            content.target = item.targetPath
             if (item.hasCustomName()) {
-                contentMap["name"] = item.customName.orEmpty()
+                content.name = item.customName.orEmpty()
             }
         } else if (item is CheckboxTreeItem) {
-            contentMap["checked"] = if (item.isChecked) "true" else "false"
+            content.checked = if (item.isChecked) "true" else "false"
         }
     }
+
+    @Serializable
+    private data class SerializableItem(
+        var type: String? = null,
+        var name: String? = null,
+        var target: String? = null,
+        var checked: String? = null,
+        var items: List<SerializableItem?>? = null,
+    )
 }
