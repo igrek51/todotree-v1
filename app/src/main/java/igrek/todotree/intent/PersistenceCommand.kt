@@ -1,5 +1,6 @@
 package igrek.todotree.intent
 
+import igrek.todotree.domain.treeitem.RootTreeItem
 import igrek.todotree.exceptions.DeserializationFailedException
 import igrek.todotree.info.UiInfoService
 import igrek.todotree.info.errorcheck.SafeExecutor
@@ -149,7 +150,7 @@ class PersistenceCommand(
 
     private fun saveRootTree() {
         try {
-            val output = treePersistenceService.serializeTree(treeManager.rootItem)
+            val output = treePersistenceService.serializeTree(treeManager.rootItem ?: RootTreeItem())
             val dbFilePath = dbFile().absolutePath
             val internalBackupFilePath = dbCopyFile().absolutePath // backup copy in the internal storage
             val externalBackupFile = externalBackupFile() // backup copy in the external storage (optional)
