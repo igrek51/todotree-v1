@@ -435,7 +435,7 @@ private fun RowScope.TextContentItemContainer(
             if (item is LinkTreeItem) {
                 Text(
                     modifier = Modifier
-                        .padding(vertical = 4.dp, horizontal = 4.dp)
+                        .padding(vertical = 9.dp, horizontal = 4.dp)
                         .drawBehind {
                             val verticalOffset = size.height - linkOffset2Sp
                             drawLine(
@@ -456,7 +456,7 @@ private fun RowScope.TextContentItemContainer(
                 Text(
                     modifier = Modifier
                         .weight(1.0f)
-                        .padding(vertical = 4.dp, horizontal = 4.dp),
+                        .padding(vertical = 9.dp, horizontal = 4.dp),
                     text = item.displayName,
                     fontSize = 16.sp,
                     fontWeight = fontWeight,

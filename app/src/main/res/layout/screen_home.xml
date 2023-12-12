@@ -35,7 +35,7 @@
 
                 <ImageButton
                     android:id="@+id/goBackButton"
-                    android:layout_width="48dp"
+                    android:layout_width="56dp"
                     android:layout_height="48dp"
                     android:layout_gravity="center_vertical"
                     android:adjustViewBounds="true"
@@ -49,7 +49,7 @@
 
                 <ImageButton
                     android:id="@+id/save2Button"
-                    android:layout_width="48dp"
+                    android:layout_width="40dp"
                     android:layout_height="48dp"
                     android:layout_gravity="center_vertical"
                     android:layout_marginEnd="0dp"
@@ -58,7 +58,7 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:focusableInTouchMode="false"
-                    android:padding="8dp"
+                    android:padding="4dp"
                     android:scaleType="centerInside"
                     android:src="@drawable/save"/>
 
