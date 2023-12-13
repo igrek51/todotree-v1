@@ -548,7 +548,7 @@ fun handleItemGesture(dx: Float, dy: Float, itemWidth: Float, itemHeight: Float,
         return true
     } else if (dx <= -itemWidth * GESTURE_MIN_DX) { // swipe left
         mainScope.launch {
-            TreeCommand().goBack()
+            TreeCommand().goBackUntilRoot()
         }
         return true
     }

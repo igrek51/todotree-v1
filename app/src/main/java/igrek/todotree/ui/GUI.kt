@@ -68,7 +68,7 @@ class GUI {
         }
         goBackButton = appCompatActivity.findViewById<ImageButton>(R.id.goBackButton)?.also {
             it.setOnClickListener {
-                NavigationCommand().backClicked()
+                NavigationCommand().backUntilRootClicked()
             }
         }
         tabTitleLabel = appCompatActivity.findViewById(R.id.tabTitleLabel)

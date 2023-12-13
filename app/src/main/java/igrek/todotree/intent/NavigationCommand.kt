@@ -1,21 +1,21 @@
 package igrek.todotree.intent
 
 import android.content.Context
-import android.os.Handler
-import android.os.Looper
 import igrek.todotree.R
 import igrek.todotree.activity.ActivityController
 import igrek.todotree.app.AppData
 import igrek.todotree.app.AppState
+import igrek.todotree.command.Commander
 import igrek.todotree.inject.LazyExtractor
 import igrek.todotree.inject.LazyInject
 import igrek.todotree.inject.appFactory
-import igrek.todotree.command.Commander
 import igrek.todotree.layout.navigation.NavigationMenuController
 import igrek.todotree.service.import.DatabaseImportFileChooser
 import igrek.todotree.service.tree.TreeSelectionManager
 import igrek.todotree.ui.GUI
 import igrek.todotree.ui.treelist.TreeListLayout
+import igrek.todotree.util.mainScope
+import kotlinx.coroutines.launch
 
 class NavigationCommand(
     context: LazyInject<Context> = appFactory.context,
@@ -93,7 +93,7 @@ class NavigationCommand(
 
     fun backClicked(): Boolean {
         gui.startLoading()
-        Handler(Looper.getMainLooper()).post {
+        mainScope.launch {
             if (appData.isState(AppState.ITEMS_LIST)) {
                 if (treeSelectionManager.isAnythingSelected) {
                     treeSelectionManager.cancelSelectionMode()
@@ -108,15 +108,34 @@ class NavigationCommand(
         return true
     }
 
+    fun backUntilRootClicked(): Boolean {
+        gui.startLoading()
+        mainScope.launch {
+            if (appData.isState(AppState.ITEMS_LIST)) {
+                if (treeSelectionManager.isAnythingSelected) {
+                    treeSelectionManager.cancelSelectionMode()
+                    treeListLayout.updateItemsList()
+                } else {
+                    TreeCommand().goBackUntilRoot()
+                }
+            } else if (appData.isState(AppState.EDIT_ITEM_CONTENT)) {
+                gui.onEditBackClicked()
+            }
+        }
+        return true
+    }
+
     fun doneClicked(): Boolean {
-        if (appData.isState(AppState.EDIT_ITEM_CONTENT)) {
-            gui.requestSaveEditedItem()
-        } else if (appData.isState(AppState.ITEMS_LIST)) {
-            if (treeSelectionManager.isAnythingSelected) {
-                treeSelectionManager.cancelSelectionMode()
-                treeListLayout.updateItemsList()
-            } else {
-                TreeCommand().goBack()
+        mainScope.launch {
+            if (appData.isState(AppState.EDIT_ITEM_CONTENT)) {
+                gui.requestSaveEditedItem()
+            } else if (appData.isState(AppState.ITEMS_LIST)) {
+                if (treeSelectionManager.isAnythingSelected) {
+                    treeSelectionManager.cancelSelectionMode()
+                    treeListLayout.updateItemsList()
+                } else {
+                    TreeCommand().goBack()
+                }
             }
         }
         return true

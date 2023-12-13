@@ -20,6 +20,8 @@ import igrek.todotree.ui.GUI
 import igrek.todotree.ui.treelist.TreeListLayout
 import igrek.todotree.util.EmotionLessInator
 import kotlinx.coroutines.*
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import org.joda.time.DateTime
 
 @OptIn(DelicateCoroutinesApi::class)
@@ -48,25 +50,51 @@ class TreeCommand(
     private val treeListLayout: TreeListLayout by LazyExtractor(appFactory.treeListLayout)
 
     private val emotionLessInator = EmotionLessInator()
+    private val traversalMutex = Mutex()
 
-    fun goBack() {
-        try {
-            val current = treeManager.currentItem!!
-            // if item was reached from link - go back to link parent
-            if (linkHistoryService.hasLink(current)) {
-                val linkFromTarget = linkHistoryService.getLinkFromTarget(current)
-                linkHistoryService.resetTarget(current)
-                linkFromTarget?.getParent()?.let { linkParent ->
-                    treeManager.goTo(linkParent)
+    suspend fun goBack() {
+        traversalMutex.withLock {
+            try {
+                val current = treeManager.currentItem!!
+                // if item was reached from link - go back to link parent
+                if (linkHistoryService.hasLink(current)) {
+                    val linkFromTarget = linkHistoryService.getLinkFromTarget(current)
+                    linkHistoryService.resetTarget(current)
+                    linkFromTarget?.getParent()?.let { linkParent ->
+                        treeManager.goTo(linkParent)
+                    }
+                } else {
+                    treeManager.goUp()
+                    linkHistoryService.resetTarget(current) // reset link target - just in case
                 }
-            } else {
-                treeManager.goUp()
-                linkHistoryService.resetTarget(current) // reset link target - just in case
+                treeListLayout.updateItemsList()
+                treeScrollCache.restoreScrollPosition()
+            } catch (e: NoSuperItemException) {
+                ExitCommand().saveAndExitRequested()
             }
-            treeListLayout.updateItemsList()
-            treeScrollCache.restoreScrollPosition()
-        } catch (e: NoSuperItemException) {
-            ExitCommand().saveAndExitRequested()
+        }
+    }
+
+    suspend fun goBackUntilRoot() {
+        // go back until root
+        traversalMutex.withLock {
+            try {
+                val current = treeManager.currentItem!!
+                // if item was reached from link - go back to link parent
+                if (linkHistoryService.hasLink(current)) {
+                    val linkFromTarget = linkHistoryService.getLinkFromTarget(current)
+                    linkHistoryService.resetTarget(current)
+                    linkFromTarget?.getParent()?.let { linkParent ->
+                        treeManager.goTo(linkParent)
+                    }
+                } else {
+                    treeManager.goUp()
+                    linkHistoryService.resetTarget(current) // reset link target - just in case
+                }
+                treeListLayout.updateItemsList()
+                treeScrollCache.restoreScrollPosition()
+            } catch (_: NoSuperItemException) {
+            }
         }
     }
 
