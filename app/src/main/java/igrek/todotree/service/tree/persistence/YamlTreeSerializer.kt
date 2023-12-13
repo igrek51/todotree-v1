@@ -13,6 +13,7 @@ internal class YamlTreeSerializer {
     private val yaml = Yaml(
         configuration = YamlConfiguration(
             encodeDefaults=false,
+            breakScalarsAt=1000000,
         ),
     )
     private val logger: Logger = LoggerFactory.logger

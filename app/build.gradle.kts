@@ -167,6 +167,7 @@ dependencies {
     implementation("com.google.guava:guava:32.1.3-android")
     // YAML
     implementation("com.charleskorn.kaml:kaml:0.56.0")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.16.0")
     // RX
     implementation("io.reactivex.rxjava2:rxandroid:2.1.1")
     implementation("io.reactivex.rxjava2:rxkotlin:2.4.0")

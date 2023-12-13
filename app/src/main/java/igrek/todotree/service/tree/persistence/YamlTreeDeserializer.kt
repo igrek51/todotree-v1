@@ -1,17 +1,18 @@
 package igrek.todotree.service.tree.persistence
 
-import com.charleskorn.kaml.Yaml
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.node.ArrayNode
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import igrek.todotree.domain.treeitem.*
 import igrek.todotree.exceptions.DeserializationFailedException
 import igrek.todotree.info.logger.Logger
 import igrek.todotree.info.logger.LoggerFactory
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.SerializationException
 
 
 class YamlTreeDeserializer {
 
-    private val yaml = Yaml.default
+    private val mapper = ObjectMapper(YAMLFactory())
     private val logger: Logger = LoggerFactory.logger
 
     @Throws(DeserializationFailedException::class)
@@ -19,65 +20,62 @@ class YamlTreeDeserializer {
         val startTime = System.currentTimeMillis()
 
         try {
-            val rawRoot: SerializableItem = yaml.decodeFromString(SerializableItem.serializer(), data)
-
-            val result = mapRawItemToTreeItem(rawRoot)
+            val rootNode: JsonNode = mapper.readTree(data)
+            val result = mapNodeToTreeItem(rootNode)
 
             val duration = System.currentTimeMillis() - startTime
             logger.debug("Tree deserialization done in $duration ms")
             return result
-        } catch (e: SerializationException) {
+        } catch (e: Exception) {
             throw DeserializationFailedException(e.message)
         }
     }
 
     @Throws(DeserializationFailedException::class)
-    private fun mapRawItemToTreeItem(rawItem: SerializableItem): AbstractTreeItem {
-        val type = rawItem.type ?: "text"
+    private fun mapNodeToTreeItem(node: JsonNode): AbstractTreeItem {
+        val type = node.get("type")?.asText() ?: "text"
 
         val treeItem: AbstractTreeItem = when (type) {
             "/" -> {
                 RootTreeItem()
             }
             "text" -> {
-                if (rawItem.name == null) throw DeserializationFailedException("property 'name' not found")
-                TextTreeItem(null, rawItem.name)
+                val name = node.get("name")?.asText()
+                    ?: throw DeserializationFailedException("property 'name' not found")
+                TextTreeItem(null, name)
             }
             "remote" -> {
-                if (rawItem.name == null) throw DeserializationFailedException("property 'name' not found")
-                RemoteTreeItem(null, rawItem.name)
+                val name = node.get("name")?.asText()
+                    ?: throw DeserializationFailedException("property 'name' not found")
+                RemoteTreeItem(null, name)
             }
             "separator" -> {
                 SeparatorTreeItem(null)
             }
             "link" -> {
                 // name is optional, target required
-                if (rawItem.target == null) throw DeserializationFailedException("property 'target' not found")
-                LinkTreeItem(null, rawItem.target, rawItem.name)
+                val name = node.get("name")?.asText()
+                val target = node.get("target")?.asText()
+                    ?: throw DeserializationFailedException("property 'target' not found")
+                LinkTreeItem(null, target, name)
             }
             "checkbox" -> {
-                if (rawItem.name == null) throw DeserializationFailedException("property 'name' not found")
-                val checked = "true" == rawItem.checked
-                CheckboxTreeItem(null, rawItem.name, checked)
+                val name = node.get("name")?.asText()
+                    ?: throw DeserializationFailedException("property 'name' not found")
+                val checkedStr = node.get("checked")?.asText()
+                val checkedBool = "true" == checkedStr
+                CheckboxTreeItem(null, name, checkedBool)
             }
-            else -> throw DeserializationFailedException("Unknown item type: " + rawItem.type)
+            else -> throw DeserializationFailedException("Unknown item type: $type")
         }
-        if (rawItem.items != null) {
-            for (jsonChild in rawItem.items) {
-                if (jsonChild != null) {
-                    treeItem.add(mapRawItemToTreeItem(jsonChild))
+        if (node.get("items") != null) {
+            val items: ArrayNode = node.get("items") as ArrayNode
+            for (child in items.elements()) {
+                if (child != null) {
+                    treeItem.add(mapNodeToTreeItem(child))
                 }
             }
         }
         return treeItem
     }
-
-    @Serializable
-    private data class SerializableItem(
-        val type: String? = null,
-        val name: String? = null,
-        val target: String? = null,
-        val checked: String? = null,
-        val items: List<SerializableItem?>? = null,
-    )
 }
