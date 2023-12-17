@@ -366,6 +366,18 @@ private fun TreeItemComposable(
             controller.onAddItemAboveClick(position)
         }
 
+        // More
+        ItemIconButton(R.drawable.more) {
+            val position = itemsContainer.indexToPositionMap.getValue(index)
+            val coordinates = SizeAndPosition(
+                x = itemPosition.value.x.toInt(),
+                y = itemPosition.value.y.toInt(),
+                w = itemSize.value.width,
+                h = itemSize.value.height,
+            )
+            controller.onItemLongClick(position, coordinates)
+        }
+
     }
 }
 
