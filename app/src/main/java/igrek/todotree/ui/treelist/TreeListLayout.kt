@@ -325,47 +325,6 @@ private fun TreeItemComposable(
 
         TextContentItemContainer(itemsContainer, index)
 
-        // Edit item
-        ItemIconButton(
-            R.drawable.edit,
-            modifier = Modifier.layout { measurable, constraints ->
-                val placeable = when {
-                    itemsContainer.isItemParent.getValue(index).value -> measurable.measure(constraints)
-                    else -> measurable.measure(constraints.copy(minWidth = 0, maxWidth = 0))
-                }
-                layout(placeable.width, placeable.height) {
-                    placeable.placeRelative(0, 0)
-                }
-            },
-        ) {
-            val item: AbstractTreeItem = itemsContainer.items.getOrNull(index) ?: return@ItemIconButton
-            controller.onEditItemClick(item)
-        }
-
-        // Enter item
-        ItemIconButton(
-            R.drawable.arrow_forward,
-            modifier = Modifier.layout { measurable, constraints ->
-                val placeable = when {
-                    !itemsContainer.isItemParent.getValue(index).value -> measurable.measure(constraints)
-                    else -> measurable.measure(constraints.copy(minWidth = 0, maxWidth = 0))
-                }
-                layout(placeable.width, placeable.height) {
-                    placeable.placeRelative(0, 0)
-                }
-            },
-        ) {
-            val item: AbstractTreeItem = itemsContainer.items.getOrNull(index) ?: return@ItemIconButton
-            val position = itemsContainer.indexToPositionMap.getValue(index)
-            controller.onEnterItemClick(position, item)
-        }
-
-        // Add new above
-        ItemIconButton(R.drawable.plus) {
-            val position = itemsContainer.indexToPositionMap.getValue(index)
-            controller.onAddItemAboveClick(position)
-        }
-
         // More
         ItemIconButton(R.drawable.more) {
             val position = itemsContainer.indexToPositionMap.getValue(index)
@@ -376,6 +335,14 @@ private fun TreeItemComposable(
                 h = itemSize.value.height,
             )
             controller.onItemLongClick(position, coordinates)
+        }
+
+        EditOrEnterButton(controller, itemsContainer, index)
+
+        // Add new above
+        ItemIconButton(R.drawable.plus) {
+            val position = itemsContainer.indexToPositionMap.getValue(index)
+            controller.onAddItemAboveClick(position)
         }
 
     }
@@ -424,6 +391,69 @@ private fun SelectCheckboxItemContainer(
             itemsContainer.isSelected.getValue(index).value = checked
         }
     )
+}
+
+
+@Composable
+private fun EditOrEnterButton(
+    controller: TreeListLayout,
+    itemsContainer: ItemsContainer,
+    index: Int,
+) {
+    IconButton(
+        modifier = Modifier.size(32.dp, 36.dp),
+        onClick = {
+            val isParent = itemsContainer.isItemParent.getValue(index).value
+            Handler(Looper.getMainLooper()).post {
+                mainScope.launch {
+                    when {
+                        isParent -> { // edit item
+                            val item: AbstractTreeItem = itemsContainer.items.getOrNull(index) ?: return@launch
+                            controller.onEditItemClick(item)
+                        }
+                        else -> { // enter item
+                            val item: AbstractTreeItem = itemsContainer.items.getOrNull(index) ?: return@launch
+                            val position = itemsContainer.indexToPositionMap.getValue(index)
+                            controller.onEnterItemClick(position, item)
+                        }
+                    }
+                }
+            }
+        },
+    ) {
+        Icon(
+            painterResource(id = R.drawable.edit),
+            modifier = Modifier
+                .size(24.dp)
+                .layout { measurable, constraints ->
+                    val placeable = when {
+                        itemsContainer.isItemParent.getValue(index).value -> measurable.measure(constraints)
+                        else -> measurable.measure(constraints.copy(minWidth = 0, maxWidth = 0))
+                    }
+                    layout(placeable.width, placeable.height) {
+                        placeable.placeRelative(0, 0)
+                    }
+                },
+            contentDescription = null,
+            tint = Color.White,
+        )
+        Icon(
+            painterResource(id = R.drawable.arrow_forward),
+            modifier = Modifier
+                .size(24.dp)
+                .layout { measurable, constraints ->
+                    val placeable = when {
+                        !itemsContainer.isItemParent.getValue(index).value -> measurable.measure(constraints)
+                        else -> measurable.measure(constraints.copy(minWidth = 0, maxWidth = 0))
+                    }
+                    layout(placeable.width, placeable.height) {
+                        placeable.placeRelative(0, 0)
+                    }
+                },
+            contentDescription = null,
+            tint = Color.White,
+        )
+    }
 }
 
 @SuppressLint("ModifierParameter")
@@ -530,10 +560,8 @@ private fun ItemIconButton(
     IconButton(
         modifier = modifier.size(32.dp, 36.dp),
         onClick = {
-            Handler(Looper.getMainLooper()).post {
-                mainScope.launch {
-                    onClick()
-                }
+            mainScope.launch {
+                onClick()
             }
         },
     ) {
