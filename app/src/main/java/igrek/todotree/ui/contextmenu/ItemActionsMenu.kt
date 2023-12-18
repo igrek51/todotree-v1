@@ -35,7 +35,7 @@ class ItemActionsMenu(
         val actions = filterVisibleOnly(buildActionsList(coordinates))
         val actionNames = convertToNamesArray(actions)
         val builder = AlertDialog.Builder(activity)
-        builder.setTitle("Choose action")
+        //builder.setTitle("Choose action")
         builder.setItems(actionNames) { _, item ->
             Handler(Looper.getMainLooper()).post {
                 mainScope.launch {
