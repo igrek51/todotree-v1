@@ -1,6 +1,10 @@
 package igrek.todotree.intent
 
-import igrek.todotree.domain.treeitem.*
+import igrek.todotree.domain.treeitem.AbstractTreeItem
+import igrek.todotree.domain.treeitem.LinkTreeItem
+import igrek.todotree.domain.treeitem.RemoteTreeItem
+import igrek.todotree.domain.treeitem.RootTreeItem
+import igrek.todotree.domain.treeitem.TextTreeItem
 import igrek.todotree.exceptions.NoSuperItemException
 import igrek.todotree.info.Toaster
 import igrek.todotree.info.UiInfoService
@@ -8,18 +12,20 @@ import igrek.todotree.inject.LazyExtractor
 import igrek.todotree.inject.LazyInject
 import igrek.todotree.inject.appFactory
 import igrek.todotree.service.access.DatabaseLock
-import igrek.todotree.service.history.ChangesHistory
 import igrek.todotree.service.history.LinkHistoryService
 import igrek.todotree.service.remote.RemotePushService
 import igrek.todotree.service.remote.TodoDto
 import igrek.todotree.service.tree.TreeManager
-import igrek.todotree.service.tree.TreeMover
 import igrek.todotree.service.tree.TreeScrollCache
 import igrek.todotree.service.tree.TreeSelectionManager
 import igrek.todotree.ui.GUI
 import igrek.todotree.ui.treelist.TreeListLayout
 import igrek.todotree.util.EmotionLessInator
-import kotlinx.coroutines.*
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import org.joda.time.DateTime
@@ -32,8 +38,6 @@ class TreeCommand(
     databaseLock: LazyInject<DatabaseLock> = appFactory.databaseLock,
     treeScrollCache: LazyInject<TreeScrollCache> = appFactory.treeScrollCache,
     treeSelectionManager: LazyInject<TreeSelectionManager> = appFactory.treeSelectionManager,
-    treeMover: LazyInject<TreeMover> = appFactory.treeMover,
-    changesHistory: LazyInject<ChangesHistory> = appFactory.changesHistory,
     remotePushService: LazyInject<RemotePushService> = appFactory.remotePushService,
     linkHistoryService: LazyInject<LinkHistoryService> = appFactory.linkHistoryService,
 ) {
@@ -43,8 +47,6 @@ class TreeCommand(
     private val databaseLock by LazyExtractor(databaseLock)
     private val treeScrollCache by LazyExtractor(treeScrollCache)
     private val treeSelectionManager by LazyExtractor(treeSelectionManager)
-    private val treeMover by LazyExtractor(treeMover)
-    private val changesHistory by LazyExtractor(changesHistory)
     private val remotePushService by LazyExtractor(remotePushService)
     private val linkHistoryService by LazyExtractor(linkHistoryService)
     private val treeListLayout: TreeListLayout by LazyExtractor(appFactory.treeListLayout)
@@ -167,6 +169,7 @@ class TreeCommand(
 
     fun navigateToRoot() {
         navigateTo(treeManager.rootItem)
+        linkHistoryService.clear()
     }
 
     fun markItemSelected(position: Int) {
@@ -222,12 +225,6 @@ class TreeCommand(
             linkHistoryService.storeTargetLink(target, item)
             navigateTo(target)
         }
-    }
-
-    fun itemMoved(position: Int, step: Int): List<AbstractTreeItem> {
-        treeMover.move(treeManager.currentItem!!, position, step)
-        changesHistory.registerChange()
-        return treeManager.currentItem!!.children
     }
 
     fun findItemByPath(paths: Array<String>): AbstractTreeItem? {

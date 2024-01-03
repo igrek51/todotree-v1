@@ -23,4 +23,8 @@ class LinkHistoryService {
     fun resetTarget(target: AbstractTreeItem) {
         target2link.remove(target)
     }
+
+    fun clear() {
+        target2link.clear()
+    }
 }

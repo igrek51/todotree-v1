@@ -48,17 +48,16 @@ class ExitCommand(
     }
 
     private fun quickSaveAndExit() {
+        logger.info("Quick exiting...")
         Handler(Looper.getMainLooper()).post { postQuickSave() }
         activityController.minimize()
-        logger.info("Quick exiting...")
     }
 
     private fun postQuickSave() {
         PersistenceCommand().saveDatabase()
         windowManagerService.keepScreenOn(false)
         TreeCommand().navigateToRoot()
-        val shouldBeLocked = settingsState.lockDB
-        lock.isLocked = shouldBeLocked
+        lock.isLocked = settingsState.lockDB
         gui.showItemsList()
         logger.debug("Quick exit done")
     }
